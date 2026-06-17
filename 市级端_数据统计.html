@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市级运营平台 - 数据统计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 二次确认弹窗函数
+        function confirmModal(message, callback) {
+            // 检查是否已存在模态框
+            let modal = document.getElementById('modal');
+            if (modal) {
+                modal.remove();
+            }
+            
+            // 创建模态框
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.95)';
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 max-w-md w-full mx-4 transition-all duration-300">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">确认操作</h3>
+                        <p class="text-gray-700 mb-6">${message}</p>
+                    </div>
+                    <div class="flex border-t border-slate-200 p-4 space-x-3">
+                        <button id="cancelBtn" class="flex-1 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+                            取消
+                        </button>
+                        <button id="confirmBtn" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            确定
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 显示动画
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                modal.style.transform = 'scale(1)';
+            }, 10);
+            
+            // 关闭弹窗函数
+            function closeModal() {
+                modal.style.opacity = '0';
+                modal.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    if (modal.parentNode) {
+                        modal.parentNode.removeChild(modal);
+                    }
+                }, 300);
+            }
+            
+            // 添加关闭事件
+            document.getElementById('cancelBtn').addEventListener('click', closeModal);
+            
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                closeModal();
+                if (callback) {
+                    callback();
+                }
+            });
+            
+            // 点击模态框外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 侧边栏 -->
+    <div class="flex h-screen overflow-hidden">
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">管理员</p>
+                        <p class="text-[10px] text-slate-400">市级管理员</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">数据统计</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors">
+                            <i class="fa fa-bell text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors">
+                        <i class="fa fa-question-circle text-lg"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- 标签页 -->
+                <div class="flex space-x-1 p-1 bg-slate-200/50 rounded-lg w-fit mb-6">
+                    <button data-tab="business" class="px-6 py-2 rounded-md text-sm transition-all bg-white shadow-sm text-blue-700 font-bold tab-link">业务统计</button>
+                    <button data-tab="institution" class="px-6 py-2 rounded-md text-sm transition-all text-slate-600 hover:bg-white/50 tab-link">机构统计</button>
+                    <button data-tab="enterprise" class="px-6 py-2 rounded-md text-sm transition-all text-slate-600 hover:bg-white/50 tab-link">企业统计</button>
+                </div>
+
+                <!-- 业务统计 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden tab-content" id="business">
+                    <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="font-bold text-slate-800">业务统计</h3>
+                        <div class="flex items-center space-x-2">
+                            <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                                <option>2026年3月</option>
+                                <option>2026年2月</option>
+                                <option>2026年1月</option>
+                                <option>2025年12月</option>
+                            </select>
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                <i class="fa fa-search mr-2"></i>查询
+                            </button>
+                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all">
+                                <i class="fa fa-download mr-2"></i>导出
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+
+                    <!-- 业务概览 -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-blue-800 mb-1">业务总量</h4>
+                            <div class="text-2xl font-bold text-blue-900">120</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +15%</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-green-800 mb-1">担保总额</h4>
+                            <div class="text-2xl font-bold text-green-900">¥1.2亿</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +10%</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-purple-800 mb-1">涉及企业</h4>
+                            <div class="text-2xl font-bold text-purple-900">85</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +8%</div>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-yellow-800 mb-1">平均办理时长</h4>
+                            <div class="text-2xl font-bold text-yellow-900">1.5天</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 -0.5天</div>
+                        </div>
+                    </div>
+
+                    <!-- 业务趋势图表 -->
+                    <div class="mb-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">业务趋势</h4>
+                        <div class="h-64 bg-white rounded-md border border-gray-200">
+                            <canvas id="businessTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 保函类型分布 -->
+                    <div class="mb-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">保函类型分布</h4>
+                        <div class="h-64 bg-white rounded-md border border-gray-200">
+                            <canvas id="guaranteeTypeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 业务明细 -->
+                    <div>
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">业务明细</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日期</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务量</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金额</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">完成率</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-10</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">投标保函</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥2,500,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-09</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">履约保函</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">3</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥6,000,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-08</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">预付款保函</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥2,000,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-07</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">工资保函</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">4</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥3,200,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 机构统计 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden tab-content hidden" id="institution">
+                    <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="font-bold text-slate-800">机构统计</h3>
+                        <div class="flex items-center space-x-2">
+                            <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                                <option>2026年3月</option>
+                                <option>2026年2月</option>
+                                <option>2026年1月</option>
+                                <option>2025年12月</option>
+                            </select>
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="alert('查询功能已触发')">
+                                <i class="fa fa-search mr-2"></i>查询
+                            </button>
+                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all" onclick="alert('导出功能已触发')">
+                                <i class="fa fa-download mr-2"></i>导出
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+
+                    <!-- 机构概览 -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-blue-800 mb-1">机构总数</h4>
+                            <div class="text-2xl font-bold text-blue-900">15</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +2</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-green-800 mb-1">活跃机构</h4>
+                            <div class="text-2xl font-bold text-green-900">12</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +1</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-purple-800 mb-1">业务量排名第一</h4>
+                            <div class="text-2xl font-bold text-purple-900">建设银行</div>
+                            <div class="text-xs text-gray-500 mt-1">45笔业务</div>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-yellow-800 mb-1">平均办理时长</h4>
+                            <div class="text-2xl font-bold text-yellow-900">1.2天</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 -0.3天</div>
+                        </div>
+                    </div>
+
+                    <!-- 机构业务量图表 -->
+                    <div class="mb-6">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">机构业务量排名</h4>
+                        <div class="h-64 bg-white rounded-md border border-gray-200">
+                            <canvas id="institutionBusinessChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 机构明细 -->
+                    <div>
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">机构明细</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">机构名称</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">机构类型</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务量</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金额</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">完成率</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">中国建设银行福建省分行</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">银行</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">45</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥4,500,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">中国工商银行福建省分行</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">银行</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">35</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥3,200,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">中国平安保险福建分公司</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">保险公司</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">25</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥2,800,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600">100%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <!-- 企业统计 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden tab-content hidden" id="enterprise">
+                    <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
+                        <h3 class="font-bold text-slate-800">企业统计</h3>
+                        <div class="flex items-center space-x-2">
+                            <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                                <option>2026年3月</option>
+                                <option>2026年2月</option>
+                                <option>2026年1月</option>
+                                <option>2025年12月</option>
+                            </select>
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="alert('查询功能已触发')">
+                                <i class="fa fa-search mr-2"></i>查询
+                            </button>
+                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all" onclick="alert('导出功能已触发')">
+                                <i class="fa fa-download mr-2"></i>导出
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+
+                    <!-- 企业概览 -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-blue-800 mb-1">企业总数</h4>
+                            <div class="text-2xl font-bold text-blue-900">85</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +10</div>
+                        </div>
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-green-800 mb-1">活跃企业</h4>
+                            <div class="text-2xl font-bold text-green-900">65</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +8</div>
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-purple-800 mb-1">平均保函金额</h4>
+                            <div class="text-2xl font-bold text-purple-900">¥100万</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +5%</div>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4">
+                            <h4 class="text-sm font-medium text-yellow-800 mb-1">重复申请率</h4>
+                            <div class="text-2xl font-bold text-yellow-900">35%</div>
+                            <div class="text-xs text-gray-500 mt-1">较上月 +3%</div>
+                        </div>
+                    </div>
+
+                    <!-- 企业明细 -->
+                    <div>
+                        <h4 class="text-md font-semibold text-gray-800 mb-4">企业明细</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">企业名称</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">行业</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">业务量</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金额</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">最近申请日期</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100">
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">福建省建筑工程有限公司</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">建筑</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">8</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥8,000,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-15</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors bg-gray-50">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">福建省市政工程有限公司</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">市政</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">6</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥6,500,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-14</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">福建省机电工程有限公司</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">机电</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">5</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">¥5,200,000</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2026-03-13</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script>
+        // 创建模态框函数
+        function createModal(title, content) {
+            console.log('createModal called with title:', title);
+            // 检查是否已存在模态框
+            let modal = document.getElementById('modal');
+            if (modal) {
+                modal.remove();
+            }
+            
+            // 创建模态框
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 max-w-2xl w-full mx-4">
+                    <div class="flex justify-between items-center border-b border-slate-200 p-4">
+                        <h3 class="text-lg font-bold text-slate-900">${title}</h3>
+                        <button id="closeModal" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 max-h-[70vh] overflow-y-auto">
+                        ${content}
+                    </div>
+                    <div class="flex justify-end border-t border-slate-200 p-4 space-x-3">
+                        <button id="confirmModal" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                            确定
+                        </button>
+                        <button id="cancelModal" class="border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+                            取消
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            console.log('Modal appended to body');
+            
+            // 添加关闭事件
+            document.getElementById('closeModal').addEventListener('click', function() {
+                modal.remove();
+            });
+            
+            document.getElementById('cancelModal').addEventListener('click', function() {
+                modal.remove();
+            });
+            
+            document.getElementById('confirmModal').addEventListener('click', function() {
+                modal.remove();
+            });
+            
+            // 点击模态框外部关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+            let isTabSwitching = false;
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 设置标签切换标志
+                    isTabSwitching = true;
+                    
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 移除所有tab的激活状态
+                    tabs.forEach(t => {
+                        t.classList.remove('bg-white', 'shadow-sm', 'text-blue-700', 'font-bold');
+                        t.classList.add('text-slate-600', 'hover:bg-white/50');
+                    });
+                    
+                    // 添加当前tab的激活状态
+                    this.classList.remove('text-slate-600', 'hover:bg-white/50');
+                    this.classList.add('bg-white', 'shadow-sm', 'text-blue-700', 'font-bold');
+                    
+                    // 隐藏所有内容
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    
+                    // 显示对应内容
+                    const targetContent = document.getElementById(tabId);
+                    if (targetContent) {
+                        targetContent.classList.remove('hidden');
+                    }
+                    
+                    // 延迟设置标签切换标志为false，确保切换过程完成
+                    setTimeout(function() {
+                        isTabSwitching = false;
+                    }, 100);
+                });
+            });
+
+            // 为业务统计页面的按钮添加功能
+            const businessQueryBtn = document.querySelector('#business .bg-blue-600.text-white.px-4.py-2.rounded-lg');
+            if (businessQueryBtn) {
+                businessQueryBtn.addEventListener('click', function() {
+                    // 检查是否正在切换标签
+                    if (isTabSwitching) {
+                        return; // 如果正在切换标签，不执行任何操作
+                    }
+                    
+                    alert('查询功能已触发');
+                });
+            }
+
+            const businessExportBtn = document.querySelector('#business .bg-gray-200.text-gray-700.px-4.py-2.rounded-lg');
+            if (businessExportBtn) {
+                businessExportBtn.addEventListener('click', function() {
+                    // 检查是否正在切换标签
+                    if (isTabSwitching) {
+                        return; // 如果正在切换标签，不执行任何操作
+                    }
+                    
+                    alert('导出功能已触发');
+                });
+            }
+
+            // 为机构统计页面的按钮添加功能
+            const institutionQueryBtn = document.querySelector('#institution .bg-blue-600.text-white.px-4.py-2.rounded-lg');
+            if (institutionQueryBtn) {
+                institutionQueryBtn.addEventListener('click', function() {
+                    // 检查是否正在切换标签
+                    if (isTabSwitching) {
+                        return; // 如果正在切换标签，不执行任何操作
+                    }
+                    
+                    alert('查询功能已触发');
+                });
+            }
+
+            const institutionExportBtn = document.querySelector('#institution .bg-gray-200.text-gray-700.px-4.py-2.rounded-lg');
+            if (institutionExportBtn) {
+                institutionExportBtn.addEventListener('click', function() {
+                    // 检查是否正在切换标签
+                    if (isTabSwitching) {
+                        return; // 如果正在切换标签，不执行任何操作
+                    }
+                    
+                    alert('导出功能已触发');
+                });
+            }
+
+            // 为企业统计页面的按钮添加功能
+            const enterpriseQueryBtn = document.querySelector('#enterprise .bg-blue-600.text-white.px-4.py-2.rounded-lg');
+            if (enterpriseQueryBtn) {
+                enterpriseQueryBtn.addEventListener('click', function() {
+                    // 检查是否正在切换标签
+                    if (isTabSwitching) {
+                        return; // 如果正在切换标签，不执行任何操作
+                    }
+                    
+                    alert('查询功能已触发');
+                });
+            }
+
+            const enterpriseExportBtn = document.querySelector('#enterprise .bg-gray-200.text-gray-700.px-4.py-2.rounded-lg');
+            if (enterpriseExportBtn) {
+                enterpriseExportBtn.addEventListener('click', function() {
+                    // 检查是否正在切换标签
+                    if (isTabSwitching) {
+                        return; // 如果正在切换标签，不执行任何操作
+                    }
+                    
+                    alert('导出功能已触发');
+                });
+            }
+
+            // 通知按钮功能
+            const notificationButton = document.querySelector('.fa-bell').parentElement;
+            let notificationDropdown = null;
+            let unreadCount = 3; // 未读消息数量
+            
+            // 更新未读消息数量显示
+            function updateUnreadCount() {
+                const unreadBadge = notificationButton.querySelector('.unread-badge');
+                if (unreadCount > 0) {
+                    if (!unreadBadge) {
+                        const badge = document.createElement('span');
+                        badge.className = 'unread-badge absolute top-0 right-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center z-10';
+                        badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                        notificationButton.appendChild(badge);
+                    } else {
+                        unreadBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                    }
+                } else {
+                    if (unreadBadge) {
+                        unreadBadge.remove();
+                    }
+                }
+            }
+            
+            // 初始化未读消息数量显示
+            updateUnreadCount();
+            
+            notificationButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // 检查是否正在切换标签
+                if (isTabSwitching) {
+                    return; // 如果正在切换标签，不执行任何操作
+                }
+                
+                // 关闭已有的下拉菜单
+                if (notificationDropdown) {
+                    notificationDropdown.remove();
+                    notificationDropdown = null;
+                    return;
+                }
+                
+                // 创建通知下拉菜单
+                notificationDropdown = document.createElement('div');
+                notificationDropdown.className = 'absolute top-full right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50 transition-all duration-300 transform opacity-100';
+                
+                notificationDropdown.innerHTML = `
+                    <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+                        <h3 class="font-semibold text-gray-800">通知中心</h3>
+                        <button id="markAllRead" class="text-blue-600 text-sm hover:underline transition-colors">全部标为已读</button>
+                    </div>
+                    <div class="max-h-80 overflow-y-auto">
+                        <div class="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <div class="flex items-start">
+                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3"></div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">数据统计更新</h4>
+                                    <p class="text-sm text-gray-600 mt-1">本月业务统计数据已更新，请查看</p>
+                                    <p class="text-xs text-gray-400 mt-2">10分钟前</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <div class="flex items-start">
+                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3"></div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">机构业务排名</h4>
+                                    <p class="text-sm text-gray-600 mt-1">本月机构业务排名已更新</p>
+                                    <p class="text-xs text-gray-400 mt-2">1小时前</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer">
+                            <div class="flex items-start">
+                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3"></div>
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-gray-900">系统更新通知</h4>
+                                    <p class="text-sm text-gray-600 mt-1">系统将于今晚 22:00 进行维护更新</p>
+                                    <p class="text-xs text-gray-400 mt-2">3小时前</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4 border-t border-gray-200 text-center">
+                        <a href="#" class="text-blue-600 text-sm hover:underline transition-colors">查看所有通知</a>
+                    </div>
+                `;
+                
+                // 添加到页面
+                this.parentElement.appendChild(notificationDropdown);
+                
+                // 点击其他地方关闭下拉菜单
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!notificationDropdown.contains(e.target) && e.target !== notificationButton) {
+                        notificationDropdown.remove();
+                        notificationDropdown = null;
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+                
+                // 全部标为已读按钮
+                document.getElementById('markAllRead').addEventListener('click', function() {
+                    alert('所有通知已标为已读');
+                    unreadCount = 0;
+                    updateUnreadCount();
+                    notificationDropdown.remove();
+                    notificationDropdown = null;
+                });
+                
+                // 点击通知项标记为已读
+                const notificationItems = notificationDropdown.querySelectorAll('.p-4.border-b');
+                notificationItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const unreadDot = this.querySelector('.w-2.h-2');
+                        if (unreadDot) {
+                            unreadDot.remove();
+                            if (unreadCount > 0) {
+                                unreadCount--;
+                                updateUnreadCount();
+                            }
+                        }
+                    });
+                });
+            });
+
+            // 帮助按钮功能
+            const helpButton = document.querySelector('.fa-question-circle').parentElement;
+            
+            // 显示模态框函数
+            function showModal(title, content, buttons = []) {
+                // 检查是否已存在模态框
+                let modal = document.getElementById('modal');
+                if (modal) {
+                    modal.remove();
+                }
+                
+                // 创建模态框
+                modal = document.createElement('div');
+                modal.id = 'modal';
+                modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                
+                // 生成按钮HTML
+                const buttonsHtml = buttons.length > 0 ? buttons.map(btn => `
+                    <button class="${btn.className}" data-action="${btn.action || 'close'}">
+                        ${btn.text}
+                    </button>
+                `).join('') : `
+                    <button class="bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2 rounded-md" data-action="close">
+                        关闭
+                    </button>
+                `;
+                
+                modal.innerHTML = `
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 max-w-2xl w-full mx-4">
+                        <div class="flex justify-between items-center border-b border-slate-200 p-4">
+                            <h3 class="text-lg font-bold text-slate-900">${title}</h3>
+                            <button id="closeModal" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-500 transition-colors">
+                                <i class="fa fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-6 max-h-[70vh] overflow-y-auto">
+                            ${content}
+                        </div>
+                        <div class="flex justify-end border-t border-slate-200 p-4 space-x-3">
+                            ${buttonsHtml}
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // 添加关闭事件
+                document.getElementById('closeModal').addEventListener('click', function() {
+                    modal.remove();
+                });
+                
+                // 添加按钮事件
+                modal.querySelectorAll('button[data-action="close"]').forEach(button => {
+                    button.addEventListener('click', function() {
+                        modal.remove();
+                    });
+                });
+                
+                // 点击模态框外部关闭
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+                
+                // 执行按钮回调
+                buttons.forEach(btn => {
+                    if (btn.callback) {
+                        const btnElements = Array.from(modal.querySelectorAll('button')).filter(el => el.textContent.trim().includes(btn.text));
+                        if (btnElements.length > 0) {
+                            btnElements[0].addEventListener('click', btn.callback);
+                        }
+                    }
+                });
+            }
+            
+            helpButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // 检查是否正在切换标签
+                if (isTabSwitching) {
+                    return; // 如果正在切换标签，不执行任何操作
+                }
+                
+                // 创建帮助中心模态框
+                showModal('帮助中心', `
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">帮助中心</h3>
+                            <div class="mb-6">
+                                <div class="relative">
+                                    <input type="text" id="helpSearch" placeholder="搜索帮助内容..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <button id="helpSearchBtn" class="absolute right-2 top-2 text-gray-500 hover:text-primary">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-800 mb-3">数据统计</h4>
+                                <div class="space-y-3">
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何查看业务统计数据？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在数据统计页面，选择"业务统计"标签页，系统会显示业务总量、担保总额、涉及企业数和平均办理时长等概览数据，以及业务趋势图表和保函类型分布。</p>
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何导出统计数据？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在数据统计页面，选择相应的标签页，点击"导出"按钮，系统会将当前页面的统计数据导出为Excel文件。</p>
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何切换统计周期？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在数据统计页面，使用页面上方的下拉菜单选择不同的统计周期（如月份），然后点击"查询"按钮即可查看对应周期的统计数据。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-800 mb-3">机构统计</h4>
+                                <div class="space-y-3">
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何查看机构业务排名？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在数据统计页面，选择"机构统计"标签页，系统会显示机构总数、活跃机构数、业务量排名第一的机构等概览数据，以及机构业务量排名图表。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-800 mb-3">企业统计</h4>
+                                <div class="space-y-3">
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何查看企业业务数据？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在数据统计页面，选择"企业统计"标签页，系统会显示企业总数、活跃企业数、业务量排名第一的企业等概览数据，以及企业明细列表。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-800 mb-3">系统操作</h4>
+                                <div class="space-y-3">
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何修改密码？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在页面右上角点击用户头像，选择"修改密码"，按照提示输入原密码和新密码即可完成修改。</p>
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">如何添加新用户？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在系统设置中选择"用户管理"，点击"添加用户"按钮，填写用户信息并设置权限即可。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-800 mb-3">常见问题</h4>
+                                <div class="space-y-3">
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">忘记密码怎么办？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">在登录页面点击"忘记密码"，按照提示验证身份后即可重置密码。</p>
+                                        </div>
+                                    </div>
+                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
+                                            <span class="font-medium">系统卡顿怎么办？</span>
+                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                                        </button>
+                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
+                                            <p class="text-gray-700">建议清除浏览器缓存，关闭不必要的浏览器标签页，或尝试使用其他浏览器访问系统。</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-4 border-t border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">联系支持</h3>
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <p class="text-gray-700 mb-2">如果您有其他问题，欢迎联系我们的支持团队：</p>
+                                <p class="text-gray-700 mb-1"><i class="fa fa-phone mr-2"></i> 400-123-4567</p>
+                                <p class="text-gray-700 mb-1"><i class="fa fa-envelope mr-2"></i> support@example.com</p>
+                                <p class="text-gray-700"><i class="fa fa-clock-o mr-2"></i> 工作时间：周一至周五 9:00-18:00</p>
+                            </div>
+                        </div>
+                    </div>
+                `, [
+                    { text: '关闭', className: 'bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2 rounded-md', callback: function() {
+                        document.getElementById('modal').remove();
+                    }}
+                ]);
+                
+                // 添加帮助问题的展开/收起功能
+                setTimeout(() => {
+                    const helpQuestions = document.querySelectorAll('.help-question');
+                    helpQuestions.forEach(question => {
+                        question.addEventListener('click', function() {
+                            const answer = this.nextElementSibling;
+                            const icon = this.querySelector('i');
+                            
+                            answer.classList.toggle('hidden');
+                            icon.classList.toggle('rotate-180');
+                        });
+                    });
+                    
+                    // 添加搜索功能
+                    const searchInput = document.getElementById('helpSearch');
+                    const searchBtn = document.getElementById('helpSearchBtn');
+                    
+                    function performSearch() {
+                        const searchTerm = searchInput.value.toLowerCase();
+                        const helpItems = document.querySelectorAll('.help-question');
+                        
+                        helpItems.forEach(item => {
+                            const questionText = item.textContent.toLowerCase();
+                            const parentDiv = item.closest('.border');
+                            
+                            if (questionText.includes(searchTerm)) {
+                                parentDiv.style.display = 'block';
+                            } else {
+                                parentDiv.style.display = 'none';
+                            }
+                        });
+                    }
+                    
+                    searchBtn.addEventListener('click', performSearch);
+                    searchInput.addEventListener('keyup', function(e) {
+                        if (e.key === 'Enter') {
+                            performSearch();
+                        }
+                    });
+                }, 100);
+            });
+
+                
+        });
+
+        // 业务趋势图表
+        const businessTrendCtx = document.getElementById('businessTrendChart').getContext('2d');
+        const businessTrendChart = new Chart(businessTrendCtx, {
+            type: 'line',
+            data: {
+                labels: ['1月', '2月', '3月', '4月', '5月', '6月'],
+                datasets: [{
+                    label: '业务量',
+                    data: [80, 95, 120, 110, 130, 150],
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }, {
+                    label: '担保金额',
+                    data: [80000000, 95000000, 120000000, 110000000, 130000000, 150000000],
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '业务量'
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: '担保金额 (元)'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // 保函类型分布图表
+        const guaranteeTypeCtx = document.getElementById('guaranteeTypeChart').getContext('2d');
+        const guaranteeTypeChart = new Chart(guaranteeTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['投标保函', '履约保函', '预付款保函', '工资保函', '其他'],
+                datasets: [{
+                    data: [45, 30, 15, 8, 2],
+                    backgroundColor: [
+                        '#3B82F6',
+                        '#10B981',
+                        '#F59E0B',
+                        '#8B5CF6',
+                        '#6B7280'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map(function(label, i) {
+                                        const dataset = data.datasets[0];
+                                        const value = dataset.data[i];
+                                        const total = dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((value / total) * 100);
+                                        return {
+                                            text: `${label} ${percentage}%`,
+                                            fillStyle: dataset.backgroundColor[i],
+                                            strokeStyle: dataset.borderColor,
+                                            lineWidth: dataset.borderWidth,
+                                            hidden: isNaN(dataset.data[i]) || dataset.data[i] === 0,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 机构业务量图表
+        const institutionBusinessCtx = document.getElementById('institutionBusinessChart');
+        if (institutionBusinessCtx) {
+            const institutionBusinessChart = new Chart(institutionBusinessCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['建设银行', '工商银行', '平安保险', '农业银行', '中国银行'],
+                    datasets: [{
+                        label: '业务量',
+                        data: [45, 35, 25, 15, 10],
+                        backgroundColor: '#3B82F6'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '业务量'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+    </script>
+</body>
+</html>

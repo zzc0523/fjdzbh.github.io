@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市级运营平台 - 展业管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 创建模态框函数
+        function createModal(title, content) {
+            let modal = document.getElementById('modal');
+            if (modal) { modal.remove(); }
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.95)';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-all duration-300">
+                    <div class="flex justify-between items-center border-b border-slate-200 p-5 bg-slate-50">
+                        <h3 class="text-xl font-bold text-slate-900">${title}</h3>
+                        <button id="closeModal" class="w-9 h-9 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">${content}</div>
+                    <div class="flex justify-end border-t border-slate-200 p-5 bg-slate-50 space-x-4">
+                        <button id="confirmModal" class="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-primary/90 transition-all font-medium shadow-sm hover:shadow-md">确定</button>
+                        <button id="cancelModal" class="border border-slate-300 text-slate-700 px-6 py-2.5 rounded-lg hover:bg-slate-100 transition-colors font-medium">取消</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => { modal.style.opacity = '1'; modal.style.transform = 'scale(1)'; }, 10);
+            function closeModal() {
+                modal.style.opacity = '0';
+                modal.style.transform = 'scale(0.95)';
+                setTimeout(() => { if (modal.parentNode) { modal.parentNode.removeChild(modal); } }, 300);
+            }
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelModal').addEventListener('click', closeModal);
+            document.getElementById('confirmModal').addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) { if (e.target === modal) { closeModal(); } });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 发起展业申请
+            const initiateBtn = document.getElementById('initiateBusinessBtn');
+            if (initiateBtn) {
+                initiateBtn.addEventListener('click', function() {
+                    createModal('发起展业申请', `
+                        <div class="space-y-4">
+                            <div><label class="font-bold text-slate-500 block mb-1">选择申请机构 *</label><select class="w-full border p-2 rounded"><option>中国平安保险福建分公司</option></select></div>
+                            <div><label class="font-bold text-slate-500 block mb-1">申请展业产品 *</label><select class="w-full border p-2 rounded"><option>投标保函</option><option>履约保函</option></select></div>
+                            <div><label class="font-bold text-slate-500 block mb-1">申请说明 *</label><textarea class="w-full border p-2 rounded" rows="3"></textarea></div>
+                            <div><label class="font-bold text-slate-500 block mb-1">附件材料 *</label><div class="border-2 border-dashed p-6 text-center rounded">点击上传文件</div></div>
+                        </div>
+                    `);
+                });
+            }
+
+            // 查看按钮
+            document.querySelectorAll('a.text-primary').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tr = this.closest('tr');
+                    const id = tr.querySelector('td:nth-of-type(1)').textContent.trim();
+                    createModal(`展业管理详情 - ${id}`, `
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
+                                <div><label class="font-bold text-slate-500 block">申请编号</label>${id}</div>
+                                <div><label class="font-bold text-slate-500 block">机构名称</label>${tr.querySelector('td:nth-of-type(2)').textContent.trim()}</div>
+                                <div><label class="font-bold text-slate-500 block">产品名称</label>${tr.querySelector('td:nth-of-type(3)').textContent.trim()}</div>
+                                <div><label class="font-bold text-slate-500 block">状态</label>${tr.querySelector('td:nth-of-type(5)').textContent.trim()}</div>
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+
+            // 提交按钮
+            document.querySelectorAll('a.text-blue-500').forEach(btn => {
+                if (btn.textContent.trim() === '提交') {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const tr = this.closest('tr');
+                        const id = tr.querySelector('td:nth-of-type(1)').textContent.trim();
+                        if (confirm(`确定要提交申请 ${id} 吗？`)) {
+                            const badge = tr.querySelector('td:nth-of-type(5) span');
+                            badge.textContent = '已提交';
+                            badge.className = 'px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800';
+                            this.remove();
+                        }
+                    });
+                }
+            });
+
+            // 查询筛选逻辑
+            const queryBtn = document.getElementById('queryBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const keywordSearch = document.getElementById('keywordSearch');
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+            const tableBody = document.querySelector('tbody');
+
+            function filterTable() {
+                const keyword = keywordSearch.value.toLowerCase();
+                const status = statusFilter.value;
+                const date = dateFilter.value;
+                const rows = tableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const id = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const product = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const rowDate = row.querySelector('td:nth-child(4)').textContent.trim();
+                    const rowStatus = row.querySelector('td:nth-child(5)').textContent.trim();
+
+                    const matchesKeyword = id.includes(keyword) || name.includes(keyword) || product.includes(keyword);
+                    const matchesStatus = status === '' || rowStatus === status;
+                    const matchesDate = date === '' || rowDate === date;
+
+                    if (matchesKeyword && matchesStatus && matchesDate) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            queryBtn.addEventListener('click', filterTable);
+            resetBtn.addEventListener('click', function() {
+                keywordSearch.value = '';
+                statusFilter.value = '';
+                dateFilter.value = '';
+                filterTable();
+            });
+
+            // 回车触发查询
+            keywordSearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterTable();
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-building"></i></div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3"><p class="text-xs font-bold">管理员</p><p class="text-[10px] text-slate-400">市级管理员</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-4"><h1 class="text-xl font-bold text-slate-900">展业管理</h1></div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors"><i class="fa fa-bell text-lg"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                    <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors"><i class="fa fa-question-circle text-lg"></i></button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold text-slate-900">展业管理列表</h2>
+                        <button id="initiateBusinessBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2 shadow-lg shadow-blue-900/20"><i class="fa fa-plus"></i>发起展业申请</button>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex items-start space-x-3 text-sm text-blue-700">
+                        <i class="fa fa-info-circle mt-0.5"></i>
+                        <div>只有完成<strong>首单验证审核</strong>并获得“已通过”状态的机构，方可发起展业申请。</div>
+                    </div>
+
+                    <!-- 快速查询筛选 -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">关键词搜索</label>
+                                <div class="relative">
+                                    <input type="text" id="keywordSearch" placeholder="申请编号 / 机构 / 产品" class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                                    <i class="fa fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">申请状态</label>
+                                <select id="statusFilter" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                                    <option value="">全部状态</option>
+                                    <option value="待提交">待提交</option>
+                                    <option value="已提交">已提交</option>
+                                    <option value="审核通过">审核通过</option>
+                                    <option value="审核不通过">审核不通过</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">申请日期</label>
+                                <input type="date" id="dateFilter" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                            </div>
+                            <div class="flex items-end space-x-2">
+                                <button id="queryBtn" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all font-medium text-sm shadow-sm">
+                                    <i class="fa fa-search mr-2"></i>查询
+                                </button>
+                                <button id="resetBtn" class="flex-1 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-100 transition-colors font-medium text-sm">
+                                    <i class="fa fa-refresh mr-2"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">申请编号</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">机构名称</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">产品名称</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">申请日期</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-slate-200">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="font-medium text-slate-900 font-mono">BZ202603110001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">中国平安保险福建分公司</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">投标保函</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-11</td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">待提交</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline mr-3">查看</a><a href="#" class="text-blue-500 hover:underline">提交</a></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="font-medium text-slate-900 font-mono">BZ202603100002</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">中国工商银行福建省分行</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">履约保函</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">已提交</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline">查看</a></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="font-medium text-slate-900 font-mono">BZ202603090003</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">中国建设银行福建省分行</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">质量保函</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-09</td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">审核通过</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline">查看</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

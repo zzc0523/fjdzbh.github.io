@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>办理监控 - 市级运营端</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neutral-dark': '#1F2937'
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">管理员</p>
+                        <p class="text-[10px] text-slate-400">市级管理员</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white" onclick="showConfirm('退出登录', '确定要退出市级运营平台吗？', () => location.href='../登录.html')">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">办理监控</h2>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- 筛选区域 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+                    <div class="p-4 bg-white">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div class="flex items-center space-x-4 flex-wrap gap-3">
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">开函机构：</label>
+                                    <select id="filterOrg" class="px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" onchange="updateStats()">
+                                        <option>全部</option>
+                                        <option>泉州银行</option>
+                                        <option>招商银行</option>
+                                        <option>浦发银行</option>
+                                        <option>新网银行</option>
+                                        <option>平安保险</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">保函类型：</label>
+                                    <select id="filterType" class="px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" onchange="updateStats()">
+                                        <option>全部</option>
+                                        <option>投标保函</option>
+                                        <option>履约保函</option>
+                                        <option>预付款保函</option>
+                                        <option>质量保函</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">状态：</label>
+                                    <select id="filterStatus" class="px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" onchange="updateStats()">
+                                        <option>全部</option>
+                                        <option>已出函</option>
+                                        <option>处理中</option>
+                                        <option>已取消</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">企业名称：</label>
+                                    <input id="filterCompany" type="text" placeholder="请输入企业名称" class="px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" oninput="updateStats()">
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">项目名称：</label>
+                                    <input id="filterProject" type="text" placeholder="请输入项目名称" class="px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" oninput="updateStats()">
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button id="btnSearch" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                    <i class="fa fa-search mr-1"></i>查询
+                                </button>
+                                <button id="btnReset" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all">
+                                    <i class="fa fa-refresh mr-1"></i>重置
+                                </button>
+                                <button id="btnExport" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium shadow-lg shadow-green-200 hover:bg-green-700 transition-all">
+                                    <i class="fa fa-download mr-1"></i>导出
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片区域 -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg shadow-blue-500/25">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-sm opacity-80 mb-2">平均开函时长</div>
+                                <div id="avgDuration" class="text-3xl font-bold">2小时35分</div>
+                                <div class="text-xs opacity-60 mt-2 flex items-center">
+                                    <i class="fa fa-trending-down mr-1 text-red-300"></i>较昨日 -12%
+                                </div>
+                            </div>
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                                <i class="fa fa-clock-o text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg shadow-green-500/25">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-sm opacity-80 mb-2">今日开函数量</div>
+                                <div id="totalCount" class="text-3xl font-bold">5笔</div>
+                                <div class="text-xs opacity-60 mt-2 flex items-center">
+                                    <i class="fa fa-trending-up mr-1 text-yellow-300"></i>较昨日 +8%
+                                </div>
+                            </div>
+                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
+                                <i class="fa fa-file-text-o text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800 flex items-center"><i class="fa fa-clock-o mr-2 text-blue-600"></i>开函时效监控</h3>
+                        <p class="text-sm text-slate-500 mt-1">监控金融机构从企业完成支付到出函的时效</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gradient-to-r from-blue-50 to-slate-50">
+                                <tr>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">订单编号</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">项目名称</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">金融机构</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">企业名称</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">保函类型</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">状态</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">支付时间</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">出函时间</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">开函时效</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody" class="bg-white divide-y divide-slate-50"></tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+                        <span class="text-sm text-slate-500">共 <strong class="text-slate-700">128</strong> 条记录，当前显示 <strong class="text-slate-700">1-7</strong> 条</span>
+                        <div class="flex items-center space-x-2">
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all disabled:opacity-30" disabled>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all">1</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">2</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">3</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">4</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        const mockData = [
+            { orderId: 'BD20260522001', projectName: '中央活力区公共服务中心', org: '泉州银行', company: '福建建工建设有限公司', type: '投标保函', status: '已出函', payTime: '09:15:30', issueTime: '11:30:45', duration: '2小时15分' },
+            { orderId: 'BD20260522002', projectName: '泉州市城市更新项目', org: '招商银行', company: '厦门市建筑工程公司', type: '履约保函', status: '已出函', payTime: '08:30:00', issueTime: '10:25:18', duration: '1小时55分' },
+            { orderId: 'BD20260522003', projectName: '泉州湾大桥工程', org: '浦发银行', company: '泉州市建设发展集团', type: '预付款保函', status: '处理中', payTime: '07:00:00', issueTime: '12:15:30', duration: '5小时15分' },
+            { orderId: 'BD20260522004', projectName: '福州地铁5号线', org: '平安保险', company: '福州城建集团有限公司', type: '质量保函', status: '已取消', payTime: '06:45:00', issueTime: '11:00:00', duration: '4小时15分' },
+            { orderId: 'BD20260522005', projectName: '漳州开发区建设项目', org: '新网银行', company: '漳州建工集团有限公司', type: '投标保函', status: '已出函', payTime: '09:20:00', issueTime: '10:45:22', duration: '1小时25分' },
+            { orderId: 'BD20260522006', projectName: '宁德市体育中心', org: '泉州银行', company: '莆田市建设工程公司', type: '投标保函', status: '处理中', payTime: '08:00:00', issueTime: '', duration: '2小时+' },
+            { orderId: 'BD20260522007', projectName: '龙岩市文化中心', org: '招商银行', company: '龙岩市建筑工程公司', type: '履约保函', status: '已出函', payTime: '05:30:00', issueTime: '14:45:00', duration: '9小时15分' }
+        ];
+
+        // 获取状态标签HTML
+        function getStatusTag(status) {
+            const tags = {
+                '已出函': '<span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">已出函</span>',
+                '处理中': '<span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">处理中</span>',
+                '已取消': '<span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">已取消</span>'
+            };
+            return tags[status] || status;
+        }
+
+        // 渲染表格
+        function renderTable(data) {
+            const tbody = document.getElementById('dataTableBody');
+            if (!tbody) return;
+
+            let html = '';
+            data.forEach((item, index) => {
+                const bgClass = index % 2 === 0 ? '' : 'bg-slate-25';
+                html += `
+                    <tr class="hover:bg-blue-50 transition-all ${bgClass}">
+                        <td class="px-5 py-4">
+                            <span class="text-sm font-medium text-slate-800 font-mono">${item.orderId}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="text-sm text-slate-800">${item.projectName}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="text-sm text-slate-700">${item.org}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="text-sm text-slate-800">${item.company}</span>
+                        </td>
+                        <td class="px-5 py-4">
+                            <span class="text-sm text-slate-700">${item.type}</span>
+                        </td>
+                        <td class="px-5 py-4 text-center">
+                            ${getStatusTag(item.status)}
+                        </td>
+                        <td class="px-5 py-4 text-center">
+                            <span class="text-sm text-slate-600">${item.payTime}</span>
+                        </td>
+                        <td class="px-5 py-4 text-center">
+                            <span class="text-sm text-slate-600">${item.issueTime || '-'}</span>
+                        </td>
+                        <td class="px-5 py-4 text-center">
+                            <span class="text-sm text-slate-600">${item.duration}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // 更新统计数据和表格
+        function updateStats() {
+            const org = document.getElementById('filterOrg').value;
+            const type = document.getElementById('filterType').value;
+            const status = document.getElementById('filterStatus').value;
+            const company = document.getElementById('filterCompany').value.toLowerCase();
+            const project = document.getElementById('filterProject').value.toLowerCase();
+
+            // 筛选数据
+            const filtered = mockData.filter(item => {
+                if (org !== '全部' && item.org !== org) return false;
+                if (type !== '全部' && item.type !== type) return false;
+                if (status !== '全部' && item.status !== status) return false;
+                if (company && !item.company.toLowerCase().includes(company)) return false;
+                if (project && !item.projectName.toLowerCase().includes(project)) return false;
+                return true;
+            });
+
+            // 计算统计数据
+            const count = filtered.length;
+            const avgDuration = calculateAvgDuration(filtered);
+
+            // 更新卡片显示
+            document.getElementById('totalCount').textContent = `${count}笔`;
+            document.getElementById('avgDuration').textContent = avgDuration;
+
+            // 更新表格显示
+            renderTable(filtered);
+        }
+
+        // 计算平均时长
+        function calculateAvgDuration(data) {
+            const durations = data.filter(item => item.duration !== '处理中');
+            if (durations.length === 0) return '0小时0分';
+
+            let totalMinutes = 0;
+            durations.forEach(item => {
+                const match = item.duration.match(/(\d+)小时(\d+)分/);
+                if (match) {
+                    totalMinutes += parseInt(match[1]) * 60 + parseInt(match[2]);
+                }
+            });
+
+            const avgMinutes = Math.round(totalMinutes / durations.length);
+            const hours = Math.floor(avgMinutes / 60);
+            const minutes = avgMinutes % 60;
+            return `${hours}小时${minutes}分`;
+        }
+
+        function showConfirm(title, message, onConfirm) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[100]';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">${title}</h3>
+                        <p class="text-slate-600">${message}</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 flex justify-end space-x-3">
+                        <button class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">取消</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" id="modalConfirmBtn">确定</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                onConfirm();
+                modal.remove();
+            };
+        }
+
+        // 导出数据
+        function exportData() {
+            // 获取表格数据
+            const rows = document.querySelectorAll('#dataTableBody tr');
+            const headers = ['订单编号', '金融机构', '企业名称', '保函类型', '支付时间', '出函时间', '开函时效'];
+            let csvContent = headers.join(',') + '\n';
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowData = [];
+                cells.forEach(cell => {
+                    let text = cell.textContent.trim();
+                    // 处理包含逗号的内容
+                    if (text.includes(',')) {
+                        text = `"${text}"`;
+                    }
+                    rowData.push(text);
+                });
+                csvContent += rowData.join(',') + '\n';
+            });
+
+            // 创建下载链接
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const date = new Date();
+            const filename = `开函时效监控_${date.getFullYear()}${String(date.getMonth()+1).padStart(2, '0')}${String(date.getDate()).padStart(2, '0')}.csv`;
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // 页面加载完成后绑定事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化表格和统计数据
+            updateStats();
+
+            // 绑定导出按钮事件
+            const exportBtn = document.getElementById('btnExport');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    showConfirm('导出确认', '确定要导出当前筛选的数据吗？', exportData);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

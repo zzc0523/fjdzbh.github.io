@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>受益人端 - 到期预警</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'primary': '0 4px 6px -1px rgba(30, 64, 175, 0.1), 0 2px 4px -1px rgba(30, 64, 175, 0.06)',
+                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function showModal(title, content, buttons = []) {
+            let modal = document.getElementById('modal');
+            if (modal) modal.remove();
+            
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+            
+            if (buttons.length === 0) {
+                buttons = [{ text: '关闭', className: 'bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2 rounded-lg', action: 'close' }];
+            }
+            
+            const buttonsHtml = buttons.map(btn => `
+                <button class="${btn.className || 'bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90'}" data-action="${btn.action || 'custom'}">
+                    ${btn.text}
+                </button>
+            `).join('');
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-card border border-slate-200 max-w-2xl w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="modal-container">
+                    <div class="bg-primary text-white px-6 py-4 flex items-center justify-between">
+                        <h3 class="text-lg font-bold">${title}</h3>
+                        <button class="modal-close-btn text-white/80 hover:text-white transition-colors" data-action="close">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">${content}</div>
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end space-x-3">
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            requestAnimationFrame(() => {
+                modal.style.opacity = '1';
+                document.getElementById('modal-container').style.transform = 'scale(1)';
+                document.getElementById('modal-container').style.opacity = '1';
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal || e.target.dataset.action === 'close') {
+                    modal.style.opacity = '0';
+                    document.getElementById('modal-container').style.transform = 'scale(0.95)';
+                    setTimeout(() => modal.remove(), 300);
+                } else if (e.target.dataset.action === 'custom') {
+                    const btnIndex = buttons.findIndex(b => b.text === e.target.textContent.trim());
+                    if (btnIndex !== -1 && buttons[btnIndex].callback) {
+                        buttons[btnIndex].callback();
+                    }
+                }
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-xl shadow-lg z-50 transition-all duration-300 transform ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fa ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const text = this.textContent.trim();
+                    const row = this.closest('tr');
+                    const no = row.querySelector('td:nth-child(2)').textContent.trim();
+                    const enterpriseName = row.querySelector('td:nth-child(3)').textContent.trim();
+
+                    if (text === '查看') {
+                        const detailsContent = `
+                            <div class="space-y-4">
+                                <div class="bg-slate-50 p-4 rounded-xl">
+                                    <div class="grid grid-cols-2 gap-4 text-sm">
+                                        <div><span class="text-slate-400">保函编号：</span><span class="font-mono">${no}</span></div>
+                                        <div><span class="text-slate-400">申请企业：</span><span>${enterpriseName}</span></div>
+                                        <div><span class="text-slate-400">保函金额：</span><span class="font-bold">500,000</span></div>
+                                        <div><span class="text-slate-400">状态：</span><span class="text-orange-600">即将到期</span></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-700 mb-2">保函内容</h4>
+                                    <div class="bg-white border border-slate-100 rounded-xl p-4 text-sm space-y-2">
+                                        <p>本保函为投标保函，担保金额为 500,000 元整。</p>
+                                        <p>有效期自 2026-03-11 至 2026-06-11。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        showModal(`保函详情 - ${no}`, detailsContent);
+                    }
+                });
+            });
+
+            document.querySelector('.fa-bell')?.parentElement.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let dropdown = document.getElementById('notify-dropdown');
+                if (dropdown) return dropdown.remove();
+                dropdown = document.createElement('div');
+                dropdown.id = 'notify-dropdown';
+                dropdown.className = 'fixed bg-white rounded-xl shadow-card border border-slate-200 w-64 z-50 p-4';
+                const rect = e.currentTarget.getBoundingClientRect();
+                dropdown.style.top = (rect.bottom + 10) + 'px';
+                dropdown.style.left = (rect.right - 256) + 'px';
+                dropdown.innerHTML = `<h4 class="font-bold mb-2">通知消息</h4><div class="text-xs space-y-2"><div class="p-2 bg-blue-50 rounded">您有 3 笔保函即将到期</div><div class="p-2 bg-blue-50 rounded">收到 1 项新的审核任务</div></div>`;
+                document.body.appendChild(dropdown);
+                document.addEventListener('click', () => dropdown.remove(), { once: true });
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <div class="w-64 bg-slate-900 text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-user-circle"></i></div>
+                <h1 class="text-sm font-bold tracking-tight">受益人端</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 px-3 bg-slate-900">
+                <ul class="space-y-1">
+                    <li>
+                        <button onclick="toggleSubMenu('guarantee-menu')" class="w-full flex items-center p-3 text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-all group">
+                            <i class="fa fa-file-text-o mr-3 text-blue-400"></i>
+                            <span class="font-bold">保函管理</span>
+                            <i class="fa fa-chevron-down ml-auto text-slate-400 transition-transform" id="guarantee-menu-arrow"></i>
+                        </button>
+                        <ul id="guarantee-menu" class="mt-1 space-y-1 bg-slate-900">
+                            <li>
+                                <a href="受益人端_保函列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    保函列表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="受益人端_到期预警.html" class="flex items-center py-2 px-4 text-sm text-white bg-slate-900 hover:bg-slate-800 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span>
+                                    到期预警
+                                </a>
+                            </li>
+                            <li>
+                                <a href="受益人端_理赔管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    理赔管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center">
+                        <i class="fa fa-user text-slate-300"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium">福建省信息化建设办公室</p>
+                        <p class="text-xs text-slate-400">受益人</p>
+                    </div>
+                    <button class="text-slate-400 hover:text-red-400 transition-colors" title="退出登录">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto">
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">到期预警</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="搜索保函编号、企业名称..." class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 w-64">
+                        <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                    </div>
+                    <button class="relative text-slate-400 hover:text-slate-600 transition-colors" title="通知">
+                        <i class="fa fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">3</span>
+                    </button>
+                </div>
+            </header>
+            <main class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">即将到期（7天内）</p>
+                                <p class="text-2xl font-bold text-red-500 mt-1">5</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+                                <i class="fa fa-clock-o text-red-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">即将到期（30天内）</p>
+                                <p class="text-2xl font-bold text-orange-500 mt-1">12</p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center">
+                                <i class="fa fa-calendar text-orange-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">已发送提醒</p>
+                                <p class="text-2xl font-bold text-blue-500 mt-1">18</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                                <i class="fa fa-bell text-blue-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-xs text-slate-400">本月到期</p>
+                                <p class="text-2xl font-bold text-green-500 mt-1">25</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                                <i class="fa fa-check-circle text-green-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">预警范围</label>
+                            <select class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                <option value="7">7天内到期</option>
+                                <option value="15">15天内到期</option>
+                                <option value="30">30天内到期</option>
+                                <option value="60">60天内到期</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">企业名称</label>
+                            <input type="text" placeholder="请输入企业名称" class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">保函类型</label>
+                            <select class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                                <option value="">全部类型</option>
+                                <option value="bid">投标保函</option>
+                                <option value="performance">履约保函</option>
+                                <option value="payment">预付款保函</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end space-x-2">
+                            <button class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-bold">
+                                查询
+                            </button>
+                            <button class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors text-sm">
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-4">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="select-all" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <span class="ml-2 text-sm text-slate-600">全选</span>
+                            </label>
+                            <button class="text-sm text-blue-600 hover:text-blue-700 flex items-center">
+                                <i class="fa fa-bell mr-1"></i>批量提醒
+                            </button>
+                        </div>
+                        <div class="text-sm text-slate-500">
+                            共 <span class="font-bold text-slate-700">17</span> 条记录
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-gray-50 border-b">
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8">
+                                        <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函编号</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">企业名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">到期日期</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">剩余天数</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">福建省建筑工程有限公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">福州市地铁4号线二期工程</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">投标保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-06-11</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">3天</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">即将到期</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="action-btn text-primary hover:text-primary/80">查看</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110003</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">泉州市建筑工程有限公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">泉州市文化中心建设项目</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">预付款保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-09-15</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 bg-orange-100 text-orange-600 text-xs rounded-full">25天</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-800">即将到期</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="action-btn text-primary hover:text-primary/80">查看</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110004</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">厦门市建筑工程有限公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">厦门市软件园三期项目</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">履约保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-06-18</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-1 bg-yellow-100 text-yellow-600 text-xs rounded-full">10天</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">即将到期</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="action-btn text-primary hover:text-primary/80">查看</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-700">
+                            显示 1-3 条，共 17 条
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">上一页</button>
+                            <button class="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">2</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">3</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">...</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">6</button>
+                            <button class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-50">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

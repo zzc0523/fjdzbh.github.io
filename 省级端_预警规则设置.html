@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 预警规则设置</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 85vh;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            transform: scale(0.95);
+            transition: transform 0.2s ease-out;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-content > div:first-child {
+            flex-shrink: 0;
+        }
+        .modal-content > div:nth-child(2) {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .modal-content > div:last-child {
+            flex-shrink: 0;
+        }
+        .modal-backdrop.active {
+            display: flex;
+        }
+        .modal-backdrop.active .modal-content {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+                                        <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警统计分析
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">超级管理员</p>
+                        <p class="text-[10px] text-slate-400">福建省政务中心</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">预警规则设置</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">预警规则设置</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button onclick="toggleNotification(event)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all relative">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
+                                <h3 class="text-sm font-bold text-slate-800">系统通知</h3>
+                                <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-bold">3 条未读</span>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer group">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 shrink-0">
+                                            <i class="fa fa-exclamation-triangle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">费率异常波动预警</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">福州市投标保函费率波动超过20%...</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer group">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                                            <i class="fa fa-info-circle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">新机构入驻申请</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">某某建设银行提交了省级展业申请</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">1小时前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer group">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 shrink-0">
+                                            <i class="fa fa-check-circle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">系统升级成功</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">V4.0版本已完成全省节点同步</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">昨天 18:30</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-slate-100">
+                                <a href="省级端_消息管理.html" class="text-xs text-blue-600 font-bold hover:underline">查看全部通知</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-8 space-y-6">
+                <!-- 2. Alert Settings Content -->
+                <div id="tab-settings" class="space-y-6 animate-in fade-in duration-300">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4 bg-slate-50/50">
+                            <div class="flex items-center space-x-4">
+                                <h3 class="font-bold text-slate-800">预警规则列表</h3>
+                                <div class="flex p-1 bg-slate-200/50 rounded-lg w-fit">
+                                    <button onclick="filterRuleList('all')" id="rule-filter-all" class="px-4 py-1 rounded-md text-xs transition-all bg-white shadow-sm text-blue-700 font-bold">全部</button>
+                                    <button onclick="filterRuleList('enabled')" id="rule-filter-enabled" class="px-4 py-1 rounded-md text-xs transition-all text-slate-600 hover:bg-white/50">已启用</button>
+                                    <button onclick="filterRuleList('disabled')" id="rule-filter-disabled" class="px-4 py-1 rounded-md text-xs transition-all text-slate-600 hover:bg-white/50">已禁用</button>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="relative">
+                                    <input type="text" id="rule-search" onkeyup="searchRules()" placeholder="搜索规则名称..." class="border border-slate-200 rounded-lg px-4 py-1.5 pl-9 text-xs outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <i class="fa fa-search absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left" id="rule-table">
+                                <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4">规则名称</th>
+                                        <th class="px-6 py-4">预警类型</th>
+                                        <th class="px-6 py-4">预警等级</th>
+                                        <th class="px-6 py-4">核心参数</th>
+                                        <th class="px-6 py-4">通知方式</th>
+                                        <th class="px-6 py-4 text-center">状态</th>
+                                        <th class="px-6 py-4 text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100" id="rule-list-body">
+                                    <!-- Rules will be rendered here via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center text-[11px] text-slate-500">
+                            <span id="rule-count-info">共 8 条预警规则</span>
+                            <div class="flex space-x-1">
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-white"><i class="fa fa-angle-left"></i></button>
+                                <button class="w-7 h-7 rounded bg-blue-600 text-white flex items-center justify-center shadow-sm font-bold">1</button>
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-white"><i class="fa fa-angle-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="alert-modal" class="modal-backdrop" onclick="closeModal('alert-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800" id="modal-title">配置新预警规则</h3>
+                <button onclick="closeModal('alert-modal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div id="modal-content-body" class="text-sm text-slate-600">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3">
+                <button onclick="closeModal('alert-modal')" class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-50 rounded-lg">取消</button>
+                <button onclick="submitAction()" class="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-100 hover:bg-blue-700">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function toggleNotification(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notification-dropdown');
+            const isHidden = dropdown.classList.contains('hidden');
+            
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                const closeHandler = (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+
+        // --- Warning Rules Data ---
+        let warningRules = [
+            { id: 1, name: '高频申请失败预警', description: '当同一机构在短时间内申请失败次数过多时触发预警', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
+            { id: 4, name: '单笔大额保函审批', description: '当单笔保函金额超过设定阈值时触发审批预警', type: '金融风险', level: '高风险', params: '金额 > 500万', notify: ['系统', '短信', '邮件'], status: 'enabled' },
+            { id: 6, name: '黑名单企业申请拦截', description: '当黑名单企业提交保函申请时自动拦截并预警', type: '合规红线', level: '高风险', params: '实时拦截', notify: ['系统', '短信'], status: 'enabled' },
+            { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3企业', notify: ['系统', '邮件'], status: 'enabled' },
+            { id: 11, name: 'IP异常', description: '不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '> 3企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRuleTable();
+        });
+
+        function renderRuleTable() {
+            const tbody = document.getElementById('rule-list-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = warningRules.map(rule => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <span class="font-bold text-slate-700">${rule.name}</span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-500">${rule.type}</td>
+                    <td class="px-6 py-4">
+                        <span class="status-badge ${
+                            rule.level === '高风险' ? 'bg-red-100 text-red-700' : 
+                            rule.level === '中风险' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
+                        }">${rule.level}</span>
+                    </td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-500">${rule.params}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex space-x-1">
+                            ${rule.notify.map(n => `<span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">${n}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="toggleRuleStatus(${rule.id})" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rule.status === 'enabled' ? 'bg-blue-600' : 'bg-slate-200'}">
+                            <span class="pointer-events-none block h-4 w-4 rounded-full bg-white shadow-lg ring-0 transition-transform ${rule.status === 'enabled' ? 'translate-x-5' : 'translate-x-1'}"></span>
+                        </button>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end space-x-3">
+                            <button onclick="editRule(${rule.id})" class="text-blue-600 hover:text-blue-800 font-bold text-xs">编辑</button>
+                            <button onclick="deleteRule(${rule.id})" class="text-rose-500 hover:text-rose-700 font-bold text-xs">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('rule-count-info').innerText = `共 ${warningRules.length} 条预警规则`;
+        }
+
+        function toggleRuleStatus(id) {
+            const rule = warningRules.find(r => r.id === id);
+            if (rule) {
+                rule.status = rule.status === 'enabled' ? 'disabled' : 'enabled';
+                renderRuleTable();
+            }
+        }
+
+        function deleteRule(id) {
+            if (confirm('确定要删除这条预警规则吗？')) {
+                warningRules = warningRules.filter(r => r.id !== id);
+                renderRuleTable();
+            }
+        }
+
+        function filterRuleList(filter) {
+            // Update UI
+            document.querySelectorAll('[id^="rule-filter-"]').forEach(btn => {
+                btn.classList.remove('bg-white', 'shadow-sm', 'text-blue-700', 'font-bold');
+                btn.classList.add('text-slate-600');
+            });
+            document.getElementById(`rule-filter-${filter}`).classList.add('bg-white', 'shadow-sm', 'text-blue-700', 'font-bold');
+            
+            const rows = document.querySelectorAll('#rule-table tbody tr');
+            rows.forEach((row, idx) => {
+                const rule = warningRules[idx];
+                if (!rule) return;
+                
+                let show = true;
+                if (filter === 'enabled' && rule.status !== 'enabled') show = false;
+                if (filter === 'disabled' && rule.status !== 'disabled') show = false;
+                
+                row.style.display = show ? "" : "none";
+            });
+        }
+
+        function searchRules() {
+            const val = document.getElementById('rule-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#rule-table tbody tr');
+            rows.forEach((row, idx) => {
+                const rule = warningRules[idx];
+                if (!rule) return;
+                if (rule.name.toLowerCase().includes(val)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        function openConfigModal(isEdit = false, ruleData = null) {
+            document.getElementById('modal-title').innerText = isEdit ? '编辑预警规则' : '配置新预警规则';
+            document.getElementById('modal-content-body').innerHTML = `
+                <div class="space-y-5">
+                    <!-- 只读信息区域 (规则基础定义) - 编辑模式显示 -->
+                    <div id="readonly-info-section" class="${isEdit ? 'block' : 'hidden'} bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+                        <div class="px-4 py-3 bg-slate-100 border-b border-slate-200 flex items-center">
+                            <div class="w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center mr-2">
+                                <i class="fa fa-lock text-white text-[10px]"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">基础定义</span>
+                            <span class="ml-auto text-[10px] text-slate-400 flex items-center">
+                                <i class="fa fa-info-circle mr-1"></i>不可编辑
+                            </span>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则名称</label>
+                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-2.5">
+                                        <i class="fa fa-tag text-slate-300 mr-2 text-xs"></i>
+                                        <span id="display-rule-name" class="text-sm font-medium text-slate-700">-</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">预警类型</label>
+                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-2.5">
+                                        <i class="fa fa-filter text-slate-300 mr-2 text-xs"></i>
+                                        <span id="display-rule-type" class="text-sm font-medium text-slate-700">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则说明</label>
+                                <div class="bg-white border border-slate-200 rounded-lg px-3 py-3">
+                                    <p id="display-rule-desc" class="text-xs text-slate-600 leading-relaxed">-</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 新增模式下的基础选择 -->
+                    <div id="editable-base-section" class="${isEdit ? 'hidden' : 'grid'} grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">规则名称 *</label>
+                            <input type="text" id="config-rule-name" placeholder="输入规则名称" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">预警类型 *</label>
+                            <select id="config-rule-type" onchange="updateConfigForm(${isEdit})" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer bg-white">
+                                <option value="业务异常">业务异常</option>
+                                <option value="金融风险">金融风险</option>
+                                <option value="合规红线">合规红线</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 规则说明预览 -->
+                    <div id="rule-desc-preview" class="${isEdit ? 'hidden' : 'block'} p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                        <div class="flex items-start">
+                            <i class="fa fa-info-circle text-blue-500 mr-2 mt-0.5"></i>
+                            <p id="rule-desc-display" class="text-xs text-blue-700 leading-relaxed">选择预警类型后显示规则说明</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 核心参数配置区域 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">
+                                    <i class="fa fa-sliders text-blue-600 text-[10px]"></i>
+                                </div>
+                                <span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider">核心参数配置</span>
+                            </div>
+                            <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                <i class="fa fa-pencil mr-0.5"></i>可编辑
+                            </span>
+                        </div>
+                        <div id="dynamic-params-container" class="p-4 bg-white rounded-xl border border-blue-100 shadow-sm space-y-4">
+                            <!-- 由 updateConfigForm 动态生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 运行策略配置区域 -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">预警等级</label>
+                                <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                    <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                </span>
+                            </div>
+                            <select id="config-rule-level" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-bold text-slate-700 bg-white">
+                                <option value="高风险">高风险 (一级)</option>
+                                <option value="中风险">中风险 (二级)</option>
+                                <option value="低风险">低风险 (三级)</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">监控周期</label>
+                                <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                    <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                </span>
+                            </div>
+                            <select id="config-rule-cycle" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-bold text-slate-700 bg-white">
+                                <option>实时监控</option>
+                                <option>按小时统计</option>
+                                <option>按天累计</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 通知策略区域 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">通知策略</label>
+                            <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                <i class="fa fa-pencil mr-0.5"></i>可编辑
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="flex items-center justify-center p-3 bg-white border-2 border-slate-100 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all group">
+                                <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                                <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors font-medium">系统消息</span>
+                            </label>
+                            <label class="flex items-center justify-center p-3 bg-white border-2 border-slate-100 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all group">
+                                <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                                <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors font-medium">短信通知</span>
+                            </label>
+                            <label class="flex items-center justify-center p-3 bg-white border-2 border-slate-100 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all group">
+                                <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                                <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors font-medium">邮件抄送</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `;
+            updateConfigForm(isEdit);
+            document.getElementById('alert-modal').classList.add('active');
+        }
+
+        function updateConfigForm(isEdit = false, currentPolicy = null) {
+            const type = document.getElementById('config-rule-type').value;
+            const container = document.getElementById('dynamic-params-container');
+            const descDisplay = document.getElementById('rule-desc-display');
+            const descDisplayEdit = document.getElementById('display-rule-desc');
+            
+            const descriptions = {
+                '业务异常': '监控业务操作中的异常行为，包括高频申请失败、频繁操作等情况，帮助及时发现业务异常和潜在风险。',
+                '金融风险': '监控金融相关的风险指标，如大额保函审批、额度使用率等，保障资金安全和合规运营。',
+                '合规红线': '监控合规相关的风险，包括关联关系异常、黑名单匹配、IP异常等，确保业务操作符合合规要求。'
+            };
+            
+            if (descDisplay) {
+                descDisplay.innerText = descriptions[type] || '选择预警类型后显示规则说明';
+            }
+            if (descDisplayEdit) {
+                descDisplayEdit.innerText = descriptions[type] || '-';
+            }
+            
+            let html = '';
+            const readonlyClass = isEdit ? 'bg-slate-100 cursor-not-allowed' : 'bg-white cursor-pointer';
+            
+            if (type === '业务异常') {
+                html = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                            <div class="flex items-center">
+                                <p class="text-[11px] font-bold text-blue-600 uppercase flex items-center">
+                                    <i class="fa fa-cogs mr-2"></i>业务异常参数配置
+                                </p>
+                                ${isEdit ? '<span class="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-2">统计维度不可编辑</span>' : ''}
+                            </div>
+                            <span class="text-[10px] text-slate-400 bg-blue-50 px-2 py-0.5 rounded">建议阈值: 5-10次</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                    统计维度
+                                    ${isEdit ? '<span class="text-[9px] text-slate-400 ml-1">(不可编辑)</span>' : ''}
+                                </label>
+                                <div class="relative group">
+                                    <select id="config-biz-dimension" ${isEdit ? 'disabled' : 'onchange="updateBizDimension()"'} class="w-full ${readonlyClass} border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none ${!isEdit ? 'focus:ring-2 focus:ring-blue-500 transition-all' : ''} appearance-none">
+                                        <option value="申请失败次数">申请失败次数</option>
+                                        <option value="连续失败次数">连续失败次数</option>
+                                        <option value="操作频率">操作频率</option>
+                                    </select>
+                                    <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                    触发阈值
+                                    <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                </label>
+                                <div class="flex items-center group">
+                                    <div class="relative flex-1">
+                                        <input type="number" id="config-biz-threshold" value="5" class="w-full bg-white border border-blue-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                    </div>
+                                    <span id="config-biz-unit" class="bg-blue-50 border border-l-0 border-blue-200 px-3 py-2 text-xs text-blue-600 rounded-r-lg font-bold min-w-[40px] text-center">次</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === '金融风险') {
+                html = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                            <div class="flex items-center">
+                                <p class="text-[11px] font-bold text-amber-600 uppercase flex items-center">
+                                    <i class="fa fa-line-chart mr-2"></i>金融风险参数配置
+                                </p>
+                                ${isEdit ? '<span class="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-2">监控指标不可编辑</span>' : ''}
+                            </div>
+                            <span class="text-[10px] text-slate-400 bg-amber-50 px-2 py-0.5 rounded">重点管控大额标的</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                    监控指标
+                                    ${isEdit ? '<span class="text-[9px] text-slate-400 ml-1">(不可编辑)</span>' : ''}
+                                </label>
+                                <div class="relative group">
+                                    <select ${isEdit ? 'disabled' : ''} class="w-full ${readonlyClass} border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none ${!isEdit ? 'focus:ring-2 focus:ring-amber-500 transition-all' : ''} appearance-none">
+                                        <option>单笔最高保函金额</option>
+                                        <option>授信额度使用率</option>
+                                        <option>机构信用评分波动</option>
+                                    </select>
+                                    <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                    预警阈值
+                                    <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                </label>
+                                <div class="flex items-center group">
+                                    <div class="relative flex-1">
+                                        <input type="number" value="500" class="w-full bg-white border border-amber-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                                    </div>
+                                    <span class="bg-amber-50 border border-l-0 border-amber-200 px-3 py-2 text-xs text-amber-600 rounded-r-lg font-bold min-w-[40px] text-center">万元</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-amber-50/30 rounded-lg border border-amber-100/50">
+                            <p class="text-[10px] text-amber-700 leading-relaxed">
+                                <i class="fa fa-lightbulb-o mr-1"></i> 提示：大额保函审批规则开启后，超过阈值的申请将自动挂起并发送审批申请给指定角色。
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else if (type === '合规红线') {
+                const policies = [
+                    { id: '关联', name: '关联关系异常检测', desc: '检测同一项目下的投标关联方', icon: 'users' },
+                    { id: '黑名单', name: '黑名单企业库匹配', desc: '对失信被执行人进行实时拦截', icon: 'ban' },
+                    { id: 'IP', name: 'IP异常检测', desc: '检测同一IP下的多企业申报行为', icon: 'desktop' }
+                ];
+                
+                let policyHtml = '';
+                if (isEdit && currentPolicy) {
+                    const policy = policies.find(p => currentPolicy.includes(p.id));
+                    if (policy) {
+                        policyHtml = `
+                            <div class="grid grid-cols-1 gap-2">
+                                <div class="flex items-center justify-between p-3 bg-white border-2 border-rose-200 rounded-xl ring-1 ring-rose-100">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
+                                            <i class="fa fa-${policy.icon} text-xs"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-xs font-bold text-slate-700">${policy.name}</p>
+                                            <p class="text-[10px] text-slate-400">${policy.desc}</p>
+                                        </div>
+                                    </div>
+                                    <div class="w-5 h-5 rounded-full bg-rose-500 flex items-center justify-center">
+                                        <i class="fa fa-check text-white text-[10px]"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    policyHtml = `
+                        <div class="grid grid-cols-1 gap-2">
+                            <label class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-rose-200 hover:bg-rose-50/30 cursor-pointer transition-all group">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-rose-100 flex items-center justify-center text-slate-400 group-hover:text-rose-600 transition-colors">
+                                        <i class="fa fa-users text-xs"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-xs font-bold text-slate-700">关联关系异常检测</p>
+                                        <p class="text-[10px] text-slate-400">检测同一项目下的投标关联方</p>
+                                    </div>
+                                </div>
+                                <input type="radio" name="compliance" checked class="w-4 h-4 text-rose-600 focus:ring-rose-500 border-slate-300">
+                            </label>
+                            <label class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-rose-200 hover:bg-rose-50/30 cursor-pointer transition-all group">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-rose-100 flex items-center justify-center text-slate-400 group-hover:text-rose-600 transition-colors">
+                                        <i class="fa fa-ban text-xs"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-xs font-bold text-slate-700">黑名单企业库匹配</p>
+                                        <p class="text-[10px] text-slate-400">对失信被执行人进行实时拦截</p>
+                                    </div>
+                                </div>
+                                <input type="radio" name="compliance" class="w-4 h-4 text-rose-600 focus:ring-rose-500 border-slate-300">
+                            </label>
+                            <label class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-xl hover:border-rose-200 hover:bg-rose-50/30 cursor-pointer transition-all group">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-lg bg-slate-100 group-hover:bg-rose-100 flex items-center justify-center text-slate-400 group-hover:text-rose-600 transition-colors">
+                                        <i class="fa fa-desktop text-xs"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-xs font-bold text-slate-700">IP异常检测</p>
+                                        <p class="text-[10px] text-slate-400">检测同一IP下的多企业申报行为</p>
+                                    </div>
+                                </div>
+                                <input type="radio" name="compliance" class="w-4 h-4 text-rose-600 focus:ring-rose-500 border-slate-300">
+                            </label>
+                        </div>
+                    `;
+                }
+                
+                html = `
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                            <div class="flex items-center">
+                                <p class="text-[11px] font-bold text-rose-600 uppercase flex items-center">
+                                    <i class="fa fa-shield mr-2"></i>合规红线参数配置
+                                </p>
+                                ${isEdit ? '<span class="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-2">预警项不可编辑</span>' : ''}
+                            </div>
+                            <span class="text-[10px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded">核心合规控制项</span>
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                预警项与自动策略
+                                ${isEdit ? '<span class="text-[9px] text-slate-400 ml-1">(不可编辑)</span>' : ''}
+                            </label>
+                            ${policyHtml}
+                        </div>
+                        <div class="pt-2">
+                            <label class="text-[11px] font-medium text-slate-500 block mb-2 flex items-center">
+                                触发阈值（关联实体数量）
+                                <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                            </label>
+                            <div class="flex items-center group">
+                                <input type="number" value="3" class="flex-1 bg-white border border-rose-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all">
+                                <span class="bg-rose-50 border border-l-0 border-rose-200 px-3 py-2 text-xs text-rose-600 rounded-r-lg font-bold min-w-[40px] text-center">个</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function updateBizDimension() {
+            const dimension = document.getElementById('config-biz-dimension').value;
+            const unit = document.getElementById('config-biz-unit');
+            const threshold = document.getElementById('config-biz-threshold');
+            const volatilityConfig = document.getElementById('biz-volatility-config');
+
+            if (dimension === '费率波动率') {
+                unit.innerText = '%';
+                threshold.value = 20;
+                volatilityConfig.classList.remove('hidden');
+            } else {
+                unit.innerText = '次';
+                threshold.value = 5;
+                volatilityConfig.classList.add('hidden');
+            }
+        }
+
+        function editRule(id) {
+            const rule = warningRules.find(r => r.id === id);
+            if (!rule) return;
+            
+            openConfigModal(true, rule);
+            
+            document.getElementById('display-rule-name').innerText = rule.name;
+            document.getElementById('display-rule-type').innerText = rule.type;
+            
+            const levelSelect = document.getElementById('config-rule-level');
+            const typeSelect = document.getElementById('config-rule-type');
+            
+            levelSelect.value = rule.level;
+            typeSelect.value = rule.type;
+            
+            updateConfigForm(true, rule.name);
+            
+            setTimeout(() => {
+                if (rule.type === '业务异常') {
+                    const thresholdInput = document.getElementById('config-biz-threshold');
+                    if (thresholdInput) {
+                        const match = rule.params.match(/\d+/);
+                        if (match) thresholdInput.value = match[0];
+                    }
+                } else if (rule.type === '金融风险') {
+                    const thresholdInput = document.querySelector('#dynamic-params-container input[type="number"]');
+                    if (thresholdInput) {
+                        const match = rule.params.match(/\d+/);
+                        if (match) thresholdInput.value = match[0];
+                    }
+                } else if (rule.type === '合规红线') {
+                    const radios = document.querySelectorAll('input[name="compliance"]');
+                    radios.forEach(radio => {
+                        if (rule.name.includes('IP') && radio.parentElement.innerText.includes('IP')) radio.checked = true;
+                        if (rule.name.includes('关联') && radio.parentElement.innerText.includes('关联')) radio.checked = true;
+                        if (rule.name.includes('黑名单') && radio.parentElement.innerText.includes('黑名单')) radio.checked = true;
+                    });
+                    const thresholdInput = document.querySelector('#dynamic-params-container input[type="number"]');
+                    if (thresholdInput) {
+                        const match = rule.params.match(/\d+/);
+                        if (match) thresholdInput.value = match[0];
+                    }
+                }
+            }, 100);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            resetFormFields();
+        }
+        
+        function resetFormFields() {
+            const nameInput = document.getElementById('config-rule-name');
+            const typeSelect = document.getElementById('config-rule-type');
+            
+            if (nameInput) {
+                nameInput.disabled = false;
+                nameInput.classList.remove('bg-slate-50', 'text-slate-500', 'cursor-not-allowed');
+                nameInput.value = '';
+            }
+            
+            if (typeSelect) {
+                typeSelect.disabled = false;
+                typeSelect.classList.remove('bg-slate-50', 'text-slate-500', 'cursor-not-allowed');
+                typeSelect.value = '业务异常';
+            }
+        }
+
+        function submitAction() {
+            const title = document.getElementById('modal-title').innerText;
+            
+            // If it's a rule config modal
+            if (title.includes('预警规则')) {
+                const name = document.getElementById('config-rule-name').value;
+                const type = document.getElementById('config-rule-type').value;
+                const level = document.getElementById('config-rule-level').value;
+                
+                if (!name && !title.includes('编辑')) {
+                    alert('请输入规则名称');
+                    return;
+                }
+
+                if (title.includes('编辑')) {
+                    const rule = warningRules.find(r => r.name === title.split('：')[1]);
+                    if (rule) {
+                        rule.level = level;
+                    }
+                } else {
+                    const newId = warningRules.length > 0 ? Math.max(...warningRules.map(r => r.id)) + 1 : 1;
+                    warningRules.unshift({
+                        id: newId,
+                        name: name,
+                        type: type,
+                        level: level,
+                        params: type === '业务异常' ? '新配置阈值' : '自定义参数',
+                        notify: ['系统'],
+                        status: 'enabled'
+                    });
+                }
+                renderRuleTable();
+            }
+
+            // Mock submission
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = '提交中...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                closeModal('alert-modal');
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }, 600);
+        }
+    </script>
+</body>
+</html>

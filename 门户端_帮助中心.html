@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帮助中心 - 福建省电子保函服务平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 导航栏 -->
+    <nav class="bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <i class="fa fa-shield text-primary text-xl"></i>
+                </div>
+                <div class="text-2xl font-bold">福建省电子保函服务平台</div>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="门户端_首页.html" class="hover:text-accent transition-colors">首页</a>
+                <a href="门户端_保函超市.html" class="hover:text-accent transition-colors">保函超市</a>
+                <a href="门户端_新闻中心.html" class="hover:text-accent transition-colors">平台资讯</a>
+                <a href="门户端_保函验真.html" class="hover:text-accent transition-colors">保函验真</a>
+                <a href="门户端_帮助中心.html" class="text-accent font-medium">帮助中心</a>
+                <button id="searchBtn" class="text-white hover:text-accent transition-colors ml-4">
+                    <i class="fa fa-search text-xl"></i>
+                </button>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="mobileMenuBtn" class="md:hidden text-white">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 面包屑导航 -->
+    <div class="bg-white border-b border-gray-200 py-4 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex items-center text-sm text-gray-600">
+                <a href="门户端_首页.html" class="hover:text-primary transition-colors">首页</a>
+                <i class="fa fa-angle-right mx-2"></i>
+                <span class="text-primary">帮助中心</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帮助中心页面 -->
+    <section class="py-12 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <h1 class="text-3xl font-bold text-gray-800 mb-8">帮助中心</h1>
+            
+            <!-- 帮助中心导航 -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="#faq" class="p-4 border border-primary rounded-md bg-blue-50 text-center hover:bg-blue-100 transition-colors">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa fa-question-circle text-primary text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">常见问题</h3>
+                        <p class="text-sm text-gray-500 mt-1">解答用户常见疑问</p>
+                    </a>
+                    <a href="#video" class="p-4 border border-gray-300 rounded-md text-center hover:bg-gray-50 transition-colors">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa fa-play-circle text-green-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">视频教程</h3>
+                        <p class="text-sm text-gray-500 mt-1">提供分步操作视频</p>
+                    </a>
+                    <a href="#manual" class="p-4 border border-gray-300 rounded-md text-center hover:bg-gray-50 transition-colors">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa fa-download text-yellow-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">手册下载</h3>
+                        <p class="text-sm text-gray-500 mt-1">下载业务办理手册</p>
+                    </a>
+                    <a href="#customer-service" class="p-4 border border-gray-300 rounded-md text-center hover:bg-gray-50 transition-colors">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa fa-headphones text-purple-600 text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold">在线客服</h3>
+                        <p class="text-sm text-gray-500 mt-1">7x24小时智能客服</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 常见问题 -->
+            <div id="faq" class="bg-white rounded-lg shadow-md p-8 mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">常见问题</h2>
+                    <a href="门户端_常见问题.html" class="text-primary hover:text-secondary transition-colors flex items-center">
+                        查看更多 <i class="fa fa-angle-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- 问题项 -->
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">什么是电子保函？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">电子保函是指以电子形式出具的保函，具有与纸质保函同等的法律效力。电子保函通过数字签名技术确保其真实性和完整性，可在平台上进行在线申请、审核、签发和验真。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-1">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-1">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-1"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">如何申请电子保函？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">企业用户需要先在平台注册并登录，然后进入企业工作台，点击"保函申请"，选择保函类型，填写申请信息，上传相关材料，提交申请后等待金融机构审核。审核通过后，电子保函将自动生成并发送给企业。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-2">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-2">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-2"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">电子保函的办理周期是多久？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">电子保函的办理周期因保函类型和金融机构而异。一般来说，投标保函的办理周期为1-2个工作日，履约保函、预付款保函等其他类型的保函办理周期为2-3个工作日。具体办理时间以金融机构的实际处理速度为准。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-3">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-3">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-3"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">如何验证电子保函的真伪？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">您可以通过平台的"保函验真"功能验证电子保函的真伪。验证方式包括：输入保函编号、扫描二维码或上传保函文件。系统会实时返回保函状态、关键条款及电子签章信息，确保保函的真实性和有效性。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-4">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-4">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-4"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">电子保函的费用如何计算？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">电子保函的费用根据保函类型、金额、有效期等因素计算。一般来说，费率范围为0.1%-1.0%不等。具体费用以金融机构的报价为准，您可以在申请过程中查看详细的费用明细。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-5">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-5">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-5"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">电子保函与纸质保函有什么区别？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">电子保函与纸质保函具有同等的法律效力，但电子保函具有以下优势：1. 办理速度快，无需线下提交材料；2. 全程在线操作，方便快捷；3. 采用数字签名技术，安全性更高；4. 可在线验真，避免假保函风险；5. 存储方便，不易丢失。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-6">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-6">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-6"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">如何查询保函的办理进度？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">您可以登录平台，进入企业工作台，点击"我的保函"，在列表中查看保函的办理进度。系统会实时更新保函的状态，包括待审核、审核中、已通过、已拒绝等。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-7">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-7">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-7"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">电子保函到期后如何处理？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">电子保函到期后，系统会自动失效，无需手动处理。如果您需要延长保函有效期，可以在保函到期前申请续保。具体操作流程：登录平台，进入企业工作台，点击"我的保函"，找到需要续保的保函，点击"续保"按钮，按照提示操作即可。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-8">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-8">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-8"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md overflow-hidden">
+                        <button class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors faq-toggle">
+                            <span class="font-medium text-left">企业如何入驻平台成为金融机构？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="p-4 border-t border-gray-200 faq-content">
+                            <p class="text-gray-600">金融机构入驻平台需要满足以下条件：1. 具有金融许可证；2. 具备电子保函业务能力；3. 符合监管要求。入驻流程：1. 联系平台运营团队；2. 提交入驻申请和相关资质材料；3. 平台审核通过后，完成系统对接；4. 正式开展电子保函业务。</p>
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-500 mr-2">是否对您有帮助？</span>
+                                    <button class="text-green-500 hover:text-green-700 mr-4 feedback-btn" data-feedback="helpful" data-id="faq-9">
+                                        <i class="fa fa-thumbs-up mr-1"></i>是
+                                    </button>
+                                    <button class="text-red-500 hover:text-red-700 feedback-btn" data-feedback="unhelpful" data-id="faq-9">
+                                        <i class="fa fa-thumbs-down mr-1"></i>否
+                                    </button>
+                                </div>
+                                <span class="text-xs text-gray-400 feedback-status" data-id="faq-9"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 视频教程 -->
+            <div id="video" class="bg-white rounded-lg shadow-md p-8 mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">视频教程</h2>
+                    <a href="门户端_视频教程.html" class="text-primary hover:text-secondary transition-colors flex items-center">
+                        查看更多 <i class="fa fa-angle-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 视频项 -->
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/10/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">福建省电子保函服务平台注册与登录</h3>
+                            <p class="text-gray-600 text-sm mb-3">详细介绍如何在平台注册企业账号并登录系统</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>05:30</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/11/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">投标保函申请流程</h3>
+                            <p class="text-gray-600 text-sm mb-3">详细介绍投标保函的申请步骤</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>08:45</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/12/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">保函验真操作指南</h3>
+                            <p class="text-gray-600 text-sm mb-3">如何使用平台验证电子保函的真伪</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>04:20</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/13/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">企业信息维护教程</h3>
+                            <p class="text-gray-600 text-sm mb-3">如何在平台上维护企业基本信息</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>06:15</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/14/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">预付款保函申请流程</h3>
+                            <p class="text-gray-600 text-sm mb-3">详细介绍预付款保函的申请步骤</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>07:30</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/15/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">工资保函办理指南</h3>
+                            <p class="text-gray-600 text-sm mb-3">如何为农民工工资支付申请保函</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>09:15</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/16/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">预付款保函申请流程</h3>
+                            <p class="text-gray-600 text-sm mb-3">详细介绍预付款保函的申请步骤</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>07:30</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                        <div class="relative">
+                            <img src="https://picsum.photos/id/17/600/400" alt="视频封面" class="w-full h-48 object-cover">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-primary/80 rounded-full flex items-center justify-center cursor-pointer video-play-btn">
+                                    <i class="fa fa-play text-white text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold mb-2">企业信息维护教程</h3>
+                            <p class="text-gray-600 text-sm mb-3">如何在平台上维护企业基本信息</p>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fa fa-clock-o mr-2"></i>
+                                <span>06:15</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 手册下载 -->
+            <div id="manual" class="bg-white rounded-lg shadow-md p-8 mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">手册下载</h2>
+                    <a href="门户端_操作手册.html" class="text-primary hover:text-secondary transition-colors flex items-center">
+                        查看更多 <i class="fa fa-angle-right ml-1"></i>
+                    </a>
+                </div>
+                
+                <div class="space-y-4">
+                    <!-- 手册项 -->
+                    <div class="border border-gray-200 rounded-md p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold">福建省电子保函服务平台操作手册</h3>
+                                <p class="text-gray-600 text-sm mt-1">详细介绍平台各项功能的操作流程</p>
+                                <p class="text-gray-500 text-xs mt-1">PDF | 2.5MB</p>
+                            </div>
+                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold">投标保函申请指南</h3>
+                                <p class="text-gray-600 text-sm mt-1">投标保函的申请流程和注意事项</p>
+                                <p class="text-gray-500 text-xs mt-1">PDF | 1.8MB</p>
+                            </div>
+                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold">履约保函办理指南</h3>
+                                <p class="text-gray-600 text-sm mt-1">履约保函的办理流程和所需材料</p>
+                                <p class="text-gray-500 text-xs mt-1">PDF | 2.1MB</p>
+                            </div>
+                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold">工资保函操作指南</h3>
+                                <p class="text-gray-600 text-sm mt-1">工资保函的申请和管理流程</p>
+                                <p class="text-gray-500 text-xs mt-1">PDF | 1.5MB</p>
+                            </div>
+                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-md p-4 hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold">福建省电子保函服务平台API文档</h3>
+                                <p class="text-gray-600 text-sm mt-1">平台API接口的使用说明和示例</p>
+                                <p class="text-gray-500 text-xs mt-1">PDF | 3.2MB</p>
+                            </div>
+                            <a href="#" class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 在线客服 -->
+            <div id="customer-service" class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">在线客服</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 智能客服 -->
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fa fa-robot text-primary text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg">智能客服机器人</h3>
+                                <p class="text-sm text-gray-500">7x24小时在线，实时解答问题</p>
+                            </div>
+                        </div>
+                        
+                        <div class="border border-gray-200 rounded-md overflow-hidden">
+                            <div class="bg-gray-50 p-4 border-b border-gray-200">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fa fa-robot text-primary"></i>
+                                    </div>
+                                    <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                                        <p>您好！我是福建省电子保函服务平台的智能客服助手，有什么可以帮助您的吗？</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4">
+                                <div class="flex space-x-2 mb-4">
+                                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors">如何申请保函？</button>
+                                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors">保函验真流程</button>
+                                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors">费用计算方式</button>
+                                </div>
+                                <div class="flex">
+                                    <input type="text" placeholder="请输入您的问题..." class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary">
+                                    <button class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors">
+                                        <i class="fa fa-paper-plane"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 人工客服 -->
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fa fa-user text-green-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg">人工客服</h3>
+                                <p class="text-sm text-gray-500">工作时间：9:00-18:00</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <i class="fa fa-phone text-gray-500 w-6"></i>
+                                <span class="ml-2">客服热线：400-123-4567</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-envelope text-gray-500 w-6"></i>
+                                <span class="ml-2">邮箱：service@fjetg.com</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-weixin text-gray-500 w-6"></i>
+                                <span class="ml-2">微信公众号：福建省电子保函服务平台</span>
+                            </div>
+                            <button id="contactHumanBtn" class="w-full bg-primary text-white py-2 rounded-md hover:bg-primary/90 transition-colors mt-4">
+                                立即联系人工客服
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 悬浮快捷登录入口 -->
+    <div class="fixed right-6 top-1/2 transform -translate-y-1/2 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-40">
+            <h3 class="text-lg font-semibold text-gray-800 mb-6 text-center">登录</h3>
+            <ul class="space-y-6">
+                <li>
+                    <a href="门户端_登录.html" class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-building text-primary text-2xl mb-2"></i>
+                        <span>投保企业</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="门户端_机构登录.html" class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-university text-green-600 text-2xl mb-2"></i>
+                        <span>金融机构</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="门户端_监管机构登录.html" class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-bank text-blue-600 text-2xl mb-2"></i>
+                        <span>监管单位</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 悬浮快捷登录入口 -->
+    <div class="fixed right-6 top-1/2 transform -translate-y-1/2 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-4 w-40">
+            <h3 class="text-lg font-semibold text-gray-800 mb-6 text-center">登录</h3>
+            <ul class="space-y-6">
+                <li>
+                    <a href="门户端_登录.html" class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-building text-primary text-2xl mb-2"></i>
+                        <span>投保企业</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="门户端_机构登录.html" class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-university text-green-600 text-2xl mb-2"></i>
+                        <span>金融机构</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="门户端_监管机构登录.html" class="flex flex-col items-center p-4 hover:bg-gray-50 rounded-md transition-colors">
+                        <i class="fa fa-bank text-blue-600 text-2xl mb-2"></i>
+                        <span>监管单位</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="bg-neutral-dark text-white py-12 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">福建省电子保函服务平台</h3>
+                    <p class="text-gray-400">推动电子保函业务规范化、数字化发展，提高保函办理效率，降低企业融资成本。</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="门户端_首页.html" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+                        <li><a href="门户端_新闻中心.html" class="text-gray-400 hover:text-white transition-colors">平台资讯</a></li>
+                        <li><a href="门户端_保函超市.html" class="text-gray-400 hover:text-white transition-colors">保函超市</a></li>
+                        <li><a href="门户端_保函验真.html" class="text-gray-400 hover:text-white transition-colors">保函验真</a></li>
+                        <li><a href="门户端_帮助中心.html" class="text-gray-400 hover:text-white transition-colors">帮助中心</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">联系我们</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> <span class="text-gray-400">400-123-4567</span></li>
+                        <li class="flex items-center"><i class="fa fa-envelope mr-2"></i> <span class="text-gray-400">service@fjetg.com</span></li>
+                        <li class="flex items-center"><i class="fa fa-map-marker mr-2"></i> <span class="text-gray-400">福建省福州市鼓楼区</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fa fa-youtube-play"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 福建省电子保函服务平台 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 智能客服悬浮按钮 -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="chatbotBtn" class="w-16 h-16 bg-primary rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors">
+            <i class="fa fa-comments text-white text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- 智能客服对话弹窗 -->
+    <div id="chatbotModal" class="fixed bottom-24 right-6 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="bg-primary text-white p-4 rounded-t-lg flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fa fa-robot text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold">智能客服助手</h3>
+                </div>
+                <button id="closeChatbot" class="text-white hover:text-gray-200">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 h-80 overflow-y-auto" id="chatbotMessages">
+                <div class="flex items-start mb-4">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fa fa-robot text-primary"></i>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                        <p>您好！我是福建省电子保函服务平台的智能客服助手，有什么可以帮助您的吗？</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 p-4">
+                <div class="flex space-x-2 mb-4">
+                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors quick-question">如何申请保函？</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors quick-question">保函验真流程</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors quick-question">费用计算方式</button>
+                </div>
+                <div class="flex">
+                    <input type="text" id="chatbotInput" placeholder="请输入您的问题..." class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <button id="sendMessage" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-3 text-center">
+                    <button id="contactHuman" class="text-primary hover:text-secondary transition-colors text-sm">
+                        <i class="fa fa-user mr-1"></i>转人工客服
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">登录</h3>
+                    <button id="closeLogin" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">账号</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">密码</label>
+                        <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="flex items-center justify-between mb-6">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2">
+                            <span class="text-gray-600">记住我</span>
+                        </label>
+                        <a href="#" class="text-secondary hover:text-primary transition-colors">忘记密码？</a>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                        登录
+                    </button>
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-600">还没有账号？ <a href="#" class="text-secondary hover:text-primary transition-colors">立即注册</a></p>
+                    </div>
+                    <div class="mt-8">
+                        <p class="text-center text-gray-600 mb-4">其他登录方式</p>
+                        <div class="flex justify-center space-x-4">
+                            <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                <i class="fa fa-weixin text-green-600"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                <i class="fa fa-qq text-blue-500"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors">
+                                <i class="fa fa-yideng"></i>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 注册弹窗 -->
+    <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">注册</h3>
+                    <button id="closeRegister" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">企业名称</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">统一社会信用代码</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">联系人姓名</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">联系电话</label>
+                        <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">密码</label>
+                        <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex space-x-4">
+                            <div class="flex-1">
+                                <label class="block text-gray-700 mb-2">验证码</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            </div>
+                            <div class="w-40">
+                                <label class="block text-gray-700 mb-2">获取验证码</label>
+                                <button type="button" class="w-full bg-secondary text-white py-3 rounded-md hover:bg-primary transition-colors">
+                                    发送
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2">
+                            <span class="text-gray-600">我已阅读并同意 <a href="#" class="text-secondary hover:text-primary transition-colors">《用户服务协议》</a> 和 <a href="#" class="text-secondary hover:text-primary transition-colors">《隐私政策》</a></span>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                        注册
+                    </button>
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-600">已有账号？ <a href="#" class="text-secondary hover:text-primary transition-colors">立即登录</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 人工客服接入弹窗 -->
+    <div id="humanServiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">联系人工客服</h3>
+                    <button id="closeHumanService" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="humanServiceForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">姓名</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">联系电话</label>
+                        <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">问题类型</label>
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                            <option value="">请选择问题类型</option>
+                            <option value="application">保函申请</option>
+                            <option value="verification">保函验真</option>
+                            <option value="account">账号问题</option>
+                            <option value="payment">费用问题</option>
+                            <option value="progress">办理进度</option>
+                            <option value="technical">技术问题</option>
+                            <option value="complaint">投诉建议</option>
+                            <option value="other">其他问题</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">问题描述</label>
+                        <textarea class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                        提交申请
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 问题提交成功确认弹窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-check text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">提交成功</h3>
+            <p class="text-gray-600 mb-6">您的问题已成功提交，客服人员将在24小时内与您联系。</p>
+            <button id="closeSuccess" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                确定
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 智能客服功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 智能客服弹窗
+            const chatbotBtn = document.getElementById('chatbotBtn');
+            const chatbotModal = document.getElementById('chatbotModal');
+            const closeChatbot = document.getElementById('closeChatbot');
+            const sendMessage = document.getElementById('sendMessage');
+            const chatbotInput = document.getElementById('chatbotInput');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            const contactHuman = document.getElementById('contactHuman');
+            const quickQuestions = document.querySelectorAll('.quick-question');
+            
+            // 人工客服弹窗
+            const humanServiceModal = document.getElementById('humanServiceModal');
+            const closeHumanService = document.getElementById('closeHumanService');
+            const humanServiceForm = document.getElementById('humanServiceForm');
+            
+            // 成功确认弹窗
+            const successModal = document.getElementById('successModal');
+            const closeSuccess = document.getElementById('closeSuccess');
+            
+            // FAQ功能
+            const faqToggles = document.querySelectorAll('.faq-toggle');
+            
+            // 视频播放按钮
+            const videoPlayBtns = document.querySelectorAll('.video-play-btn');
+            
+            // 移动端菜单
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            // 人工客服按钮
+            const contactHumanBtn = document.getElementById('contactHumanBtn');
+            
+            // 打开智能客服弹窗
+            if (chatbotBtn && chatbotModal) {
+                chatbotBtn.addEventListener('click', function() {
+                    chatbotModal.classList.toggle('hidden');
+                    // 显示动画效果
+                    if (!chatbotModal.classList.contains('hidden')) {
+                        chatbotModal.classList.add('animate-fade-in');
+                    }
+                });
+            }
+            
+            // 关闭智能客服弹窗
+            if (closeChatbot && chatbotModal) {
+                closeChatbot.addEventListener('click', function() {
+                    chatbotModal.classList.add('hidden');
+                });
+            }
+            
+            // 发送消息
+            if (sendMessage && chatbotInput && chatbotMessages) {
+                sendMessage.addEventListener('click', function() {
+                    sendUserMessage();
+                });
+                
+                // 按回车键发送消息
+                chatbotInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendUserMessage();
+                    }
+                });
+            }
+            
+            // 快速问题点击
+            if (quickQuestions.length > 0) {
+                quickQuestions.forEach(button => {
+                    button.addEventListener('click', function() {
+                        chatbotInput.value = this.textContent;
+                        sendUserMessage();
+                    });
+                });
+            }
+            
+            // 转人工客服
+            if (contactHuman && humanServiceModal) {
+                contactHuman.addEventListener('click', function() {
+                    chatbotModal.classList.add('hidden');
+                    humanServiceModal.classList.remove('hidden');
+                });
+            }
+            
+            // 关闭人工客服弹窗
+            if (closeHumanService && humanServiceModal) {
+                closeHumanService.addEventListener('click', function() {
+                    humanServiceModal.classList.add('hidden');
+                });
+                
+                // 点击弹窗外部关闭
+                humanServiceModal.addEventListener('click', function(e) {
+                    if (e.target === humanServiceModal) {
+                        humanServiceModal.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // 提交人工客服表单
+            if (humanServiceForm && successModal) {
+                humanServiceForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // 添加加载状态
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>提交中...';
+                    submitBtn.disabled = true;
+                    
+                    // 模拟提交延迟
+                    setTimeout(() => {
+                        humanServiceModal.classList.add('hidden');
+                        successModal.classList.remove('hidden');
+                        // 恢复按钮状态
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 1000);
+                });
+            }
+            
+            // 关闭成功确认弹窗
+            if (closeSuccess && successModal) {
+                closeSuccess.addEventListener('click', function() {
+                    successModal.classList.add('hidden');
+                });
+                
+                // 点击弹窗外部关闭
+                successModal.addEventListener('click', function(e) {
+                    if (e.target === successModal) {
+                        successModal.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // FAQ展开/收起功能
+            if (faqToggles.length > 0) {
+                faqToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function() {
+                        const content = this.nextElementSibling;
+                        const icon = this.querySelector('i');
+                        
+                        // 切换内容显示/隐藏
+                        if (content.style.display === 'none') {
+                            content.style.display = 'block';
+                            icon.style.transform = 'rotate(180deg)';
+                        } else {
+                            content.style.display = 'none';
+                            icon.style.transform = 'rotate(0deg)';
+                        }
+                    });
+                });
+            }
+            
+            // 视频播放按钮点击事件
+            if (videoPlayBtns.length > 0) {
+                videoPlayBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const videoTitle = this.closest('.relative').nextElementSibling.querySelector('h3').textContent;
+                        const videoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ'; // 示例视频URL
+                        openVideoModal(videoTitle, videoUrl);
+                    });
+                });
+            }
+            
+            // 打开视频播放弹窗
+            function openVideoModal(title, url) {
+                // 创建视频弹窗
+                const modal = document.createElement('div');
+                modal.id = 'videoModal';
+                modal.className = 'fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50';
+                modal.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-gray-800">${title}</h3>
+                            <button id="closeVideoModal" class="text-gray-400 hover:text-gray-600">
+                                <i class="fa fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="aspect-video w-full">
+                            <iframe src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="w-full h-full rounded-md"></iframe>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                // 关闭视频弹窗
+                const closeBtn = document.getElementById('closeVideoModal');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        modal.remove();
+                    });
+                }
+                
+                // 点击弹窗外部关闭
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+            
+            // 移动端菜单按钮点击事件
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    const navLinks = document.querySelector('.md\:flex');
+                    if (navLinks) {
+                        navLinks.classList.toggle('hidden');
+                        navLinks.classList.toggle('flex');
+                        navLinks.classList.toggle('flex-col');
+                        navLinks.classList.toggle('absolute');
+                        navLinks.classList.toggle('top-full');
+                        navLinks.classList.toggle('left-0');
+                        navLinks.classList.toggle('w-full');
+                        navLinks.classList.toggle('bg-primary');
+                        navLinks.classList.toggle('p-4');
+                        navLinks.classList.toggle('shadow-md');
+                        navLinks.classList.toggle('z-50');
+                    }
+                });
+            }
+            
+            // 平滑滚动效果
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // 减去导航栏高度
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 帮助中心导航交互优化
+            const helpNavLinks = document.querySelectorAll('#faq, #video, #manual, #customer-service');
+            const navButtons = document.querySelectorAll('.p-4.border.rounded-md.text-center');
+            
+            // 滚动监听，高亮当前导航项
+            window.addEventListener('scroll', function() {
+                const scrollPosition = window.scrollY + 100;
+                
+                helpNavLinks.forEach((section, index) => {
+                    if (section.offsetTop <= scrollPosition && section.offsetTop + section.offsetHeight > scrollPosition) {
+                        navButtons.forEach((btn, i) => {
+                            if (i === index) {
+                                btn.classList.remove('border-gray-300', 'hover:bg-gray-50');
+                                btn.classList.add('border-primary', 'bg-blue-50');
+                            } else {
+                                btn.classList.remove('border-primary', 'bg-blue-50');
+                                btn.classList.add('border-gray-300', 'hover:bg-gray-50');
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // 立即联系人工客服按钮点击事件
+            if (contactHumanBtn && humanServiceModal) {
+                contactHumanBtn.addEventListener('click', function() {
+                    humanServiceModal.classList.remove('hidden');
+                });
+            }
+            
+            // 发送用户消息函数
+            function sendUserMessage() {
+                const message = chatbotInput.value.trim();
+                if (message) {
+                    // 添加用户消息到聊天窗口
+                    const userMessageHTML = `
+                        <div class="flex items-start mb-4 justify-end animate-fade-in">
+                            <div class="bg-primary text-white rounded-lg p-3 max-w-[80%]">
+                                <p>${message}</p>
+                            </div>
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+                                <i class="fa fa-user text-gray-600"></i>
+                            </div>
+                        </div>
+                    `;
+                    chatbotMessages.insertAdjacentHTML('beforeend', userMessageHTML);
+                    
+                    // 清空输入框
+                    chatbotInput.value = '';
+                    
+                    // 滚动到底部
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    
+                    // 添加机器人正在输入的提示
+                    const typingIndicatorHTML = `
+                        <div class="flex items-start mb-4 typing-indicator">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fa fa-robot text-primary"></i>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                                <div class="flex space-x-1">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    chatbotMessages.insertAdjacentHTML('beforeend', typingIndicatorHTML);
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    
+                    // 模拟机器人回复
+                    setTimeout(() => {
+                        // 移除正在输入的提示
+                        const typingIndicator = document.querySelector('.typing-indicator');
+                        if (typingIndicator) {
+                            typingIndicator.remove();
+                        }
+                        
+                        let botResponse = "感谢您的咨询。关于您的问题，我需要为您查询相关信息。";
+                        
+                        // 根据关键词生成不同回复
+                        if (message.includes('申请') && message.includes('保函')) {
+                            botResponse = "申请电子保函的流程如下：1. 注册并登录平台；2. 进入企业工作台；3. 点击'保函申请'；4. 选择保函类型；5. 填写申请信息并上传材料；6. 提交申请等待审核。";
+                        } else if (message.includes('验真')) {
+                            botResponse = "您可以通过以下方式验证保函真伪：1. 在平台首页点击'保函验真'；2. 选择验真方式（输入保函编号、扫描二维码或上传文件）；3. 提交验证信息；4. 系统会实时返回保函状态和详细信息。";
+                        } else if (message.includes('费用') || message.includes('计算')) {
+                            botResponse = "电子保函的费用根据保函类型、金额、有效期等因素计算，费率范围一般为0.1%-1.0%不等。具体费用以金融机构的报价为准，您可以在申请过程中查看详细的费用明细。";
+                        } else if (message.includes('注册') || message.includes('账号')) {
+                            botResponse = "注册账号的流程：1. 点击平台首页的'注册'按钮；2. 填写企业基本信息；3. 上传相关资质文件；4. 完成手机验证；5. 提交注册申请，等待审核通过后即可登录使用。";
+                        } else if (message.includes('登录') || message.includes('密码')) {
+                            botResponse = "如果您忘记了密码，可以点击登录页面的'忘记密码'链接，通过手机验证码重置密码。如果遇到其他登录问题，请联系人工客服获取帮助。";
+                        } else if (message.includes('投标保函')) {
+                            botResponse = "投标保函是指投标人向招标人出具的，保证投标人在中标后履行投标义务的担保。申请流程：1. 登录平台；2. 选择投标保函；3. 填写项目信息；4. 上传招标文件等材料；5. 提交申请等待审核。";
+                        } else if (message.includes('履约保函')) {
+                            botResponse = "履约保函是指承包商向业主出具的，保证承包商按照合同约定履行义务的担保。申请流程：1. 登录平台；2. 选择履约保函；3. 填写合同信息；4. 上传合同等材料；5. 提交申请等待审核。";
+                        } else if (message.includes('预付款保函')) {
+                            botResponse = "预付款保函是指承包商向业主出具的，保证承包商按照合同约定使用预付款的担保。申请流程：1. 登录平台；2. 选择预付款保函；3. 填写合同信息；4. 上传合同等材料；5. 提交申请等待审核。";
+                        } else if (message.includes('工资保函')) {
+                            botResponse = "工资保函是指建筑企业向建设单位出具的，保证按时支付农民工工资的担保。申请流程：1. 登录平台；2. 选择工资保函；3. 填写项目信息；4. 上传相关材料；5. 提交申请等待审核。";
+                        } else if (message.includes('有效期') || message.includes('期限')) {
+                            botResponse = "电子保函的有效期根据具体业务需求确定，一般由申请人在申请时指定。投标保函的有效期通常与投标有效期一致，履约保函的有效期通常与合同履行期限一致。";
+                        } else if (message.includes('材料') || message.includes('资料')) {
+                            botResponse = "申请电子保函一般需要提供以下材料：1. 企业营业执照；2. 法定代表人身份证；3. 项目相关文件（如招标文件、合同等）；4. 其他根据具体保函类型需要的材料。具体要求以平台提示为准。";
+                        } else if (message.includes('审核') || message.includes('时间')) {
+                            botResponse = "电子保函的审核时间因保函类型和金融机构而异。一般来说，投标保函的审核时间为1-2个工作日，履约保函、预付款保函等其他类型的保函审核时间为2-3个工作日。";
+                        } else if (message.includes('取消') || message.includes('撤回')) {
+                            botResponse = "如果您需要取消或撤回保函申请，可以在审核通过前联系客服进行处理。如果保函已经签发，需要按照平台规定的流程办理保函注销手续。";
+                        } else if (message.includes('客服') || message.includes('联系')) {
+                            botResponse = "您可以通过以下方式联系客服：1. 客服热线：400-123-4567；2. 邮箱：service@fjetg.com；3. 微信公众号：福建省电子保函服务平台；4. 平台在线客服。工作时间：9:00-18:00。";
+                        }
+                        
+                        const botMessageHTML = `
+                            <div class="flex items-start mb-4 animate-fade-in">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-robot text-primary"></i>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                                    <p>${botResponse}</p>
+                                </div>
+                            </div>
+                        `;
+                        chatbotMessages.insertAdjacentHTML('beforeend', botMessageHTML);
+                        
+                        // 滚动到底部
+                        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    }, 1500);
+                }
+            }
+        });
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+        .animate-bounce {
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+    </style>
+<!-- 搜索弹窗 -->
+    <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">智能搜索</h3>
+                    <button id="closeSearch" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form>
+                    <div class="relative">
+                        <input type="text" id="searchInput" placeholder="请输入搜索内容" class="w-full px-4 py-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-lg">
+                        <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+                            <i class="fa fa-search mr-2"></i>搜索
+                        </button>
+                        <!-- 关键词联想下拉框 -->
+                        <div id="searchSuggestions" class="absolute left-0 right-0 top-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg hidden z-10">
+                            <ul class="py-2">
+                                <!-- 联想词将通过JavaScript动态添加 -->
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- 分类筛选 -->
+                    <div class="mt-4 mb-6">
+                        <h4 class="text-gray-700 font-medium mb-3">分类筛选</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-primary text-white shadow-md shadow-primary/20 text-sm font-medium transition-all duration-300">全部</button>
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent">保函产品</button>
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent">平台资讯</button>
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent">帮助中心</button>
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent">政策法规</button>
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent">办事指南</button>
+                            <button type="button" class="search-category-btn px-4 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent">验真服务</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 热门搜索 -->
+                    <div class="mt-4 mb-6">
+                        <h4 class="text-gray-700 mb-2">热门搜索</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="#" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors search-hot-tag">投标保函</a>
+                            <a href="#" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors search-hot-tag">履约保函</a>
+                            <a href="#" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors search-hot-tag">预付款保函</a>
+                            <a href="#" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors search-hot-tag">工资保函</a>
+                            <a href="#" class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-200 transition-colors search-hot-tag">保函验真</a>
+                        </div>
+                    </div>
+                    
+                    <!-- 搜索结果 -->
+                    <div id="searchResults" class="mt-6 hidden">
+                        <h4 class="text-gray-700 mb-3">搜索结果</h4>
+                        <div class="space-y-4">
+                            <!-- 搜索结果将通过JavaScript动态添加 -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 初始化功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 搜索功能
+            const searchBtn = document.getElementById('searchBtn');
+            const searchModal = document.getElementById('searchModal');
+            const closeSearch = document.getElementById('closeSearch');
+            const searchInput = document.getElementById('searchInput');
+            const searchSuggestions = document.getElementById('searchSuggestions');
+            const searchResults = document.getElementById('searchResults');
+            const categoryBtns = document.querySelectorAll('.search-category-btn');
+            const hotTags = document.querySelectorAll('.search-hot-tag');
+            
+            // 模拟搜索数据
+            const searchData = {
+                '保函': [
+                    { title: '投标保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '履约保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '预付款保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '工资保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '保函验真', category: '帮助中心', url: '保函验真.html' }
+                ],
+                '投标': [
+                    { title: '投标保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '投标保函申请流程', category: '帮助中心', url: '帮助中心.html' },
+                    { title: '投标保函办理指南', category: '平台资讯', url: '新闻中心.html' }
+                ],
+                '履约': [
+                    { title: '履约保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '履约保函申请流程', category: '帮助中心', url: '帮助中心.html' }
+                ],
+                '预付款': [
+                    { title: '预付款保函', category: '保函产品', url: '保函超市.html' }
+                ],
+                '工资': [
+                    { title: '工资保函', category: '保函产品', url: '保函超市.html' },
+                    { title: '工资保函办理指南', category: '平台资讯', url: '新闻中心.html' }
+                ],
+                '验真': [
+                    { title: '保函验真', category: '帮助中心', url: '保函验真.html' },
+                    { title: '保函验真操作指南', category: '帮助中心', url: '帮助中心.html' }
+                ],
+                '政策': [
+                    { title: '电子保函业务管理办法', category: '政策法规', url: '新闻中心.html' },
+                    { title: '关于促进电子保函发展的指导意见', category: '政策法规', url: '新闻中心.html' }
+                ],
+                '申请': [
+                    { title: '如何申请电子保函', category: '帮助中心', url: '帮助中心.html' },
+                    { title: '投标保函申请流程', category: '帮助中心', url: '帮助中心.html' },
+                    { title: '履约保函申请流程', category: '帮助中心', url: '帮助中心.html' }
+                ]
+            };
+            
+            // 搜索弹窗功能
+            if (searchBtn && searchModal && closeSearch) {
+                searchBtn.addEventListener('click', function() {
+                    searchModal.classList.remove('hidden');
+                });
+                
+                closeSearch.addEventListener('click', function() {
+                    searchModal.classList.add('hidden');
+                    // 重置搜索状态
+                    searchInput.value = '';
+                    searchSuggestions.classList.add('hidden');
+                    searchResults.classList.add('hidden');
+                });
+                
+                // 点击弹窗外部关闭
+                searchModal.addEventListener('click', function(e) {
+                    if (e.target === searchModal) {
+                        searchModal.classList.add('hidden');
+                        // 重置搜索状态
+                        searchInput.value = '';
+                        searchSuggestions.classList.add('hidden');
+                        searchResults.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // 关键词联想功能
+            if (searchInput && searchSuggestions) {
+                searchInput.addEventListener('input', function() {
+                    const keyword = this.value.trim().toLowerCase();
+                    if (keyword) {
+                        // 查找匹配的关键词
+                        const suggestions = [];
+                        for (const key in searchData) {
+                            if (key.includes(keyword)) {
+                                searchData[key].forEach(item => {
+                                    if (!suggestions.find(s => s.title === item.title)) {
+                                        suggestions.push(item);
+                                    }
+                                });
+                            }
+                        }
+                        
+                        // 显示联想词
+                        if (suggestions.length > 0) {
+                            searchSuggestions.innerHTML = '';
+                            const ul = document.createElement('ul');
+                            ul.className = 'py-2';
+                            suggestions.forEach(item => {
+                                const li = document.createElement('li');
+                                li.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+                                li.innerHTML = `
+                                    <div class="font-medium">${item.title}</div>
+                                    <div class="text-xs text-gray-500">${item.category}</div>
+                                `;
+                                li.addEventListener('click', function() {
+                                    searchInput.value = item.title;
+                                    searchSuggestions.classList.add('hidden');
+                                    performSearch(item.title);
+                                });
+                                ul.appendChild(li);
+                            });
+                            searchSuggestions.appendChild(ul);
+                            searchSuggestions.classList.remove('hidden');
+                        } else {
+                            searchSuggestions.classList.add('hidden');
+                        }
+                    } else {
+                        searchSuggestions.classList.add('hidden');
+                        searchResults.classList.add('hidden');
+                    }
+                });
+                
+                // 点击页面其他地方关闭联想框
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                        searchSuggestions.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // 分类筛选功能
+            if (categoryBtns.length > 0) {
+                categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // 更新按钮样式
+                        categoryBtns.forEach(b => {
+                            b.classList.remove('bg-primary', 'text-white', 'shadow-md', 'shadow-primary/20');
+                            b.classList.add('bg-gray-50', 'text-gray-600');
+                        });
+                        this.classList.remove('bg-gray-50', 'text-gray-600');
+                        this.classList.add('bg-primary', 'text-white', 'shadow-md', 'shadow-primary/20');
+                        
+                        // 执行搜索
+                        const keyword = searchInput.value.trim();
+                        if (keyword) {
+                            performSearch(keyword);
+                        }
+                    });
+                });
+            }
+            
+            // 搜索表单提交
+            const searchForm = searchModal.querySelector('form');
+            if (searchForm) {
+                searchForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const keyword = searchInput.value.trim();
+                    if (keyword) {
+                        performSearch(keyword);
+                    }
+                });
+            }
+            
+            // 热门搜索标签点击事件
+            if (hotTags.length > 0) {
+                hotTags.forEach(tag => {
+                    tag.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const keyword = this.textContent;
+                        searchInput.value = keyword;
+                        performSearch(keyword);
+                    });
+                });
+            }
+            
+            // 执行搜索
+            function performSearch(keyword) {
+                // 隐藏联想框
+                searchSuggestions.classList.add('hidden');
+                
+                // 获取当前选中的分类
+                const selectedCategory = document.querySelector('.search-category-btn.bg-primary').textContent;
+                
+                // 查找匹配的结果
+                let results = [];
+                for (const key in searchData) {
+                    if (key.includes(keyword.toLowerCase())) {
+                        searchData[key].forEach(item => {
+                            if (selectedCategory === '全部' || item.category === selectedCategory) {
+                                if (!results.find(r => r.title === item.title)) {
+                                    results.push(item);
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                // 显示搜索结果
+                if (results.length > 0) {
+                    searchResults.innerHTML = '';
+                    const h4 = document.createElement('h4');
+                    h4.className = 'text-gray-700 mb-3';
+                    h4.textContent = `搜索结果 (${results.length})`;
+                    searchResults.appendChild(h4);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'space-y-4';
+                    results.forEach(item => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors';
+                        resultItem.innerHTML = `
+                            <a href="${item.url}" class="block">
+                                <div class="font-medium text-primary hover:underline">${item.title}</div>
+                                <div class="text-xs text-gray-500 mt-1">${item.category}</div>
+                            </a>
+                        `;
+                        div.appendChild(resultItem);
+                    });
+                    searchResults.appendChild(div);
+                    searchResults.classList.remove('hidden');
+                } else {
+                    searchResults.innerHTML = '';
+                    const h4 = document.createElement('h4');
+                    h4.className = 'text-gray-700 mb-3';
+                    h4.textContent = '搜索结果';
+                    searchResults.appendChild(h4);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'space-y-4';
+                    const noResult = document.createElement('div');
+                    noResult.className = 'p-3 border border-gray-200 rounded-md text-center text-gray-500';
+                    noResult.textContent = '未找到相关内容，请尝试其他关键词';
+                    div.appendChild(noResult);
+                    searchResults.appendChild(div);
+                    searchResults.classList.remove('hidden');
+                }
+            }
+            
+            // 移动端菜单功能
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navLinks = document.querySelector('nav .container > div:nth-child(2)');
+            
+            if (mobileMenuBtn && navLinks) {
+                // 确保导航栏有相对定位
+                const nav = document.querySelector('nav');
+                if (nav) {
+                    nav.style.position = 'relative';
+                }
+                
+                mobileMenuBtn.addEventListener('click', function() {
+                    navLinks.classList.toggle('hidden');
+                    navLinks.classList.toggle('flex');
+                    navLinks.classList.toggle('flex-col');
+                    navLinks.classList.toggle('absolute');
+                    navLinks.classList.toggle('top-full');
+                    navLinks.classList.toggle('left-0');
+                    navLinks.classList.toggle('w-full');
+                    navLinks.classList.toggle('bg-primary');
+                    navLinks.classList.toggle('p-4');
+                    navLinks.classList.toggle('z-50');
+                });
+                
+                // 监听窗口大小变化，确保在桌面视图时导航链接始终显示
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth >= 768) {
+                        navLinks.classList.remove('hidden');
+                        navLinks.classList.add('flex');
+                        navLinks.classList.remove('flex-col', 'absolute', 'top-full', 'left-0', 'w-full', 'bg-primary', 'p-4', 'z-50');
+                    } else {
+                        // 在移动视图时默认隐藏
+                        if (!navLinks.classList.contains('absolute')) {
+                            navLinks.classList.add('hidden');
+                            navLinks.classList.remove('flex');
+                        }
+                    }
+                });
+            }
+            
+            // 反馈功能
+            const feedbackBtns = document.querySelectorAll('.feedback-btn');
+            
+            if (feedbackBtns.length > 0) {
+                feedbackBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const feedback = this.getAttribute('data-feedback');
+                        const id = this.getAttribute('data-id');
+                        const statusElement = document.querySelector(`.feedback-status[data-id="${id}"]`);
+                        
+                        // 显示反馈成功提示
+                        if (statusElement) {
+                            statusElement.textContent = '感谢您的反馈！';
+                            statusElement.classList.add('text-green-500');
+                        }
+                        
+                        // 禁用反馈按钮
+                        const feedbackBtnsForId = document.querySelectorAll(`.feedback-btn[data-id="${id}"]`);
+                        feedbackBtnsForId.forEach(b => {
+                            b.disabled = true;
+                            b.classList.add('opacity-50', 'cursor-not-allowed');
+                        });
+                        
+                        // 模拟发送反馈数据
+                        console.log(`Feedback for ${id}: ${feedback}`);
+                    });
+                });
+            }
+        });
+    </script>
+    </body>
+</html>

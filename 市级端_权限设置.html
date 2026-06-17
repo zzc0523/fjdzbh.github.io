@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市级运营平台 - 权限设置</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">福州市管理员</p>
+                        <p class="text-[10px] text-slate-400">福州市运营平台</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">权限设置</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">角色与功能授权</span>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-full">
+                    <!-- 角色列表 -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest">角色列表</h3>
+                            <button onclick="openAddRoleModal()" class="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors" title="新增角色">
+                                <i class="fa fa-plus-circle text-lg"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-2" id="roleListContainer">
+                            <button onclick="selectRole(this, '平台管理员', '拥有本市平台所有管理权限')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">平台管理员</span>
+                                    <i class="fa fa-chevron-right text-xs"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 opacity-80">拥有本市平台所有管理权限</p>
+                            </button>
+                            <button onclick="selectRole(this, '业务审核员', '负责保函、理赔申请审核')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">业务审核员</span>
+                                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 text-slate-400">负责保函、理赔申请审核</p>
+                            </button>
+                            <button onclick="selectRole(this, '机构管理员', '负责金融机构入围及产品管理')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">机构管理员</span>
+                                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 text-slate-400">负责金融机构入围及产品管理</p>
+                            </button>
+                            <button onclick="selectRole(this, '数据分析员', '负责数据统计与报表导出')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">数据分析员</span>
+                                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 text-slate-400">负责数据统计与报表导出</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 权限详情 -->
+                    <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">权限配置：<span class="text-blue-600">平台管理员</span></h3>
+                                <p class="text-xs text-slate-500 mt-1">勾选右侧功能模块以为该角色授权</p>
+                            </div>
+                            <button class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                保存授权
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-8 space-y-8">
+                            <!-- 模块 1 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">业务核心功能</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">保函列表管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">保函注销审核</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">理赔申请审核</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">机构准入审核</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">保函验真功能</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">流程配置管理</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">政务协同接口</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">产品上架审核</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 2 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">数据报表与监控</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">运营看板访问</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">异常业务监控</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">多维统计报表</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">数据导出权限</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 3 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">系统管理权限</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">人员账号管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">角色功能授权</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">操作日志查看</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">系统参数配置</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Role Modal -->
+    <div id="addRoleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">新增角色</h3>
+                <button onclick="closeAddRoleModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">角色名称 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="roleNameInput" placeholder="请输入角色名称，如：财务审核员" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">角色描述</label>
+                    <textarea id="roleDescInput" placeholder="请简要描述该角色的主要职能..." class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all h-24"></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">初始权限模板</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="radio" name="template" value="blank" checked class="template-radio w-4 h-4 text-blue-600">
+                            <span class="ml-3 text-sm text-slate-600 font-medium">空白模板</span>
+                        </label>
+                        <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="radio" name="template" value="inherit" class="template-radio w-4 h-4 text-blue-600">
+                            <span class="ml-3 text-sm text-slate-600 font-medium">继承现有角色</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- 继承角色选择框 (默认隐藏) -->
+                <div id="inheritRoleContainer" class="space-y-1 hidden animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">选择要继承的角色</label>
+                    <select id="inheritRoleSelect" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                        <!-- 由 JS 动态填充 -->
+                    </select>
+                    <p class="text-[10px] text-slate-400 italic mt-1">创建后将自动复制该角色的所有权限配置</p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
+                <button onclick="closeAddRoleModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
+                <button onclick="saveNewRole()" class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">确认创建</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始权限模板切换逻辑
+            document.querySelectorAll('.template-radio').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const container = document.getElementById('inheritRoleContainer');
+                    if (this.value === 'inherit') {
+                        container.classList.remove('hidden');
+                        populateInheritRoleSelect();
+                    } else {
+                        container.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        function populateInheritRoleSelect() {
+            const select = document.getElementById('inheritRoleSelect');
+            const roles = document.querySelectorAll('.role-btn span.font-bold');
+            select.innerHTML = '';
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.textContent;
+                option.textContent = role.textContent;
+                select.appendChild(option);
+            });
+        }
+
+        function openAddRoleModal() {
+            const modal = document.getElementById('addRoleModal');
+            const content = modal.querySelector('div > div');
+            
+            // 重置模板选择
+            document.querySelector('input[value="blank"]').checked = true;
+            document.getElementById('inheritRoleContainer').classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeAddRoleModal() {
+            const modal = document.getElementById('addRoleModal');
+            const content = modal.querySelector('div > div');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function saveNewRole() {
+            const name = document.getElementById('roleNameInput').value;
+            const desc = document.getElementById('roleDescInput').value || '暂无描述';
+            const templateType = document.querySelector('input[name="template"]:checked').value;
+            const inheritFrom = templateType === 'inherit' ? document.getElementById('inheritRoleSelect').value : null;
+
+            if (!name) {
+                alert('请输入角色名称');
+                return;
+            }
+
+            // 动态添加角色到列表
+            const container = document.getElementById('roleListContainer');
+            const newRoleBtn = document.createElement('button');
+            newRoleBtn.onclick = function() { selectRole(this, name, desc); };
+            newRoleBtn.className = "role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group";
+            newRoleBtn.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="font-bold">${name}</span>
+                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                </div>
+                <p class="text-[10px] mt-1 text-slate-400">${desc}</p>
+            `;
+            container.appendChild(newRoleBtn);
+
+            let successMsg = '角色「' + name + '」创建成功';
+            if (inheritFrom) {
+                successMsg += '，已成功继承「' + inheritFrom + '」的权限配置';
+            } else {
+                successMsg += '，请继续为其分配权限';
+            }
+
+            showNotification(successMsg, 'success');
+            closeAddRoleModal();
+            
+            // 自动选中新创建的角色
+            selectRole(newRoleBtn, name, desc, templateType === 'inherit');
+
+            // 重置表单
+            document.getElementById('roleNameInput').value = '';
+            document.getElementById('roleDescInput').value = '';
+        }
+
+        function selectRole(btn, name, desc, isInherited = false) {
+            // 更新列表项样式
+            document.querySelectorAll('.role-btn').forEach(b => {
+                b.classList.remove('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
+                b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+                const p = b.querySelector('p');
+                if (p) p.classList.replace('opacity-80', 'text-slate-400');
+                const i = b.querySelector('i');
+                if (i) i.classList.add('opacity-0');
+            });
+
+            btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
+            btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+            const p = btn.querySelector('p');
+            if (p) p.classList.replace('text-slate-400', 'opacity-80');
+            const i = btn.querySelector('i');
+            if (i) i.classList.remove('opacity-0');
+
+            // 更新详情页标题和描述
+            document.querySelector('h3.text-lg.font-bold.text-slate-800').innerHTML = `权限配置：<span class="text-blue-600">${name}</span>`;
+            document.querySelector('p.text-xs.text-slate-500.mt-1').textContent = desc;
+
+            // 模拟加载权限
+            if (isInherited) {
+                // 如果是继承角色，这里模拟保持现有某些勾选状态（实际业务中应该从被继承角色复制）
+                // 为了演示效果，我们让勾选概率更高
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = Math.random() > 0.1;
+                });
+            } else {
+                // 如果是空白模板或普通切换，随机切换复选框状态作为演示
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = Math.random() > 0.4;
+                });
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-[9999] transition-all duration-500 flex items-center space-x-3 min-w-[300px] justify-center bg-blue-600 text-white`;
+            
+            let icon = 'fa-check-circle';
+            if(type === 'error') {
+                notification.className = notification.className.replace('bg-blue-600', 'bg-rose-600');
+                icon = 'fa-exclamation-circle';
+            }
+
+            notification.innerHTML = `<i class="fa ${icon} text-lg"></i><span class="font-medium tracking-wide">${message}</span>`;
+            document.body.appendChild(notification);
+            
+            notification.style.transform = 'translate(-50%, -20px)';
+            notification.style.opacity = '0';
+            
+            requestAnimationFrame(() => {
+                notification.style.transform = 'translate(-50%, 0)';
+                notification.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                notification.style.transform = 'translate(-50%, -20px)';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>理赔管理 - 金融机构平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-bank"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">金融机构平台</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="机构端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_机构备案.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                            <span>机构备案</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_产品管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cubes mr-3 group-hover:text-blue-400"></i>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_订单管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-file-text mr-3 group-hover:text-blue-400"></i>
+                            <span>保函订单</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_退保管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-undo mr-3 group-hover:text-blue-400"></i>
+                            <span>退保管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_理赔管理.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20">
+                            <i class="fa fa-gavel mr-3"></i>
+                            <span class="font-medium">理赔管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Bank&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">中国建设银行</p>
+                        <p class="text-[10px] text-slate-400">福建省分行</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">理赔管理</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">理赔申请审核</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all relative">
+                        <i class="fa fa-bell-o"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    </button>
+                    <div class="h-8 w-px bg-slate-200"></div>
+
+                </div>
+            </header>
+
+            <!-- Content -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <!-- 搜索过滤 -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">理赔单号 / 保函编号</label>
+                            <input type="text" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="输入关键字搜索">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">申请来源（市级端）</label>
+                            <select class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">全部城市</option>
+                                <option value="fuzhou">福州市公共资源交易中心</option>
+                                <option value="xiamen">厦门市公共资源交易中心</option>
+                                <option value="quanzhou">泉州市公共资源交易中心</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">当前状态</label>
+                            <select class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="pending">待审核</option>
+                                <option value="processing">审核中</option>
+                                <option value="approved">已赔付</option>
+                                <option value="rejected">已驳回</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button class="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+                                <i class="fa fa-search mr-2"></i>查询记录
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 列表 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4">理赔单号</th>
+                                <th class="px-6 py-4">保函信息</th>
+                                <th class="px-6 py-4">申请单位（受益人）</th>
+                                <th class="px-6 py-4">理赔金额</th>
+                                <th class="px-6 py-4">申请时间</th>
+                                <th class="px-6 py-4">状态</th>
+                                <th class="px-6 py-4">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-sm">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260311001</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">FJ202601150001</div>
+                                    <div class="text-xs text-slate-500">投标保函</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">福州市公共资源交易中心</div>
+                                    <div class="text-xs text-slate-500">来源：福州市</div>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">¥100,000.00</td>
+                                <td class="px-6 py-4 text-slate-500">2026-03-11 14:30</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">待审核</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 font-bold hover:underline mr-3" onclick="openAuditModal('CL20260311001')">审核</button>
+                                    <button class="text-slate-400 font-bold hover:text-slate-600" onclick="openDetailModal('CL20260311001')">详情</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260310024</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">FJ202512100892</div>
+                                    <div class="text-xs text-slate-500">履约保函</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">厦门市建设局</div>
+                                    <div class="text-xs text-slate-500">来源：厦门市</div>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">¥250,000.00</td>
+                                <td class="px-6 py-4 text-slate-500">2026-03-10 10:15</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-blue-100 text-blue-700">审核中</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button class="text-blue-600 font-bold hover:underline mr-3" onclick="openAuditModal('CL20260310024')">继续审核</button>
+                                    <button class="text-slate-400 font-bold hover:text-slate-600" onclick="openDetailModal('CL20260310024')">详情</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260309005</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">FJ202601200033</div>
+                                    <div class="text-xs text-slate-500">履约保函</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">福州市财政局</div>
+                                    <div class="text-xs text-slate-500">来源：福州市</div>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">¥150,000.00</td>
+                                <td class="px-6 py-4 text-slate-500">2026-03-09 09:00</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-indigo-100 text-indigo-700">待赔付</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button class="text-indigo-600 font-bold hover:underline mr-3" onclick="openPaymentModal('CL20260309005')">赔付处理</button>
+                                    <button class="text-slate-400 font-bold hover:text-slate-600" onclick="openDetailModal('CL20260309005')">详情</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260308115</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">FJ202602010045</div>
+                                    <div class="text-xs text-slate-500">投标保函</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="font-medium text-slate-900">泉州市水利局</div>
+                                    <div class="text-xs text-slate-500">来源：泉州市</div>
+                                </td>
+                                <td class="px-6 py-4 font-bold text-slate-900">¥50,000.00</td>
+                                <td class="px-6 py-4 text-slate-500">2026-03-08 16:45</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-700">已赔付</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button class="text-slate-400 font-bold hover:text-slate-600 mr-3" onclick="openDetailModal('CL20260308115')">详情</button>
+                                    <button class="text-blue-600 font-bold hover:underline" onclick="openReceiptModal('CL20260308115')">查看凭证</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- Pagination -->
+                    <div class="p-6 border-t border-slate-100 flex items-center justify-between">
+                        <p class="text-xs text-slate-500">显示 1 到 10 条，共 12 条记录</p>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 border border-slate-200 rounded text-slate-400 hover:bg-slate-50 disabled:opacity-50" disabled>上一页</button>
+                            <button class="px-3 py-1 bg-blue-600 text-white rounded font-bold">1</button>
+                            <button class="px-3 py-1 border border-slate-200 rounded text-slate-600 hover:bg-slate-50">2</button>
+                            <button class="px-3 py-1 border border-slate-200 rounded text-slate-600 hover:bg-slate-50">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Audit Modal -->
+    <div id="auditModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">理赔申请审核 - <span id="auditClaimId" class="font-mono text-blue-600"></span></h3>
+                <button onclick="closeAuditModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto max-h-[70vh] space-y-8">
+                <!-- 保函基本信息 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">保函基本信息</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">保函编号</span>
+                            <span class="font-medium">FJ202601150001</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">保函类型</span>
+                            <span class="font-medium">投标保函</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">保额</span>
+                            <span class="font-bold">¥500,000.00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">被保证人</span>
+                            <span class="font-medium text-right">福建省某建设有限公司</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 理赔基本信息 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">理赔基本信息</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">理赔金额</span>
+                            <span class="font-bold text-red-600">¥100,000.00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">申请单位</span>
+                            <span class="font-medium text-right">福州市公共资源交易中心</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">理赔联系人</span>
+                            <span class="font-medium">张三</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">理赔联系人电话</span>
+                            <span class="font-medium">13800138000</span>
+                        </div>
+                        <div class="mt-2 pt-2">
+                            <p class="text-slate-500 mb-1">理赔原因</p>
+                            <p class="font-medium bg-slate-50 p-3 rounded-lg border border-slate-100">投标人中标后未签约</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 证明材料 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">证明材料</h4>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="p-4 border border-slate-200 rounded-xl hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold truncate">中标通知书.pdf</p>
+                                    <p class="text-[10px] text-slate-400">2.4 MB</p>
+                                </div>
+                                <i class="fa fa-eye text-slate-300 group-hover:text-blue-500"></i>
+                            </div>
+                        </div>
+                        <div class="p-4 border border-slate-200 rounded-xl hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-file-image-o text-blue-500 text-xl"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold truncate">未签约证明函.jpg</p>
+                                    <p class="text-[10px] text-slate-400">1.8 MB</p>
+                                </div>
+                                <i class="fa fa-eye text-slate-300 group-hover:text-blue-500"></i>
+                            </div>
+                        </div>
+                        <div class="p-4 border border-slate-200 rounded-xl hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-file-text-o text-slate-500 text-xl"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold truncate">索赔申请书.pdf</p>
+                                    <p class="text-[10px] text-slate-400">1.1 MB</p>
+                                </div>
+                                <i class="fa fa-eye text-slate-300 group-hover:text-blue-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 审核意见 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">审核意见</h4>
+                    <textarea class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none h-32" placeholder="请在此输入审核详细意见或驳回原因..."></textarea>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
+                <button onclick="closeAuditModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">暂存进度</button>
+                <button class="px-6 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-100 transition-all">驳回申请</button>
+                <button class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="submitAudit()">审核通过</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal (Read-only version of Audit Modal) -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">理赔申请详情 - <span id="detailClaimId" class="font-mono text-blue-600"></span></h3>
+                <button onclick="closeDetailModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto max-h-[70vh] space-y-8">
+                <!-- 保函基本信息 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">保函基本信息</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">保函编号</span>
+                            <span class="font-medium">FJ202601150001</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">保函类型</span>
+                            <span class="font-medium">投标保函</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">保额</span>
+                            <span class="font-bold">¥500,000.00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">被保证人</span>
+                            <span class="font-medium text-right">福建省某建设有限公司</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 理赔基本信息 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">理赔基本信息</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">理赔金额</span>
+                            <span class="font-bold text-red-600">¥100,000.00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">申请单位</span>
+                            <span class="font-medium text-right">福州市公共资源交易中心</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">理赔联系人</span>
+                            <span class="font-medium">张三</span>
+                        </div>
+                        <div class="flex justify-between border-b border-slate-50 pb-2">
+                            <span class="text-slate-500">理赔联系人电话</span>
+                            <span class="font-medium">13800138000</span>
+                        </div>
+                        <div class="mt-2 pt-2">
+                            <p class="text-slate-500 mb-1">理赔原因</p>
+                            <p class="font-medium bg-slate-50 p-3 rounded-lg border border-slate-100">投标人中标后未签约</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 证明材料 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">证明材料</h4>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="p-4 border border-slate-200 rounded-xl hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold truncate">中标通知书.pdf</p>
+                                    <p class="text-[10px] text-slate-400">2.4 MB</p>
+                                </div>
+                                <i class="fa fa-eye text-slate-300 group-hover:text-blue-500"></i>
+                            </div>
+                        </div>
+                        <div class="p-4 border border-slate-200 rounded-xl hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-file-image-o text-blue-500 text-xl"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold truncate">未签约证明函.jpg</p>
+                                    <p class="text-[10px] text-slate-400">1.8 MB</p>
+                                </div>
+                                <i class="fa fa-eye text-slate-300 group-hover:text-blue-500"></i>
+                            </div>
+                        </div>
+                        <div class="p-4 border border-slate-200 rounded-xl hover:border-blue-300 transition-colors cursor-pointer group">
+                            <div class="flex items-center space-x-3">
+                                <i class="fa fa-file-text-o text-slate-500 text-xl"></i>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold truncate">索赔申请书.pdf</p>
+                                    <p class="text-[10px] text-slate-400">1.1 MB</p>
+                                </div>
+                                <i class="fa fa-eye text-slate-300 group-hover:text-blue-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 审核进度/意见记录 -->
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">审核意见记录</h4>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 rounded-full bg-blue-500 mt-1.5"></div>
+                            <div>
+                                <p class="text-sm font-bold">审核通过</p>
+                                <p class="text-xs text-slate-500 mb-1">审核人：李四 | 2026-03-12 10:00</p>
+                                <p class="text-sm text-slate-600">经核实，材料齐全且符合理赔条件，予以通过。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end bg-slate-50/50">
+                <button onclick="closeDetailModal()" class="px-8 py-2 bg-slate-800 text-white rounded-lg text-sm font-bold hover:bg-slate-900 transition-all">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receiptModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">支付/理赔凭证</h3>
+                <button onclick="closeReceiptModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-8">
+                <div class="aspect-[4/3] bg-slate-100 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center space-y-4 group cursor-pointer hover:bg-slate-50 transition-all">
+                    <i class="fa fa-file-image-o text-5xl text-slate-300 group-hover:text-blue-500 transition-colors"></i>
+                    <p class="text-slate-400 group-hover:text-blue-600 font-medium">点击查看电子凭证大图</p>
+                    <div class="text-[10px] text-slate-400 text-center">
+                        <p>凭证单号：REC-20260308-001</p>
+                        <p>生成时间：2026-03-08 17:00</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex justify-center">
+                    <button class="px-6 py-2 border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                        <i class="fa fa-download mr-2"></i>下载凭证
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">赔付处理 - <span id="paymentClaimId" class="font-mono text-indigo-600"></span></h3>
+                <button onclick="closePaymentModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-8 space-y-6">
+                <div class="grid grid-cols-2 gap-6 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase mb-1">应赔付金额</p>
+                        <p class="text-xl font-black text-indigo-700">¥150,000.00</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-slate-400 uppercase mb-1">收款单位</p>
+                        <p class="text-sm font-bold text-slate-700">福州市财政局</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">收款账户信息</h4>
+                    <div class="grid grid-cols-1 gap-3 text-sm">
+                        <div class="flex justify-between p-3 bg-slate-50 rounded-lg">
+                            <span class="text-slate-500">开户银行</span>
+                            <span class="font-medium">中国建设银行福州分行营业部</span>
+                        </div>
+                        <div class="flex justify-between p-3 bg-slate-50 rounded-lg">
+                            <span class="text-slate-500">银行账号</span>
+                            <span class="font-mono font-medium">3505 0188 0007 0000 XXXX</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">上传赔付凭证 <span class="text-rose-500">*</span></h4>
+                    <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-indigo-400 transition-colors cursor-pointer group bg-slate-50/30">
+                        <i class="fa fa-cloud-upload text-4xl text-slate-300 group-hover:text-indigo-500 mb-2 transition-colors"></i>
+                        <p class="text-xs text-slate-500 group-hover:text-indigo-600 transition-colors">点击或拖拽银行转账回单到此处上传</p>
+                        <p class="text-[10px] text-slate-400 mt-1">支持 PDF, JPG, PNG 格式</p>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
+                <button onclick="closePaymentModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
+                <button class="px-8 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all" onclick="confirmPayment()">确认已赔付</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openAuditModal(id) {
+            const modal = document.getElementById('auditModal');
+            document.getElementById('auditClaimId').textContent = id;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeAuditModal() {
+            const modal = document.getElementById('auditModal');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function submitAudit() {
+            alert('审核通过已提交，理赔款项将进入支付流程。');
+            closeAuditModal();
+        }
+
+        // 详情弹窗控制
+        function openDetailModal(id) {
+            const modal = document.getElementById('detailModal');
+            document.getElementById('detailClaimId').textContent = id;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeDetailModal() {
+            const modal = document.getElementById('detailModal');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // 凭证弹窗控制
+        function openReceiptModal(id) {
+            const modal = document.getElementById('receiptModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeReceiptModal() {
+            const modal = document.getElementById('receiptModal');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        // 赔付弹窗控制
+        function openPaymentModal(id) {
+            const modal = document.getElementById('paymentModal');
+            document.getElementById('paymentClaimId').textContent = id;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.children[0].classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.add('opacity-0');
+            modal.children[0].classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function confirmPayment() {
+            alert('赔付凭证已上传，该笔理赔流程已完成。');
+            closePaymentModal();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务监控 - 市级运营端</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neutral-dark': '#1F2937'
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">管理员</p>
+                        <p class="text-[10px] text-slate-400">市级管理员</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white" onclick="showConfirm('退出登录', '确定要退出市级运营平台吗？', () => location.href='../登录.html')">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">服务监控</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <input type="text" placeholder="搜索服务信息..." class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                        <i class="fa fa-search mr-2"></i>搜索
+                    </button>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <!-- 查询条件区域 -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-6">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div class="flex items-center space-x-4 flex-wrap gap-3">
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">交易中心：</label>
+                                    <select id="searchCenter" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48">
+                                        <option value="">全部</option>
+                                        <option value="福建省公共资源交易中心">福建省公共资源交易中心</option>
+                                        <option value="厦门市公共资源交易中心">厦门市公共资源交易中心</option>
+                                        <option value="泉州市公共资源交易中心">泉州市公共资源交易中心</option>
+                                        <option value="漳州市公共资源交易中心">漳州市公共资源交易中心</option>
+                                        <option value="福州市公共资源交易中心">福州市公共资源交易中心</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">标段名称：</label>
+                                    <input id="searchProject" type="text" placeholder="请输入标段名称" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48">
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">出函机构：</label>
+                                    <select id="searchOrg" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-40">
+                                        <option value="">全部</option>
+                                        <option value="泉州银行">泉州银行</option>
+                                        <option value="招商银行">招商银行</option>
+                                        <option value="浦发银行">浦发银行</option>
+                                        <option value="新网银行">新网银行</option>
+                                        <option value="平安保险">平安保险</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center">
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">日期范围：</label>
+                                    <div class="flex items-center space-x-2">
+                                        <input id="searchDateStart" type="date" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-36" value="2026-05-01">
+                                        <span class="text-slate-400">至</span>
+                                        <input id="searchDateEnd" type="date" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-36" value="2026-05-31">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button id="btnSearch" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                    <i class="fa fa-search mr-1"></i>查询
+                                </button>
+                                <button id="btnReset" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all">
+                                    <i class="fa fa-refresh mr-1"></i>重置
+                                </button>
+                                <button class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium shadow-lg shadow-green-200 hover:bg-green-700 transition-all">
+                                    <i class="fa fa-download mr-1"></i>导出
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片区域 -->
+                <div class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg">
+                        <div class="text-xs opacity-80">出函数量</div>
+                        <div class="text-2xl font-bold mt-1" id="totalCount">4笔</div>
+                        <div class="text-xs opacity-60 mt-1" id="totalCountTrend">筛选条件下共4笔</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white shadow-lg">
+                        <div class="text-xs opacity-80">保证金总计</div>
+                        <div class="text-2xl font-bold mt-1" id="totalBond">3,650,000.00元</div>
+                        <div class="text-xs opacity-60 mt-1" id="totalBondTrend">筛选条件下共计</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-lg">
+                        <div class="text-xs opacity-80">保费总计</div>
+                        <div class="text-2xl font-bold mt-1" id="totalPremium">18,250.00元</div>
+                        <div class="text-xs opacity-60 mt-1" id="totalPremiumTrend">筛选条件下共计</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white shadow-lg">
+                        <div class="text-xs opacity-80">出函机构数</div>
+                        <div class="text-2xl font-bold mt-1" id="orgCount">4家</div>
+                        <div class="text-xs opacity-60 mt-1" id="orgCountTrend">筛选条件下共4家</div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800 flex items-center"><i class="fa fa-list-alt mr-2 text-blue-600"></i>已出函保函列表</h3>
+                        <p class="text-sm text-slate-500 mt-1">展示所有已出函保函的完整信息</p>
+                    </div>
+                    <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
+                        <table class="w-full min-w-[2000px]">
+                            <colgroup>
+                                <col style="width: 80px;">
+                                <col style="width: 150px;">
+                                <col style="width: 180px;">
+                                <col style="width: 120px;">
+                                <col style="width: 140px;">
+                                <col style="width: 130px;">
+                                <col style="width: 140px;">
+                                <col style="width: 120px;">
+                                <col style="width: 100px;">
+                                <col style="width: 90px;">
+                                <col style="width: 130px;">
+                                <col style="width: 120px;">
+                                <col style="width: 120px;">
+                                <col style="width: 120px;">
+                                <col style="width: 120px;">
+                                <col style="width: 140px;">
+                                <col style="width: 120px;">
+                                <col style="width: 120px;">
+                            </colgroup>
+                            <thead class="bg-gradient-to-r from-blue-50 to-slate-50 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">序号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">交易中心</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">标段名称</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">企业名称</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">招标人</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">投保时间</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">开标时间</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">保函开立时间</th>
+                                    <th class="px-3 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">保证金(元)</th>
+                                    <th class="px-3 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">保费(元)</th>
+                                    <th class="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">保函状态</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">订单编号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">投保单号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">保单号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">出函机构名称</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">付款人银行户名</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">付款人银行账号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">付款人基本户</th>
+                                    <th class="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 whitespace-nowrap">基本户账号</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody" class="bg-white divide-y divide-slate-50">
+                                <tr class="hover:bg-blue-50 transition-all" data-center="福建省公共资源交易中心" data-project="福州地铁5号线一期工程土建施工项目" data-org="泉州银行" data-date="2026-05-22" data-bond="500000" data-premium="2500">
+                                    <td class="px-3 py-3 text-center row-num"><span class="text-sm text-slate-600">1</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">福建省公共资源交易中心</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 truncate block max-w-[150px]" title="福州地铁5号线一期工程土建施工项目">福州地铁5号线一期工程土建施工项目</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800">福建建工建设有限公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">福州市地铁集团</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-22 09:15</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-28 10:00</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-22 11:30</span></td>
+                                    <td class="px-3 py-3 text-right row-bond"><span class="text-sm text-slate-800 font-medium">500,000.00</span></td>
+                                    <td class="px-3 py-3 text-right row-premium"><span class="text-sm text-green-600 font-medium">2,500.00</span></td>
+                                    <td class="px-3 py-3 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">已出函</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BD20260522001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">TB20260522001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BH20260522001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">泉州银行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">福建建工建设有限公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6222****1234</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">中国建设银行福州分行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6217****5678</span></td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all bg-slate-25" data-center="厦门市公共资源交易中心" data-project="厦门新机场主体工程" data-org="招商银行" data-date="2026-05-22" data-bond="800000" data-premium="4000">
+                                    <td class="px-3 py-3 text-center row-num"><span class="text-sm text-slate-600">2</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">厦门市公共资源交易中心</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 truncate block max-w-[150px]" title="厦门新机场主体工程">厦门新机场主体工程</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800">厦门市建筑工程公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">厦门翔业集团</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-22 08:30</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-30 09:00</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-22 10:25</span></td>
+                                    <td class="px-3 py-3 text-right row-bond"><span class="text-sm text-slate-800 font-medium">800,000.00</span></td>
+                                    <td class="px-3 py-3 text-right row-premium"><span class="text-sm text-green-600 font-medium">4,000.00</span></td>
+                                    <td class="px-3 py-3 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">已出函</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BD20260522002</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">TB20260522002</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BH20260522002</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">招商银行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">厦门市建筑工程公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6222****2345</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">中国工商银行厦门分行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6217****6789</span></td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all" data-center="漳州市公共资源交易中心" data-project="漳州古雷石化项目" data-org="平安保险" data-date="2026-05-21" data-bond="2000000" data-premium="10000">
+                                    <td class="px-3 py-3 text-center row-num"><span class="text-sm text-slate-600">3</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">漳州市公共资源交易中心</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 truncate block max-w-[150px]" title="漳州古雷石化项目">漳州古雷石化项目</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800">福州城建集团有限公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">漳州古雷石化公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-21 14:20</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-27 09:00</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-21 16:00</span></td>
+                                    <td class="px-3 py-3 text-right row-bond"><span class="text-sm text-slate-800 font-medium">2,000,000.00</span></td>
+                                    <td class="px-3 py-3 text-right row-premium"><span class="text-sm text-green-600 font-medium">10,000.00</span></td>
+                                    <td class="px-3 py-3 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">已出函</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BD20260521001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">TB20260521001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BH20260521001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">平安保险</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">福州城建集团有限公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6222****4567</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">中国农业银行福州分行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6217****8901</span></td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all" data-center="福州市公共资源交易中心" data-project="福州滨海新城基础设施" data-org="新网银行" data-date="2026-05-20" data-bond="350000" data-premium="1750">
+                                    <td class="px-3 py-3 text-center row-num"><span class="text-sm text-slate-600">4</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">福州市公共资源交易中心</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 truncate block max-w-[150px]" title="福州滨海新城基础设施">福州滨海新城基础设施</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800">宁德市建筑工程公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">福州新区管委会</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-20 10:15</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-26 11:00</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-600">2026-05-20 14:30</span></td>
+                                    <td class="px-3 py-3 text-right row-bond"><span class="text-sm text-slate-800 font-medium">350,000.00</span></td>
+                                    <td class="px-3 py-3 text-right row-premium"><span class="text-sm text-green-600 font-medium">1,750.00</span></td>
+                                    <td class="px-3 py-3 text-center"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">已出函</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BD20260520001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">TB20260520001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-800 font-mono">BH20260520001</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">新网银行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">宁德市建筑工程公司</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6222****5678</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700">招商银行福州分行</span></td>
+                                    <td class="px-3 py-3"><span class="text-sm text-slate-700 font-mono">6217****9012</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50">
+                        <span class="text-sm text-slate-500">共 <strong class="text-slate-700">4</strong> 条记录，当前显示 <strong class="text-slate-700">1-4</strong> 条</span>
+                        <div class="flex items-center space-x-2">
+                            <select class="px-3 py-1.5 border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>10条/页</option>
+                                <option>20条/页</option>
+                                <option>50条/页</option>
+                                <option>100条/页</option>
+                            </select>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all disabled:opacity-30" disabled>
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all">1</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">2</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">3</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">...</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-lg transition-all">26</button>
+                            <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                            <span class="text-sm text-slate-500 ml-2">跳至 <input type="number" class="w-12 px-2 py-1 border border-slate-200 rounded text-center text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value="1"> 页</span>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function showConfirm(title, message, onConfirm) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[100]';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">${title}</h3>
+                        <p class="text-slate-600">${message}</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 flex justify-end space-x-3">
+                        <button class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">取消</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" id="modalConfirmBtn">确定</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                onConfirm();
+                modal.remove();
+            };
+        }
+
+        // 格式化数字为千位分隔符
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // 查询数据并更新卡片统计
+        function searchData() {
+            const center = document.getElementById('searchCenter').value;
+            const project = document.getElementById('searchProject').value.toLowerCase();
+            const org = document.getElementById('searchOrg').value;
+            const dateStart = document.getElementById('searchDateStart').value;
+            const dateEnd = document.getElementById('searchDateEnd').value;
+
+            const rows = document.querySelectorAll('#dataTableBody tr');
+            let visibleCount = 0;
+            let totalBond = 0;
+            let totalPremium = 0;
+            const orgSet = new Set();
+
+            rows.forEach((row, index) => {
+                const rowCenter = row.getAttribute('data-center');
+                const rowProject = row.getAttribute('data-project').toLowerCase();
+                const rowOrg = row.getAttribute('data-org');
+                const rowDate = row.getAttribute('data-date');
+
+                let isVisible = true;
+
+                // 交易中心筛选
+                if (center && rowCenter !== center) {
+                    isVisible = false;
+                }
+
+                // 标段名称筛选
+                if (project && !rowProject.includes(project)) {
+                    isVisible = false;
+                }
+
+                // 出函机构筛选
+                if (org && rowOrg !== org) {
+                    isVisible = false;
+                }
+
+                // 日期范围筛选
+                if (dateStart && dateEnd && rowDate) {
+                    if (rowDate < dateStart || rowDate > dateEnd) {
+                        isVisible = false;
+                    }
+                } else if (dateStart && rowDate) {
+                    if (rowDate < dateStart) {
+                        isVisible = false;
+                    }
+                } else if (dateEnd && rowDate) {
+                    if (rowDate > dateEnd) {
+                        isVisible = false;
+                    }
+                }
+
+                // 显示/隐藏行
+                if (isVisible) {
+                    row.style.display = '';
+                    visibleCount++;
+                    totalBond += parseFloat(row.getAttribute('data-bond')) || 0;
+                    totalPremium += parseFloat(row.getAttribute('data-premium')) || 0;
+                    orgSet.add(rowOrg);
+
+                    // 更新序号
+                    row.querySelector('.row-num span').textContent = visibleCount;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // 更新卡片数据
+            document.getElementById('totalCount').textContent = visibleCount + '笔';
+            document.getElementById('totalCountTrend').textContent = '筛选条件下共' + visibleCount + '笔';
+
+            document.getElementById('totalBond').textContent = formatNumber(totalBond) + '元';
+            document.getElementById('totalBondTrend').textContent = '筛选条件下共计' + formatNumber(totalBond) + '元';
+
+            document.getElementById('totalPremium').textContent = formatNumber(totalPremium) + '元';
+            document.getElementById('totalPremiumTrend').textContent = '筛选条件下共计' + formatNumber(totalPremium) + '元';
+
+            document.getElementById('orgCount').textContent = orgSet.size + '家';
+            document.getElementById('orgCountTrend').textContent = '筛选条件下共' + orgSet.size + '家';
+
+            // 更新分页信息
+            const paginationInfo = document.querySelector('.bg-slate-50 .text-sm.text-slate-500');
+            paginationInfo.innerHTML = '共 <strong class="text-slate-700">' + visibleCount + '</strong> 条记录，当前显示 <strong class="text-slate-700">1-' + visibleCount + '</strong> 条';
+        }
+
+        // 重置查询条件
+        function resetSearch() {
+            document.getElementById('searchCenter').value = '';
+            document.getElementById('searchProject').value = '';
+            document.getElementById('searchOrg').value = '';
+            document.getElementById('searchDateStart').value = '2026-05-01';
+            document.getElementById('searchDateEnd').value = '2026-05-31';
+            searchData();
+        }
+
+        // 页面加载时默认执行查询
+        document.addEventListener('DOMContentLoaded', function() {
+            searchData();
+
+            // 绑定查询按钮事件
+            document.getElementById('btnSearch').addEventListener('click', searchData);
+
+            // 绑定重置按钮事件
+            document.getElementById('btnReset').addEventListener('click', resetSearch);
+        });
+    </script>
+</body>
+</html>

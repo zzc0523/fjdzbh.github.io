@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市级运营平台 - 部门与人员管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">福州市管理员</p>
+                        <p class="text-[10px] text-slate-400">福州市运营平台</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">部门与人员管理</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">平台用户管理</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openModal('add')" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-bold shadow-lg shadow-blue-200">
+                        <i class="fa fa-plus"></i>
+                        <span>新增人员</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="flex gap-6">
+                    <!-- 组织树 -->
+                    <div class="w-72 shrink-0">
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            <!-- 标题栏 -->
+                            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+                                <h3 class="text-sm font-bold text-slate-800">组织架构</h3>
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="openOrgModal('add')" class="w-6 h-6 rounded hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors" title="新增组织">
+                                        <i class="fa fa-plus text-xs"></i>
+                                    </button>
+                                    <button onclick="refreshOrgTree()" class="w-6 h-6 rounded hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors" title="刷新">
+                                        <i class="fa fa-refresh text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 搜索框 -->
+                            <div class="p-3 border-b border-slate-100">
+                                <div class="relative">
+                                    <input type="text" id="org-search-input" placeholder="搜索组织..." class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all pl-8">
+                                    <i class="fa fa-search absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- 统计信息 -->
+                            <div class="px-3 py-2 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                                <span>共 <span class="font-bold text-slate-700" id="org-count">0</span> 个组织</span>
+                                <span id="selected-org-name">-</span>
+                            </div>
+                            
+                            <!-- 组织树内容 -->
+                            <div class="p-2 max-h-[500px] overflow-y-auto">
+                                <ul id="org-tree" class="space-y-0.5"></ul>
+                            </div>
+                            
+                            <!-- 操作栏 -->
+                            <div class="p-3 border-t border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="expandAllOrgs()" class="text-xs text-slate-500 hover:text-blue-600 transition-colors">
+                                        <i class="fa fa-plus-square mr-1"></i>展开全部
+                                    </button>
+                                    <button onclick="collapseAllOrgs()" class="text-xs text-slate-500 hover:text-blue-600 transition-colors">
+                                        <i class="fa fa-minus-square mr-1"></i>收起全部
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 人员列表区域 -->
+                    <div class="flex-1">
+                        <!-- 搜索与筛选 -->
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-6 flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center space-x-4 flex-1">
+                                <div class="relative w-64">
+                                    <input type="text" placeholder="搜索姓名/账号/手机号..." class="w-full border border-slate-200 rounded-lg px-4 py-2 pl-10 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                    <i class="fa fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                                </div>
+                                <select class="border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500">
+                                    <option value="all">所有角色</option>
+                                    <option>平台管理员</option>
+                                    <option>业务审核员</option>
+                                    <option>机构管理员</option>
+                                    <option>数据分析员</option>
+                                </select>
+                                <select class="border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:ring-2 focus:ring-blue-500">
+                                    <option value="all">所有状态</option>
+                                    <option value="active">启用</option>
+                                    <option value="inactive">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 人员列表 -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4">人员信息</th>
+                                        <th class="px-6 py-4">账号</th>
+                                        <th class="px-6 py-4">所属角色</th>
+                                        <th class="px-6 py-4">所属组织</th>
+                                        <th class="px-6 py-4">最后登录</th>
+                                        <th class="px-6 py-4">状态</th>
+                                        <th class="px-6 py-4">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100">
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3 font-bold text-xs">张</div>
+                                                <div>
+                                                    <p class="font-bold text-slate-700">张立伟</p>
+                                                    <p class="text-[10px] text-slate-400">138****8888</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600 font-mono">fz_zhanglw</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded">平台管理员</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600">福州市运营中心</td>
+                                        <td class="px-6 py-4 text-slate-500 font-mono text-xs">2024-05-20 15:30</td>
+                                        <td class="px-6 py-4">
+                                            <span class="flex items-center">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                                                <span class="text-xs text-emerald-600 font-bold">启用</span>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3 text-xs">
+                                                <button class="text-blue-600 font-bold hover:underline" onclick="openModal('edit', {name:'张立伟', account:'fz_zhanglw', role:'平台管理员', phone:'13888888888'})">编辑</button>
+                                                <button class="text-slate-400 font-bold hover:text-slate-600">重置密码</button>
+                                                <button class="text-rose-500 font-bold hover:underline">禁用</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-slate-50 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center">
+                                                <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 mr-3 font-bold text-xs">李</div>
+                                                <div>
+                                                    <p class="font-bold text-slate-700">李美琪</p>
+                                                    <p class="text-[10px] text-slate-400">139****9999</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600 font-mono">fz_limq</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">业务审核员</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-slate-600">业务审核部</td>
+                                        <td class="px-6 py-4 text-slate-500 font-mono text-xs">2024-05-19 10:20</td>
+                                        <td class="px-6 py-4">
+                                            <span class="flex items-center">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2"></span>
+                                                <span class="text-xs text-emerald-600 font-bold">启用</span>
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3 text-xs">
+                                                <button class="text-blue-600 font-bold hover:underline" onclick="openModal('edit', {name:'李美琪', account:'fz_limq', role:'业务审核员', phone:'13999999999'})">编辑</button>
+                                                <button class="text-slate-400 font-bold hover:text-slate-600">重置密码</button>
+                                                <button class="text-rose-500 font-bold hover:underline">禁用</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="action-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 sticky top-0 z-10">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-800">新增人员</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="form-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">姓名 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="form-name" placeholder="人员真实姓名" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">工号</label>
+                        <input type="text" id="form-employee-id" placeholder="员工编号" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">登录账号 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="form-account" placeholder="建议拼音缩写" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">性别</label>
+                        <select id="form-gender" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="">请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">所属组织</label>
+                        <select id="form-org" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="">请选择组织</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">所属角色 <span class="text-rose-500">*</span></label>
+                        <select id="form-role" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                            <option value="">请选择角色</option>
+                            <option>平台管理员</option>
+                            <option>业务审核员</option>
+                            <option>机构管理员</option>
+                            <option>数据分析员</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">手机号码 <span class="text-rose-500">*</span></label>
+                        <input type="tel" id="form-phone" placeholder="11位手机号" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">邮箱</label>
+                        <input type="email" id="form-email" placeholder="工作邮箱" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                </div>
+                <div class="space-y-1" id="password-field">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">初始密码</label>
+                    <input type="password" id="form-password" value="123456" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-100 text-slate-400 font-mono">
+                    <p class="text-[10px] text-slate-400 italic">用户首次登录后需强制修改密码</p>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">状态</label>
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="form-status" id="form-status-active" value="active" checked class="w-4 h-4 text-blue-600">
+                            <span class="ml-2 text-sm text-slate-600">启用</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="form-status" id="form-status-inactive" value="inactive" class="w-4 h-4 text-blue-600">
+                            <span class="ml-2 text-sm text-slate-600">禁用</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50 sticky bottom-0">
+                <button onclick="closeModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
+                <button onclick="saveUser()" class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 组织管理弹窗 -->
+    <div id="org-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 id="org-modal-title" class="text-lg font-bold text-slate-800">新增组织</h3>
+                <button onclick="closeOrgModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="event.preventDefault(); saveOrg();" class="p-6 space-y-4">
+                <input type="hidden" id="org-form-id">
+                <input type="hidden" id="org-form-parent-id">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">上级组织</label>
+                    <select id="org-form-parent" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="">无（作为顶级部门）</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">组织名称 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="org-form-name" placeholder="请输入组织名称" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">组织类型</label>
+                    <select id="org-form-type" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="dept">部门</option>
+                        <option value="team">小组</option>
+                    </select>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">负责人</label>
+                    <input type="text" id="org-form-manager" placeholder="请输入负责人姓名" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">描述</label>
+                    <textarea id="org-form-desc" placeholder="请输入组织描述" rows="2" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all resize-none"></textarea>
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" onclick="closeOrgModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-bold">取消</button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function buildUserOrgOptions() {
+            const select = document.getElementById('form-org');
+            let options = '<option value="">请选择组织</option>';
+            
+            function buildOptions(data, prefix = '') {
+                data.forEach(item => {
+                    options += `<option value="${item.id}">${prefix}${item.name}</option>`;
+                    if (item.children.length > 0) {
+                        buildOptions(item.children, prefix + '├─ ');
+                    }
+                });
+            }
+            
+            buildOptions(orgData);
+            select.innerHTML = options;
+        }
+
+        function openModal(mode, data = null) {
+            const modal = document.getElementById('action-modal');
+            const title = document.getElementById('modal-title');
+            const passwordField = document.getElementById('password-field');
+            const content = modal.querySelector('div > div');
+            
+            buildUserOrgOptions();
+            
+            if (mode === 'edit' && data) {
+                title.textContent = '编辑人员';
+                passwordField.classList.add('hidden');
+                document.getElementById('form-id').value = data.id || '';
+                document.getElementById('form-name').value = data.name || '';
+                document.getElementById('form-employee-id').value = data.employeeId || '';
+                document.getElementById('form-account').value = data.account || '';
+                document.getElementById('form-gender').value = data.gender || '';
+                document.getElementById('form-org').value = data.orgId || '';
+                document.getElementById('form-role').value = data.role || '';
+                document.getElementById('form-phone').value = data.phone || '';
+                document.getElementById('form-email').value = data.email || '';
+                document.getElementById('form-password').value = '******';
+                document.querySelector(`input[name="form-status"][value="${data.status || 'active'}"]`).checked = true;
+                document.getElementById('form-account').readOnly = true;
+                document.getElementById('form-account').classList.add('bg-slate-100', 'text-slate-400');
+            } else {
+                title.textContent = '新增人员';
+                passwordField.classList.remove('hidden');
+                document.getElementById('form-id').value = '';
+                document.getElementById('form-name').value = '';
+                document.getElementById('form-employee-id').value = '';
+                document.getElementById('form-account').value = '';
+                document.getElementById('form-gender').value = '';
+                document.getElementById('form-org').value = '';
+                document.getElementById('form-role').value = '';
+                document.getElementById('form-phone').value = '';
+                document.getElementById('form-email').value = '';
+                document.getElementById('form-password').value = generatePassword();
+                document.getElementById('form-status-active').checked = true;
+                document.getElementById('form-account').readOnly = false;
+                document.getElementById('form-account').classList.remove('bg-slate-100', 'text-slate-400');
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('action-modal');
+            const content = modal.querySelector('div > div');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+            let password = '';
+            for (let i = 0; i < 8; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        }
+
+        function validatePhone(phone) {
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+
+        function validateEmail(email) {
+            if (!email) return true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function saveUser() {
+            const id = document.getElementById('form-id').value;
+            const name = document.getElementById('form-name').value.trim();
+            const account = document.getElementById('form-account').value.trim();
+            const role = document.getElementById('form-role').value;
+            const phone = document.getElementById('form-phone').value.trim();
+            const orgId = document.getElementById('form-org').value;
+            const email = document.getElementById('form-email').value.trim();
+            const status = document.querySelector('input[name="form-status"]:checked').value;
+            
+            if (!name) {
+                showNotification('请填写姓名', 'error');
+                document.getElementById('form-name').focus();
+                return;
+            }
+            
+            if (!account) {
+                showNotification('请填写登录账号', 'error');
+                document.getElementById('form-account').focus();
+                return;
+            }
+            
+            if (!role) {
+                showNotification('请选择所属角色', 'error');
+                document.getElementById('form-role').focus();
+                return;
+            }
+            
+            if (!phone) {
+                showNotification('请填写手机号码', 'error');
+                document.getElementById('form-phone').focus();
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                showNotification('请输入有效的手机号码', 'error');
+                document.getElementById('form-phone').focus();
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showNotification('请输入有效的邮箱地址', 'error');
+                document.getElementById('form-email').focus();
+                return;
+            }
+            
+            const userData = {
+                id: id || `user-${Date.now()}`,
+                name,
+                employeeId: document.getElementById('form-employee-id').value.trim(),
+                account,
+                gender: document.getElementById('form-gender').value,
+                orgId,
+                role,
+                phone,
+                email,
+                status
+            };
+            
+            const isEdit = !!id;
+            if (isEdit) {
+                showNotification('人员信息已更新', 'success');
+            } else {
+                const password = document.getElementById('form-password').value;
+                showNotification(`人员新增成功！初始密码：${password}`, 'success');
+            }
+            
+            closeModal();
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-[9999] transition-all duration-500 flex items-center space-x-3 min-w-[300px] justify-center bg-blue-600 text-white`;
+            
+            let icon = 'fa-check-circle';
+            if(type === 'error') {
+                notification.className = notification.className.replace('bg-blue-600', 'bg-rose-600');
+                icon = 'fa-exclamation-circle';
+            }
+
+            notification.innerHTML = `<i class="fa ${icon} text-lg"></i><span class="font-medium tracking-wide">${message}</span>`;
+            document.body.appendChild(notification);
+            
+            notification.style.transform = 'translate(-50%, -20px)';
+            notification.style.opacity = '0';
+            
+            requestAnimationFrame(() => {
+                notification.style.transform = 'translate(-50%, 0)';
+                notification.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                notification.style.transform = 'translate(-50%, -20px)';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // 组织树数据
+        const orgData = [
+            {
+                id: '1',
+                name: '福州市运营中心',
+                type: 'root',
+                description: '市级运营管理中心',
+                manager: '张立伟',
+                memberCount: 15,
+                children: [
+                    {
+                        id: '1-1',
+                        name: '业务审核部',
+                        type: 'dept',
+                        description: '负责保函业务审核',
+                        manager: '李美琪',
+                        memberCount: 8,
+                        children: [
+                            { id: '1-1-1', name: '审核一组', type: 'team', description: '投标保函审核', manager: '王强', memberCount: 4, children: [] },
+                            { id: '1-1-2', name: '审核二组', type: 'team', description: '履约保函审核', manager: '赵雪', memberCount: 4, children: [] }
+                        ]
+                    },
+                    {
+                        id: '1-2',
+                        name: '技术支持部',
+                        type: 'dept',
+                        description: '系统运维与技术支持',
+                        manager: '陈明',
+                        memberCount: 4,
+                        children: [
+                            { id: '1-2-1', name: '系统维护组', type: 'team', description: '日常系统维护', manager: '刘伟', memberCount: 4, children: [] }
+                        ]
+                    },
+                    {
+                        id: '1-3',
+                        name: '数据管理部',
+                        type: 'dept',
+                        description: '数据统计与分析',
+                        manager: '周芳',
+                        memberCount: 3,
+                        children: []
+                    }
+                ]
+            }
+        ];
+
+        let selectedOrgId = null;
+        let searchKeyword = '';
+
+        function renderOrgTree(data, parentElement, level = 0) {
+            data.forEach(item => {
+                const isMatch = !searchKeyword || item.name.toLowerCase().includes(searchKeyword.toLowerCase());
+                
+                if (!isMatch && item.children.length > 0) {
+                    const hasMatchingChild = item.children.some(child => {
+                        const childMatch = child.name.toLowerCase().includes(searchKeyword.toLowerCase());
+                        return childMatch || child.children.length > 0 && child.children.some(c => c.name.toLowerCase().includes(searchKeyword.toLowerCase()));
+                    });
+                    if (!hasMatchingChild) return;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'relative group';
+                li.dataset.orgId = item.id;
+                
+                const paddingLeft = level > 0 ? `pl-${level * 4}` : '';
+                const isSelected = selectedOrgId === item.id;
+                
+                li.innerHTML = `
+                    <div class="flex items-center ${paddingLeft} px-2 py-1.5 rounded cursor-pointer hover:bg-slate-100 transition-colors ${isSelected ? 'bg-blue-50' : ''}" data-org-id="${item.id}">
+                        ${item.children.length > 0 ? `
+                            <button class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 mr-1 org-expand-btn" data-org-id="${item.id}">
+                                <i class="fa fa-chevron-right text-xs transition-transform"></i>
+                            </button>
+                        ` : '<span class="w-5"></span>'}
+                        <i class="fa ${getOrgIcon(item.type)} mr-2 text-sm ${getOrgIconColor(item.type)}"></i>
+                        <span class="text-sm text-slate-700 flex-1 truncate">${item.name}</span>
+                        ${item.memberCount !== undefined ? `<span class="text-xs text-slate-400 ml-1">(${item.memberCount})</span>` : ''}
+                        <div class="absolute right-2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-1">
+                            <button class="w-5 h-5 rounded hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 edit-org-btn" data-org-id="${item.id}" title="编辑">
+                                <i class="fa fa-pencil text-xs"></i>
+                            </button>
+                            <button class="w-5 h-5 rounded hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-600 delete-org-btn" data-org-id="${item.id}" title="删除">
+                                <i class="fa fa-trash text-xs"></i>
+                            </button>
+                            <button class="w-5 h-5 rounded hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-green-600 add-child-btn" data-org-id="${item.id}" title="新增子组织">
+                                <i class="fa fa-plus text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                parentElement.appendChild(li);
+                
+                if (item.children.length > 0) {
+                    const ul = document.createElement('ul');
+                    ul.className = 'hidden mt-0.5 space-y-0.5';
+                    ul.dataset.parentId = item.id;
+                    li.appendChild(ul);
+                    renderOrgTree(item.children, ul, level + 1);
+                }
+            });
+        }
+
+        function getOrgIcon(type) {
+            switch(type) {
+                case 'root': return 'fa-building';
+                case 'dept': return 'fa-building-o';
+                case 'team': return 'fa-users';
+                default: return 'fa-folder';
+            }
+        }
+
+        function getOrgIconColor(type) {
+            switch(type) {
+                case 'root': return 'text-blue-600';
+                case 'dept': return 'text-indigo-600';
+                case 'team': return 'text-emerald-600';
+                default: return 'text-slate-500';
+            }
+        }
+
+        function countOrgs(data) {
+            let count = data.length;
+            data.forEach(item => {
+                if (item.children.length > 0) {
+                    count += countOrgs(item.children);
+                }
+            });
+            return count;
+        }
+
+        function updateOrgCount() {
+            const count = countOrgs(orgData);
+            document.getElementById('org-count').textContent = count;
+        }
+
+        function updateSelectedOrgName() {
+            if (selectedOrgId) {
+                const org = findOrgById(orgData, selectedOrgId);
+                document.getElementById('selected-org-name').textContent = org ? org.name : '-';
+            } else {
+                document.getElementById('selected-org-name').textContent = '-';
+            }
+        }
+
+        function refreshOrgTree() {
+            const tree = document.getElementById('org-tree');
+            tree.innerHTML = '';
+            renderOrgTree(orgData, tree);
+            bindOrgEvents();
+            updateOrgCount();
+            updateSelectedOrgName();
+        }
+
+        function expandAllOrgs() {
+            document.querySelectorAll('ul[data-parent-id]').forEach(ul => {
+                ul.classList.remove('hidden');
+            });
+            document.querySelectorAll('.org-expand-btn i').forEach(icon => {
+                icon.classList.add('rotate-90');
+            });
+        }
+
+        function collapseAllOrgs() {
+            document.querySelectorAll('ul[data-parent-id]').forEach(ul => {
+                ul.classList.add('hidden');
+            });
+            document.querySelectorAll('.org-expand-btn i').forEach(icon => {
+                icon.classList.remove('rotate-90');
+            });
+        }
+
+        function initOrgSearch() {
+            const input = document.getElementById('org-search-input');
+            input.addEventListener('input', function(e) {
+                searchKeyword = e.target.value;
+                refreshOrgTree();
+            });
+        }
+
+        function bindOrgEvents() {
+            // 展开/收起
+            document.querySelectorAll('.org-expand-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const orgId = this.dataset.orgId;
+                    const ul = document.querySelector(`ul[data-parent-id="${orgId}"]`);
+                    if (ul) {
+                        ul.classList.toggle('hidden');
+                        this.querySelector('i').classList.toggle('rotate-90');
+                    }
+                });
+            });
+
+            // 点击组织项
+            document.querySelectorAll('[data-org-id]').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    if (!e.target.closest('button')) {
+                        const orgId = this.dataset.orgId;
+                        selectedOrgId = orgId;
+                        document.querySelectorAll('[data-org-id]').forEach(item => {
+                            item.classList.remove('bg-blue-50');
+                        });
+                        this.classList.add('bg-blue-50');
+                    }
+                });
+            });
+
+            // 编辑组织
+            document.querySelectorAll('.edit-org-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const orgId = this.dataset.orgId;
+                    const org = findOrgById(orgData, orgId);
+                    if (org) {
+                        openOrgModal('edit', org);
+                    }
+                });
+            });
+
+            // 删除组织
+            document.querySelectorAll('.delete-org-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const orgId = this.dataset.orgId;
+                    if (confirm('确定要删除这个组织吗？')) {
+                        deleteOrg(orgId);
+                        showNotification('组织删除成功', 'success');
+                        refreshOrgTree();
+                    }
+                });
+            });
+
+            // 新增子组织
+            document.querySelectorAll('.add-child-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const parentId = this.dataset.orgId;
+                    openOrgModal('add', { parentId });
+                });
+            });
+        }
+
+        function findOrgById(data, id) {
+            for (const item of data) {
+                if (item.id === id) return item;
+                if (item.children.length > 0) {
+                    const found = findOrgById(item.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        function deleteOrg(id) {
+            function removeFromArray(arr) {
+                const index = arr.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    arr.splice(index, 1);
+                    return true;
+                }
+                for (const item of arr) {
+                    if (item.children && removeFromArray(item.children)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            removeFromArray(orgData);
+        }
+
+        function buildOrgOptions(data, parentId = '', prefix = '') {
+            let options = '';
+            data.forEach(item => {
+                options += `<option value="${item.id}" ${parentId === item.id ? 'selected' : ''}>${prefix}${item.name}</option>`;
+                if (item.children.length > 0) {
+                    options += buildOrgOptions(item.children, parentId, prefix + '├─ ');
+                }
+            });
+            return options;
+        }
+
+        function openOrgModal(type, data = {}) {
+            const modal = document.getElementById('org-modal');
+            const title = document.getElementById('org-modal-title');
+            const form = modal.querySelector('form');
+            
+            const parentSelect = document.getElementById('org-form-parent');
+            const currentParentId = type === 'edit' ? getParentId(data.id) : (data.parentId || '');
+            parentSelect.innerHTML = `<option value="">无（作为顶级部门）</option>${buildOrgOptions(orgData, currentParentId)}`;
+            
+            document.getElementById('org-form-id').value = data.id || '';
+            document.getElementById('org-form-name').value = data.name || '';
+            document.getElementById('org-form-type').value = data.type || 'dept';
+            document.getElementById('org-form-manager').value = data.manager || '';
+            document.getElementById('org-form-desc').value = data.description || '';
+            document.getElementById('org-form-parent-id').value = currentParentId;
+            
+            if (type === 'edit') {
+                title.textContent = '编辑组织';
+            } else {
+                title.textContent = data.parentId ? '新增子组织' : '新增组织';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('.modal-content').classList.remove('scale-95');
+            }, 10);
+        }
+
+        function getParentId(childId) {
+            function findParent(data, childId, parentId = '') {
+                for (const item of data) {
+                    if (item.id === childId) {
+                        return parentId;
+                    }
+                    if (item.children.length > 0) {
+                        const found = findParent(item.children, childId, item.id);
+                        if (found) return found;
+                    }
+                }
+                return '';
+            }
+            return findParent(orgData, childId);
+        }
+
+        function closeOrgModal() {
+            const modal = document.getElementById('org-modal');
+            const content = modal.querySelector('.modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function saveOrg() {
+            const id = document.getElementById('org-form-id').value;
+            const name = document.getElementById('org-form-name').value;
+            const type = document.getElementById('org-form-type').value;
+            const parentId = document.getElementById('org-form-parent').value;
+            const manager = document.getElementById('org-form-manager').value;
+            const description = document.getElementById('org-form-desc').value;
+            
+            if (!name.trim()) {
+                alert('请填写组织名称');
+                return;
+            }
+
+            if (id) {
+                const org = findOrgById(orgData, id);
+                if (org) {
+                    org.name = name;
+                    org.type = type;
+                    org.manager = manager;
+                    org.description = description;
+                    
+                    const oldParentId = getParentId(id);
+                    if (oldParentId !== parentId) {
+                        const oldParent = findOrgById(orgData, oldParentId);
+                        if (oldParent) {
+                            const index = oldParent.children.findIndex(item => item.id === id);
+                            if (index !== -1) {
+                                oldParent.children.splice(index, 1);
+                            }
+                        }
+                        
+                        if (parentId) {
+                            const newParent = findOrgById(orgData, parentId);
+                            if (newParent) {
+                                newParent.children.push(org);
+                            }
+                        } else {
+                            orgData[0].children.push(org);
+                        }
+                    }
+                }
+                showNotification('组织信息已更新', 'success');
+            } else {
+                const newOrg = {
+                    id: parentId ? `${parentId}-${Date.now()}` : `new-${Date.now()}`,
+                    name,
+                    type: parentId ? type : 'dept',
+                    manager,
+                    description,
+                    memberCount: 0,
+                    children: []
+                };
+                
+                if (parentId) {
+                    const parent = findOrgById(orgData, parentId);
+                    if (parent) {
+                        parent.children.push(newOrg);
+                    }
+                } else {
+                    orgData[0].children.push(newOrg);
+                }
+                showNotification('组织新增成功', 'success');
+            }
+            
+            closeOrgModal();
+            refreshOrgTree();
+        }
+
+        // 初始化组织树
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshOrgTree();
+            initOrgSearch();
+        });
+    </script>
+</body>
+</html>

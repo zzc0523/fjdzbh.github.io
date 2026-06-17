@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市级运营平台 - 机构备案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        // 获取审核时间线HTML
+        function getTimelineHTML(status) {
+            if (status === '待提交') {
+                return `
+                    <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div class="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs">
+                                <i class="fa fa-pencil"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-slate-800">草拟备案信息</h4>
+                            <p class="text-sm text-slate-500">2026-04-24 09:00:00</p>
+                            <p class="text-sm text-slate-600 mt-1">操作人：市级管理员</p>
+                        </div>
+                    </div>
+                `;
+            } else if (status === '待审核') {
+                return `
+                    <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div class="h-full w-0.5 bg-slate-200 mt-2"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-slate-800">市级发起备案</h4>
+                            <p class="text-sm text-slate-500">2026-04-24 09:00:00</p>
+                            <p class="text-sm text-slate-600 mt-1">操作人：市级管理员</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div class="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs">
+                                <i class="fa fa-clock-o"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-slate-800">省级待审核</h4>
+                            <p class="text-sm text-slate-500">处理中...</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">
+                                <i class="fa fa-check"></i>
+                            </div>
+                            <div class="h-full w-0.5 bg-slate-200 mt-2"></div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-slate-800">市级发起备案</h4>
+                            <p class="text-sm text-slate-500">2026-04-20 10:30:00</p>
+                            <p class="text-sm text-slate-600 mt-1">操作人：市级管理员</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div class="w-6 h-6 rounded-full bg-${status === '审核通过' ? 'green' : 'red'}-500 flex items-center justify-center text-white text-xs">
+                                <i class="fa fa-${status === '审核通过' ? 'check' : 'exclamation'}"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-slate-800">省级审核${status === '审核通过' ? '通过' : '退回'}</h4>
+                            <p class="text-sm text-slate-500">2026-04-21 14:30:00</p>
+                            <p class="text-sm text-slate-600 mt-1">操作人：省级管理员</p>
+                            ${status === '审核不通过' ? '<p class="text-sm text-slate-600 mt-1 text-red-600">意见：需补充资质证明材料，特别是金融许可证明相关信息</p>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 模拟全省机构库数据
+        const globalOrgDatabase = {
+            '91350100MA2XN3GP4A': {
+                status: 'ARCHIVED',
+                orgName: '中国建设银行股份有限公司福州分行',
+                orgType: '银行',
+                city: '福州市',
+                archiveDate: '2025-03-15',
+                contactPerson: '张经理',
+                contactPhone: '138****5678'
+            },
+            '91350200MA2XN3GP5B': {
+                status: 'PENDING_PROVINCE_REVIEW',
+                orgName: '中国工商银行股份有限公司厦门分行',
+                orgType: '银行',
+                city: '厦门市',
+                submitDate: '2026-04-20',
+                currentStatus: '省级审核中',
+                contactPerson: '李经理',
+                contactPhone: '139****6789'
+            },
+            '91350300MA2XN3GP6C': {
+                status: 'REJECTED_BY_PROVINCE',
+                orgName: '福建担保有限公司',
+                orgType: '担保公司',
+                city: '泉州市',
+                rejectDate: '2026-03-10',
+                rejectReason: '资质证明材料不完整，缺少金融许可证；注册资本不符合最低要求；风险控制体系说明不详细',
+                contactPerson: '王经理',
+                contactPhone: '137****7890'
+            }
+        };
+
+        // 冲突检测函数
+        function checkOrgConflict(orgCode) {
+            if (!orgCode || orgCode.length !== 18) {
+                return null;
+            }
+            
+            const orgInfo = globalOrgDatabase[orgCode];
+            if (!orgInfo) {
+                return { status: 'NEW' };
+            }
+            
+            return orgInfo;
+        }
+
+        // 显示场景A：已备案冲突提示
+        function showArchivedConflict(orgInfo) {
+            createModal('备案冲突提示', `
+                <div class="space-y-4">
+                    <div class="flex items-start p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                        <i class="fa fa-exclamation-circle text-red-500 text-2xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-red-800 text-lg mb-2">该机构已完成省级备案</h4>
+                            <p class="text-red-700">该机构已由<span class="font-semibold">${orgInfo.city}</span>发起并完成省级备案，无需重复操作。您可直接在该机构的产品接入申请中进行审核。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-slate-800 mb-3 flex items-center">
+                            <i class="fa fa-building-o mr-2 text-blue-600"></i>机构基本信息
+                        </h5>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <span class="text-slate-500">机构名称：</span>
+                                <span class="text-slate-800">${orgInfo.orgName}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">机构类型：</span>
+                                <span class="text-slate-800">${orgInfo.orgType}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">备案属地：</span>
+                                <span class="text-slate-800">${orgInfo.city}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">备案日期：</span>
+                                <span class="text-slate-800">${orgInfo.archiveDate}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">联系人：</span>
+                                <span class="text-slate-800">${orgInfo.contactPerson}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">联系电话：</span>
+                                <span class="text-slate-800">${orgInfo.contactPhone}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                            <i class="fa fa-lightbulb-o mr-2"></i>操作建议
+                        </h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• 该机构已在全省机构库中，您可以直接审核其产品接入申请</li>
+                            <li>• 如需查看机构详细信息，请前往"机构库"模块查询</li>
+                            <li>• 如有疑问，请联系该机构备案属地管理员：${orgInfo.city}</li>
+                        </ul>
+                    </div>
+                </div>
+            `, {
+                showFooter: false,
+                confirmBtnText: '我知道了'
+            });
+        }
+
+        // 显示场景B：备案中冲突提示
+        function showPendingConflict(orgInfo) {
+            createModal('备案冲突提示', `
+                <div class="space-y-4">
+                    <div class="flex items-start p-4 bg-orange-50 border-l-4 border-orange-500 rounded">
+                        <i class="fa fa-clock-o text-orange-500 text-2xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-orange-800 text-lg mb-2">该机构正在办理入驻备案中</h4>
+                            <p class="text-orange-700">该机构正由<span class="font-semibold">${orgInfo.city}</span>办理入驻备案中，当前状态为<span class="font-semibold">${orgInfo.currentStatus}</span>，请联系该地市管理员或等待备案完成后再行操作。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-slate-800 mb-3 flex items-center">
+                            <i class="fa fa-info-circle mr-2 text-blue-600"></i>备案进度信息
+                        </h5>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <span class="text-slate-500">机构名称：</span>
+                                <span class="text-slate-800">${orgInfo.orgName}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">机构类型：</span>
+                                <span class="text-slate-800">${orgInfo.orgType}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">备案发起地：</span>
+                                <span class="text-slate-800">${orgInfo.city}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">提交日期：</span>
+                                <span class="text-slate-800">${orgInfo.submitDate}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">当前状态：</span>
+                                <span class="text-orange-600 font-semibold">${orgInfo.currentStatus}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">联系人：</span>
+                                <span class="text-slate-800">${orgInfo.contactPerson}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                            <i class="fa fa-lightbulb-o mr-2"></i>操作建议
+                        </h5>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• 同一机构在同一时间只能由一个地市主导备案流程</li>
+                            <li>• 建议联系${orgInfo.city}管理员了解备案进度</li>
+                            <li>• 备案完成后，该机构将自动进入全省机构库</li>
+                            <li>• 您可以在"机构库"中查询备案完成情况</li>
+                        </ul>
+                    </div>
+                </div>
+            `, {
+                showFooter: false,
+                confirmBtnText: '我知道了'
+            });
+        }
+
+        // 显示场景C：已拒绝提示（允许重新发起）
+        function showRejectedConflict(orgInfo) {
+            let modalClosed = false;
+            
+            createModal('历史备案记录提示', `
+                <div class="space-y-4">
+                    <div class="flex items-start p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+                        <i class="fa fa-exclamation-triangle text-yellow-600 text-2xl mr-3 mt-1"></i>
+                        <div>
+                            <h4 class="font-semibold text-yellow-800 text-lg mb-2">该机构曾有备案被拒绝记录</h4>
+                            <p class="text-yellow-700">该机构曾由<span class="font-semibold">${orgInfo.city}</span>发起备案，但被省级审核拒绝。您可以重新发起备案流程。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-red-50 rounded-lg p-4 border border-red-200">
+                        <h5 class="font-semibold text-red-800 mb-3 flex items-center">
+                            <i class="fa fa-times-circle mr-2"></i>历史驳回原因
+                        </h5>
+                        <div class="text-sm text-red-700 space-y-2">
+                            <p><span class="font-semibold">驳回日期：</span>${orgInfo.rejectDate}</p>
+                            <p><span class="font-semibold">驳回原因：</span></p>
+                            <div class="bg-white p-3 rounded border border-red-200 mt-2">
+                                <p class="text-slate-700">${orgInfo.rejectReason}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-slate-800 mb-3 flex items-center">
+                            <i class="fa fa-building-o mr-2 text-blue-600"></i>机构基本信息
+                        </h5>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                                <span class="text-slate-500">机构名称：</span>
+                                <span class="text-slate-800">${orgInfo.orgName}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">机构类型：</span>
+                                <span class="text-slate-800">${orgInfo.orgType}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">原备案地：</span>
+                                <span class="text-slate-800">${orgInfo.city}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-500">联系人：</span>
+                                <span class="text-slate-800">${orgInfo.contactPerson}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 rounded-lg p-4">
+                        <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                            <i class="fa fa-check-circle mr-2"></i>重新备案说明
+                        </h5>
+                        <ul class="text-sm text-green-700 space-y-1">
+                            <li>• 您可以重新为该机构发起备案流程</li>
+                            <li>• 请仔细查看历史驳回原因，避免重复提交不符合要求的材料</li>
+                            <li>• 建议与机构沟通，确保资质材料完整后再提交</li>
+                        </ul>
+                    </div>
+                </div>
+            `, {
+                confirmBtnText: '继续发起备案',
+                onConfirm: function(closeModal) {
+                    modalClosed = true;
+                    closeModal();
+                    setTimeout(() => {
+                        openNewOrgModal(orgInfo);
+                    }, 350);
+                }
+            });
+        }
+
+        // 打开新增备案模态框（支持预填充数据）
+        function openNewOrgModal(prefillData = null) {
+            createModal('新增备案', `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">机构名称 <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入机构名称" id="orgName" value="${prefillData ? prefillData.orgName : ''}">
+                            <p class="text-xs text-slate-500 mt-1">最多200字符</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">机构类型 <span class="text-red-500">*</span></label>
+                            <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" id="orgType">
+                                <option value="">请选择机构类型</option>
+                                <option value="银行" ${prefillData && prefillData.orgType === '银行' ? 'selected' : ''}>银行</option>
+                                <option value="担保公司" ${prefillData && prefillData.orgType === '担保公司' ? 'selected' : ''}>担保公司</option>
+                                <option value="保险公司" ${prefillData && prefillData.orgType === '保险公司' ? 'selected' : ''}>保险公司</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">统一社会信用代码 <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary pr-10" placeholder="请输入18位统一社会信用代码" id="orgCode" maxlength="18">
+                                <div id="codeCheckIcon" class="absolute right-3 top-1/2 transform -translate-y-1/2 hidden">
+                                    <i class="fa fa-spinner fa-spin text-blue-500"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1" id="codeCheckHint">系统会自动检测是否已存在备案记录</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">法定代表人 <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入法定代表人姓名" id="legalRep">
+                            <p class="text-xs text-slate-500 mt-1">最多50字符</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">联系人姓名 <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入联系人姓名" id="contactName" value="${prefillData ? prefillData.contactPerson : ''}">
+                            <p class="text-xs text-slate-500 mt-1">最多50字符</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">联系人手机 <span class="text-red-500">*</span></label>
+                            <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入11位手机号码" id="contactPhone" value="${prefillData ? prefillData.contactPhone : ''}">
+                            <p class="text-xs text-slate-500 mt-1">11位手机，符合运营商号段</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">联系人邮箱 <span class="text-red-500">*</span></label>
+                            <input type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入电子邮箱" id="contactEmail" value="${prefillData ? prefillData.contactEmail : ''}">
+                            <p class="text-xs text-slate-500 mt-1">用于接收账号信息</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">拟备案保函类型 <span class="text-red-500">*</span></label>
+                        <div class="flex flex-wrap gap-4">
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="投标保函">
+                                <span>投标保函</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="履约保函">
+                                <span>履约保函</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="预付款保函">
+                                <span>预付款保函</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-2" value="质量保函">
+                                <span>质量保函</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">市级推荐意见 <span class="text-red-500">*</span></label>
+                        <textarea class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" rows="4" placeholder="请输入市级推荐意见" id="recommendOpinion"></textarea>
+                        <p class="text-xs text-slate-500 mt-1">最多500字符</p>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">附件（推荐函）</label>
+                        <div class="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
+                            <div class="flex flex-col items-center">
+                                <i class="fa fa-paperclip text-slate-400 text-3xl mb-3"></i>
+                                <p class="text-slate-500 mb-2">点击或拖拽文件至此处上传</p>
+                                <p class="text-xs text-slate-400 mb-4">支持.pdf/.doc/.docx，≤20MB，支持上传后预览</p>
+                                <input type="file" class="hidden" id="fileUpload">
+                                <label for="fileUpload" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors cursor-pointer">
+                                    选择文件
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `, {
+                onShow: function() {
+                    const orgCodeInput = document.getElementById('orgCode');
+                    const checkIcon = document.getElementById('codeCheckIcon');
+                    const checkHint = document.getElementById('codeCheckHint');
+                    
+                    if (prefillData) {
+                        orgCodeInput.value = Object.keys(globalOrgDatabase).find(key => globalOrgDatabase[key] === prefillData) || '';
+                    }
+                    
+                    let checkTimeout;
+                    orgCodeInput.addEventListener('input', function() {
+                        clearTimeout(checkTimeout);
+                        const value = this.value.trim();
+                        
+                        checkIcon.classList.remove('hidden');
+                        checkIcon.innerHTML = '<i class="fa fa-spinner fa-spin text-blue-500"></i>';
+                        checkHint.className = 'text-xs text-slate-500 mt-1';
+                        checkHint.textContent = '正在校验...';
+                        
+                        checkTimeout = setTimeout(() => {
+                            if (value.length === 18) {
+                                const result = checkOrgConflict(value);
+                                
+                                if (result && result.status === 'ARCHIVED') {
+                                    checkIcon.innerHTML = '<i class="fa fa-times-circle text-red-500"></i>';
+                                    checkHint.className = 'text-xs text-red-500 mt-1';
+                                    checkHint.textContent = '该机构已完成省级备案，不可重复发起';
+                                    orgCodeInput.classList.add('border-red-500');
+                                    orgCodeInput.classList.remove('border-green-500');
+                                    setTimeout(() => showArchivedConflict(result), 500);
+                                } else if (result && result.status.startsWith('PENDING')) {
+                                    checkIcon.innerHTML = '<i class="fa fa-exclamation-circle text-orange-500"></i>';
+                                    checkHint.className = 'text-xs text-orange-500 mt-1';
+                                    checkHint.textContent = '该机构正在备案中，不可重复发起';
+                                    orgCodeInput.classList.add('border-orange-500');
+                                    orgCodeInput.classList.remove('border-green-500');
+                                    setTimeout(() => showPendingConflict(result), 500);
+                                } else if (result && result.status.startsWith('REJECTED')) {
+                                    checkIcon.innerHTML = '<i class="fa fa-exclamation-triangle text-yellow-500"></i>';
+                                    checkHint.className = 'text-xs text-yellow-600 mt-1';
+                                    checkHint.textContent = '该机构曾有备案被拒绝记录，可重新发起';
+                                    orgCodeInput.classList.add('border-yellow-500');
+                                    orgCodeInput.classList.remove('border-green-500');
+                                    setTimeout(() => showRejectedConflict(result), 500);
+                                } else {
+                                    checkIcon.innerHTML = '<i class="fa fa-check-circle text-green-500"></i>';
+                                    checkHint.className = 'text-xs text-green-600 mt-1';
+                                    checkHint.textContent = '校验通过，可以发起备案';
+                                    orgCodeInput.classList.add('border-green-500');
+                                    orgCodeInput.classList.remove('border-red-500', 'border-orange-500', 'border-yellow-500');
+                                }
+                            } else if (value.length > 0) {
+                                checkIcon.innerHTML = '<i class="fa fa-info-circle text-slate-400"></i>';
+                                checkHint.className = 'text-xs text-slate-500 mt-1';
+                                checkHint.textContent = '请输入18位统一社会信用代码';
+                                orgCodeInput.classList.remove('border-green-500', 'border-red-500', 'border-orange-500', 'border-yellow-500');
+                            } else {
+                                checkIcon.classList.add('hidden');
+                                checkHint.className = 'text-xs text-slate-500 mt-1';
+                                checkHint.textContent = '18位，字母数字组合';
+                                orgCodeInput.classList.remove('border-green-500', 'border-red-500', 'border-orange-500', 'border-yellow-500');
+                            }
+                        }, 500);
+                    });
+                },
+                onConfirm: function(closeModal) {
+                    const orgCode = document.getElementById('orgCode').value.trim();
+                    const orgName = document.getElementById('orgName').value.trim();
+                    
+                    if (!orgCode || orgCode.length !== 18) {
+                        alert('请输入正确的18位统一社会信用代码');
+                        return;
+                    }
+                    
+                    const result = checkOrgConflict(orgCode);
+                    if (result && (result.status === 'ARCHIVED' || result.status.startsWith('PENDING'))) {
+                        alert('该机构存在冲突，无法发起备案');
+                        return;
+                    }
+                    
+                    alert('新增成功，状态为待提交');
+                    closeModal();
+                }
+            });
+        }
+
+        // 创建模态框函数
+        function createModal(title, content, options = {}) {
+            let modal = document.getElementById('modal');
+            if (modal) { modal.remove(); }
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.95)';
+            
+            const confirmBtnText = options.confirmBtnText || '提交';
+            const showFooter = options.showFooter !== false;
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-all duration-300">
+                    <div class="flex justify-between items-center border-b border-slate-200 p-5 bg-slate-50">
+                        <h3 class="text-xl font-bold text-slate-900">${title}</h3>
+                        <button id="closeModal" class="w-9 h-9 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6">${content}</div>
+                    ${showFooter ? `
+                    <div class="flex justify-end border-t border-slate-200 p-5 bg-slate-50 space-x-4">
+                        <button id="cancelModal" class="border border-slate-300 text-slate-700 px-6 py-2.5 rounded-lg hover:bg-slate-100 transition-colors font-medium">取消</button>
+                        <button id="confirmModal" class="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-primary/90 transition-all font-medium shadow-sm hover:shadow-md">${confirmBtnText}</button>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => { 
+                modal.style.opacity = '1'; 
+                modal.style.transform = 'scale(1)'; 
+                // 触发onShow回调
+                if (options.onShow) {
+                    options.onShow();
+                }
+            }, 10);
+            
+            function closeModal() {
+                modal.style.opacity = '0';
+                modal.style.transform = 'scale(0.95)';
+                setTimeout(() => { if (modal.parentNode) { modal.parentNode.removeChild(modal); } }, 300);
+            }
+            
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            if (showFooter) {
+                document.getElementById('cancelModal').addEventListener('click', closeModal);
+                document.getElementById('confirmModal').addEventListener('click', function() {
+                    if (options.onConfirm) {
+                        options.onConfirm(closeModal);
+                    } else {
+                        closeModal();
+                    }
+                });
+            }
+            modal.addEventListener('click', function(e) { if (e.target === modal) { closeModal(); } });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 新增备案按钮
+            const addBtn = document.querySelector('button:has(i.fa-plus)');
+            if (addBtn) {
+                addBtn.addEventListener('click', function() {
+                    openNewOrgModal();
+                });
+            }
+            
+            // 批量备案
+            const uploadBtn = document.querySelector('button:has(i.fa-upload)');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', function() {
+                    createModal('批量备案机构', `
+                        <div class="space-y-6">
+                            <!-- 模板下载 -->
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-slate-700">模板下载</h3>
+                                <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors flex items-center">
+                                    <i class="fa fa-download mr-2"></i>下载Excel模板
+                                </button>
+                                <p class="text-xs text-slate-500">请按照模板格式填写机构信息，支持 .xlsx/.xls 格式，最大10MB</p>
+                            </div>
+                            
+                            <!-- 文件上传 -->
+                            <div class="space-y-2">
+                                <h3 class="text-sm font-semibold text-slate-700">文件上传</h3>
+                                <div class="border-2 border-dashed border-slate-300 rounded-lg p-10 text-center">
+                                    <div class="flex flex-col items-center">
+                                        <i class="fa fa-cloud-upload text-slate-400 text-4xl mb-4"></i>
+                                        <p class="text-slate-500 mb-2">点击或拖拽文件至此处上传</p>
+                                        <p class="text-xs text-slate-400 mb-4">支持 .xlsx/.xls 格式，最大10MB</p>
+                                        <input type="file" class="hidden" id="fileUpload">
+                                        <label for="fileUpload" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors cursor-pointer">
+                                            选择文件
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 导入预览 -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="text-sm font-semibold text-slate-700">导入预览</h3>
+                                    <button class="text-blue-600 hover:text-blue-800 flex items-center text-sm" id="downloadErrorBtn">
+                                        <i class="fa fa-download mr-1"></i>下载错误报告
+                                    </button>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm" id="previewTable">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="px-3 py-2 border text-left">机构名称</th>
+                                                <th class="px-3 py-2 border text-left">机构类型</th>
+                                                <th class="px-3 py-2 border text-left">统一社会信用代码</th>
+                                                <th class="px-3 py-2 border text-left">法定代表人</th>
+                                                <th class="px-3 py-2 border text-left">联系人姓名</th>
+                                                <th class="px-3 py-2 border text-left">联系人手机</th>
+                                                <th class="px-3 py-2 border text-left">拟备案保函类型</th>
+                                                <th class="px-3 py-2 border text-left">市级推荐意见</th>
+                                                <th class="px-3 py-2 border text-left">错误原因</th>
+                                                <th class="px-3 py-2 border text-left">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-200">
+                                            <tr>
+                                                <td class="px-3 py-2 border">XX银行股份有限公司</td>
+                                                <td class="px-3 py-2 border">银行</td>
+                                                <td class="px-3 py-2 border">91110000XXXXXXXXXX</td>
+                                                <td class="px-3 py-2 border">张三</td>
+                                                <td class="px-3 py-2 border">李四</td>
+                                                <td class="px-3 py-2 border">13812345678</td>
+                                                <td class="px-3 py-2 border">投标保函,履约保函</td>
+                                                <td class="px-3 py-2 border">该机构资质优良</td>
+                                                <td class="px-3 py-2 border text-red-500">机构已备案</td>
+                                                <td class="px-3 py-2 border text-center">
+                                                    <button class="text-red-500 hover:text-red-700">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-3 py-2 border">YY保险公司</td>
+                                                <td class="px-3 py-2 border">保险公司</td>
+                                                <td class="px-3 py-2 border">91110000YYYYYYYYYY</td>
+                                                <td class="px-3 py-2 border">王五</td>
+                                                <td class="px-3 py-2 border">赵六</td>
+                                                <td class="px-3 py-2 border">13987654321</td>
+                                                <td class="px-3 py-2 border">履约保函,预付款保函</td>
+                                                <td class="px-3 py-2 border">建议通过</td>
+                                                <td class="px-3 py-2 border text-green-500">无错误</td>
+                                                <td class="px-3 py-2 border text-center">
+                                                    <button class="text-red-500 hover:text-red-700">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-3 py-2 border">ZZ担保公司</td>
+                                                <td class="px-3 py-2 border">担保公司</td>
+                                                <td class="px-3 py-2 border">91110000ZZZZZZZZZZ</td>
+                                                <td class="px-3 py-2 border">钱七</td>
+                                                <td class="px-3 py-2 border">孙八</td>
+                                                <td class="px-3 py-2 border">13712345678</td>
+                                                <td class="px-3 py-2 border">质量保函</td>
+                                                <td class="px-3 py-2 border">资质良好</td>
+                                                <td class="px-3 py-2 border text-red-500">统一社会信用代码格式错误</td>
+                                                <td class="px-3 py-2 border text-center">
+                                                    <button class="text-red-500 hover:text-red-700">
+                                                        <i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    `, {
+                        onConfirm: function(closeModal) {
+                            // 检查统一社会信用代码是否已存在
+                            const existingCodes = [];
+                            document.querySelectorAll('tbody tr').forEach(row => {
+                                const code = row.querySelector('td:nth-of-type(4)').textContent.trim();
+                                existingCodes.push(code);
+                            });
+                            
+                            // 检查预览表格中的代码
+                            const previewCodes = [];
+                            document.querySelectorAll('#previewTable tbody tr').forEach(row => {
+                                const code = row.querySelector('td:nth-of-type(3)').textContent.trim();
+                                previewCodes.push(code);
+                            });
+                            
+                            // 检查是否有重复
+                            const duplicateCodes = [];
+                            previewCodes.forEach(code => {
+                                if (existingCodes.includes(code)) {
+                                    duplicateCodes.push(code);
+                                }
+                            });
+                            
+                            if (duplicateCodes.length > 0) {
+                                alert(`以下机构已备案，无法重复发起：${duplicateCodes.join(', ')}`);
+                                return;
+                            }
+                            
+                            // 模拟批量新增"待提交"备案数据
+                            alert('批量新增成功，状态为待提交');
+                            closeModal();
+                        },
+                        onShow: function() {
+                            // 为下载错误报告按钮添加点击事件
+                            const downloadErrorBtn = document.getElementById('downloadErrorBtn');
+                            if (downloadErrorBtn) {
+                                downloadErrorBtn.addEventListener('click', function() {
+                                    // 模拟生成错误报告并下载
+                                    const errorData = [
+                                        { "机构名称": "XX银行股份有限公司", "统一社会信用代码": "91110000XXXXXXXXXX", "错误原因": "机构已备案" },
+                                        { "机构名称": "ZZ担保公司", "统一社会信用代码": "91110000ZZZZZZZZZZ", "错误原因": "统一社会信用代码格式错误" }
+                                    ];
+                                    
+                                    // 转换为CSV格式
+                                    const headers = Object.keys(errorData[0]);
+                                    const csvContent = [
+                                        headers.join(','),
+                                        ...errorData.map(row => headers.map(field => row[field]).join(','))
+                                    ].join('\n');
+                                    
+                                    // 创建下载链接
+                                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                                    const link = document.createElement('a');
+                                    const url = URL.createObjectURL(blob);
+                                    link.setAttribute('href', url);
+                                    link.setAttribute('download', '导入错误报告.csv');
+                                    link.style.visibility = 'hidden';
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                    
+                                    alert('错误报告已下载');
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+
+            // 批量提交审核
+            const batchSubmitBtn = document.getElementById('batchSubmitBtn');
+            if (batchSubmitBtn) {
+                batchSubmitBtn.addEventListener('click', function() {
+                    const selectedCheckboxes = document.querySelectorAll('tbody input[type="checkbox"]:checked');
+                    if (selectedCheckboxes.length === 0) {
+                        alert('请选择需要提交审核的记录');
+                        return;
+                    }
+                    
+                    let hasInvalidStatus = false;
+                    selectedCheckboxes.forEach(cb => {
+                        const tr = cb.closest('tr');
+                        const status = tr.querySelector('td:nth-last-child(2)').textContent.trim();
+                        if (status !== '待提交') {
+                            hasInvalidStatus = true;
+                        }
+                    });
+                    
+                    if (hasInvalidStatus) {
+                        alert('仅“待提交”状态的记录可以进行批量提交审核');
+                        return;
+                    }
+                    
+                    if (confirm(`确认将选中的 ${selectedCheckboxes.length} 条记录提交审核吗？`)) {
+                        alert('批量提交成功，已进入待审核流程');
+                        // 模拟更新页面状态
+                        selectedCheckboxes.forEach(cb => {
+                            const tr = cb.closest('tr');
+                            const statusCell = tr.querySelector('td:nth-last-child(2)');
+                            statusCell.innerHTML = '<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">待审核</span>';
+                            const actionCell = tr.querySelector('td:last-child');
+                            actionCell.innerHTML = `
+                                <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                <a href="#" class="text-blue-500 hover:text-blue-700 mr-3">编辑</a>
+                            `;
+                        });
+                    }
+                });
+            }
+
+            // 重新绑定查看和编辑按钮的函数
+            function bindActionButtons() {
+                // 查看按钮
+                document.querySelectorAll('a.text-primary').forEach(btn => {
+                    if (btn.textContent.trim() === '查看') {
+                        // 移除旧监听器（如果有的话，但在这种静态页面中通常直接重新绑定即可）
+                        const newBtn = btn.cloneNode(true);
+                        btn.parentNode.replaceChild(newBtn, btn);
+                        
+                        newBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const tr = this.closest('tr');
+                            const name = tr.querySelector('td:nth-of-type(2)').textContent.trim();
+                            const status = tr.querySelector('td:nth-last-child(2)').textContent.trim();
+                            
+                            let statusSpecificHTML = '';
+                            if (status === '待提交') {
+                                statusSpecificHTML = `
+                                    <div class="bg-blue-50 border border-blue-100 rounded-md p-4 mb-6">
+                                        <p class="text-sm text-blue-800">当前记录处于“待提交”状态，您可以继续编辑完善资料后提交审核。</p>
+                                    </div>
+                                `;
+                            }
+
+                            createModal(`机构详情 - ${name}`, `
+                                <div class="space-y-6">
+                                    ${statusSpecificHTML}
+                                    <!-- 基本信息 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">基本信息</h3>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">机构名称</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${name}</div>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">机构类型</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(3)').textContent.trim()}</div>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">统一社会信用代码</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(4)').textContent.trim()}</div>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">法定代表人</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(5)').textContent.trim()}</div>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人姓名</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(6)').textContent.trim()}</div>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人手机</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(7)').textContent.trim()}</div>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人邮箱</label>
+                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">contact@example.com</div>
+                                            </div>
+
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <label class="text-sm font-medium text-slate-700 block mb-1">拟备案保函类型</label>
+                                            <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(8)').textContent.trim()}</div>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <label class="text-sm font-medium text-slate-700 block mb-1">市级推荐意见</label>
+                                            <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50 min-h-[80px]">${tr.querySelector('td:nth-of-type(9)').textContent.trim()}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 附件 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">附件（推荐函）</h3>
+                                        ${status === '待提交' ? `
+                                        <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
+                                            <p class="text-slate-500 mb-2">点击或拖拽文件至此处上传</p>
+                                            <p class="text-xs text-slate-400 mb-4">支持 .pdf/.doc/.docx 格式，≤20MB，支持上传后预览</p>
+                                            <button class="border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors">
+                                                选择文件
+                                            </button>
+                                        </div>
+                                        ` : ''}
+                                        
+                                        <div class="mt-4">
+                                            <div class="flex items-center justify-between p-3 border border-slate-200 rounded-md">
+                                                <div class="flex items-center">
+                                                    <i class="fa fa-file-pdf-o text-red-500 mr-3"></i>
+                                                    <div>
+                                                        <p class="text-sm font-medium text-slate-900">推荐函.pdf</p>
+                                                        <p class="text-xs text-slate-500">2026-04-20 10:30:00</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <button class="text-blue-600 hover:text-blue-800"><i class="fa fa-eye"></i></button>
+                                                    <button class="text-slate-500 hover:text-slate-700"><i class="fa fa-download"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    ${status === '审核不通过' ? `
+                                    <!-- 省级审核意见 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">省级审核意见</h3>
+                                        <div class="bg-red-50 border border-red-100 rounded-md p-4">
+                                            <p class="text-sm text-red-800 mb-2">需补充资质证明材料，特别是金融许可证明相关信息</p>
+                                            <div class="flex justify-between items-center mt-2">
+                                                <div class="text-xs text-slate-500">
+                                                    <p>审核人：省级管理员</p>
+                                                    <p>审核时间：2026-04-21 14:30:00</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
+                                    
+                                    <!-- 审核时间线 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">审核时间线</h3>
+                                        <div class="space-y-4">
+                                            ${getTimelineHTML(status)}
+                                        </div>
+                                    </div>
+                                </div>
+                            `, {
+                                showFooter: false
+                            });
+                        });
+                    }
+                });
+
+                // 编辑按钮
+                document.querySelectorAll('a.text-blue-500').forEach(btn => {
+                    if (btn.textContent.trim() === '编辑') {
+                        const newBtn = btn.cloneNode(true);
+                        btn.parentNode.replaceChild(newBtn, btn);
+                        
+                        newBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const tr = this.closest('tr');
+                            const name = tr.querySelector('td:nth-of-type(2)').textContent.trim();
+                            const status = tr.querySelector('td:nth-last-child(2)').textContent.trim();
+                            createModal(`编辑机构 - ${name}`, `
+                                <div class="space-y-6">
+                                    <!-- 基本信息 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">基本信息</h3>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">机构名称 <span class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" value="${name}">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">机构类型 <span class="text-red-500">*</span></label>
+                                                <select class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary">
+                                                    <option value="银行" ${tr.querySelector('td:nth-of-type(3)').textContent.trim() === '银行' ? 'selected' : ''}>银行</option>
+                                                    <option value="保险公司" ${tr.querySelector('td:nth-of-type(3)').textContent.trim() === '保险公司' ? 'selected' : ''}>保险公司</option>
+                                                    <option value="担保公司" ${tr.querySelector('td:nth-of-type(3)').textContent.trim() === '担保公司' ? 'selected' : ''}>担保公司</option>
+                                                    <option value="其他" ${tr.querySelector('td:nth-of-type(3)').textContent.trim() === '其他' ? 'selected' : ''}>其他</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">统一社会信用代码 <span class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" value="${tr.querySelector('td:nth-of-type(4)').textContent.trim()}">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">法定代表人 <span class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" value="${tr.querySelector('td:nth-of-type(5)').textContent.trim()}">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人姓名 <span class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" value="${tr.querySelector('td:nth-of-type(6)').textContent.trim()}">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人手机 <span class="text-red-500">*</span></label>
+                                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" value="${tr.querySelector('td:nth-of-type(7)').textContent.trim()}">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人邮箱 <span class="text-red-500">*</span></label>
+                                                <input type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入电子邮箱">
+                                            </div>
+
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <label class="text-sm font-medium text-slate-700 block mb-1">拟备案保函类型 <span class="text-red-500">*</span></label>
+                                            <div class="flex flex-wrap gap-4">
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" id="product1" class="mr-2" checked>
+                                                    <label for="product1">投标保函</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" id="product2" class="mr-2" checked>
+                                                    <label for="product2">履约保函</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" id="product3" class="mr-2">
+                                                    <label for="product3">预付款保函</label>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <input type="checkbox" id="product4" class="mr-2">
+                                                    <label for="product4">质量保函</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <label class="text-sm font-medium text-slate-700 block mb-1">市级推荐意见 <span class="text-red-500">*</span></label>
+                                            <textarea class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary min-h-[80px]">${tr.querySelector('td:nth-of-type(9)').textContent.trim()}</textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 附件 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">附件（推荐函）</h3>
+                                        <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
+                                            <p class="text-slate-500 mb-2">点击或拖拽文件至此处上传</p>
+                                            <p class="text-xs text-slate-400 mb-4">支持 .pdf/.doc/.docx 格式，≤20MB，支持上传后预览</p>
+                                            <input type="file" class="hidden" id="fileUpload">
+                                            <label for="fileUpload" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50 transition-colors cursor-pointer">
+                                                选择文件
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <div class="flex items-center justify-between p-3 border border-slate-200 rounded-md">
+                                                <div class="flex items-center">
+                                                    <i class="fa fa-file-pdf-o text-red-500 mr-3"></i>
+                                                    <div>
+                                                        <p class="text-sm font-medium text-slate-900">推荐函.pdf</p>
+                                                        <p class="text-xs text-slate-500">2026-04-20 10:30:00</p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <button class="text-blue-600 hover:text-blue-800"><i class="fa fa-eye"></i></button>
+                                                    <button class="text-slate-500 hover:text-slate-700"><i class="fa fa-download"></i></button>
+                                                    <button class="text-red-500 hover:text-red-700"><i class="fa fa-trash"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- 审核时间线 -->
+                                    <div>
+                                        <h3 class="text-base font-semibold text-slate-800 mb-4">审核时间线</h3>
+                                        <div class="space-y-4">
+                                            ${getTimelineHTML(status)}
+                                        </div>
+                                    </div>
+                                </div>
+                            `, {
+                                confirmBtnText: status === '审核不通过' ? '重新提交' : '提交',
+                                onConfirm: function(closeModal) {
+                                    alert(status === '审核不通过' ? '已重新提交审核' : '提交成功');
+                                    if (status === '审核不通过') {
+                                        // 模拟更新状态
+                                        const statusCell = tr.querySelector('td:nth-last-child(2)');
+                                        statusCell.innerHTML = '<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">待审核</span>';
+                                        const actionCell = tr.querySelector('td:last-child');
+                                        actionCell.innerHTML = `
+                                            <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                        `;
+                                        bindActionButtons();
+                                    }
+                                    closeModal();
+                                }
+                            });
+                        });
+                    }
+                });
+            }
+
+            // 初始绑定
+            bindActionButtons();
+
+            // 查询筛选逻辑
+            const queryBtn = document.getElementById('queryBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const keywordSearch = document.getElementById('keywordSearch');
+            const typeFilter = document.getElementById('typeFilter');
+            const statusFilter = document.getElementById('statusFilter');
+            const tableBody = document.querySelector('tbody');
+
+            function filterTable() {
+                const keyword = keywordSearch.value.toLowerCase();
+                const type = typeFilter.value;
+                const status = statusFilter.value;
+                const rows = tableBody.querySelectorAll('tr');
+
+                rows.forEach(row => {
+                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const rowType = row.querySelector('td:nth-child(3)').textContent.trim();
+                    const code = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+                    const rowStatus = row.querySelector('td:nth-child(12)').textContent.trim();
+
+                    const matchesKeyword = name.includes(keyword) || code.includes(keyword);
+                    const matchesType = type === '' || rowType === type;
+                    const matchesStatus = status === '' || rowStatus === status;
+
+                    if (matchesKeyword && matchesType && matchesStatus) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            queryBtn.addEventListener('click', filterTable);
+            resetBtn.addEventListener('click', function() {
+                keywordSearch.value = '';
+                typeFilter.value = '';
+                statusFilter.value = '';
+                filterTable();
+            });
+            
+            // 回车触发查询
+            keywordSearch.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterTable();
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-building"></i></div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3"><p class="text-xs font-bold">管理员</p><p class="text-[10px] text-slate-400">市级管理员</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-4"><h1 class="text-xl font-bold text-slate-900">机构备案</h1></div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors"><i class="fa fa-bell text-lg"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
+                    <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors"><i class="fa fa-question-circle text-lg"></i></button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold text-slate-900">机构备案列表</h2>
+                        <div class="flex space-x-3">
+                            <button id="batchSubmitBtn" class="inline-flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors shadow-sm">
+                                <i class="fa fa-send"></i><span>批量提交审核</span>
+                            </button>
+                            <button class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                                <i class="fa fa-plus"></i><span>新增备案</span>
+                            </button>
+                            <button class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors" style="display: none;">
+                                <i class="fa fa-upload"></i><span>批量备案</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 快速查询筛选 -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">关键词搜索</label>
+                                <div class="relative">
+                                    <input type="text" id="keywordSearch" placeholder="机构名称 / 信用代码" class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                                    <i class="fa fa-search absolute left-3 top-2.5 text-slate-400"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">机构类型</label>
+                                <select id="typeFilter" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                                    <option value="">全部类型</option>
+                                    <option value="银行">银行</option>
+                                    <option value="保险公司">保险公司</option>
+                                    <option value="担保公司">担保公司</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">报备状态</label>
+                                <select id="statusFilter" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                                    <option value="">全部状态</option>
+                                    <option value="待提交">待提交</option>
+                                    <option value="待审核">待审核</option>
+                                    <option value="审核通过">审核通过</option>
+                                    <option value="审核不通过">审核不通过</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end space-x-2">
+                                <button id="queryBtn" class="flex-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all font-medium text-sm shadow-sm">
+                                    <i class="fa fa-search mr-2"></i>查询
+                                </button>
+                                <button id="resetBtn" class="flex-1 border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-100 transition-colors font-medium text-sm">
+                                    <i class="fa fa-refresh mr-2"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider"><input type="checkbox" class="rounded border-slate-300"></th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">机构名称</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">机构类型</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">统一社会信用代码</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">法定代表人</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">联系人</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">联系电话</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">拟备案保函类型</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">市级推荐意见</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">发起时间</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">审核意见</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-slate-200">
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-slate-300"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-slate-900">福建省建设投资有限公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">担保公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860E</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈建华</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈经理</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13500135001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,履约保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">-</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-24 09:00:00</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">-</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-slate-100 text-slate-600">待提交</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                        <a href="#" class="text-blue-500 hover:text-blue-700 mr-3">编辑</a>
+                                        <a href="#" class="text-emerald-600 hover:text-emerald-800">提交</a>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-slate-300"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-slate-900">中国建设银行福建省分行</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">银行</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860A</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">王建国</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">张三</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13800138001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,履约保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">该机构资质优良，建议通过</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-15 10:30:00</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">资料齐全，符合要求，审核通过</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">审核通过</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-slate-300"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-slate-900">中国工商银行福建省分行</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">银行</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860B</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">李明</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">李四</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13900139001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">履约保函,预付款保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">机构实力强，风控体系完善，建议通过</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-14 14:20:00</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">资料齐全，符合要求，审核通过</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">审核通过</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-slate-300"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-slate-900">兴业银行福建分行</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">银行</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860D</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">张伟</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">赵六</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13600136001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,质量保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">建议补充相关资质材料后重新提交</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-13 09:15:00</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">缺少资质证明材料，审核不通过</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">审核不通过</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                        <a href="#" class="text-blue-500 hover:text-blue-700">编辑</a>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-slate-300"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-slate-900">中国平安保险福建分公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">保险公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860C</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈静</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">王五</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13700137001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,履约保函,预付款保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">材料已收悉，正在审核中</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-12 16:45:00</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">待审核</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">待审核</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 mr-3">查看</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="text-sm text-slate-500">显示 1 到 5 条，共 24 条记录</div>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-1 border border-slate-300 rounded hover:bg-slate-100 disabled:opacity-50" disabled>上一页</button>
+                            <button class="px-3 py-1 bg-primary text-white rounded">1</button>
+                            <button class="px-3 py-1 border border-slate-300 rounded hover:bg-slate-100">2</button>
+                            <button class="px-3 py-1 border border-slate-300 rounded hover:bg-slate-100">3</button>
+                            <button class="px-3 py-1 border border-slate-300 rounded hover:bg-slate-100">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

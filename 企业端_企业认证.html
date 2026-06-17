@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业认证</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        // 显示通知函数
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelectorAll('.notification-toast');
+            existing.forEach(el => {
+                el.style.transform = 'translateY(-20px)';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            });
+
+            const notification = document.createElement('div');
+            notification.className = `notification-toast fixed top-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-[9999] transition-all duration-500 flex items-center space-x-3 min-w-[300px] justify-center`;
+            
+            let icon = 'fa-info-circle';
+            switch(type) {
+                case 'success':
+                    notification.classList.add('bg-green-500', 'text-white');
+                    icon = 'fa-check-circle';
+                    break;
+                case 'error':
+                    notification.classList.add('bg-red-500', 'text-white');
+                    icon = 'fa-times-circle';
+                    break;
+                case 'warning':
+                    notification.classList.add('bg-orange-500', 'text-white');
+                    icon = 'fa-exclamation-triangle';
+                    break;
+                default:
+                    notification.classList.add('bg-primary', 'text-white');
+            }
+
+            notification.innerHTML = `<i class="fa ${icon} text-lg"></i><span class="font-medium tracking-wide">${message}</span>`;
+            document.body.appendChild(notification);
+
+            notification.style.transform = 'translate(-50%, -20px)';
+            notification.style.opacity = '0';
+
+            requestAnimationFrame(() => {
+                notification.style.transform = 'translate(-50%, 0)';
+                notification.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                notification.style.transform = 'translate(-50%, -20px)';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // 显示模态框函数
+        function showModal(title, content, buttons = [], maxWidth = 'max-w-md') {
+            const modalContainer = document.createElement('div');
+            modalContainer.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9000] transition-opacity duration-300 p-4';
+            modalContainer.id = 'modal-container';
+            modalContainer.style.opacity = '0';
+
+            const modalContent = document.createElement('div');
+            modalContent.className = `bg-white rounded-2xl shadow-2xl w-full ${maxWidth} max-h-[90vh] flex flex-col transform transition-transform duration-300 scale-95 overflow-hidden`;
+
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'flex justify-between items-center px-6 py-5 border-b shrink-0 bg-gray-50/50';
+            
+            const modalTitle = document.createElement('h3');
+            modalTitle.className = 'text-xl font-bold text-gray-800 flex items-center';
+            modalTitle.innerHTML = `<span class="w-1.5 h-6 bg-primary rounded-full mr-3"></span>${title}`;
+            
+            const closeIcon = document.createElement('button');
+            closeIcon.className = 'w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors';
+            closeIcon.innerHTML = '<i class="fa fa-times text-gray-400 text-lg"></i>';
+            closeIcon.onclick = closeModal;
+            
+            modalHeader.appendChild(modalTitle);
+            modalHeader.appendChild(closeIcon);
+            modalContent.appendChild(modalHeader);
+
+            const modalBody = document.createElement('div');
+            modalBody.className = 'text-gray-600 p-8 flex-1 overflow-y-auto min-h-0';
+            if (typeof content === 'string') {
+                modalBody.innerHTML = content;
+            } else {
+                modalBody.appendChild(content);
+            }
+            modalContent.appendChild(modalBody);
+
+            const modalFooter = document.createElement('div');
+            modalFooter.className = 'flex justify-end space-x-3 px-8 py-5 border-t shrink-0 bg-gray-50/50';
+
+            if (buttons.length === 0) {
+                const closeButton = document.createElement('button');
+                closeButton.className = 'px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors';
+                closeButton.textContent = '关闭';
+                closeButton.onclick = closeModal;
+                modalFooter.appendChild(closeButton);
+            } else {
+                buttons.forEach(button => {
+                    const btn = document.createElement('button');
+                    btn.className = button.className || 'px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium transition-colors';
+                    btn.textContent = button.text;
+                    btn.onclick = button.onClick || closeModal;
+                    modalFooter.appendChild(btn);
+                });
+            }
+
+            modalContent.appendChild(modalFooter);
+            modalContainer.appendChild(modalContent);
+            document.body.appendChild(modalContainer);
+
+            requestAnimationFrame(() => {
+                modalContainer.style.opacity = '1';
+                modalContent.style.transform = 'scale(1)';
+            });
+
+            modalContainer.onclick = (e) => { if (e.target === modalContainer) closeModal(); };
+
+            function closeModal() {
+                modalContainer.style.opacity = '0';
+                modalContent.style.transform = 'scale(0.95)';
+                setTimeout(() => modalContainer.remove(), 300);
+            }
+            
+            window.closeCurrentModal = closeModal;
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 下拉菜单切换
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationDropdown = document.getElementById('notification-dropdown');
+            const userDropdownBtn = document.getElementById('user-dropdown-btn');
+            const userDropdown = document.getElementById('user-dropdown');
+
+            if (notificationBtn && notificationDropdown) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationDropdown.classList.toggle('hidden');
+                    userDropdown?.classList.add('hidden');
+                });
+            }
+
+            if (userDropdownBtn && userDropdown) {
+                userDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                    notificationDropdown?.classList.add('hidden');
+                });
+            }
+
+            document.addEventListener('click', function() {
+                notificationDropdown?.classList.add('hidden');
+                userDropdown?.classList.add('hidden');
+            });
+
+            // 文件上传预览
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(input => {
+                input.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const uploadArea = this.closest('.upload-area');
+                        if (uploadArea) {
+                            const icon = uploadArea.querySelector('.upload-icon');
+                            const text = uploadArea.querySelector('.upload-text');
+                            const size = uploadArea.querySelector('.upload-size');
+                            
+                            if (icon) icon.className = 'fa fa-check-circle upload-icon text-green-500 text-3xl mb-2';
+                            if (text) text.textContent = file.name;
+                            if (size) size.textContent = (file.size / 1024 / 1024).toFixed(2) + 'MB';
+                            
+                            uploadArea.classList.add('border-green-500', 'bg-green-50');
+                        }
+                        showNotification('文件上传成功', 'success');
+                        
+                        // 营业执照OCR识别
+                        if (this.id === 'business-license-upload') {
+                            ocrBusinessLicense(file);
+                        }
+                    }
+                });
+            });
+            
+            // OCR识别营业执照
+            function ocrBusinessLicense(file) {
+                showNotification('正在识别营业执照信息，请稍候...', 'info');
+                
+                // 模拟OCR识别过程
+                setTimeout(() => {
+                    // 模拟识别结果
+                    const ocrResult = {
+                        companyName: '福建省建设工程有限公司',
+                        creditCode: '91350000XXXXXXXXXX',
+                        companyType: 'limited',
+                        industry: 'construction',
+                        registeredCapital: '10000',
+                        establishmentDate: '2010-01-01',
+                        registeredAddress: '福建省福州市鼓楼区五四路123号',
+                        businessScope: '建筑工程施工、市政工程、装修装饰工程、机电设备安装工程等',
+                        legalPerson: '张三'
+                    };
+                    
+                    // 回填表单
+                    document.getElementById('company-name').value = ocrResult.companyName;
+                    document.getElementById('credit-code').value = ocrResult.creditCode;
+                    document.getElementById('company-type').value = ocrResult.companyType;
+                    document.getElementById('industry').value = ocrResult.industry;
+                    document.getElementById('registered-capital').value = ocrResult.registeredCapital;
+                    document.getElementById('establishment-date').value = ocrResult.establishmentDate;
+                    document.getElementById('registered-address').value = ocrResult.registeredAddress;
+                    document.getElementById('business-scope').value = ocrResult.businessScope;
+                    document.getElementById('legal-person-name').value = ocrResult.legalPerson;
+                    
+                    showNotification('营业执照信息识别成功，已自动回填', 'success');
+                }, 2000);
+            }
+        });
+
+        // 提交认证
+        function submitCertification() {
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('border-red-500');
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+
+            if (!isValid) {
+                showNotification('请填写所有必填项', 'error');
+                return;
+            }
+            
+            // 检查经办人身份认证状态
+            const statusDiv = document.getElementById('contact-verification-status');
+            if (statusDiv && statusDiv.classList.contains('bg-yellow-50')) {
+                showNotification('请完成经办人身份认证', 'error');
+                return;
+            }
+
+            showNotification('认证信息提交成功，系统正在审核中...', 'success');
+            
+            // 模拟审核状态更新
+            setTimeout(() => {
+                const statusBadge = document.getElementById('cert-status-badge');
+                if (statusBadge) {
+                    statusBadge.className = 'px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium';
+                    statusBadge.innerHTML = '<i class="fa fa-clock-o mr-1"></i> 审核中';
+                }
+            }, 1500);
+        }
+
+        // 保存草稿
+        function saveDraft() {
+            showNotification('草稿已保存', 'success');
+        }
+
+        // 查看认证材料
+        function viewMaterial(type) {
+            const materials = {
+                'license': { title: '营业执照副本', desc: '企业营业执照副本扫描件' },
+                'idcard_front': { title: '法人身份证正面', desc: '法定代表人身份证正面扫描件' },
+                'idcard_back': { title: '法人身份证反面', desc: '法定代表人身份证反面扫描件' },
+                'authorization': { title: '授权委托书', desc: '企业授权委托书' },
+                'other': { title: '其他材料', desc: '其他辅助证明材料' }
+            };
+            
+            const material = materials[type];
+            if (material) {
+                showModal(material.title, `
+                    <div class="text-center py-8">
+                        <div class="w-20 h-20 bg-gray-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-file-image-o text-4xl text-gray-400"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">${material.title}</h4>
+                        <p class="text-sm text-gray-500 mb-6">${material.desc}</p>
+                        <div class="bg-gray-50 rounded-lg p-4 text-left">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-500">文件大小</span>
+                                <span class="text-gray-900">2.4MB</span>
+                            </div>
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-gray-500">上传时间</span>
+                                <span class="text-gray-900">2026-01-15</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">核验状态</span>
+                                <span class="text-green-600 font-medium">已核验</span>
+                            </div>
+                        </div>
+                    </div>
+                `, [
+                    { text: '关闭', className: 'px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors' },
+                    { text: '下载查看', className: 'px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium transition-colors' }
+                ]);
+            }
+        }
+
+        // 重新认证
+        function recertify() {
+            showModal('重新认证', `
+                <div class="space-y-4 py-4">
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <i class="fa fa-exclamation-triangle text-yellow-500 mt-0.5 mr-3"></i>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-800">重新认证说明</p>
+                                <p class="text-xs text-yellow-600 mt-1">重新认证将清除现有认证信息，需要重新提交所有材料进行审核。审核期间部分功能可能受限。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600">确定要重新进行企业认证吗？</p>
+                </div>
+            `, [
+                { text: '取消', className: 'px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors' },
+                { 
+                    text: '确认重新认证', 
+                    className: 'px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium transition-colors',
+                    onClick: () => {
+                        closeCurrentModal();
+                        showNotification('已重置认证信息，请重新填写', 'info');
+                        // 重置表单
+                        document.querySelectorAll('input, select, textarea').forEach(el => {
+                            if (el.type !== 'hidden' && !el.readOnly) {
+                                el.value = '';
+                            }
+                        });
+                        // 重置认证状态
+                        const statusDiv = document.getElementById('contact-verification-status');
+                        if (statusDiv) {
+                            statusDiv.className = 'flex items-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg';
+                            statusDiv.innerHTML = '<i class="fa fa-exclamation-circle text-yellow-500 mr-3"></i><span class="text-sm text-yellow-800">请完成经办人身份认证</span>';
+                        }
+                    }
+                }
+            ]);
+        }
+        
+        // 经办人身份认证
+        function verifyContactPerson() {
+            const name = document.getElementById('contact-person-name').value;
+            const idCard = document.getElementById('contact-person-id').value;
+            const phone = document.getElementById('contact-person-phone').value;
+            
+            if (!name || !idCard || !phone) {
+                showNotification('请先填写完整的经办人信息', 'error');
+                return;
+            }
+            
+            // 显示二维码验证模态框
+            showModal('身份认证', `
+                <div class="text-center py-6">
+                    <div class="mb-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4">三要素+人脸识别认证</h4>
+                        <p class="text-sm text-gray-600 mb-6">请使用手机扫描下方二维码进行身份验证</p>
+                        <div class="flex justify-center">
+                            <div class="w-48 h-48 bg-white p-2 rounded-lg shadow-lg flex items-center justify-center">
+                                <div class="w-44 h-44 bg-gray-100 flex items-center justify-center">
+                                    <i class="fa fa-qrcode text-6xl text-gray-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-4">扫码后请按照提示完成人脸识别</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 text-left">
+                        <h5 class="text-sm font-bold text-gray-800 mb-3">验证信息</h5>
+                        <div class="space-y-2">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">姓名</span>
+                                <span class="text-gray-900 font-medium">${name}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">身份证号</span>
+                                <span class="text-gray-900 font-medium">${idCard}</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-gray-500">手机号</span>
+                                <span class="text-gray-900 font-medium">${phone}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `, [
+                { text: '取消', className: 'px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors' },
+                { 
+                    text: '模拟认证通过', 
+                    className: 'px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 font-medium transition-colors',
+                    onClick: () => {
+                        closeCurrentModal();
+                        showNotification('身份认证成功', 'success');
+                        // 更新认证状态
+                        const statusDiv = document.getElementById('contact-verification-status');
+                        if (statusDiv) {
+                            statusDiv.className = 'flex items-center p-3 bg-green-50 border border-green-200 rounded-lg';
+                            statusDiv.innerHTML = '<i class="fa fa-check-circle text-green-500 mr-3"></i><span class="text-sm text-green-800">身份认证已通过</span>';
+                        }
+                    }
+                }
+            ], 'max-w-lg');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa fa-shield text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">福建省电子保函服务平台</h1>
+                            <p class="text-xs text-gray-500">企业端</p>
+                        </div>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="企业端_工作台.html" class="text-gray-600 hover:text-primary transition-colors">工作台</a>
+                    <a href="企业端_保函申请.html" class="text-gray-600 hover:text-primary transition-colors">保函申请</a>
+                    <a href="企业端_订单管理.html" class="text-gray-600 hover:text-primary transition-colors">订单管理</a>
+                    <a href="企业端_企业认证.html" class="text-primary font-medium">企业认证</a>
+                    <div class="relative" id="notification-wrapper">
+                        <button class="text-gray-600 hover:text-primary relative p-1 transition-colors" id="notification-btn">
+                            <i class="fa fa-bell"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
+                            <div class="p-3 border-b border-gray-100 flex justify-between items-center">
+                                <h3 class="text-sm font-bold text-gray-800">最新通知</h3>
+                                <a href="企业端_消息中心.html" class="text-xs text-primary hover:underline">查看全部</a>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fa fa-file-text text-primary text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-gray-900 truncate">保函申请审核通过</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的投标保函（FJ202603110001）已审核通过，请及时支付保费。</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">10分钟前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fa fa-exclamation-triangle text-yellow-600 text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-gray-900 truncate">保函即将到期提醒</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您有一笔履约保函将于3天后到期，请处理。</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">2小时前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fa fa-check-circle text-green-600 text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-gray-900 truncate">账户认证成功</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的企业实名认证已更新成功。</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">昨天</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2 bg-gray-50 text-center">
+                                <button class="text-xs text-gray-500 hover:text-primary transition-colors">全部标记为已读</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative" id="user-dropdown-wrapper">
+                        <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors" id="user-dropdown-btn">
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                <i class="fa fa-user text-gray-600"></i>
+                            </div>
+                            <span class="hidden md:inline">138****8888</span>
+                        </button>
+                        <!-- 个人中心下拉菜单 -->
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
+                            <div class="p-4 border-b border-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fa fa-user text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold">138****8888</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="py-2">
+                                <a href="企业端_发票管理.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-file-text mr-3 w-5 text-center"></i>
+                                    <span>发票管理</span>
+                                </a>
+                                <a href="企业端_服务咨询.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-comments mr-3 w-5 text-center"></i>
+                                    <span>服务咨询</span>
+                                </a>
+                                <a href="企业端_我的账户.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-user-circle mr-3 w-5 text-center"></i>
+                                    <span>我的账户</span>
+                                </a>
+                                <div class="border-t border-gray-100 mt-2 pt-2">
+                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors" id="logout-btn">
+                                        <i class="fa fa-sign-out mr-3 w-5 text-center"></i>
+                                        <span>退出登录</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-50 min-h-[calc(100vh-4rem)]">
+        <div class="max-w-6xl mx-auto">
+            <!-- 页面标题 -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">企业认证</h2>
+                    <p class="text-sm text-gray-500 mt-1">完成企业实名认证，享受更多平台服务</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span id="cert-status-badge" class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                        <i class="fa fa-check-circle mr-1"></i> 已完成认证
+                    </span>
+                    <a href="企业端_企业认证填写.html" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium inline-flex items-center">
+                        <i class="fa fa-refresh mr-2"></i>重新认证
+                    </a>
+                </div>
+            </div>
+
+            <!-- 认证信息展示页 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                <div class="p-6">
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center">
+                            <span class="text-white text-2xl font-bold">建</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-800">福建省建设工程有限公司</h2>
+                            <div class="flex items-center space-x-3 mt-1">
+                                <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">已认证</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- 基本信息 -->
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-500 mb-4">基本信息</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">统一社会信用代码:</span>
+                                    <span class="text-sm text-gray-800">91350000XXXXXXXXXX</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">法定代表人:</span>
+                                    <span class="text-sm text-gray-800">张三</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">经办人姓名:</span>
+                                    <span class="text-sm text-gray-800">李四</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">经办人手机号:</span>
+                                    <span class="text-sm text-gray-800">139****9999</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500">经营范围:</span>
+                                    <span class="text-sm text-gray-800 ml-2">建筑工程施工、市政工程、装修装饰工程等</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 企业信息 -->
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-500 mb-4">企业信息</h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">注册地址:</span>
+                                    <span class="text-sm text-gray-800">福建省福州市鼓楼区五四路123号</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">注册资本:</span>
+                                    <span class="text-sm text-gray-800">10,000万元</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">成立日期:</span>
+                                    <span class="text-sm text-gray-800">2010-01-01</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">认证时间:</span>
+                                    <span class="text-sm text-gray-800">2026-01-11</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 开票信息 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">开票信息</h3>
+                        <button onclick="openEditInvoiceModal()" class="px-4 py-1.5 border border-primary text-primary rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium flex items-center">
+                            <i class="fa fa-edit mr-1"></i>编辑
+                        </button>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <h4 class="text-sm font-bold text-gray-700 mb-4">增值税普通发票</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">单位名称:</span>
+                                <span class="text-sm text-gray-800">福建省建设工程有限公司</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">联系电话:</span>
+                                <span class="text-sm text-gray-800">0591-88888888</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">统一社会信用代码:</span>
+                                <span class="text-sm text-gray-800">91350000XXXXXXXXXX</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">开户银行:</span>
+                                <span class="text-sm text-gray-800">中国建设银行福州分行</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">注册地址:</span>
+                                <span class="text-sm text-gray-800">福建省福州市鼓楼区五四路1234号</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-500">银行账号:</span>
+                                <span class="text-sm text-gray-800">622202***********88</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </main>
+
+    <!-- 编辑开票信息模态框 -->
+    <div id="invoice-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 overflow-hidden">
+            <!-- 模态框头部 -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800">编辑开票信息</h3>
+                <button onclick="closeInvoiceModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- 发票类型标签页 -->
+            <div class="flex border-b border-gray-100">
+                <button id="invoice-type-normal" onclick="switchInvoiceType('normal')" 
+                    class="flex-1 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors border-b-2 border-transparent">
+                    普通发票
+                </button>
+                <button id="invoice-type-special" onclick="switchInvoiceType('special')" 
+                    class="flex-1 py-3 text-sm font-medium text-primary border-b-2 border-primary">
+                    专用发票
+                </button>
+            </div>
+
+            <!-- 表单内容 -->
+            <div class="p-6 space-y-4">
+                <!-- 发票抬头 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        发票抬头 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="invoice-title" value="福建省建设工程有限公司" 
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="请输入发票抬头">
+                </div>
+
+                <!-- 纳税人识别号 -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        纳税人识别号 <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" id="tax-id" value="91350000XXXXXXXXXX" 
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                        placeholder="请输入纳税人识别号">
+                </div>
+
+                <!-- 其他信息（专用发票时显示） -->
+                <div id="extra-fields" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- 注册地址 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            注册地址
+                        </label>
+                        <input type="text" id="register-address" value="福建省福州市鼓楼区五四路1234号" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            placeholder="请输入注册地址">
+                    </div>
+
+                    <!-- 注册电话 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            注册电话
+                        </label>
+                        <input type="tel" id="register-phone" value="0591-88888888" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            placeholder="请输入注册电话">
+                    </div>
+
+                    <!-- 开户银行 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            开户银行
+                        </label>
+                        <input type="text" id="bank-name" value="中国建设银行福州分行" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            placeholder="请输入开户银行">
+                    </div>
+
+                    <!-- 银行账号 -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            银行账号
+                        </label>
+                        <input type="text" id="bank-account" value="622202***********88" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                            placeholder="请输入银行账号">
+                    </div>
+                </div>
+
+                <!-- 普通发票提示 -->
+                <div id="normal-invoice-tip" class="flex items-start space-x-2 text-sm text-gray-500 hidden">
+                    <i class="fa fa-info-circle text-blue-500 mt-0.5"></i>
+                    <span>普通发票仅需填写抬头与税号，其他信息为选填项。</span>
+                </div>
+            </div>
+
+            <!-- 底部按钮 -->
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end space-x-3">
+                <button onclick="closeInvoiceModal()" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    取消
+                </button>
+                <button onclick="saveInvoiceInfo()" class="px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    保存更改
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentInvoiceType = 'special'; // 默认显示专用发票
+
+        function openEditInvoiceModal() {
+            document.getElementById('invoice-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            switchInvoiceType(currentInvoiceType);
+        }
+
+        function closeInvoiceModal() {
+            document.getElementById('invoice-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function switchInvoiceType(type) {
+            currentInvoiceType = type;
+            const normalBtn = document.getElementById('invoice-type-normal');
+            const specialBtn = document.getElementById('invoice-type-special');
+            const extraFields = document.getElementById('extra-fields');
+            const normalTip = document.getElementById('normal-invoice-tip');
+
+            if (type === 'normal') {
+                normalBtn.classList.add('text-primary', 'border-primary');
+                normalBtn.classList.remove('text-gray-500');
+                specialBtn.classList.remove('text-primary', 'border-primary');
+                specialBtn.classList.add('text-gray-500');
+                extraFields.classList.add('hidden');
+                normalTip.classList.remove('hidden');
+            } else {
+                specialBtn.classList.add('text-primary', 'border-primary');
+                specialBtn.classList.remove('text-gray-500');
+                normalBtn.classList.remove('text-primary', 'border-primary');
+                normalBtn.classList.add('text-gray-500');
+                extraFields.classList.remove('hidden');
+                normalTip.classList.add('hidden');
+            }
+        }
+
+        function saveInvoiceInfo() {
+            const title = document.getElementById('invoice-title').value.trim();
+            const taxId = document.getElementById('tax-id').value.trim();
+
+            if (!title) {
+                showNotification('请输入发票抬头', 'error');
+                return;
+            }
+            if (!taxId) {
+                showNotification('请输入纳税人识别号', 'error');
+                return;
+            }
+
+            showNotification('开票信息保存成功', 'success');
+            closeInvoiceModal();
+        }
+    </script>
+</body>
+</html>

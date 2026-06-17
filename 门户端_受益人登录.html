@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>受益人登录 - 福建省电子保函服务平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937',
+                        'beneficiary': '#0891B2'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <nav class="bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <i class="fa fa-shield text-primary text-xl"></i>
+                </div>
+                <div class="text-2xl font-bold">福建省电子保函服务平台</div>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="门户端_首页.html" class="hover:text-accent transition-colors">首页</a>
+                <a href="门户端_保函超市.html" class="hover:text-accent transition-colors">保函超市</a>
+                <a href="门户端_新闻中心.html" class="hover:text-accent transition-colors">平台资讯</a>
+                <a href="门户端_保函验真.html" class="hover:text-accent transition-colors">保函验真</a>
+                <a href="门户端_帮助中心.html" class="hover:text-accent transition-colors">帮助中心</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="md:hidden text-white">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-16 px-4">
+        <div class="container mx-auto max-w-4xl">
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div class="flex flex-col md:flex-row">
+                    <div class="md:w-1/2 bg-gradient-to-br from-cyan-600 to-blue-700 p-8 flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <h2 class="text-3xl font-bold mb-4">受益人登录</h2>
+                            <p class="mb-8">福建省电子保函服务平台</p>
+                            <img src="https://picsum.photos/id/1005/600/400" alt="登录背景" class="rounded-lg w-full max-w-xs mx-auto">
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 p-8">
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">受益人登录</h3>
+                            <p class="text-gray-600">请输入账号密码登录</p>
+                        </div>
+                        
+                        <form class="beneficiary-form">
+                            <div class="login-step active" id="step1">
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">受益人账号</label>
+                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">密码</label>
+                                    <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary">
+                                </div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2">
+                                        <span class="text-gray-600">记住我</span>
+                                    </label>
+                                    <a href="#" class="text-secondary hover:text-beneficiary transition-colors">忘记密码？</a>
+                                </div>
+                                <button type="button" class="w-full bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors next-step">
+                                    下一步
+                                </button>
+                            </div>
+                            
+                            <div class="login-step hidden" id="step2">
+                                <div class="text-center mb-6">
+                                    <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <i class="fa fa-mobile text-beneficiary text-3xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold mb-2">短信验证</h4>
+                                    <p class="text-gray-600">我们已向您的手机发送验证码</p>
+                                    <p class="text-gray-500 mt-1">138****6789</p>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">验证码</label>
+                                    <div class="flex space-x-4">
+                                        <input type="text" class="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入验证码">
+                                        <button type="button" class="w-32 bg-secondary text-white py-3 rounded-md hover:bg-beneficiary transition-colors">
+                                            重新发送
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-4 mb-6">
+                                    <button type="button" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-md hover:bg-gray-300 transition-colors prev-step">
+                                        上一步
+                                    </button>
+                                    <button type="submit" class="flex-1 bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors">
+                                        登录
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <div class="mt-6 text-center">
+                            <p class="text-gray-600">返回 <a href="门户端_首页.html" class="text-secondary hover:text-beneficiary transition-colors">首页</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-neutral-dark text-white py-12 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">福建省电子保函服务平台</h3>
+                    <p class="text-gray-400">推动电子保函业务规范化、数字化发展，提高保函办理效率，降低企业融资成本。</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">快速链接</h4>
+                    <ul class="space-y-2">
+                        <li><a href="门户端_首页.html" class="text-gray-400 hover:text-white transition-colors">首页</a></li>
+                        <li><a href="门户端_新闻中心.html" class="text-gray-400 hover:text-white transition-colors">平台资讯</a></li>
+                        <li><a href="门户端_保函超市.html" class="text-gray-400 hover:text-white transition-colors">保函超市</a></li>
+                        <li><a href="门户端_保函验真.html" class="text-gray-400 hover:text-white transition-colors">保函验真</a></li>
+                        <li><a href="门户端_帮助中心.html" class="text-gray-400 hover:text-white transition-colors">帮助中心</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">联系我们</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center"><i class="fa fa-phone mr-2"></i> <span class="text-gray-400">400-123-4567</span></li>
+                        <li class="flex items-center"><i class="fa fa-envelope mr-2"></i> <span class="text-gray-400">service@fjetg.com</span></li>
+                        <li class="flex items-center"><i class="fa fa-map-marker mr-2"></i> <span class="text-gray-400">福建省福州市鼓楼区</span></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-beneficiary transition-colors">
+                            <i class="fa fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-beneficiary transition-colors">
+                            <i class="fa fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-beneficiary transition-colors">
+                            <i class="fa fa-youtube-play"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 福建省电子保函服务平台 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nextButtons = document.querySelectorAll('.next-step');
+            const prevButtons = document.querySelectorAll('.prev-step');
+            const steps = document.querySelectorAll('.login-step');
+            
+            let currentStep = 0;
+            
+            nextButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (currentStep < steps.length - 1) {
+                        steps[currentStep].classList.add('hidden');
+                        steps[currentStep].classList.remove('active');
+                        currentStep++;
+                        steps[currentStep].classList.remove('hidden');
+                        steps[currentStep].classList.add('active');
+                    }
+                });
+            });
+            
+            prevButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (currentStep > 0) {
+                        steps[currentStep].classList.add('hidden');
+                        steps[currentStep].classList.remove('active');
+                        currentStep--;
+                        steps[currentStep].classList.remove('hidden');
+                        steps[currentStep].classList.add('active');
+                    }
+                });
+            });
+
+            const loginForm = document.querySelector('.beneficiary-form');
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                window.location.href = '受益人端_保函列表.html';
+            });
+        });
+    </script>
+</body>
+</html>

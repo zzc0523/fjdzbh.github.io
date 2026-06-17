@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 预警统计分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function toggleNotification(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notification-dropdown');
+            const isHidden = dropdown.classList.contains('hidden');
+            
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                const closeHandler = (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            width: 100%;
+            height: 350px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+                                        <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警统计分析
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">超级管理员</p>
+                        <p class="text-[10px] text-slate-400">福建省政务中心</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">预警统计分析</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">预警统计分析</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button onclick="toggleNotification(event)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all relative">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        
+                        <!-- Notification Dropdown -->
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 z-50 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
+                                <h3 class="text-sm font-bold text-slate-800">系统通知</h3>
+                                <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-bold">3 条未读</span>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer group">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 shrink-0">
+                                            <i class="fa fa-exclamation-triangle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">费率异常波动预警</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">福州市投标保函费率波动超过20%...</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer group">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 shrink-0">
+                                            <i class="fa fa-info-circle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">新机构入驻申请</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">某某建设银行提交了省级展业申请</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">1小时前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer group">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 shrink-0">
+                                            <i class="fa fa-check-circle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700 group-hover:text-blue-600 transition-colors">系统升级成功</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">V4.0版本已完成全省节点同步</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">昨天 18:30</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-slate-100">
+                                <a href="省级端_消息管理.html" class="text-xs text-blue-600 font-bold hover:underline">查看全部通知</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <button class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-all text-sm font-medium">
+                        <i class="fa fa-download"></i>
+                        <span>导出统计报表</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-8 space-y-6">
+                <!-- 3. Alert Statistics Content -->
+                <div id="tab-statistics" class="space-y-6 animate-in fade-in duration-300">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h3 class="font-bold text-slate-800 mb-6">预警类型占比分布</h3>
+                            <div id="alert-type-pie" class="chart-container"></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h3 class="font-bold text-slate-800 mb-6">所属平台分布分析</h3>
+                            <div id="alert-platform-donut" class="chart-container"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h3 class="font-bold text-slate-800 mb-6">月度预警趋势变化</h3>
+                            <div id="alert-trend-line" class="chart-container"></div>
+                        </div>
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <h3 class="font-bold text-slate-800 mb-6">各地市预警排行对比</h3>
+                            <div id="alert-region-bar" class="chart-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        let charts = {};
+        const colors = {
+            blue: '#3b82f6',
+            emerald: '#10b981',
+            amber: '#f59e0b',
+            rose: '#f43f5e',
+            indigo: '#6366f1',
+            slate: '#94a3b8'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initStatisticsCharts();
+            window.addEventListener('resize', () => {
+                Object.values(charts).forEach(c => c && c.resize());
+            });
+        });
+
+        function initStatisticsCharts() {
+            if (charts.alertTypePie) return;
+
+            // 1. 预警类型占比
+            charts.alertTypePie = echarts.init(document.getElementById('alert-type-pie'));
+            charts.alertTypePie.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { bottom: '0%', left: 'center', itemStyle: { borderRadius: 0 } },
+                series: [{
+                    name: '预警类型',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+                    label: { show: false, position: 'center' },
+                    emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold' } },
+                    labelLine: { show: false },
+                    data: [
+                        { value: 45, name: '业务异常', itemStyle: { color: colors.blue } },
+                        { value: 35, name: '金融风险', itemStyle: { color: colors.amber } },
+                        { value: 20, name: '合规红线', itemStyle: { color: colors.rose } }
+                    ]
+                }]
+            });
+
+            // 2. 所属平台分布
+            charts.alertPlatformDonut = echarts.init(document.getElementById('alert-platform-donut'));
+            charts.alertPlatformDonut.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { orient: 'vertical', left: 'left', top: 'middle' },
+                series: [{
+                    name: '平台分布',
+                    type: 'pie',
+                    radius: '65%',
+                    center: ['60%', '50%'],
+                    itemStyle: { borderRadius: 4 },
+                    data: [
+                        { value: 15, name: '省级平台', itemStyle: { color: colors.blue } },
+                        { value: 35, name: '市级平台', itemStyle: { color: colors.indigo } },
+                        { value: 50, name: '金融机构', itemStyle: { color: colors.emerald } }
+                    ],
+                    emphasis: {
+                        itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0, 0, 0, 0.5)' }
+                    }
+                }]
+            });
+
+            // 3. 趋势分析
+            charts.alertTrendLine = echarts.init(document.getElementById('alert-trend-line'));
+            charts.alertTrendLine.setOption({
+                tooltip: { trigger: 'axis' },
+                legend: { data: ['业务异常', '金融风险', '合规红线'], bottom: 0 },
+                grid: { left: '3%', right: '4%', bottom: '10%', containLabel: true },
+                xAxis: { type: 'category', boundaryGap: false, data: ['1月', '2月', '3月', '4月', '5月'] },
+                yAxis: { type: 'value' },
+                series: [
+                    { name: '业务异常', type: 'line', smooth: true, data: [35, 42, 38, 45, 48], color: colors.blue, areaStyle: { opacity: 0.1 } },
+                    { name: '金融风险', type: 'line', smooth: true, data: [28, 35, 32, 38, 42], color: colors.amber, areaStyle: { opacity: 0.1 } },
+                    { name: '合规红线', type: 'line', smooth: true, data: [15, 18, 16, 20, 22], color: colors.rose, areaStyle: { opacity: 0.1 } }
+                ]
+            });
+
+            // 4. 地域分布
+            charts.alertRegionBar = echarts.init(document.getElementById('alert-region-bar'));
+            charts.alertRegionBar.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'value' },
+                yAxis: { type: 'category', data: ['福州市', '厦门市', '泉州市', '漳州市', '宁德市'].reverse() },
+                series: [{
+                    name: '预警总数',
+                    type: 'bar',
+                    data: [56, 48, 32, 25, 18].reverse(),
+                    itemStyle: { 
+                        color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                            { offset: 0, color: colors.blue },
+                            { offset: 1, color: '#93c5fd' }
+                        ]),
+                        borderRadius: [0, 4, 4, 0] 
+                    },
+                    label: { show: true, position: 'right', fontSize: 10 }
+                }]
+            });
+        }
+    </script>
+</body>
+</html>

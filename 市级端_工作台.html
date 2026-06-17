@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>市级运营平台 - 工作台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 通用确认弹窗
+        function showConfirm(title, message, onConfirm) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[100] animate-in fade-in duration-200';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">${title}</h3>
+                        <p class="text-slate-600">${message}</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 flex justify-end space-x-3">
+                        <button class="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">取消</button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" id="modalConfirmBtn">确定</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            document.getElementById('modalConfirmBtn').onclick = () => {
+                onConfirm();
+                modal.remove();
+            };
+        }
+
+        // 通用详情弹窗
+        function showDetail(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-[100] animate-in fade-in duration-200';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl max-w-lg w-full mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                        <h3 class="text-lg font-bold text-slate-800">${title}</h3>
+                        <button class="text-slate-400 hover:text-slate-600" onclick="this.closest('.fixed').remove()">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 max-h-[60vh] overflow-y-auto text-slate-600 leading-relaxed">
+                        ${content}
+                    </div>
+                    <div class="bg-slate-50 p-4 flex justify-end">
+                        <button class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onclick="this.closest('.fixed').remove()">知道了</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 侧边栏 -->
+    <div class="flex h-screen overflow-hidden">
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">管理员</p>
+                        <p class="text-[10px] text-slate-400">市级管理员</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white" onclick="showConfirm('退出登录', '确定要退出市级运营平台吗？', () => location.href='../登录.html')">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">工作台</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors relative" id="notificationBtn">
+                            <i class="fa fa-bell text-lg"></i>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <!-- 简易下拉菜单 -->
+                        <div class="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-xl border border-slate-100 hidden z-50 overflow-hidden" id="notificationDropdown">
+                            <div class="p-4 border-b border-slate-50 bg-slate-50/50 flex justify-between items-center">
+                                <h4 class="font-bold text-slate-800 text-sm">系统通知</h4>
+                                <span class="text-[10px] text-blue-600 cursor-pointer">全部标为已读</span>
+                            </div>
+                            <div class="max-h-80 overflow-y-auto">
+                                <div class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <p class="text-xs font-bold text-slate-800">5笔业务处理超时</p>
+                                    <p class="text-[10px] text-slate-500 mt-1 line-clamp-2">福州某建筑公司提交的投标保函已超过24小时未审核...</p>
+                                    <p class="text-[9px] text-slate-400 mt-2">10分钟前</p>
+                                </div>
+                                <div class="p-4 border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors">
+                                    <p class="text-xs font-bold text-slate-800">2家新机构准入申请</p>
+                                    <p class="text-[10px] text-slate-500 mt-1">建设银行福建分行、人保财险福建分公司提交了准入材料</p>
+                                    <p class="text-[9px] text-slate-400 mt-2">2小时前</p>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center bg-slate-50/30">
+                                <a href="#" class="text-xs text-slate-400 hover:text-blue-600 transition-colors">查看全部历史通知</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors" onclick="showDetail('帮助中心', '<div class=\'space-y-4\'><p><b>1. 工作台说明：</b>工作台汇总了当前平台的运营核心数据，包括保函数量、金额及待办事项。</p><p><b>2. 业务趋势分析：</b>您可以选择最近7天或30天查看业务量及金额的波动情况。</p><p><b>3. 待办处理：</b>点击右侧待办事项卡片可快速进入相关模块进行处理。</p><p><b>4. 客服支持：</b>如有疑问请联系系统管理员或拨打 400-XXX-XXXX。</p></div>')">
+                        <i class="fa fa-question-circle text-lg"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+                <!-- 欢迎语 -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-slate-800">下午好，管理员</h3>
+                    <p class="text-slate-500 mt-1">欢迎回来，这是您今天的运营数据概览。</p>
+                </div>
+
+                <!-- 核心指标 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- 累计保函数量 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
+                                <i class="fa fa-file-text-o text-lg"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-green-500 text-xs font-bold flex items-center justify-end">
+                                    <i class="fa fa-caret-up mr-1"></i> 12%
+                                </span>
+                                <span class="text-[10px] text-slate-400">环比上月</span>
+                            </div>
+                        </div>
+                        <h4 class="text-slate-500 text-sm font-medium">累计保函数量</h4>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-2xl font-bold text-slate-800">1,284</span>
+                            <span class="text-[10px] text-slate-400 font-normal">笔</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
+                            <span class="text-[10px] text-slate-400">今日新增</span>
+                            <span class="text-xs font-bold text-slate-700">+28</span>
+                        </div>
+                    </div>
+
+                    <!-- 累计担保金额 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-green-50 text-green-600 rounded-lg flex items-center justify-center">
+                                <i class="fa fa-money text-lg"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-green-500 text-xs font-bold flex items-center justify-end">
+                                    <i class="fa fa-caret-up mr-1"></i> 8.5%
+                                </span>
+                                <span class="text-[10px] text-slate-400">环比上月</span>
+                            </div>
+                        </div>
+                        <h4 class="text-slate-500 text-sm font-medium">累计担保金额</h4>
+                        <div class="flex items-baseline space-x-1 mt-1">
+                            <span class="text-2xl font-bold text-slate-800">2.45</span>
+                            <span class="text-xs font-bold text-slate-800">亿</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-50 flex justify-between items-center">
+                            <span class="text-[10px] text-slate-400">平均笔单价</span>
+                            <span class="text-xs font-bold text-slate-700">19.1万</span>
+                        </div>
+                    </div>
+
+                    <!-- 待处理业务 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-yellow-50 text-yellow-600 rounded-lg flex items-center justify-center">
+                                <i class="fa fa-clock-o text-lg"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-red-500 text-xs font-bold flex items-center justify-end">
+                                    <i class="fa fa-warning mr-1"></i> 3
+                                </span>
+                                <span class="text-[10px] text-slate-400">超时预警</span>
+                            </div>
+                        </div>
+                        <h4 class="text-slate-500 text-sm font-medium">待处理业务</h4>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-2xl font-bold text-slate-800">15</span>
+                            <span class="text-[10px] text-slate-400 font-normal">项</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-50 flex gap-2">
+                            <div class="flex-1 bg-red-50 rounded p-1.5 text-center">
+                                <p class="text-[9px] text-red-400 scale-90">紧急</p>
+                                <p class="text-xs font-bold text-red-600">5</p>
+                            </div>
+                            <div class="flex-1 bg-slate-50 rounded p-1.5 text-center">
+                                <p class="text-[9px] text-slate-400 scale-90">常规</p>
+                                <p class="text-xs font-bold text-slate-700">10</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 入驻机构 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fa fa-handshake-o text-lg"></i>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-slate-400 text-xs font-bold">稳定</span>
+                                <span class="text-[10px] text-slate-400">运行状态</span>
+                            </div>
+                        </div>
+                        <h4 class="text-slate-500 text-sm font-medium">入驻机构</h4>
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <span class="text-2xl font-bold text-slate-800">24</span>
+                            <span class="text-[10px] text-slate-400 font-normal">家</span>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-slate-50 grid grid-cols-3 gap-1">
+                            <div class="text-center border-r border-slate-100 last:border-0">
+                                <p class="text-[8px] text-slate-400">银行</p>
+                                <p class="text-[11px] font-bold text-slate-700">12</p>
+                            </div>
+                            <div class="text-center border-r border-slate-100 last:border-0">
+                                <p class="text-[8px] text-slate-400">保险</p>
+                                <p class="text-[11px] font-bold text-slate-700">8</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[8px] text-slate-400">担保</p>
+                                <p class="text-[11px] font-bold text-slate-700">4</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- 左侧图表区域 -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- 业务趋势图 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h4 class="text-lg font-bold text-slate-800">业务趋势分析</h4>
+                                    <p class="text-xs text-slate-400 mt-1">展示最近7天的保函申请数量与担保金额趋势</p>
+                                </div>
+                                <select class="text-sm border-none bg-slate-50 rounded-md px-3 py-1.5 focus:ring-0 text-slate-600">
+                                    <option>最近7天</option>
+                                    <option>最近30天</option>
+                                </select>
+                            </div>
+                            <div class="h-[300px]">
+                                <canvas id="businessTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- 两个子图表 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- 保函类型分布 -->
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                <h4 class="text-lg font-bold text-slate-800 mb-2">保函类型占比</h4>
+                                <p class="text-xs text-slate-400 mb-6">不同业务类型的保函分布情况</p>
+                                <div class="h-[250px] flex items-center justify-center">
+                                    <canvas id="guaranteeTypeChart"></canvas>
+                                </div>
+                            </div>
+                            <!-- 机构业务排行 -->
+                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                <h4 class="text-lg font-bold text-slate-800 mb-2">机构业务排行</h4>
+                                <p class="text-xs text-slate-400 mb-6">活跃机构的保函签发数量TOP5</p>
+                                <div class="h-[250px]">
+                                    <canvas id="institutionRankingChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧侧边栏：待办事项 -->
+                    <div class="space-y-8">
+                        <!-- 待办事项 -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="text-lg font-bold text-slate-800">待办事项</h4>
+                                <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-full">3条紧急</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="location.href='办理监控.html'">
+                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 shrink-0"></div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-bold text-slate-800">5笔业务处理超时</p>
+                                        <p class="text-xs text-slate-500 mt-1">需立即联系处理机构进行督办</p>
+                                        <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='机构备案.html'">
+                                    <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 shrink-0"></div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-bold text-slate-800">2家机构提交准入申请</p>
+                                        <p class="text-xs text-slate-500 mt-1">请尽快完成准入资格初审</p>
+                                        <p class="text-[10px] text-slate-400 mt-2">2小时前</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='数据统计.html'">
+                                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 shrink-0"></div>
+                                    <div class="ml-4">
+                                        <p class="text-sm font-bold text-slate-800">本月运营报表已生成</p>
+                                        <p class="text-xs text-slate-500 mt-1">请核对数据并提交至省级平台</p>
+                                        <p class="text-[10px] text-slate-400 mt-2">5小时前</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="w-full mt-6 py-2 text-sm text-slate-500 hover:text-primary font-medium border border-slate-100 rounded-lg hover:bg-slate-50 transition-all" onclick="showDetail('待办事项', '<p>更多待办事项正在加载中...目前所有紧急事项已在工作台列出。</p>')">查看全部待办</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // 设置 Chart.js 的全局默认字体和颜色
+        Chart.defaults.font.family = "'Inter', 'system-ui', 'sans-serif'";
+        Chart.defaults.color = '#94A3B8';
+
+        // 1. 业务趋势图 (Line + Bar 混合图)
+        const trendCtx = document.getElementById('businessTrendChart').getContext('2d');
+        const businessChart = new Chart(trendCtx, {
+            data: {
+                labels: ['3-25', '3-26', '3-27', '3-28', '3-29', '3-30', '3-31'],
+                datasets: [
+                    {
+                        type: 'line',
+                        label: '保函申请量 (笔)',
+                        data: [65, 78, 56, 89, 120, 95, 110],
+                        borderColor: '#1E40AF',
+                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#1E40AF',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'bar',
+                        label: '担保金额 (千万)',
+                        data: [42, 55, 38, 62, 85, 68, 75],
+                        backgroundColor: 'rgba(59, 130, 246, 0.3)',
+                        borderRadius: 4,
+                        barThickness: 20,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            padding: 20,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        padding: 12,
+                        backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                        titleFont: { size: 13, weight: 'bold' },
+                        bodyFont: { size: 12 }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true,
+                        grid: { color: '#F1F5F9' },
+                        title: { display: true, text: '申请量', font: { size: 10 } }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: { drawOnChartArea: false },
+                        title: { display: true, text: '金额', font: { size: 10 } }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // 模拟图表切换数据
+        document.querySelector('select').addEventListener('change', function(e) {
+            const isThirtyDays = e.target.value === '最近30天';
+            if (isThirtyDays) {
+                businessChart.data.labels = Array.from({length: 30}, (_, i) => `3-${i+1}`);
+                businessChart.data.datasets[0].data = Array.from({length: 30}, () => Math.floor(Math.random() * 100) + 50);
+                businessChart.data.datasets[1].data = Array.from({length: 30}, () => Math.floor(Math.random() * 60) + 30);
+            } else {
+                businessChart.data.labels = ['3-25', '3-26', '3-27', '3-28', '3-29', '3-30', '3-31'];
+                businessChart.data.datasets[0].data = [65, 78, 56, 89, 120, 95, 110];
+                businessChart.data.datasets[1].data = [42, 55, 38, 62, 85, 68, 75];
+            }
+            businessChart.update();
+        });
+
+        // 通知下拉逻辑
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        
+        notificationBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', () => {
+            notificationDropdown.classList.add('hidden');
+        });
+
+        notificationDropdown.addEventListener('click', (e) => e.stopPropagation());
+
+        // 2. 保函类型占比图 (Doughnut)
+        const typeCtx = document.getElementById('guaranteeTypeChart').getContext('2d');
+        new Chart(typeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['投标保函', '履约保函', '预付款保函', '工资保函', '其他'],
+                datasets: [{
+                    data: [45, 25, 15, 10, 5],
+                    backgroundColor: [
+                        '#1E40AF', // primary
+                        '#3B82F6', // secondary
+                        '#60A5FA', // accent
+                        '#93C5FD',
+                        '#DBEAFE'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            padding: 15,
+                            font: { size: 11 }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. 机构业务排行 (Horizontal Bar)
+        const rankingCtx = document.getElementById('institutionRankingChart').getContext('2d');
+        new Chart(rankingCtx, {
+            type: 'bar',
+            data: {
+                labels: ['建设银行', '工商银行', '中国银行', '平安保险', '人保财险'],
+                datasets: [{
+                    label: '保函签发数',
+                    data: [320, 285, 240, 195, 150],
+                    backgroundColor: function(context) {
+                        const chart = context.chart;
+                        const {ctx, chartArea} = chart;
+                        if (!chartArea) return null;
+                        const gradient = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
+                        gradient.addColorStop(0, '#3B82F6');
+                        gradient.addColorStop(1, '#60A5FA');
+                        return gradient;
+                    },
+                    borderRadius: 5,
+                    barThickness: 15
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: '#F1F5F9' },
+                        ticks: { font: { size: 11 } }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

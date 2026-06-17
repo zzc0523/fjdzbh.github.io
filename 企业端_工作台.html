@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业工作台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        // 业务申请趋势图表交互
+        function updateTrendChart(dimension) {
+            const chartBars = document.querySelectorAll('.chart-bar');
+            const legendText = document.querySelector('#chart-legend .legend-text');
+            
+            if (chartBars.length === 0) return;
+
+            chartBars.forEach(bar => {
+                const barCurrent = bar.querySelector('.bar-current');
+                const barHistory = bar.querySelector('.bar-history');
+                if (!barCurrent || !barHistory) return;
+
+                const count = parseInt(bar.getAttribute('data-count')) || 0;
+                const amount = parseFloat(bar.getAttribute('data-amount')) || 0;
+                const histCount = parseInt(bar.getAttribute('data-hist-count')) || 0;
+                const histAmount = parseFloat(bar.getAttribute('data-hist-amount')) || 0;
+
+                const tooltipCurrent = barCurrent.querySelector('.chart-tooltip');
+                const tooltipHistory = barHistory.querySelector('.chart-tooltip');
+
+                if (dimension === 'count') {
+                    const currentHeight = Math.max(8, (count / 40 * 100));
+                    const historyHeight = Math.max(8, (histCount / 40 * 100));
+                    
+                    barCurrent.style.height = `${currentHeight}%`;
+                    barHistory.style.height = `${historyHeight}%`;
+                    
+                    if (tooltipCurrent) tooltipCurrent.textContent = `本期: ${count}笔`;
+                    if (tooltipHistory) tooltipHistory.textContent = `同期: ${histCount}笔`;
+                    if (legendText) legendText.textContent = '申请笔数';
+                } else {
+                    const currentHeight = Math.max(8, (amount / 20 * 100));
+                    const historyHeight = Math.max(8, (histAmount / 20 * 100));
+                    
+                    barCurrent.style.height = `${currentHeight}%`;
+                    barHistory.style.height = `${historyHeight}%`;
+                    
+                    if (tooltipCurrent) tooltipCurrent.textContent = `本期: ¥${amount}w`;
+                    if (tooltipHistory) tooltipHistory.textContent = `同期: ¥${histAmount}w`;
+                    if (legendText) legendText.textContent = '申请金额';
+                }
+            });
+        }
+
+        function initTrendChart() {
+            const chartToggle = document.getElementById('chart-dimension-toggle');
+            if (!chartToggle) return;
+
+            const buttons = chartToggle.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const dim = this.getAttribute('data-dim');
+                    
+                    buttons.forEach(b => {
+                        b.classList.remove('text-primary', 'bg-white', 'shadow-sm');
+                        b.classList.add('text-gray-400', 'hover:text-gray-600');
+                    });
+                    this.classList.remove('text-gray-400', 'hover:text-gray-600');
+                    this.classList.add('text-primary', 'bg-white', 'shadow-sm');
+
+                    updateTrendChart(dim);
+                    showNotification(`已切换至按${dim === 'count' ? '笔数' : '金额'}展示趋势`, 'success');
+                });
+            });
+            
+            // 延迟初始化以确保布局完成
+            setTimeout(() => updateTrendChart('count'), 100);
+        }
+
+        // 显示通知函数
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelectorAll('.notification-toast');
+            existing.forEach(el => {
+                el.style.transform = 'translateY(-20px)';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 300);
+            });
+
+            const notification = document.createElement('div');
+            notification.className = `notification-toast fixed top-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-[9999] transition-all duration-500 flex items-center space-x-3 min-w-[300px] justify-center`;
+            
+            let icon = 'fa-info-circle';
+            switch(type) {
+                case 'success':
+                    notification.classList.add('bg-green-500', 'text-white');
+                    icon = 'fa-check-circle';
+                    break;
+                case 'error':
+                    notification.classList.add('bg-red-500', 'text-white');
+                    icon = 'fa-times-circle';
+                    break;
+                case 'warning':
+                    notification.classList.add('bg-orange-500', 'text-white');
+                    icon = 'fa-exclamation-triangle';
+                    break;
+                default:
+                    notification.classList.add('bg-primary', 'text-white');
+            }
+
+            notification.innerHTML = `<i class="fa ${icon} text-lg"></i><span class="font-medium tracking-wide">${message}</span>`;
+            document.body.appendChild(notification);
+
+            notification.style.transform = 'translate(-50%, -20px)';
+            notification.style.opacity = '0';
+
+            requestAnimationFrame(() => {
+                notification.style.transform = 'translate(-50%, 0)';
+                notification.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                notification.style.transform = 'translate(-50%, -20px)';
+                notification.style.opacity = '0';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        // 显示模态框函数
+        function showModal(title, content, buttons = [], maxWidth = 'max-w-md') {
+            const modalContainer = document.createElement('div');
+            modalContainer.className = 'fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9000] transition-opacity duration-300 p-4';
+            modalContainer.id = 'modal-container';
+            modalContainer.style.opacity = '0';
+
+            const modalContent = document.createElement('div');
+            modalContent.className = `bg-white rounded-2xl shadow-2xl w-full ${maxWidth} max-h-[90vh] flex flex-col transform transition-transform duration-300 scale-95 overflow-hidden`;
+
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'flex justify-between items-center px-6 py-5 border-b shrink-0 bg-gray-50/50';
+            
+            const modalTitle = document.createElement('h3');
+            modalTitle.className = 'text-xl font-bold text-gray-800 flex items-center';
+            modalTitle.innerHTML = `<span class="w-1.5 h-6 bg-primary rounded-full mr-3"></span>${title}`;
+            
+            const closeIcon = document.createElement('button');
+            closeIcon.className = 'w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 transition-colors';
+            closeIcon.innerHTML = '<i class="fa fa-times text-gray-400 text-lg"></i>';
+            closeIcon.onclick = closeModal;
+            
+            modalHeader.appendChild(modalTitle);
+            modalHeader.appendChild(closeIcon);
+            modalContent.appendChild(modalHeader);
+
+            const modalBody = document.createElement('div');
+            modalBody.className = 'text-gray-600 p-8 flex-1 overflow-y-auto min-h-0';
+            if (typeof content === 'string') {
+                modalBody.innerHTML = content;
+            } else {
+                modalBody.appendChild(content);
+            }
+            modalContent.appendChild(modalBody);
+
+            const modalFooter = document.createElement('div');
+            modalFooter.className = 'flex justify-end space-x-3 px-8 py-5 border-t shrink-0 bg-gray-50/50';
+
+            if (buttons.length === 0) {
+                const closeButton = document.createElement('button');
+                closeButton.className = 'px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 font-medium transition-colors';
+                closeButton.textContent = '关闭';
+                closeButton.onclick = closeModal;
+                modalFooter.appendChild(closeButton);
+            } else {
+                buttons.forEach(button => {
+                    const btn = document.createElement('button');
+                    btn.className = button.className || 'px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium transition-colors';
+                    btn.textContent = button.text;
+                    btn.onclick = button.onClick || closeModal;
+                    modalFooter.appendChild(btn);
+                });
+            }
+
+            modalContent.appendChild(modalFooter);
+            modalContainer.appendChild(modalContent);
+            document.body.appendChild(modalContainer);
+
+            requestAnimationFrame(() => {
+                modalContainer.style.opacity = '1';
+                modalContent.style.transform = 'scale(1)';
+            });
+
+            modalContainer.onclick = (e) => { if (e.target === modalContainer) closeModal(); };
+
+            function closeModal() {
+                modalContainer.style.opacity = '0';
+                modalContent.style.transform = 'scale(0.95)';
+                setTimeout(() => modalContainer.remove(), 300);
+            }
+            
+            window.closeCurrentModal = closeModal;
+        }
+
+        // 公告详情展示
+        function showAnnouncement(type) {
+            const announcements = {
+                'holiday': {
+                    title: '关于2026年清明节放假期间业务处理的通知',
+                    date: '2026-03-20',
+                    content: `
+                        <div class="space-y-4">
+                            <p class="text-sm text-gray-600 leading-relaxed italic">尊敬的用户：</p>
+                            <p class="text-sm text-gray-600 leading-relaxed">根据国家关于2026年清明节放假安排，现将平台放假期间业务处理安排通知如下：</p>
+                            <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                                <ul class="list-disc list-inside text-sm text-blue-800 space-y-2 ml-2 font-medium">
+                                    <li>放假时间：2026年4月4日（周六）至4月6日（周一），共3天。</li>
+                                    <li>业务受理：放假期间，电子保函在线申请功能正常开放。</li>
+                                    <li>人工审核：涉及人工审核的业务顺延至4月7日（周二）起进行处理。</li>
+                                    <li>客服咨询：在线客服系统维持运转，紧急情况请拨打值班热线。</li>
+                                </ul>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed">请各企业根据项目投标进度提前做好安排，感谢您的理解与支持。</p>
+                        </div>
+                    `
+                },
+                'maintenance': {
+                    title: '平台系统升级维护公告 (3月15日)',
+                    date: '2026-03-10',
+                    content: `
+                        <div class="space-y-4">
+                            <p class="text-sm text-gray-600 leading-relaxed">为了提供更优质的服务体验，平台将于以下时间进行系统维护升级：</p>
+                            <div class="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                                <p class="text-xs text-orange-800 font-bold flex items-center">
+                                    <i class="fa fa-clock-o mr-2"></i>
+                                    维护时间：2026年3月15日 22:00 - 3月16日 06:00
+                                </p>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed font-bold border-b pb-2">升级内容包括：</p>
+                            <ul class="list-disc list-inside text-sm text-gray-600 space-y-2 ml-2">
+                                <li>优化保函在线预览加载速度，提升30%以上；</li>
+                                <li>新增手机短信验证码快捷登录，增强账户安全；</li>
+                                <li>修复部分移动端浏览器兼容性显示问题。</li>
+                            </ul>
+                            <p class="text-sm text-gray-600 leading-relaxed italic text-gray-400">维护期间系统将暂停访问，请避开此时段进行业务操作。</p>
+                        </div>
+                    `
+                },
+                'feature': {
+                    title: '新版保函验证功能上线通知',
+                    date: '2026-03-05',
+                    content: `
+                        <div class="space-y-4">
+                            <p class="text-sm text-gray-600 leading-relaxed">为增强保函的安全性和权威性，新版“保函在线验证”功能今日起正式上线：</p>
+                            <div class="grid grid-cols-2 gap-4 my-4">
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center hover:bg-white hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fa fa-qrcode text-primary text-xl"></i>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-800">二维码扫码核验</p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-center hover:bg-white hover:shadow-md transition-all">
+                                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                        <i class="fa fa-shield text-green-500 text-xl"></i>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-800">区块链防伪确权</p>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 leading-relaxed">用户只需输入订单号和企业统一社会信用代码，即可实时查询保函的真实性及当前状态，有效杜绝虚假保函风险。</p>
+                            <button onclick="window.location.href='订单管理.html'" class="w-full py-3 bg-primary text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 active:scale-95">立即体验新功能</button>
+                        </div>
+                    `
+                }
+            };
+
+            const data = announcements[type];
+            if (!data) return;
+
+            // 添加即时反馈
+            if (window.showNotification) {
+                window.showNotification('正在获取公告详情...', 'info');
+            }
+
+            // 稍微延迟显示模态框，提升体感反馈
+            setTimeout(() => {
+                if (window.showModal) {
+                    window.showModal(data.title, `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between text-[10px] text-gray-400 border-b border-gray-100 pb-4 mb-4">
+                                <div class="flex items-center">
+                                    <i class="fa fa-calendar-o mr-2"></i>发布时间：${data.date}
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fa fa-eye mr-1"></i> 浏览次数：1.5k+
+                                </div>
+                            </div>
+                            ${data.content}
+                        </div>
+                    `, [], 'max-w-lg');
+                }
+            }, 300);
+        }
+
+        // 费用计算器弹窗
+        window.showCalculator = function() {
+            window.showModal('保函费用计算器', `
+                <div class="space-y-6">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-start space-x-3 mb-6">
+                        <i class="fa fa-info-circle text-primary mt-1"></i>
+                        <p class="text-xs text-blue-800 leading-relaxed">
+                            计算结果仅供参考，实际费用以系统正式申请及担保机构最终审核为准。不同担保机构费率可能存在差异。
+                        </p>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">保函金额 (元)</label>
+                            <div class="relative">
+                                <input type="number" id="calc-amount" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="请输入保函金额" oninput="window.updateCalcPreview()">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">¥</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">保函类型</label>
+                            <select id="calc-type" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none bg-white cursor-pointer" onchange="window.updateCalcPreview()">
+                                <option value="投标保函">投标保函 (参考费率: 0.10%)</option>
+                                <option value="履约保函">履约保函 (参考费率: 0.20%)</option>
+                                <option value="预付款保函">预付款保函 (参考费率: 0.15%)</option>
+                                <option value="质量保函">质量保函 (参考费率: 0.18%)</option>
+                                <option value="农民工工资保函">农民工工资保函 (参考费率: 0.12%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">保函期限</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <select id="calc-term" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none bg-white cursor-pointer" onchange="window.updateCalcPreview()">
+                                        <option value="1">1个月</option>
+                                        <option value="3">3个月</option>
+                                        <option value="6" selected>6个月</option>
+                                        <option value="12">12个月</option>
+                                        <option value="24">24个月</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <select id="calc-unit" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all appearance-none bg-white cursor-pointer" onchange="window.updateCalcPreview()">
+                                        <option value="month">按月</option>
+                                        <option value="year">按年</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pt-6 border-t border-dashed mt-6">
+                            <div id="calc-result" class="bg-gray-50 rounded-2xl p-6 text-center border border-gray-100">
+                                <p class="text-gray-500 text-sm mb-1">预估费用</p>
+                                <p class="text-3xl font-black text-gray-400">¥ 0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `, [
+                {
+                    text: '立即计算',
+                    className: 'px-8 py-3 bg-primary text-white rounded-xl hover:bg-blue-700 font-bold shadow-lg shadow-blue-200 transition-all active:scale-95',
+                    onClick: () => window.calculateFee()
+                },
+                {
+                    text: '重置',
+                    className: 'px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-bold transition-all',
+                    onClick: () => window.resetCalculator()
+                }
+            ], 'max-w-md');
+        };
+
+        // 费用计算逻辑
+        window.calculateFee = function() {
+            const amountInput = document.getElementById('calc-amount');
+            const typeSelect = document.getElementById('calc-type');
+            const termSelect = document.getElementById('calc-term');
+            const unitSelect = document.getElementById('calc-unit');
+            const resultDiv = document.getElementById('calc-result');
+            
+            if (!amountInput || !typeSelect || !termSelect || !unitSelect || !resultDiv) return;
+            
+            const amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                showNotification('请输入有效的申请金额', 'warning');
+                return;
+            }
+
+            // 费率配置
+            const rates = {
+                '投标保函': 0.001,
+                '履约保函': 0.002,
+                '预付款保函': 0.0015,
+                '质量保函': 0.0018,
+                '农民工工资保函': 0.0012
+            };
+
+            const selectedType = typeSelect.value;
+            const rate = rates[selectedType] || 0.001;
+            const term = parseInt(termSelect.value);
+            const unit = unitSelect.value;
+
+            // 计算总期限（月）
+            const totalMonths = unit === 'year' ? term * 12 : term;
+            
+            // 计算费用（考虑期限因素）
+            let fee = amount * rate;
+            
+            // 对于长期保函，给予一定折扣
+            if (totalMonths > 12) {
+                fee = fee * (1 + (totalMonths - 12) * 0.8 / 12);
+            } else if (totalMonths > 6) {
+                fee = fee * (1 + (totalMonths - 6) * 0.9 / 6);
+            }
+            
+            fee = parseFloat(fee.toFixed(2));
+            
+            // 更新结果显示
+            resultDiv.innerHTML = `
+                <p class="text-gray-500 text-sm mb-1">预估费用</p>
+                <p class="text-3xl font-black text-red-500">¥${fee.toLocaleString()}</p>
+                <div class="mt-4 text-xs text-gray-400 space-y-1">
+                    <p class="block">计算详情：</p>
+                    <p class="block">费率：${(rate * 100).toFixed(2)}%</p>
+                    <p class="block">期限：${totalMonths}个月</p>
+                    <p class="block">计算公式：${amount.toLocaleString()} × ${(rate * 100).toFixed(2)}%</p>
+                </div>
+            `;
+            
+            showNotification('计算完成', 'success');
+        };
+
+        // 重置计算器
+        window.resetCalculator = function() {
+            const amountInput = document.getElementById('calc-amount');
+            const typeSelect = document.getElementById('calc-type');
+            const termSelect = document.getElementById('calc-term');
+            const unitSelect = document.getElementById('calc-unit');
+            const resultDiv = document.getElementById('calc-result');
+            
+            if (amountInput) amountInput.value = '';
+            if (typeSelect) typeSelect.value = '投标保函';
+            if (termSelect) termSelect.value = '6';
+            if (unitSelect) unitSelect.value = 'month';
+            
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <p class="text-gray-500 text-sm mb-1">预估费用</p>
+                    <p class="text-3xl font-black text-gray-400">¥ 0.00</p>
+                `;
+            }
+            
+            showNotification('已重置计算器', 'info');
+        };
+
+        // 实时预览计算
+        window.updateCalcPreview = function() {
+            const amountInput = document.getElementById('calc-amount');
+            const typeSelect = document.getElementById('calc-type');
+            const termSelect = document.getElementById('calc-term');
+            const unitSelect = document.getElementById('calc-unit');
+            const resultDiv = document.getElementById('calc-result');
+            
+            if (!amountInput || !typeSelect || !termSelect || !unitSelect || !resultDiv) return;
+            
+            const amount = parseFloat(amountInput.value);
+            if (isNaN(amount) || amount <= 0) {
+                resultDiv.innerHTML = `
+                    <p class="text-gray-500 text-sm mb-1">预估费用</p>
+                    <p class="text-3xl font-black text-gray-400">¥ 0.00</p>
+                `;
+                return;
+            }
+
+            // 费率配置
+            const rates = {
+                '投标保函': 0.001,
+                '履约保函': 0.002,
+                '预付款保函': 0.0015,
+                '质量保函': 0.0018,
+                '农民工工资保函': 0.0012
+            };
+
+            const selectedType = typeSelect.value;
+            const rate = rates[selectedType] || 0.001;
+            const term = parseInt(termSelect.value);
+            const unit = unitSelect.value;
+
+            // 计算总期限（月）
+            const totalMonths = unit === 'year' ? term * 12 : term;
+            
+            // 计算费用（考虑期限因素）
+            let fee = amount * rate;
+            
+            // 对于长期保函，给予一定折扣
+            if (totalMonths > 12) {
+                fee = fee * (1 + (totalMonths - 12) * 0.8 / 12);
+            } else if (totalMonths > 6) {
+                fee = fee * (1 + (totalMonths - 6) * 0.9 / 6);
+            }
+            
+            fee = parseFloat(fee.toFixed(2));
+            
+            // 更新结果显示
+            resultDiv.innerHTML = `
+                <p class="text-gray-500 text-sm mb-1">预估费用</p>
+                <p class="text-3xl font-black text-red-500">¥${fee.toLocaleString()}</p>
+                <div class="mt-4 text-xs text-gray-400 space-y-1">
+                    <p class="block">计算详情：</p>
+                    <p class="block">费率：${(rate * 100).toFixed(2)}%</p>
+                    <p class="block">期限：${totalMonths}个月</p>
+                    <p class="block">计算公式：${amount.toLocaleString()} × ${(rate * 100).toFixed(2)}%</p>
+                </div>
+            `;
+        };
+
+        // 挂载到 window 供外部调用
+        window.updateTrendChart = updateTrendChart;
+        window.initTrendChart = initTrendChart;
+        window.showNotification = showNotification;
+        window.showModal = showModal;
+        window.showAnnouncement = showAnnouncement;
+
+        // 常用功能配置弹窗
+        function showConfigModal() {
+            const functions = [
+                { id: 'bhsq', name: '保函申请', icon: 'fa-file-text-o', color: 'blue', checked: true },
+                { id: 'jdcx', name: '进度查询', icon: 'fa-clock-o', color: 'green', checked: true },
+                { id: 'bhgl', name: '保函管理', icon: 'fa-credit-card', color: 'yellow', checked: true },
+                { id: 'fwzx', name: '服务咨询', icon: 'fa-comments', color: 'purple', checked: true },
+                { id: 'xmlb', name: '项目列表', icon: 'fa-briefcase', color: 'indigo', checked: false },
+                { id: 'zhgl', name: '账户管理', icon: 'fa-user-circle', color: 'pink', checked: false }
+            ];
+
+            const configHtml = `
+                <div class="space-y-4">
+                    <p class="text-xs text-gray-400 mb-4">请选择您想要在首页展示的常用功能入口（建议展示4个）</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        ${functions.map(f => `
+                            <div class="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-primary/30 transition-all cursor-pointer group" onclick="this.querySelector('input').click()">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
+                                        <i class="fa ${f.icon} text-gray-400 group-hover:text-primary"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-gray-700">${f.name}</span>
+                                </div>
+                                <input type="checkbox" ${f.checked ? 'checked' : ''} class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary" onclick="event.stopPropagation()">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            showModal('配置常用功能', configHtml, [
+                {
+                    text: '取消',
+                    className: 'px-6 py-2.5 border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-100 font-bold transition-all'
+                },
+                {
+                    text: '保存配置',
+                    className: 'px-8 py-2.5 bg-primary text-white rounded-xl hover:bg-blue-700 font-bold shadow-lg shadow-blue-200 transition-all active:scale-95',
+                    onClick: () => {
+                        showNotification('常用功能配置保存成功！', 'success');
+                        if (window.closeCurrentModal) window.closeCurrentModal();
+                    }
+                }
+            ], 'max-w-lg');
+        }
+        window.showConfigModal = showConfigModal;
+
+        // 快捷操作配置弹窗
+        function showQuickActionsConfigModal() {
+            const actions = [
+                { id: 'tbbh', name: '申请投标保函', icon: 'fa-file-text-o', checked: true },
+                { id: 'lybh', name: '申请履约保函', icon: 'fa-file-text', checked: true },
+                { id: 'yfkb', name: '申请预付款保函', icon: 'fa-file-code-o', checked: false },
+                { id: 'qyxx', name: '企业信息维护', icon: 'fa-user-circle-o', checked: true },
+                { id: 'fycq', name: '费用测算工具', icon: 'fa-calculator', checked: false },
+                { id: 'bhjy', name: '保函真伪校验', icon: 'fa-shield', checked: false }
+            ];
+
+            const configHtml = `
+                <div class="space-y-4">
+                    <p class="text-xs text-gray-400 mb-4">请选择您常用的快捷操作入口（建议展示3-4个）</p>
+                    <div class="space-y-2">
+                        ${actions.map(a => `
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-primary/30 transition-all cursor-pointer group" onclick="this.querySelector('input').click()">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
+                                        <i class="fa ${a.icon} text-gray-400 group-hover:text-primary"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-gray-700">${a.name}</span>
+                                </div>
+                                <input type="checkbox" ${a.checked ? 'checked' : ''} class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary" onclick="event.stopPropagation()">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            showModal('配置快捷操作', configHtml, [
+                {
+                    text: '取消',
+                    className: 'px-6 py-2.5 border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-100 font-bold transition-all'
+                },
+                {
+                    text: '保存配置',
+                    className: 'px-8 py-2.5 bg-primary text-white rounded-xl hover:bg-blue-700 font-bold shadow-lg shadow-blue-200 transition-all active:scale-95',
+                    onClick: () => {
+                        showNotification('快捷操作配置已更新！', 'success');
+                        if (window.closeCurrentModal) window.closeCurrentModal();
+                    }
+                }
+            ], 'max-w-md');
+        }
+        window.showQuickActionsConfigModal = showQuickActionsConfigModal;
+
+        // 保函详情快速查看
+        window.showGuaranteeDetail = function(id) {
+            showNotification(`正在加载保函 ${id} 详情...`, 'info');
+            
+            // 保函数据映射
+            const guaranteeData = {
+                'FJ202603100001': {
+                    type: '履约保函',
+                    amount: '¥2,000,000.00',
+                    status: '申请中',
+                    statusClass: 'bg-blue-50 text-blue-600 border border-blue-100',
+                    project: '福州市地铁2号线延伸工程',
+                    beneficiary: '福州市城乡建设局',
+                    applyDate: '2026-03-10',
+                    expireDate: '2027-03-10',
+                    steps: [
+                        { name: '提交申请', date: '2026-03-10 09:30', status: 'completed' },
+                        { name: '审核中', date: '2026-03-11 14:20', status: 'active' },
+                        { name: '支付保费', date: '', status: 'pending' },
+                        { name: '保函开立', date: '', status: 'pending' }
+                    ]
+                },
+                'FJ202603120001': {
+                    type: '投标保函',
+                    amount: '¥800,000.00',
+                    status: '待补录',
+                    statusClass: 'bg-blue-50 text-blue-600 border border-blue-100',
+                    project: '厦门市翔安国际机场航站楼工程',
+                    beneficiary: '厦门市公共资源交易中心',
+                    applyDate: '2026-03-12',
+                    expireDate: '2026-06-12',
+                    steps: [
+                        { name: '提交申请', date: '2026-03-12 10:00', status: 'completed' },
+                        { name: '待补录材料', date: '2026-03-12 16:30', status: 'active' },
+                        { name: '待审核', date: '', status: 'pending' },
+                        { name: '待支付', date: '', status: 'pending' },
+                        { name: '已出函', date: '', status: 'pending' }
+                    ]
+                },
+                'FJ202603130001': {
+                    type: '预付款保函',
+                    amount: '¥1,500,000.00',
+                    status: '待支付',
+                    statusClass: 'bg-rose-50 text-rose-600 border border-rose-100',
+                    project: '泉州市晋江大桥扩建工程',
+                    beneficiary: '福建省交通建设集团有限公司',
+                    applyDate: '2026-03-13',
+                    expireDate: '2027-03-13',
+                    steps: [
+                        { name: '提交申请', date: '2026-03-13 11:00', status: 'completed' },
+                        { name: '审核通过', date: '2026-03-15 15:00', status: 'completed' },
+                        { name: '待支付保费', date: '2026-03-15 15:05', status: 'active' },
+                        { name: '保函开立', date: '', status: 'pending' }
+                    ]
+                }
+            };
+            
+            const data = guaranteeData[id] || {
+                type: '投标保函',
+                amount: '¥500,000.00',
+                status: '已开立',
+                statusClass: 'bg-green-100 text-green-600 border border-green-200',
+                project: '福州市地铁2号线延伸工程施工标段',
+                beneficiary: '福州市公共资源交易中心',
+                applyDate: '2026-03-01',
+                expireDate: '2027-03-01',
+                steps: [
+                    { name: '提交申请', date: '2026-03-01', status: 'completed' },
+                    { name: '审核通过', date: '2026-03-02', status: 'completed' },
+                    { name: '支付成功', date: '2026-03-02', status: 'completed' },
+                    { name: '保函已开立', date: '2026-03-03', status: 'completed' }
+                ]
+            };
+            
+            setTimeout(() => {
+                const timelineHtml = `
+                    <div class="relative pb-8">
+                        <div class="absolute left-4 top-0 h-full w-0.5 bg-gray-100"></div>
+                        <div class="space-y-8 relative">
+                            ${data.steps.map((step, index) => `
+                                <div class="flex items-start">
+                                    <div class="absolute left-4 -translate-x-1/2 w-3 h-3 rounded-full border-2 ${
+                                        step.status === 'completed' ? 'bg-primary border-primary' : 
+                                        step.status === 'active' ? 'bg-white border-primary animate-pulse' : 'bg-white border-gray-300'
+                                    }"></div>
+                                    <div class="ml-10">
+                                        <h4 class="text-sm font-bold ${step.status === 'pending' ? 'text-gray-400' : 'text-gray-800'}">${step.name}</h4>
+                                        ${step.date ? `<p class="text-[10px] text-gray-400 mt-0.5">${step.date}</p>` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                const detailContent = `
+                    <div class="space-y-8">
+                        <!-- 基本信息卡片 -->
+                        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                            <div class="grid grid-cols-2 gap-y-6 gap-x-8">
+                                <div class="space-y-1">
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">订单号</p>
+                                    <p class="text-sm font-bold text-gray-900">${id}</p>
+                                </div>
+                                <div class="space-y-1 text-right">
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">当前状态</p>
+                                    <span class="px-2.5 py-1 text-[10px] font-bold rounded-full ${data.statusClass}">${data.status}</span>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">保函类型</p>
+                                    <p class="text-sm font-bold text-gray-900">${data.type}</p>
+                                </div>
+                                <div class="space-y-1 text-right">
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">保函金额</p>
+                                    <p class="text-sm font-bold text-red-500 font-mono">${data.amount}</p>
+                                </div>
+                                <div class="col-span-2 space-y-1">
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">对应项目</p>
+                                    <p class="text-sm font-medium text-gray-800 leading-relaxed">${data.project}</p>
+                                </div>
+                                <div class="col-span-2 space-y-1">
+                                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">受益人</p>
+                                    <p class="text-sm font-medium text-gray-800 leading-relaxed">${data.beneficiary || '未指定'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 业务进度 -->
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-800 mb-6 flex items-center">
+                                <i class="fa fa-clock-o mr-2 text-primary"></i> 业务办理进度
+                            </h3>
+                            <div class="px-2">
+                                ${timelineHtml}
+                            </div>
+                        </div>
+
+                        <!-- 相关文件 (仅在已开立时显示) -->
+                        ${(data.status === '已开立' || data.status === '已出函') ? `
+                            <div class="pt-6 border-t border-gray-100">
+                                <h3 class="text-sm font-bold text-gray-800 mb-4 flex items-center">
+                                    <i class="fa fa-file-text-o mr-2 text-primary"></i> 相关附件
+                                </h3>
+                                <div class="bg-blue-50/50 rounded-xl p-4 flex items-center justify-between border border-blue-100/50">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3 shadow-sm">
+                                            <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs font-bold text-gray-800">电子保函凭证预览.pdf</p>
+                                            <p class="text-[10px] text-gray-400 mt-0.5">2.4 MB</p>
+                                        </div>
+                                    </div>
+                                    <button class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-xs font-bold text-primary hover:bg-primary hover:text-white hover:border-primary transition-all shadow-sm">预览</button>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+
+                const buttons = [];
+                if (data.status === '待支付') {
+                    buttons.push({
+                        text: '立即支付',
+                        className: 'px-8 py-2.5 bg-rose-500 text-white rounded-lg hover:bg-rose-600 font-bold transition-all shadow-lg shadow-rose-100',
+                        onClick: () => window.location.href = '保函申请.html?step=6'
+                    });
+                } else if (data.status === '待补录') {
+                    buttons.push({
+                        text: '去补录',
+                        className: 'px-8 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-bold transition-all shadow-lg shadow-blue-100',
+                        onClick: () => window.location.href = '保函申请.html?step=3'
+                    });
+                } else if (data.status === '待审核' || data.status === '审核中') {
+                    buttons.push({
+                        text: '催办申请',
+                        className: 'px-6 py-2.5 border border-primary text-primary rounded-lg hover:bg-blue-50 font-bold transition-all',
+                        onClick: () => {
+                            showNotification('已向担保机构发送催办请求', 'success');
+                            if (window.closeCurrentModal) window.closeCurrentModal();
+                        }
+                    });
+                }
+                
+                buttons.push({
+                    text: '进入订单管理',
+                    className: 'px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-blue-700 font-bold transition-all',
+                    onClick: () => window.location.href = '订单管理.html'
+                });
+
+                showModal(`业务详情 - ${id}`, detailContent, buttons, 'max-w-xl');
+            }, 400);
+        };
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 初始化趋势图（优先初始化，防止被后续逻辑阻塞）
+            if (typeof initTrendChart === 'function') {
+                initTrendChart();
+            }
+
+            // 2. Tab切换功能
+            const tabContainer = document.querySelector('.tab-btn')?.parentElement;
+            const tabContents = {
+                'overview': 'overview-content',
+                'tasks': 'tasks-content',
+                'quick-actions': 'quick-actions-content',
+                'analytics': 'analytics-content'
+            };
+
+            if (tabContainer) {
+                tabContainer.addEventListener('click', function(e) {
+                    const btn = e.target.closest('.tab-btn');
+                    if (!btn) return;
+                    
+                    e.preventDefault();
+                    const tabId = btn.getAttribute('data-tab');
+                    if (!tabId) return;
+
+                    // 1. 更新按钮样式
+                    tabContainer.querySelectorAll('.tab-btn').forEach(t => {
+                        t.classList.remove('bg-primary', 'text-white');
+                        t.classList.add('border', 'border-gray-300', 'text-gray-700', 'hover:bg-gray-50');
+                    });
+                    btn.classList.add('bg-primary', 'text-white');
+                    btn.classList.remove('border', 'border-gray-300', 'text-gray-700', 'hover:bg-gray-50');
+
+                    // 2. 切换内容显隐
+                    Object.values(tabContents).forEach(id => {
+                        const content = document.getElementById(id);
+                        if (content) content.classList.add('hidden');
+                    });
+
+                    const targetContent = document.getElementById(tabContents[tabId]);
+                    if (targetContent) {
+                        targetContent.classList.remove('hidden');
+                        if (tabId === 'analytics') {
+                            const progressBars = targetContent.querySelectorAll('.transition-all.duration-1000');
+                            progressBars.forEach(bar => {
+                                const width = bar.style.width;
+                                bar.style.width = '0';
+                                setTimeout(() => bar.style.width = width, 50);
+                            });
+                            // 确保趋势图初始状态正确，稍微延迟以等待 DOM 显示
+                            setTimeout(() => {
+                                if (window.updateTrendChart) {
+                                    // 检查当前选中的维度
+                                    const activeBtn = document.querySelector('#chart-dimension-toggle button.text-primary');
+                                    const currentDim = activeBtn ? activeBtn.getAttribute('data-dim') : 'count';
+                                    window.updateTrendChart(currentDim);
+                                }
+                            }, 50);
+                        }
+                        showNotification(`已切换到${btn.textContent.trim()}`, 'info');
+                    }
+                });
+            }
+
+            // 通知按钮点击事件
+            const notificationBtn = document.getElementById('notification-btn');
+            const notificationDropdown = document.getElementById('notification-dropdown');
+            
+            if (notificationBtn && notificationDropdown) {
+                notificationBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    notificationDropdown.classList.toggle('hidden');
+                });
+
+                // 点击外部关闭下拉菜单
+                document.addEventListener('click', function(e) {
+                    if (!notificationDropdown.contains(e.target) && e.target !== notificationBtn) {
+                        notificationDropdown.classList.add('hidden');
+                    }
+                });
+
+                // 消息项点击跳转
+                notificationDropdown.querySelectorAll('.cursor-pointer').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const title = this.querySelector('p.font-bold').textContent;
+                        if (title.includes('审核通过')) {
+                            showNotification('正在进入支付页面...', 'success');
+                            setTimeout(() => {
+                                window.location.href = '保函申请.html?step=4';
+                            }, 500);
+                        } else {
+                            showNotification('正在跳转至消息详情...', 'info');
+                            setTimeout(() => {
+                                window.location.href = '消息中心.html';
+                            }, 500);
+                        }
+                    });
+                });
+            }
+
+            // 帮助按钮点击事件
+            const helpIcon = document.querySelector('header .fa-question-circle');
+            if (helpIcon && helpIcon.parentElement) {
+                helpIcon.parentElement.addEventListener('click', function() {
+                    showModal('帮助中心', '<p>如需帮助，请联系客服热线：<span class="text-primary font-bold">400-123-4567</span></p><p class="mt-2">或访问帮助文档获取更多信息。</p>');
+                });
+            }
+
+            // 个人中心下拉菜单
+            const userDropdownBtn = document.getElementById('user-dropdown-btn');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (userDropdownBtn && userDropdown) {
+                userDropdownBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                // 点击外部关闭下拉菜单
+                document.addEventListener('click', function(e) {
+                    if (!userDropdown.contains(e.target) && e.target !== userDropdownBtn) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            // 退出登录按钮
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showModal('确认退出', '您确定要退出登录吗？', [
+                        {
+                            text: '取消',
+                            className: 'px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50'
+                        },
+                        {
+                            text: '确认退出',
+                            className: 'px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600',
+                            onClick: function() {
+                                showNotification('正在退出...', 'info');
+                                setTimeout(() => {
+                                    window.location.href = '门户端_登录.html';
+                                }, 1000);
+                            }
+                        }
+                    ]);
+                });
+            }
+
+
+
+            // 概览卡片点击事件
+            const overviewCards = document.querySelectorAll('#overview-content .bg-white.rounded-lg.shadow-md.p-6');
+            overviewCards.forEach(card => {
+                card.classList.add('cursor-pointer', 'hover:shadow-lg', 'transition-shadow', 'duration-200');
+                card.addEventListener('click', function(e) {
+                    const link = this.querySelector('a');
+                    if (link) {
+                        window.location.href = link.getAttribute('href');
+                    }
+                });
+            });
+
+            // 常用功能点击事件
+            const commonFunctions = document.querySelectorAll('.grid.grid-cols-2.md\:grid-cols-4.gap-4 a, .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-4.gap-3 button');
+            commonFunctions.forEach(element => {
+                element.addEventListener('click', function(e) {
+                    const span = this.querySelector('span');
+                    const text = span ? span.textContent : (this.textContent || '功能');
+                    // 只有非费用计算按钮才显示跳转通知
+                    if (!text.includes('费用计算')) {
+                        showNotification(`正在跳转到${text.trim()}`, 'info');
+                    }
+                });
+            });
+
+
+
+            // 模板下载弹窗
+            window.showTemplates = function() {
+                const templates = [
+                    { name: '投标保函申请书模板', type: 'DOCX', size: '25KB' },
+                    { name: '履约保函格式范本', type: 'PDF', size: '156KB' },
+                    { name: '预付款保函开立申请表', type: 'XLSX', size: '42KB' },
+                    { name: '企业实名认证授权委托书', type: 'DOCX', size: '18KB' }
+                ];
+
+                const templateHtml = `
+                    <div class="space-y-3">
+                        ${templates.map(t => `
+                            <div class="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-lg bg-gray-50 group-hover:bg-blue-100 flex items-center justify-center mr-4 transition-colors">
+                                        <i class="fa ${t.type === 'PDF' ? 'fa-file-pdf-o text-red-500' : 'fa-file-word-o text-blue-500'} text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800">${t.name}</p>
+                                        <p class="text-[10px] text-gray-400 uppercase mt-0.5">${t.type} · ${t.size}</p>
+                                    </div>
+                                </div>
+                                <button onclick="window.downloadTemplate('${t.name}')" class="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-primary hover:bg-white transition-all">
+                                    <i class="fa fa-download"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                showModal('常用模板下载', templateHtml, [], 'max-w-lg');
+            };
+
+            // 最新通知点击事件
+            const notifications = document.querySelectorAll('#overview-content .flex.items-start.p-3.border.border-gray-200.rounded-md');
+            notifications.forEach(notification => {
+                notification.classList.add('cursor-pointer', 'hover:bg-gray-50', 'transition-colors', 'duration-200');
+                notification.addEventListener('click', function() {
+                    const notificationTitle = this.querySelector('h4').textContent;
+                    const notificationContent = this.querySelector('p').textContent;
+                    showModal(notificationTitle, `<div class="p-2"><p class="text-gray-700 leading-relaxed">${notificationContent}</p></div>`);
+                });
+            });
+
+            // 我的任务立即处理按钮点击事件
+            const taskButtons = document.querySelectorAll('#tasks-content button');
+            taskButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const taskTitle = this.closest('.border').querySelector('h4').textContent;
+                    showNotification(`正在处理：${taskTitle}`, 'info');
+                    
+                    setTimeout(() => {
+                        if (taskTitle.includes('补充材料')) {
+                            window.location.href = '保函申请.html?step=2';
+                        } else if (taskTitle.includes('确认保函开立信息')) {
+                            window.location.href = '保函申请.html?step=4';
+                        } else if (taskTitle.includes('待支付保费')) {
+                            window.location.href = '保函申请.html?step=6';
+                        } else {
+                            showNotification('任务处理成功', 'success');
+                        }
+                    }, 500);
+                });
+            });
+
+            // 快速操作按钮点击事件
+            const quickActionButtons = document.querySelectorAll('#quick-actions-content button');
+            quickActionButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const actionText = this.querySelector('span').textContent;
+                    
+                    if (actionText === '费用计算') {
+                        // 费用计算按钮使用专门的函数
+                        window.showCalculator();
+                    } else {
+                        showNotification(`正在启动：${actionText}`, 'info');
+                        
+                        setTimeout(() => {
+                            if (['投标保函', '履约保函', '预付款保函', '质量保函'].includes(actionText)) {
+                                window.location.href = '保函申请.html';
+                            } else if (actionText === '保函验证') {
+                                window.location.href = '订单管理.html';
+                            } else {
+                                showNotification(`${actionText}功能正在开发中...`, 'warning');
+                            }
+                        }, 500);
+                    }
+                });
+            });
+
+            // 统计分析点击效果
+            const analyticsCards = document.querySelectorAll('#analytics-content .border');
+            analyticsCards.forEach(card => {
+                card.classList.add('cursor-pointer', 'hover:border-primary', 'transition-all', 'duration-300');
+                card.addEventListener('click', function() {
+                    const titleElement = this.querySelector('h4') || this.querySelector('div');
+                    const title = titleElement ? titleElement.textContent : '统计';
+                    showNotification(`查看${title}详细统计数据`, 'info');
+                });
+            });
+
+
+
+            // 下载模板逻辑
+            window.downloadTemplate = function(name) {
+                showNotification(`正在下载模板：${name}...`, 'info');
+                setTimeout(() => {
+                    showNotification('下载成功', 'success');
+                }, 1000);
+            };
+
+        });
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa fa-shield text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">福建省电子保函服务平台</h1>
+                            <p class="text-xs text-gray-500">企业端</p>
+                        </div>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="企业端_工作台.html" class="text-primary font-medium">工作台</a>
+                    <a href="企业端_保函申请.html" class="text-gray-600 hover:text-primary transition-colors">保函申请</a>
+                    <a href="企业端_订单管理.html" class="text-gray-600 hover:text-primary transition-colors">订单管理</a>
+                    <a href="企业端_企业认证.html" class="text-gray-600 hover:text-primary transition-colors">企业认证</a>
+                    <div class="relative" id="notification-wrapper">
+                        <button class="text-gray-600 hover:text-primary relative p-1 transition-colors" id="notification-btn">
+                            <i class="fa fa-bell"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <!-- 消息下拉菜单 -->
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
+                            <div class="p-3 border-b border-gray-100 flex justify-between items-center">
+                                <h3 class="text-sm font-bold text-gray-800">最新通知</h3>
+                                <a href="企业端_消息中心.html" class="text-xs text-primary hover:underline">查看全部</a>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fa fa-file-text text-primary text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-gray-900 truncate">保函申请审核通过</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的投标保函（FJ202603110001）已审核通过，请及时支付保费。</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">10分钟前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fa fa-exclamation-triangle text-yellow-600 text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-gray-900 truncate">保函即将到期提醒</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您有一笔履约保函将于3天后到期，请处理。</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">2小时前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                                    <div class="flex items-start">
+                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                            <i class="fa fa-check-circle text-green-600 text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-gray-900 truncate">账户认证成功</p>
+                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的企业实名认证已更新成功。</p>
+                                            <p class="text-[10px] text-gray-400 mt-1">昨天</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-2 bg-gray-50 text-center">
+                                <button class="text-xs text-gray-500 hover:text-primary transition-colors">全部标记为已读</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative" id="user-dropdown-wrapper">
+                        <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors" id="user-dropdown-btn">
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                <i class="fa fa-user text-gray-600"></i>
+                            </div>
+                            <span class="hidden md:inline">138****8888</span>
+                        </button>
+                        <!-- 个人中心下拉菜单 -->
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
+                            <div class="p-4 border-b border-gray-100">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fa fa-user text-gray-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-bold">138****8888</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="py-2">
+                                <a href="企业端_发票管理.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-file-text mr-3 w-5 text-center"></i>
+                                    <span>发票管理</span>
+                                </a>
+                                <a href="企业端_服务咨询.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-comments mr-3 w-5 text-center"></i>
+                                    <span>服务咨询</span>
+                                </a>
+                                <a href="企业端_我的账户.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                    <i class="fa fa-user-circle mr-3 w-5 text-center"></i>
+                                    <span>我的账户</span>
+                                </a>
+                                <div class="border-t border-gray-100 mt-2 pt-2">
+                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors" id="logout-btn">
+                                        <i class="fa fa-sign-out mr-3 w-5 text-center"></i>
+                                        <span>退出登录</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-50 min-h-[calc(100vh-4rem)]">
+                <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+                    <div class="flex space-x-2 overflow-x-auto pb-2 md:pb-0">
+                        <button data-tab="overview" class="tab-btn px-4 py-2 bg-primary text-white rounded-md whitespace-nowrap transition-all duration-200">
+                            <i class="fa fa-dashboard mr-2"></i>概览
+                        </button>
+                        <button data-tab="analytics" class="tab-btn px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 whitespace-nowrap transition-all duration-200">
+                            <i class="fa fa-bar-chart mr-2"></i>统计分析
+                        </button>
+                        <button data-tab="quick-actions" class="tab-btn px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 whitespace-nowrap transition-all duration-200">
+                            <i class="fa fa-bolt mr-2"></i>快速操作
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 概览内容 -->
+                <div id="overview-content">
+                    <!-- 概览卡片 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-gray-500 font-medium">待处理申请</h3>
+                                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                                    <i class="fa fa-file-text-o text-primary text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div class="text-3xl font-bold text-gray-800">3</div>
+                                <div class="text-xs text-green-600 mb-1 flex items-center">
+                                    <i class="fa fa-caret-up mr-1"></i>
+                                    <span>较昨日 +1</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-[10px] text-gray-500 flex flex-wrap gap-1">
+                                <span class="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded-full">申请中 2</span>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-50">
+                                <a href="企业端_订单管理.html" class="text-primary hover:text-blue-700 text-sm font-medium flex items-center">
+                                    查看详情 <i class="fa fa-angle-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-gray-500 font-medium">已生效保函</h3>
+                                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+                                    <i class="fa fa-credit-card text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div class="text-3xl font-bold text-gray-800">12</div>
+                                <div class="text-xs text-green-600 mb-1 flex items-center">
+                                    <i class="fa fa-caret-up mr-1"></i>
+                                    <span>本月 +4</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-[10px] text-gray-500 flex flex-wrap gap-1">
+                                <span class="bg-emerald-50 text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full">已支付 3</span>
+                                <span class="bg-green-50 text-green-600 border border-green-100 px-2 py-0.5 rounded-full">已出函 9</span>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-50">
+                                <a href="企业端_订单管理.html" class="text-primary hover:text-blue-700 text-sm font-medium flex items-center">
+                                    查看详情 <i class="fa fa-angle-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-gray-500 font-medium">待支付订单</h3>
+                                <div class="w-12 h-12 bg-rose-50 rounded-xl flex items-center justify-center">
+                                    <i class="fa fa-credit-card text-rose-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div class="text-3xl font-bold text-gray-800">3</div>
+                                <div class="text-xs text-rose-500 mb-1 flex items-center font-bold">
+                                    <i class="fa fa-exclamation-circle mr-1"></i>
+                                    <span>请及时缴纳</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-[10px] text-gray-500 flex flex-wrap gap-1">
+                                <span class="bg-rose-50 text-rose-600 border border-rose-100 px-2 py-0.5 rounded-full">待支付 3</span>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-50">
+                                <a href="企业端_订单管理.html" class="text-primary hover:text-blue-700 text-sm font-medium flex items-center">
+                                    立即支付 <i class="fa fa-angle-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-gray-500 font-medium">售后及异常</h3>
+                                <div class="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center">
+                                    <i class="fa fa-tasks text-gray-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-end justify-between">
+                                <div class="text-3xl font-bold text-gray-800">6</div>
+                                <div class="text-xs text-orange-500 mb-1 flex items-center font-bold">
+                                    <i class="fa fa-exclamation-triangle mr-1"></i>
+                                    <span>需要关注</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-[10px] text-gray-500 flex flex-wrap gap-1">
+                                <span class="bg-orange-50 text-orange-600 border border-orange-100 px-2 py-0.5 rounded-full">退保中 1</span>
+                                <span class="bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 rounded-full">理赔中 1</span>
+                                <span class="bg-cyan-50 text-cyan-600 border border-cyan-100 px-2 py-0.5 rounded-full">已退保 2</span>
+                                <span class="bg-red-50 text-red-600 border border-red-100 px-2 py-0.5 rounded-full">已拒绝 2</span>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-gray-50">
+                                <a href="企业端_订单管理.html" class="text-primary hover:text-blue-700 text-sm font-medium flex items-center">
+                                    查看详情 <i class="fa fa-angle-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快捷入口 -->
+                    <div class="grid grid-cols-1 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-gray-800">快捷操作</h3>
+                                <button onclick="window.showQuickActionsConfigModal()" class="text-sm text-gray-400 hover:text-primary transition-colors">配置</button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
+                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
+                                        <i class="fa fa-file-text-o text-gray-400 group-hover:text-primary"></i>
+                                    </div>
+                                    <span class="text-gray-700 font-medium">申请投标保函</span>
+                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
+                                </button>
+                                <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
+                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
+                                        <i class="fa fa-file-text text-gray-400 group-hover:text-primary"></i>
+                                    </div>
+                                    <span class="text-gray-700 font-medium">申请履约保函</span>
+                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
+                                </button>
+                                <button onclick="window.location.href='我的账户.html'" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
+                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
+                                        <i class="fa fa-user-circle-o text-gray-400 group-hover:text-primary"></i>
+                                    </div>
+                                    <span class="text-gray-700 font-medium">企业信息维护</span>
+                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
+                                </button>
+                                <button onclick="window.showCalculator()" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
+                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
+                                        <i class="fa fa-calculator text-gray-400 group-hover:text-primary"></i>
+                                    </div>
+                                    <span class="text-gray-700 font-medium">费用计算</span>
+                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 待支付任务 -->
+                    <div class="grid grid-cols-1 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-gray-800">待办任务</h3>
+                                <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold border border-red-100">3 条待处理</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="group bg-white border border-gray-100 rounded-2xl p-6 hover:border-primary hover:shadow-md transition-all duration-300">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-4">
+                                                <i class="fa fa-credit-card text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors">待支付保费</h4>
+                                                <p class="text-xs text-gray-400 mt-0.5">关联编号: FJ202603250002</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-rose-100">待支付</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 leading-relaxed mb-6">您的投标保函申请已通过终审，请及时缴纳保费 ¥300.00 以完成保函开立并下载。</p>
+                                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                                        <div class="flex items-center text-xs text-gray-400">
+                                            <i class="fa fa-clock-o mr-1.5"></i>
+                                            截止时间：2026-04-28 17:00
+                                        </div>
+                                        <button onclick="window.location.href='保函申请.html?step=6'" class="px-6 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 shadow-lg shadow-rose-100 transition-all active:scale-95">立即支付</button>
+                                    </div>
+                                </div>
+                                <div class="group bg-white border border-gray-100 rounded-2xl p-6 hover:border-primary hover:shadow-md transition-all duration-300">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-4">
+                                                <i class="fa fa-credit-card text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors">待支付保费</h4>
+                                                <p class="text-xs text-gray-400 mt-0.5">关联编号: FJ202604010003</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-rose-100">待支付</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 leading-relaxed mb-6">您的履约保函申请已通过终审，请及时缴纳保费 ¥1,500.00 以完成保函开立并下载。</p>
+                                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                                        <div class="flex items-center text-xs text-gray-400">
+                                            <i class="fa fa-clock-o mr-1.5"></i>
+                                            截止时间：2026-05-05 17:00
+                                        </div>
+                                        <button onclick="window.location.href='保函申请.html?step=6'" class="px-6 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 shadow-lg shadow-rose-100 transition-all active:scale-95">立即支付</button>
+                                    </div>
+                                </div>
+                                <div class="group bg-white border border-gray-100 rounded-2xl p-6 hover:border-primary hover:shadow-md transition-all duration-300">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-4">
+                                                <i class="fa fa-credit-card text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors">待支付保费</h4>
+                                                <p class="text-xs text-gray-400 mt-0.5">关联编号: FJ202604020001</p>
+                                            </div>
+                                        </div>
+                                        <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-rose-100">待支付</span>
+                                    </div>
+                                    <p class="text-sm text-gray-600 leading-relaxed mb-6">您的预付款保函申请已通过终审，请及时缴纳保费 ¥800.00 以完成保函开立并下载。</p>
+                                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+                                        <div class="flex items-center text-xs text-gray-400">
+                                            <i class="fa fa-clock-o mr-1.5"></i>
+                                            截止时间：2026-05-10 17:00
+                                        </div>
+                                        <button onclick="window.location.href='保函申请.html?step=6'" class="px-6 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 shadow-lg shadow-rose-100 transition-all active:scale-95">立即支付</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 申请中的保函与通知 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+                                <h3 class="text-lg font-bold text-gray-800">申请中的保函</h3>
+                                <a href="企业端_订单管理.html" class="text-sm text-primary hover:underline">查看全部</a>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead>
+                                        <tr class="bg-gray-50/50 text-gray-500 text-xs font-bold uppercase">
+                                            <th class="px-6 py-4">订单号</th>
+                                            <th class="px-6 py-4">项目名称</th>
+                                            <th class="px-6 py-4">保函类型</th>
+                                            <th class="px-6 py-4">金额</th>
+                                            <th class="px-6 py-4">状态</th>
+                                            <th class="px-6 py-4 text-center">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-100">
+                                        <tr class="hover:bg-gray-50/80 transition-colors group">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">FJ202603100001</div>
+                                                <div class="text-[10px] text-gray-400 mt-0.5">申请日期: 2026-03-10</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-600">福州市地铁2号线延伸工程</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm text-gray-600">履约保函</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900">¥2,000,000.00</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-blue-50 text-blue-600 border border-blue-100">申请中</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <a href="javascript:void(0)" onclick="window.showGuaranteeDetail('FJ202603100001')" class="text-primary hover:text-blue-700 font-medium text-sm">详情</a>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50/80 transition-colors group">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">FJ202603130001</div>
+                                                <div class="text-[10px] text-gray-400 mt-0.5">申请日期: 2026-03-13</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-600">泉州市晋江大桥扩建工程</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm text-gray-600">预付款保函</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900">¥1,500,000.00</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-rose-50 text-rose-600 border border-rose-100">待支付</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <a href="javascript:void(0)" onclick="window.showGuaranteeDetail('FJ202603130001')" class="text-primary hover:text-blue-700 font-medium text-sm">详情</a>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-gray-50/80 transition-colors group">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">FJ202603150001</div>
+                                                <div class="text-[10px] text-gray-400 mt-0.5">申请日期: 2026-03-15</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-600">漳州市城市广场建设项目</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="text-sm text-gray-600">投标保函</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900">¥600,000.00</td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-green-50 text-green-600 border border-green-100">已支付</span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <a href="javascript:void(0)" onclick="window.showGuaranteeDetail('FJ202603150001')" class="text-primary hover:text-blue-700 font-medium text-sm">详情</a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- 平台公告 -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                    <span class="w-1 h-5 bg-orange-400 rounded-full mr-2"></span>
+                                    最新公告
+                                </h3>
+                                <button onclick="window.location.href='消息中心.html'" class="text-[10px] text-gray-400 hover:text-primary flex items-center transition-colors">
+                                    历史公告 <i class="fa fa-angle-right ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-5" id="announcement-list">
+                                <div onclick="window.showAnnouncement('holiday')" class="group cursor-pointer">
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-500 text-[9px] font-bold">通知</span>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">关于2026年清明节放假期间业务处理的通知</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2026-03-20</span>
+                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div onclick="window.showAnnouncement('maintenance')" class="group cursor-pointer">
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-500 text-[9px] font-bold">维护</span>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">平台系统升级维护公告 (3月15日)</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2026-03-10</span>
+                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div onclick="window.showAnnouncement('feature')" class="group cursor-pointer">
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span class="px-1.5 py-0.5 rounded bg-green-50 text-green-500 text-[9px] font-bold">上线</span>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">新版保函验证功能上线通知</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2026-03-05</span>
+                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="window.location.href='消息中心.html'" class="w-full mt-6 py-2.5 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200">查看更多公告</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速操作内容 (已在概览中部分整合，这里提供更完整的工具箱) -->
+                <div id="quick-actions-content" class="hidden">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-8 text-center">快捷工具箱</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="space-y-6">
+                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b pb-2">保函业务</h4>
+                                <div class="space-y-3">
+                                    <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <i class="fa fa-plus-circle mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
+                                        <span class="font-bold text-sm">申请投标保函</span>
+                                    </button>
+                                    <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <i class="fa fa-plus-circle mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
+                                        <span class="font-bold text-sm">申请履约保函</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b pb-2">辅助工具</h4>
+                                <div class="space-y-3">
+                                    <button onclick="window.showCalculator()" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <i class="fa fa-calculator mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
+                                        <span class="font-bold text-sm">保函费用计算</span>
+                                    </button>
+                                    <button onclick="window.showTemplates()" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <i class="fa fa-download mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
+                                        <span class="font-bold text-sm">业务模板下载</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="space-y-6">
+                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b pb-2">其他服务</h4>
+                                <div class="space-y-3">
+                                    <button onclick="window.location.href='服务咨询.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <i class="fa fa-headphones mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
+                                        <span class="font-bold text-sm">在线技术支持</span>
+                                    </button>
+                                    <button onclick="window.location.href='我的账户.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
+                                        <i class="fa fa-shield mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
+                                        <span class="font-bold text-sm">账户安全设置</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计分析内容 -->
+                <div id="analytics-content" class="hidden space-y-6">
+                    <!-- 核心指标概览 -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-100">
+                            <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">保函总申请金额</p>
+                            <div class="flex items-baseline space-x-1">
+                                <span class="text-2xl font-black">¥ 8,642,000</span>
+                                <span class="text-xs font-bold text-blue-200">元</span>
+                            </div>
+                            <div class="mt-4 flex items-center text-[10px] bg-white/10 rounded-lg px-2 py-1 w-fit">
+                                <i class="fa fa-arrow-up mr-1 text-green-300"></i>
+                                <span class="text-blue-50">较上月 +12.5%</span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-100">
+                            <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">审核通过率</p>
+                            <div class="text-2xl font-black">98.2%</div>
+                            <div class="mt-4 flex items-center text-[10px] bg-white/10 rounded-lg px-2 py-1 w-fit">
+                                <i class="fa fa-check-circle mr-1 text-green-300"></i>
+                                <span class="text-blue-50">平台平均水平之上</span>
+                            </div>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl p-6 text-white shadow-lg shadow-blue-100">
+                            <p class="text-blue-100 text-xs font-bold uppercase tracking-wider mb-1">累计节省保证金</p>
+                            <div class="flex items-baseline space-x-1">
+                                <span class="text-2xl font-black">¥ 420</span>
+                                <span class="text-xs font-bold text-blue-200">万元</span>
+                            </div>
+                            <div class="mt-4 flex items-center text-[10px] bg-white/10 rounded-lg px-2 py-1 w-fit">
+                                <i class="fa fa-shield mr-1 text-green-300"></i>
+                                <span class="text-blue-50">有效释放资金</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- 趋势图表 -->
+                        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                            <div class="flex items-center justify-between mb-8">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800">业务申请趋势</h3>
+                                    <p class="text-xs text-gray-400 mt-1">按月度统计的保函申请笔数与金额趋势</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="flex bg-gray-50 p-1 rounded-lg border border-gray-100" id="chart-dimension-toggle">
+                                        <button data-dim="count" class="px-3 py-1 text-[10px] font-bold text-primary bg-white rounded shadow-sm transition-all">笔数</button>
+                                        <button data-dim="amount" class="px-3 py-1 text-[10px] font-bold text-gray-400 hover:text-gray-600 transition-all">金额</button>
+                                    </div>
+                                    <select class="text-[10px] bg-gray-50 border-gray-100 rounded-lg px-2 py-1.5 font-bold text-gray-500 outline-none cursor-pointer">
+                                        <option>2026年</option>
+                                        <option>2025年</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- 增强版图表 -->
+                            <div id="trend-chart-container" class="h-64 flex items-end justify-between space-x-1 px-2 border-b border-gray-50 pb-2 relative">
+                                <!-- 网格线 -->
+                                <div class="absolute inset-x-0 top-0 h-full flex flex-col justify-between pointer-events-none opacity-5">
+                                    <div class="border-t border-gray-800 w-full"></div>
+                                    <div class="border-t border-gray-800 w-full"></div>
+                                    <div class="border-t border-gray-800 w-full"></div>
+                                    <div class="border-t border-gray-800 w-full"></div>
+                                </div>
+                                
+                                <!-- 12个月数据数据 (本期 vs 同期) -->
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="8" data-amount="2.5" data-hist-count="12" data-hist-amount="3.8">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">4月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="12" data-amount="4.2" data-hist-count="10" data-hist-amount="3.5">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">5月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="15" data-amount="5.8" data-hist-count="14" data-hist-amount="5.2">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">6月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="22" data-amount="9.5" data-hist-count="18" data-hist-amount="7.8">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">7月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="18" data-amount="7.2" data-hist-count="20" data-hist-amount="8.5">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">8月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="20" data-amount="8.8" data-hist-count="15" data-hist-amount="6.2">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">9月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="12" data-amount="4.5" data-hist-count="16" data-hist-amount="6.8">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">10月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="18" data-amount="8.2" data-hist-count="12" data-hist-amount="5.5">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">11月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="10" data-amount="3.1" data-hist-count="15" data-hist-amount="5.2">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">12月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="25" data-amount="12.4" data-hist-count="20" data-hist-amount="9.5">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">1月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar" data-count="16" data-amount="7.8" data-hist-count="18" data-hist-amount="8.2">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-blue-400 group-hover:bg-blue-500 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-gray-400 mt-2 font-medium scale-90 shrink-0">2月</span>
+                                </div>
+                                <div class="flex-1 h-full flex flex-col justify-end items-center group chart-bar current-month" data-count="32" data-amount="15.2" data-hist-count="24" data-hist-amount="11.8">
+                                    <div class="w-full flex items-end justify-center space-x-px h-full">
+                                        <div class="bar-history w-1/2 bg-slate-200 group-hover:bg-slate-300 transition-all duration-500 rounded-t-sm relative">
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap z-10"></span>
+                                        </div>
+                                        <div class="bar-current w-1/2 bg-primary group-hover:bg-primary/90 transition-all duration-500 rounded-t-sm relative shadow-[0_-4px_12px_rgba(30,64,175,0.2)]">
+                                            <div class="w-full bg-white/20 h-1/2"></div>
+                                            <span class="chart-tooltip absolute -top-7 left-1/2 -translate-x-1/2 bg-primary text-white text-[9px] px-2 py-1 rounded shadow-lg font-bold whitespace-nowrap z-10"></span>
+                                        </div>
+                                    </div>
+                                    <span class="text-[9px] text-primary mt-2 font-black shrink-0">3月</span>
+                                </div>
+                            </div>
+                            <div class="mt-8 flex items-center justify-center space-x-8" id="chart-legend">
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-3 h-3 bg-blue-400 rounded-sm"></span>
+                                    <span class="legend-text text-[10px] font-bold text-gray-500 uppercase tracking-widest">申请笔数</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="w-3 h-3 bg-slate-200 rounded-sm"></span>
+                                    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">历史同期</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 占比与分析 -->
+                        <div class="space-y-6">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                                <h3 class="text-lg font-bold text-gray-800 mb-6">保函类型分布</h3>
+                                <div class="space-y-6">
+                                    <div class="group">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <div class="flex items-center">
+                                                <span class="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                                                <span class="text-sm font-bold text-gray-600 group-hover:text-primary transition-colors">投标保函</span>
+                                            </div>
+                                            <span class="text-sm font-mono font-bold text-gray-400">40%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-50 rounded-full h-2 overflow-hidden">
+                                            <div class="bg-primary h-full rounded-full transition-all duration-1000" style="width: 40%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="group">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <div class="flex items-center">
+                                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                                <span class="text-sm font-bold text-gray-600 group-hover:text-green-600 transition-colors">履约保函</span>
+                                            </div>
+                                            <span class="text-sm font-mono font-bold text-gray-400">30%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-50 rounded-full h-2 overflow-hidden">
+                                            <div class="bg-green-500 h-full rounded-full transition-all duration-1000" style="width: 30%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="group">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <div class="flex items-center">
+                                                <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                                                <span class="text-sm font-bold text-gray-600 group-hover:text-yellow-600 transition-colors">预付款保函</span>
+                                            </div>
+                                            <span class="text-sm font-mono font-bold text-gray-400">20%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-50 rounded-full h-2 overflow-hidden">
+                                            <div class="bg-yellow-500 h-full rounded-full transition-all duration-1000" style="width: 20%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-8 pt-6 border-t border-gray-50">
+                                    <div class="flex items-center justify-between text-[11px] text-gray-400">
+                                        <span>主流类型：投标保函</span>
+                                        <button class="text-primary font-bold hover:underline">分析报告 <i class="fa fa-external-link ml-1"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                                <h3 class="text-lg font-bold text-gray-800 mb-6">金额区间分布</h3>
+                                <div class="flex items-center justify-center py-4">
+                                    <!-- 环形图模拟 -->
+                                    <div class="relative w-32 h-32 flex items-center justify-center">
+                                        <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-gray-100" stroke-width="4"></circle>
+                                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-primary" stroke-width="4" stroke-dasharray="65 100"></circle>
+                                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-blue-300" stroke-width="4" stroke-dasharray="25 100" stroke-dashoffset="-65"></circle>
+                                            <circle cx="18" cy="18" r="16" fill="none" class="stroke-blue-100" stroke-width="4" stroke-dasharray="10 100" stroke-dashoffset="-90"></circle>
+                                        </svg>
+                                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                            <span class="text-lg font-black text-gray-800">10万+</span>
+                                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">为主</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-8 space-y-2">
+                                        <div class="flex items-center text-[10px] text-gray-500 font-bold">
+                                            <span class="w-2 h-2 bg-primary rounded-full mr-2"></span>
+                                            <span>> 10万 (65%)</span>
+                                        </div>
+                                        <div class="flex items-center text-[10px] text-gray-500 font-bold">
+                                            <span class="w-2 h-2 bg-blue-300 rounded-full mr-2"></span>
+                                            <span>5-10万 (25%)</span>
+                                        </div>
+                                        <div class="flex items-center text-[10px] text-gray-500 font-bold">
+                                            <span class="w-2 h-2 bg-blue-100 rounded-full mr-2"></span>
+                                            <span>< 5万 (10%)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 统计详情说明 -->
+                    <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center shrink-0 border border-gray-100">
+                                <i class="fa fa-lightbulb-o text-yellow-500 text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 mb-1">统计数据说明</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed">
+                                    本页展示的数据基于企业名下所有已提交的保函申请。数据每小时自动更新一次，金额类统计不含手续费。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

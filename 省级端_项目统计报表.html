@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 项目统计报表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#1E40AF', secondary: '#3B82F6', accent: '#60A5FA', neutral: '#F3F4F6', 'neutral-dark': '#1F2937' },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+            .chart-container { width: 100%; height: 350px; }
+            .custom-table { table-layout: fixed; width: 100%; }
+            .custom-table th { white-space: nowrap; font-weight: 600; letter-spacing: 0.05em; }
+            .custom-table td { font-size: 0.875rem; }
+        </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-shield"></i></div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+                                        <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警统计分析
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3"><p class="text-xs font-bold">超级管理员</p><p class="text-[10px] text-slate-400">福建省政务中心</p></div>
+                    <button class="ml-auto text-slate-500 hover:text-white"><i class="fa fa-sign-out"></i></button>
+                </div>
+            </div>
+        </aside>
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2"><h2 class="text-lg font-bold text-slate-800">业务统计分析</h2><span class="text-slate-400">/</span><span class="text-sm text-slate-500">项目统计报表</span></div>
+                <div class="flex items-center space-x-4">
+                    <button class="flex items-center space-x-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-all text-sm font-medium"><i class="fa fa-download"></i><span>导出报表</span></button>
+                </div>
+            </header>
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div class="p-4 border-b border-slate-100">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm font-medium text-slate-600">项目名称:</label>
+                                <input type="text" placeholder="" class="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm font-medium text-slate-600">项目编号:</label>
+                                <input type="text" placeholder="" class="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48">
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <label class="text-sm font-medium text-slate-600">标段名称:</label>
+                                <input type="text" placeholder="" class="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48">
+                            </div>
+                            <div class="ml-auto flex items-center space-x-2">
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">查询</button>
+                                <button class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition-all">重置</button>
+                                <button class="px-4 py-2 bg-slate-500 text-white rounded-lg text-sm font-medium hover:bg-slate-600 transition-all flex items-center">
+                                    <span>展开</span>
+                                    <i class="fa fa-chevron-down ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all flex items-center">
+                            <i class="fa fa-download mr-2"></i>导出报表
+                        </button>
+                    </div>
+                </div>
+<div class="bg-white rounded-xl border border-slate-100 shadow-lg overflow-hidden">
+                    <div class="p-4 bg-gradient-to-r from-blue-50 to-white border-b border-slate-100">
+                        <div class="flex items-center">
+                            <span class="text-sm text-slate-600">保证金金额总计：</span>
+                            <span class="font-bold text-blue-600 ml-2">17,764,000.00元</span>
+                            <span class="text-slate-300 mx-4">|</span>
+                            <span class="text-sm text-slate-600">保费总计：</span>
+                            <span class="font-bold text-green-600 ml-2">6,640.00元</span>
+                            <span class="text-slate-300 mx-4">|</span>
+                            <span class="text-sm text-slate-600">投保企业：</span>
+                            <span class="font-bold text-purple-600 ml-2">1家</span>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full custom-table">
+                            <colgroup>
+                                <col style="width: 50px;">
+                                <col style="width: 60px;">
+                                <col style="width: 160px;">
+                                <col style="width: 140px;">
+                                <col style="width: 140px;">
+                                <col style="width: 140px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                            </colgroup>
+                            <thead>
+                                <tr class="bg-gradient-to-r from-blue-50 to-slate-50">
+                                    <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">
+                                        <input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                    </th>
+                                    <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">序号</th>
+                                    <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">项目名称 <i class="fa fa-sort ml-1 text-slate-400"></i></th>
+                                    <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">项目编号 <i class="fa fa-sort ml-1 text-slate-400"></i></th>
+                                    <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">标段名称 <i class="fa fa-sort ml-1 text-slate-400"></i></th>
+                                    <th class="px-4 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">标段编号 <i class="fa fa-sort ml-1 text-slate-400"></i></th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">总取消数量</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">总申请数量</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">总出函数量</th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm">
+                                    <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"></td>
+                                    <td class="px-4 py-3 text-slate-600 font-medium">1</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium truncate" title="中央活力区公共服务中心">中央活力区公共...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">E350503050217...</td>
+                                    <td class="px-4 py-3 text-slate-600 truncate">E350503050217...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">E350503050217...</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">0</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">1</td>
+                                    <td class="px-4 py-3 text-center text-green-600 font-medium">1</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <button onclick="openDetailModal(1)" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm bg-slate-25">
+                                    <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"></td>
+                                    <td class="px-4 py-3 text-slate-600 font-medium">2</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium truncate" title="泉州至厦门至漳...">泉州至厦门至漳...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">0</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">1</td>
+                                    <td class="px-4 py-3 text-center text-amber-600 font-medium">0</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <button onclick="openDetailModal(2)" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm">
+                                    <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"></td>
+                                    <td class="px-4 py-3 text-slate-600 font-medium">3</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium truncate" title="泉州至厦门至漳...">泉州至厦门至漳...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-center text-red-500 font-medium">1</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">1</td>
+                                    <td class="px-4 py-3 text-center text-amber-600 font-medium">0</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <button onclick="openDetailModal(3)" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm bg-slate-25">
+                                    <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"></td>
+                                    <td class="px-4 py-3 text-slate-600 font-medium">4</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium truncate" title="泉州至厦门至漳...">泉州至厦门至漳...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">0</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">1</td>
+                                    <td class="px-4 py-3 text-center text-amber-600 font-medium">0</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <button onclick="openDetailModal(4)" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm">
+                                    <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"></td>
+                                    <td class="px-4 py-3 text-slate-600 font-medium">5</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium truncate" title="泉州至厦门至漳...">泉州至厦门至漳...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉交招字[2025]0...</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">0</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">1</td>
+                                    <td class="px-4 py-3 text-center text-green-600 font-medium">1</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <button onclick="openDetailModal(5)" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm bg-slate-25">
+                                    <td class="px-4 py-3"><input type="checkbox" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500"></td>
+                                    <td class="px-4 py-3 text-slate-600 font-medium">6</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium truncate" title="泉州市泉港诚平...">泉州市泉港诚平...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉港施招字2025...</td>
+                                    <td class="px-4 py-3 text-slate-600 truncate">泉港施招字2025...</td>
+                                    <td class="px-4 py-3 text-slate-600 font-mono truncate">泉港施招字2025...</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">0</td>
+                                    <td class="px-4 py-3 text-center text-slate-600">1</td>
+                                    <td class="px-4 py-3 text-center text-amber-600 font-medium">0</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <button onclick="openDetailModal(6)" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-slate-100 flex items-center justify-between bg-gradient-to-r from-white to-slate-50">
+                        <span class="text-sm text-slate-500">显示 <strong class="text-slate-700">1-6</strong> 条，共 <strong class="text-slate-700">12</strong> 条</span>
+                        <div class="flex items-center space-x-2">
+                            <select class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option>200条/页</option>
+                                <option>100条/页</option>
+                                <option>50条/页</option>
+                                <option>10条/页</option>
+                            </select>
+                            <div class="flex items-center space-x-1">
+                                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30" disabled>
+                                    <i class="fa fa-chevron-left text-sm"></i>
+                                </button>
+                                <button class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all shadow-md">1</button>
+                                <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all">2</button>
+                                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
+                                    <i class="fa fa-chevron-right text-sm"></i>
+                                </button>
+                                <span class="text-xs text-slate-500 mx-2">前往</span>
+                                <input type="text" value="1" class="w-12 h-8 text-center border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                <span class="text-xs text-slate-500">页</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div id="detail-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
+                <div class="flex items-center">
+                    <span class="text-blue-600 text-lg mr-2">|</span>
+                    <h3 class="text-lg font-bold text-slate-800">查看详情</h3>
+                </div>
+                <button onclick="closeDetailModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="text-sm font-medium text-slate-600">项目名称:</label>
+                        <input type="text" value="中央活力区公共服务中心" class="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 mt-1">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-600">项目编号:</label>
+                        <input type="text" value="E3505030502173652002002" class="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 mt-1">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-600">标段名称:</label>
+                        <input type="text" value="中央活力区公共服务中心_第1标段(包)" class="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 mt-1">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-slate-600">标段编号:</label>
+                        <input type="text" value="E3505030502173652002002" class="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 mt-1">
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-md font-semibold text-slate-800 mb-4">投保明细</h4>
+                    <div class="flex flex-wrap items-center gap-4 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-600">保单号:</label>
+                            <input type="text" placeholder="请输入" class="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-slate-600">申请状态:</label>
+                            <select class="px-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none w-48">
+                                <option value="">请选择</option>
+                                <option value="pending">待审核</option>
+                                <option value="approved">已通过</option>
+                                <option value="rejected">已拒绝</option>
+                            </select>
+                        </div>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">查询</button>
+                        <button class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all">重置</button>
+                    </div>
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all flex items-center mb-4">
+                        <i class="fa fa-download mr-2"></i>导出
+                    </button>
+                    <div class="p-4 bg-slate-50/50 rounded-lg mb-4">
+                        <span class="text-sm text-slate-600">保证金金额总计：</span>
+                        <span class="font-bold text-slate-800">17764000.00元</span>
+                        <span class="text-slate-400 mx-4">|</span>
+                        <span class="text-sm text-slate-600">保费总计：</span>
+                        <span class="font-bold text-slate-800">6640.00元</span>
+                        <span class="text-slate-400 mx-4">|</span>
+                        <span class="text-sm text-slate-600">投保企业：</span>
+                        <span class="font-bold text-slate-800">1家</span>
+                    </div>
+                    <div class="relative overflow-x-auto border border-slate-200 rounded-lg shadow-sm" style="max-height: 400px;">
+                        <table class="w-full" style="table-layout: fixed;">
+                            <colgroup>
+                                <col style="width: 60px;">
+                                <col style="width: 120px;">
+                                <col style="width: 130px;">
+                                <col style="width: 150px;">
+                                <col style="width: 100px;">
+                                <col style="width: 80px;">
+                                <col style="width: 120px;">
+                                <col style="width: 140px;">
+                                <col style="width: 140px;">
+                                <col style="width: 120px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                            </colgroup>
+                            <thead>
+                                <tr class="bg-gradient-to-r from-blue-50 to-slate-50 sticky top-0 z-10">
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">序号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">订单号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">保函编号</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">投保企业</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">承保机构</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">经办人</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">经办人联系方式</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">投保时间</th>
+                                    <th class="px-3 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">出函时间</th>
+                                    <th class="px-3 py-3 text-right text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">保证金金额</th>
+                                    <th class="px-3 py-3 text-right text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">保费（元）</th>
+                                    <th class="px-3 py-3 text-center text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200">申请状态</th>
+                                    <th class="px-3 py-3 text-center text-xs font-bold text-slate-600 uppercase tracking-wider border-b border-slate-200 sticky right-0 bg-gradient-to-r from-blue-50 to-slate-50 border-l border-slate-200">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-blue-50/50 transition-colors cursor-pointer">
+                                    <td class="px-3 py-3 text-slate-600 font-medium">1</td>
+                                    <td class="px-3 py-3 text-slate-700 font-mono truncate">DD20260127001</td>
+                                    <td class="px-3 py-3 text-slate-700 font-mono truncate">BH202601270001</td>
+                                    <td class="px-3 py-3 text-blue-600 font-semibold truncate" title="测试建设有限公司">测试建设有限公司</td>
+                                    <td class="px-3 py-3 text-slate-700 truncate">浦发银行</td>
+                                    <td class="px-3 py-3 text-slate-700 truncate">王静</td>
+                                    <td class="px-3 py-3 text-slate-700 font-mono">18650666414</td>
+                                    <td class="px-3 py-3 text-slate-600 truncate">2026-01-27 11:47:33</td>
+                                    <td class="px-3 py-3 text-slate-600 truncate">2026-01-27 14:26:01</td>
+                                    <td class="px-3 py-3 text-right text-slate-700 font-medium">800,000.00</td>
+                                    <td class="px-3 py-3 text-right text-slate-700 font-medium">8,000.00</td>
+                                    <td class="px-3 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>已出函
+                                        </span>
+                                    </td>
+                                    <td class="px-3 py-3 sticky right-0 bg-white border-l border-slate-200">
+                                        <button class="text-blue-600 hover:text-blue-700 font-medium hover:underline text-sm transition-colors">查看详情</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleSubMenu(menuId) { const menu = document.getElementById(menuId); const arrow = document.getElementById(menuId + '-arrow'); menu.classList.toggle('hidden'); arrow.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)'; }
+        function openDetailModal(id) {
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('analysis-menu').classList.remove('hidden');
+            document.getElementById('analysis-menu-arrow').style.transform = 'rotate(180deg)';
+            const industryChart = echarts.init(document.getElementById('industry-chart'));
+            industryChart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { orient: 'vertical', right: '5%', top: 'center' },
+                series: [{
+                    type: 'pie', radius: ['40%', '70%'],
+                    data: [{ value: 456, name: '市政工程' }, { value: 389, name: '房建工程' }, { value: 324, name: '交通工程' }, { value: 287, name: '水利工程' }, { value: 400, name: '其他' }]
+                }]
+            });
+            const trendChart = echarts.init(document.getElementById('trend-chart'));
+            trendChart.setOption({
+                xAxis: { type: 'category', data: ['1月', '2月', '3月', '4月', '5月', '6月'] },
+                yAxis: { type: 'value' },
+                series: [{ type: 'line', data: [180, 220, 195, 280, 310, 295] }]
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>市级运营平台 - 产品接入审核 | 四步完整流程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#1E40AF', secondary: '#3B82F6', accent: '#60A5FA', neutral: '#F3F4F6', 'neutral-dark': '#1F2937' },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .transition-smooth { transition: all 0.2s ease; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .history-card { border-left-width: 4px; transition: all 0.2s; }
+        .history-card:hover { background-color: #fefce8; transform: translateX(2px); }
+        button:active { transform: scale(0.96); }
+        .filter-card { background: linear-gradient(115deg, #ffffff 0%, #fafcff 100%); }
+        .badge-step { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 0.7rem; font-weight: 500; }
+        .action-group { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+        .btn-soft-primary { background: #EFF6FF; color: #1E40AF; }
+        .btn-soft-primary:hover { background: #DBEAFE; }
+        .btn-outline-primary { border: 1px solid #1E40AF; color: #1E40AF; background: white; }
+        .btn-outline-primary:hover { background: #1E40AF; color: white; }
+        /* 步骤标签样式 */
+        .step-tab { cursor: pointer; transition: all 0.2s; border-width: 1px; }
+        .step-tab.active { background: #1E40AF; color: white; border-color: #1E40AF; box-shadow: 0 2px 8px rgba(30,64,175,0.2); }
+        .step-tab.completed { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
+        .step-tab.pending { background: #fefce8; color: #854d0e; border-color: #fef08a; cursor: pointer; }
+        .step-tab.not-started { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; opacity: 0.6; }
+        .step-tab.not-started-clickable { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; cursor: pointer; opacity: 1; }
+        .step-tab.not-started-clickable:hover { background: #e2e8f0; color: #64748b; border-color: #cbd5e1; }
+        .step-tab.rejected { background: #fef2f2; color: #b91c1c; border-color: #fecaca; cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 (原始完整菜单) -->
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-building"></i></div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/50">
+                    <div class="flex items-center">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full">
+                        <div class="ml-3">
+                            <p class="text-xs font-bold">管理员</p>
+                            <p class="text-[10px] text-slate-400">市级管理员</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-all" title="退出登录">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm">
+                <div class="flex items-center space-x-4"><h1 class="text-xl font-bold text-slate-900">产品接入审核</h1></div>
+                <div class="flex items-center space-x-6"><button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full"><i class="fa fa-bell text-lg"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button><button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full"><i class="fa fa-question-circle text-lg"></i></button></div>
+            </header>
+            <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <!-- 流程引导 -->
+                    <div class="mb-6 flex flex-wrap items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-xl text-sm">
+                        <div class="flex items-center gap-3 flex-wrap"><span class="font-bold text-primary"><i class="fa fa-list-ol mr-1"></i>接入审核流程：</span>
+                            <span class="text-slate-700"><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-cyan-600 text-white text-xs mr-1">1</span> 产品材料审核</span><i class="fa fa-angle-right text-slate-400"></i>
+                            <span><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-600 text-white text-xs mr-1">2</span> 技术调试申请</span><i class="fa fa-angle-right text-slate-400"></i>
+                            <span><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-500 text-white text-xs mr-1">3</span> 上线验收审核</span><i class="fa fa-angle-right text-slate-400"></i>
+                            <span><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-xs mr-1">4</span> 首单验证审核</span>
+                        </div>
+                        <div class="text-xs text-slate-500 hidden md:block"><i class="fa fa-history mr-1"></i>支持查看前置步骤审核记录</div>
+                    </div>
+
+                    <!-- 筛选栏 -->
+                    <div class="filter-card bg-white rounded-xl border border-slate-200 p-5 mb-6 shadow-sm">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5"><i class="fa fa-building"></i> 机构名称</label><div class="relative"><input type="text" id="keywordSearch" placeholder="请输入机构名称" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm"><i class="fa fa-building absolute left-3 top-3 text-slate-400"></i></div></div>
+                            <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5"><i class="fa fa-cube"></i> 产品名称</label><select id="typeFilter" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm"><option value="">全部产品</option><option value="投标保函">投标保函</option><option value="履约保函">履约保函</option><option value="预付款保函">预付款保函</option><option value="电子保函">电子保函</option><option value="投标保证保险">投标保证保险</option></select></div>
+                            <div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5"><i class="fa fa-flag-checkered"></i> 审核状态</label><select id="statusFilter" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm"><option value="">全部状态</option><option value="待审核">待审核</option><option value="审核通过">审核通过 / 接入完成</option><option value="审核不通过">审核不通过</option></select></div>
+                            <div class="flex items-end gap-2"><button id="queryBtn" class="flex-1 bg-primary text-white px-4 py-2.5 rounded-lg hover:bg-primary/90 transition font-medium shadow-sm"><i class="fa fa-search mr-1"></i>查询</button><button id="resetBtn" class="flex-1 border border-slate-300 text-slate-700 px-4 py-2.5 rounded-lg hover:bg-slate-100 transition"><i class="fa fa-refresh mr-1"></i>重置</button></div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-3">
+                            <span class="text-xs font-medium text-slate-500"><i class="fa fa-filter mr-1"></i>快捷筛选：</span>
+                            <button data-step-quick="1" class="step-quick-filter text-xs px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 transition">📄 步骤1待审</button>
+                            <button data-step-quick="2" class="step-quick-filter text-xs px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 transition">🔧 步骤2待审</button>
+                            <button data-step-quick="3" class="step-quick-filter text-xs px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 transition">☁️ 步骤3待审</button>
+                            <button data-step-quick="4" class="step-quick-filter text-xs px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 transition">✅ 步骤4待审</button>
+                            <button data-step-quick="all-pending" class="step-quick-filter text-xs px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 hover:bg-amber-100">⏳ 全部待审核</button>
+                        </div>
+                    </div>
+
+                    <!-- 表格 -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50"><tr><th class="px-4 py-4 text-left font-semibold">申请编号</th><th class="px-4 py-4 text-left font-semibold">机构名称</th><th class="px-4 py-4 text-left font-semibold">产品名称</th><th class="px-4 py-4 text-left font-semibold">机构类型</th><th class="px-3 py-4 text-center">①材料</th><th class="px-3 py-4 text-center">②调试</th><th class="px-3 py-4 text-center">③验收</th><th class="px-3 py-4 text-center">④首单</th><th class="px-3 py-4 text-center">总体状态</th><th class="px-4 py-4 text-center">操作</th></td></thead>
+                            <tbody id="access-table-body" class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50/60" data-id="AP20260321001" data-name="兴业银行福州分行" data-product="投标保函" data-date="2026-03-21"><td class="apply-id px-4 py-3 font-mono">AP20260321001</td><td class="inst-name px-4 py-3 font-medium">兴业银行福州分行</td><td class="product-name px-4 py-3">投标保函</td><td class="inst-type px-4 py-3">银行</td><td class="step1-status px-3 py-3 text-center"><span class="badge-step bg-yellow-100 text-yellow-700"><i class="fa fa-clock-o"></i>待审核</span></td><td class="step2-status px-3 py-3 text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="step3-status px-3 py-3 text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="step4-status px-3 py-3 text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="overall-status px-3 py-3 text-center"><span class="badge-step bg-yellow-100 text-yellow-800">待审核</span></td><td class="px-4 py-3"><div class="action-group"><button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button><button class="btn-audit-step btn-outline-primary text-xs px-3 py-1.5 rounded-full" data-step="1"><i class="fa fa-pencil-square-o mr-1"></i>步骤1审核</button></div></td></tr>
+                                <tr class="hover:bg-slate-50/60" data-id="AP20260320002" data-name="中国建设银行福建省分行" data-product="电子保函" data-date="2026-03-20"><td class="apply-id px-4 py-3">AP20260320002</td><td class="inst-name px-4 py-3">中国建设银行福建省分行</td><td class="product-name px-4 py-3">电子保函</td><td class="inst-type px-4 py-3">银行</td><td class="step1-status px-3 py-3 text-center"><span class="badge-step bg-green-100 text-green-700"><i class="fa fa-check-circle-o"></i>已通过</span></td><td class="step2-status px-3 py-3 text-center"><span class="badge-step bg-yellow-100 text-yellow-700"><i class="fa fa-clock-o"></i>待审核</span></td><td class="step3-status px-3 py-3 text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="step4-status px-3 py-3 text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="overall-status px-3 py-3 text-center"><span class="badge-step bg-blue-100 text-blue-700">部分通过</span></td><td class="px-4 py-3"><div class="action-group"><button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button><button class="btn-audit-step btn-outline-primary text-xs px-3 py-1.5 rounded-full" data-step="2"><i class="fa fa-pencil-square-o mr-1"></i>步骤2审核</button></div></td></tr>
+                                <tr class="hover:bg-slate-50/60" data-id="AP20260318003" data-name="中国平安保险福建分公司" data-product="投标保证保险" data-date="2026-03-18"><td class="apply-id px-4 py-3">AP20260318003</td><td class="inst-name px-4 py-3">中国平安保险福建分公司</td><td class="product-name px-4 py-3">投标保证保险</td><td class="inst-type px-4 py-3">保险公司</td><td class="step1-status px-3 py-3 text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step2-status px-3 py-3 text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step3-status px-3 py-3 text-center"><span class="badge-step bg-yellow-100 text-yellow-700">待审核</span></td><td class="step4-status px-3 py-3 text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="overall-status px-3 py-3 text-center"><span class="badge-step bg-blue-100 text-blue-700">部分通过</span></td><td class="px-4 py-3"><div class="action-group"><button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button><button class="btn-audit-step btn-outline-primary text-xs px-3 py-1.5 rounded-full" data-step="3"><i class="fa fa-pencil-square-o mr-1"></i>步骤3审核</button></div></td></tr>
+                                <tr class="hover:bg-slate-50/60" data-id="AP20260315004" data-name="中国工商银行福建省分行" data-product="履约保函" data-date="2026-03-15"><td class="apply-id px-4 py-3">AP20260315004</td><td class="inst-name px-4 py-3">中国工商银行福建省分行</td><td class="product-name px-4 py-3">履约保函</td><td class="inst-type px-4 py-3">银行</td><td class="step1-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step2-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step3-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step4-status text-center"><span class="badge-step bg-yellow-100 text-yellow-700">待审核</span></td><td class="overall-status text-center"><span class="badge-step bg-blue-100 text-blue-700">部分通过</span></td><td class="px-4 py-3"><div class="action-group"><button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button><button class="btn-audit-step btn-outline-primary text-xs px-3 py-1.5 rounded-full" data-step="4"><i class="fa fa-pencil-square-o mr-1"></i>步骤4审核</button></div></td></tr>
+                                <tr class="hover:bg-slate-50/60" data-id="AP20260310005" data-name="招商银行福州分行" data-product="电子保函" data-date="2026-03-10"><td class="apply-id px-4 py-3">AP20260310005</td><td class="inst-name px-4 py-3">招商银行福州分行</td><td class="product-name px-4 py-3">电子保函</td><td class="inst-type px-4 py-3">银行</td><td class="step1-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step2-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step3-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="step4-status text-center"><span class="badge-step bg-green-100 text-green-700">✓已通过</span></td><td class="overall-status text-center"><span class="badge-step bg-emerald-100 text-emerald-800 font-semibold">✓ 接入完成</span></td><td class="px-4 py-3"><div class="action-group"><button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button><button class="btn-init-exhibition bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-xs px-3 py-1.5 rounded-full shadow-sm transition-all" data-id="AP20260310005" data-name="招商银行福州分行" data-product="电子保函"><i class="fa fa-rocket mr-1"></i>发起展业申请</button></div></td></tr>
+                                <tr class="hover:bg-slate-50/60" data-id="AP20260305006" data-name="福建海峡银行" data-product="投标保函" data-date="2026-03-05"><td class="apply-id px-4 py-3">AP20260305006</td><td class="inst-name px-4 py-3">福建海峡银行</td><td class="product-name px-4 py-3">投标保函</td><td class="inst-type px-4 py-3">银行</td><td class="step1-status text-center"><span class="badge-step bg-red-100 text-red-700"><i class="fa fa-ban"></i>已拒绝</span></td><td class="step2-status text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="step3-status text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="step4-status text-center"><span class="badge-step bg-gray-100 text-gray-500">未开始</span></td><td class="overall-status text-center"><span class="badge-step bg-red-100 text-red-700">审核不通过</span></td><td class="px-4 py-3"><div class="action-group"><button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // 侧边栏折叠
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (!menu) return;
+            if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); if(arrow) arrow.style.transform = 'rotate(180deg)'; } 
+            else { menu.classList.add('hidden'); if(arrow) arrow.style.transform = 'rotate(0deg)'; }
+        }
+
+        function showToast(msg, type='success') {
+            let t = document.getElementById('toastMsg');
+            if(t) t.remove();
+            t = document.createElement('div');
+            t.id = 'toastMsg';
+            t.className = `fixed bottom-6 left-1/2 transform -translate-x-1/2 z-[999] px-5 py-2.5 rounded-full text-white text-sm font-medium flex items-center gap-2 shadow-lg ${type === 'success' ? 'bg-emerald-600' : 'bg-rose-600'}`;
+            t.innerHTML = `<i class="fa ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        // 检查前置步骤是否都已通过
+        function checkPreStepsPassed(row, targetStep) {
+            // 步骤1不需要前置步骤
+            if (targetStep === 1) return true;
+            
+            // 检查所有前置步骤是否都已通过
+            for (let i = 1; i < targetStep; i++) {
+                const stepSpan = row.querySelector(`.step${i}-status span`);
+                // 清理状态文本中的空白字符
+                const status = stepSpan?.innerText?.trim().replace(/[\n\t\r]/g, '') || '';
+                if (!stepSpan || !status.includes('已通过')) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // 获取每个步骤的企业提交内容
+        function getStepSubmitContent(step, rowData) {
+            const stepData = {
+                1: { 
+                    name: '产品材料审核', 
+                    details: [
+                        { label: '保函类型', value: rowData.product || '投标保函' },
+                        { label: '接入地市', value: '福州市' },
+                        { label: '产品名称', value: rowData.product || '投标保函' }, 
+                        { label: '产品介绍', value: '为投标企业提供的担保服务，保障投标活动的顺利进行。' },
+                        { label: '金融机构', value: rowData.name || '中国平安保险福建分公司' },
+                        { label: '费率标准', value: '0.5%-1.2%' }, 
+                        { label: '办理时效', value: '最快1个工作日' },
+                        { label: '办理条件', value: '1. 企业信用等级A级及以上；2. 无重大违法违规记录；3. 具备相应的资质' }
+                    ], 
+                    files: ['产品服务协议.pdf'] 
+                },
+                2: { 
+                    name: '技术调试申请', 
+                    details: [], 
+                    files: [
+                        '交易中心对接函.pdf', 
+                        '第三方营业执照.pdf', 
+                        '对接人员授权书.pdf', 
+                        '金融机构服务承诺函.pdf', 
+                        '保密协议.docx', 
+                        '对接协议.docx',
+                        '保险自营平台或自有福建省电子保函服务平台声明.pdf',
+                        '金融机构电子保函业务流程说明.pdf',
+                        '机构整改说明.pdf'
+                    ] 
+                },
+                3: { 
+                    name: '上线验收审核', 
+                    details: [
+                        { label: '数据存储服务器地址', value: 'https://storage.bank-fj.com/v1/data' }, 
+                        { label: '收费标准', value: '0.003 (千分之三)' },
+                        { label: '售后服务电话、技术支持电话', value: '400-888-8888 / 0591-88888888' },
+                        { label: 'apply_url', value: 'https://api.bank-fj.com/apply' }, 
+                        { label: 'app_key', value: 'fj_bank_88889999' }, 
+                        { label: 'app_secret', value: '************************' }, 
+                        { label: 'decrypt_key', value: '********************************' }
+                    ], 
+                    files: [
+                        '业务系统等级保护证明材料.pdf', 
+                        '上线验收报告.pdf'
+                    ] 
+                },
+                4: { 
+                    name: '首单验证审核', 
+                    details: [
+                        { label: '首单验证日期', value: '2026-03-22' }
+                    ], 
+                    files: [
+                        '首单测试报告.pdf'
+                    ] 
+                }
+            };
+            const cfg = stepData[step];
+            const detailsHtml = `<div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl mb-5">${cfg.details.map(d => `<div><div class="text-[11px] text-slate-500 mb-0.5">${d.label}</div><div class="text-sm font-medium text-slate-800">${d.value}</div></div>`).join('')}</div>`;
+            const filesHtml = `<div class="space-y-2">${cfg.files.map(f => `<div class="flex justify-between items-center p-3 border border-slate-200 rounded-xl bg-white hover:shadow-sm transition"><div class="flex items-center gap-2"><i class="fa fa-file-${f.includes('.pdf') ? 'pdf' : f.includes('.docx') ? 'doc' : 'archive'}-o ${f.includes('.pdf') ? 'text-red-400' : f.includes('.docx') ? 'text-blue-400' : 'text-yellow-400'}"></i><span class="text-sm text-slate-700">${f}</span></div><button class="preview-file text-primary text-xs font-medium hover:underline" data-file="${f}">预览</button></div>`).join('')}</div>`;
+            return { detailsHtml, filesHtml };
+        }
+
+        // 获取审核内容
+        function getAuditContent(step, canAudit, stepStatus, existingRecord) {
+            if (stepStatus.includes('已通过')) {
+                return `<div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-4"><div class="flex items-center gap-2 mb-2"><i class="fa fa-check-circle text-green-600"></i><span class="font-semibold text-green-800">审核结果：通过</span></div><div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>${existingRecord.comment || '材料完整，符合接入规范。'}</div><div class="text-xs text-slate-500">审核人：${existingRecord.auditor || '平台管理员'} · ${existingRecord.auditTime || '2026-03-20 14:30'}</div></div>`;
+            } else if (stepStatus.includes('已拒绝')) {
+                return `<div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-4"><div class="flex items-center gap-2 mb-2"><i class="fa fa-ban text-red-600"></i><span class="font-semibold text-red-800">审核结果：拒绝</span></div><div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>${existingRecord.comment || '材料不符合要求，请修改后重新提交。'}</div><div class="text-xs text-slate-500">审核人：${existingRecord.auditor || '平台管理员'} · ${existingRecord.auditTime || '2026-03-19 10:15'}</div></div>`;
+            } else if (canAudit) {
+                return `<div class="border-t border-slate-200 pt-5 mt-2"><label class="font-bold text-slate-700 block mb-2 text-sm">审核意见 <span class="text-red-500">*</span></label><textarea id="auditCommentStep" class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary outline-none transition text-sm" rows="3" placeholder="请输入审核意见，说明通过或拒绝的理由..."></textarea><div class="flex gap-4 mt-5"><button id="approveStepBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa fa-thumbs-up"></i>审核通过</button><button id="rejectStepBtn" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white py-2.5 rounded-xl font-semibold transition-all shadow-sm flex items-center justify-center gap-2"><i class="fa fa-thumbs-down"></i>审核拒绝</button></div></div>`;
+            } else {
+                return `<div class="mt-5 p-4 bg-slate-100 rounded-xl text-center text-slate-500 text-sm"><i class="fa fa-info-circle mr-1"></i>当前步骤尚未审核</div>`;
+            }
+        }
+
+        // 弹窗组件 - 带步骤进度条，未开始步骤置灰不可点击
+        function createAuditModal(rowData, currentActiveStep, stepStatusMap, viewMode = false) {
+            const steps = [
+                { num: 1, name: '产品材料', key: 'step1' },
+                { num: 2, name: '技术调试', key: 'step2' },
+                { num: 3, name: '上线验收', key: 'step3' },
+                { num: 4, name: '首单验证', key: 'step4' }
+            ];
+            
+            // 判断步骤是否可点击：已通过、待审核、已拒绝状态可点击查看，未开始状态也允许查看材料
+            const isStepClickable = (stepNum, stepKey) => {
+                const status = stepStatusMap[stepKey] || '';
+                // 允许查看所有步骤的材料，包括未开始的步骤
+                return true;
+            };
+            
+            const getStepClass = (stepNum, stepKey) => {
+                const status = stepStatusMap[stepKey] || '';
+                let baseClass = 'step-tab flex-1 text-center py-2 px-1 rounded-lg border transition-all ';
+                if (status.includes('已通过')) return baseClass + 'completed';
+                if (status.includes('已拒绝')) return baseClass + 'rejected';
+                if (status.includes('待审核')) return baseClass + 'pending';
+                // 未开始的步骤允许点击查看材料，但保持未开始样式
+                return baseClass + 'not-started-clickable';
+            };
+            
+            const getStepStatusText = (status) => {
+                if (status.includes('已通过')) return '✓ 已通过';
+                if (status.includes('已拒绝')) return '✗ 已拒绝';
+                if (status.includes('待审核')) return '待审核';
+                return '未开始';
+            };
+            
+            const progressBarHtml = `
+                <div class="mb-5">
+                    <div class="flex items-center justify-between gap-2">
+                        ${steps.map(s => `
+                            <div class="${getStepClass(s.num, s.key)}" data-step="${s.num}" data-clickable="${isStepClickable(s.num, s.key)}">
+                                <div class="text-xs font-medium">${s.name}</div>
+                                <div class="text-[10px] mt-0.5">${getStepStatusText(stepStatusMap[s.key] || '')}</div>
+                            </div>
+                            ${s.num < 4 ? '<i class="fa fa-angle-right text-slate-300 text-xs"></i>' : ''}
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // 渲染当前步骤内容
+            const renderStepContent = (step) => {
+                const stepKey = `step${step}`;
+                const stepStatus = stepStatusMap[stepKey] || '';
+                // 在viewMode下不显示审核操作，canAudit始终为false
+                const canAudit = viewMode ? false : (stepStatus.includes('待审核'));
+                
+                const submitContent = getStepSubmitContent(step, rowData);
+                let record = { status: 'pending', comment: '', auditor: '', auditTime: '' };
+                
+                // 根据步骤状态获取审核记录
+                if (stepStatus.includes('已通过')) {
+                    const passRecords = {
+                        1: { comment: '产品材料齐全，费率标准符合监管要求，同意进入技术调试阶段。', auditor: '张慧', auditTime: '2026-03-16 10:15' },
+                        2: { comment: '技术对接测试通过，接口调用正常，数据加密符合安全规范。', auditor: '王强', auditTime: '2026-03-17 14:30' },
+                        3: { comment: '系统上线验收合格，安全扫描通过，符合等级保护要求。', auditor: '赵琳', auditTime: '2026-03-18 09:30' },
+                        4: { comment: '首单验证成功，交易流程顺畅，各项指标均达到预期。', auditor: '陈刚', auditTime: '2026-03-22 16:00' }
+                    };
+                    const stepRecord = passRecords[step] || passRecords[1];
+                    record = { status: 'approved', ...stepRecord };
+                } else if (stepStatus.includes('已拒绝')) {
+                    const rejectRecords = {
+                        1: { comment: '产品费率标准与备案信息不符，需重新修订后提交。', auditor: '李民', auditTime: '2026-03-17 16:20' },
+                        2: { comment: '接口响应超时，需优化系统性能后重新申请测试。', auditor: '王强', auditTime: '2026-03-18 11:45' },
+                        3: { comment: '安全扫描发现高危漏洞，修复后重新提交验收申请。', auditor: '赵琳', auditTime: '2026-03-19 10:00' },
+                        4: { comment: '首单交易验证失败，需排查问题后重新提交验证申请。', auditor: '陈刚', auditTime: '2026-03-20 09:30' }
+                    };
+                    const stepRecord = rejectRecords[step] || rejectRecords[1];
+                    record = { status: 'rejected', ...stepRecord };
+                } else if (stepStatus.includes('未开始')) {
+                    // 未开始状态：显示预设的材料内容，但审核区域显示提示
+                    // 为未开始的步骤提供预期材料信息，便于提前了解
+                    record = { status: 'not-started', comment: '', auditor: '', auditTime: '' };
+                }
+                
+                // 在viewMode下不显示待审核步骤的审核操作区域
+                const auditSection = viewMode && stepStatus.includes('待审核') ? '' : getAuditContent(step, canAudit, stepStatus, record);
+                return `
+                    <div class="space-y-4">
+                        ${submitContent.detailsHtml}
+                        ${submitContent.filesHtml}
+                        <div class="flex items-center gap-2 p-3 rounded-xl bg-amber-50 border border-amber-100 mt-4">
+                            <i class="fa fa-gavel text-amber-600"></i>
+                            <span class="font-semibold text-slate-800">审核记录</span>
+                        </div>
+                        ${auditSection}
+                    </div>
+                `;
+            };
+            
+            let currentContent = renderStepContent(currentActiveStep);
+            
+            // 创建模态框
+            let modal = document.getElementById('dynamicModal');
+            if (modal) modal.remove();
+            modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200';
+            modal.style.opacity = '0';
+            modal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+                    <div class="flex justify-between items-center border-b px-6 py-4 bg-white sticky top-0 z-10">
+                        <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fa fa-cubes text-primary"></i>${rowData.name} - 产品接入审核</h3>
+                        <button id="closeDynamicModalBtn" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center transition"><i class="fa fa-times text-slate-400"></i></button>
+                    </div>
+                    <div class="p-6 border-b bg-slate-50/50">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                            <div><div class="text-[10px] text-slate-400">申请编号</div><div class="font-mono font-medium">${rowData.id}</div></div>
+                            <div><div class="text-[10px] text-slate-400">机构名称</div><div class="font-semibold">${rowData.name}</div></div>
+                            <div><div class="text-[10px] text-slate-400">产品名称</div><div>${rowData.product}</div></div>
+                            <div><div class="text-[10px] text-slate-400">申请日期</div><div>${rowData.applyDate}</div></div>
+                        </div>
+                    </div>
+                    <div class="p-6 border-b bg-white">
+                        ${progressBarHtml}
+                    </div>
+                    <div id="modalStepContent" class="flex-1 overflow-y-auto p-6" style="max-height: calc(90vh - 280px);">
+                        ${currentContent}
+                    </div>
+                    <div class="flex justify-end gap-3 border-t px-6 py-4 bg-slate-50/90">
+                        <button id="cancelDynamicModal" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">关闭</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => modal.style.opacity = '1', 10);
+            
+            const closeModal = () => { modal.style.opacity = '0'; setTimeout(() => modal.remove(), 200); };
+            document.getElementById('closeDynamicModalBtn')?.addEventListener('click', closeModal);
+            document.getElementById('cancelDynamicModal')?.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+            
+            // 绑定步骤切换事件（仅可点击的步骤）
+            const stepTabs = modal.querySelectorAll('.step-tab');
+            stepTabs.forEach(tab => {
+                const isClickable = tab.getAttribute('data-clickable') === 'true';
+                if (!isClickable) {
+                    tab.style.cursor = 'not-allowed';
+                    return;
+                }
+                tab.addEventListener('click', () => {
+                    const stepNum = parseInt(tab.getAttribute('data-step'));
+                    // 更新激活样式
+                    stepTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    // 重新渲染内容
+                    const newContent = renderStepContent(stepNum);
+                    const contentContainer = document.getElementById('modalStepContent');
+                    if (contentContainer) contentContainer.innerHTML = newContent;
+                    // 重新绑定预览事件和新审核按钮
+                    bindPreviewEvents(contentContainer);
+                    bindAuditButtons(contentContainer, rowData, stepNum, stepStatusMap, closeModal);
+                });
+            });
+            
+            bindPreviewEvents(modal);
+            bindAuditButtons(modal, rowData, currentActiveStep, stepStatusMap, closeModal);
+            
+            return { closeModal };
+        }
+        
+        function bindPreviewEvents(container) {
+            container.querySelectorAll('.preview-file').forEach(btn => {
+                btn.addEventListener('click', (e) => { e.stopPropagation(); showToast(`预览文件: ${btn.getAttribute('data-file') || '模拟预览'}`, 'info'); });
+            });
+        }
+        
+        function bindAuditButtons(container, rowData, step, stepStatusMap, closeModal) {
+            const approveBtn = container.querySelector('#approveStepBtn');
+            const rejectBtn = container.querySelector('#rejectStepBtn');
+            const commentArea = container.querySelector('#auditCommentStep');
+            if (approveBtn) {
+                approveBtn.onclick = () => {
+                    handleAuditDecision(rowData.id, step, '通过', commentArea?.value || '', stepStatusMap);
+                    closeModal();
+                };
+            }
+            if (rejectBtn) {
+                rejectBtn.onclick = () => {
+                    handleAuditDecision(rowData.id, step, '拒绝', commentArea?.value || '', stepStatusMap);
+                    closeModal();
+                };
+            }
+        }
+        
+        // 审核决策
+        function handleAuditDecision(rowId, step, action, comment, stepStatusMap) {
+            const row = document.querySelector(`#access-table-body tr[data-id="${rowId}"]`);
+            if (!row) return;
+            const stepSpan = row.querySelector(`.step${step}-status span`);
+            const s1 = row.querySelector('.step1-status span'), s2 = row.querySelector('.step2-status span'), s3 = row.querySelector('.step3-status span'), s4 = row.querySelector('.step4-status span');
+            const overall = row.querySelector('.overall-status span');
+            
+            if (action === '通过') {
+                if (stepSpan) { stepSpan.innerHTML = '<i class="fa fa-check-circle-o mr-1"></i>已通过'; stepSpan.className = 'badge-step bg-green-100 text-green-700'; }
+                stepStatusMap[`step${step}`] = '已通过';
+                showToast(`✅ 步骤${step}审核通过${comment ? '，意见已记录' : ''}`, 'success');
+                const p1 = s1?.innerHTML.includes('已通过'), p2 = s2?.innerHTML.includes('已通过'), p3 = s3?.innerHTML.includes('已通过'), p4 = s4?.innerHTML.includes('已通过');
+                if (p1 && p2 && p3 && p4) { overall.innerHTML = '<i class="fa fa-check-circle-o mr-1"></i>接入完成'; overall.className = 'badge-step bg-emerald-100 text-emerald-800 font-semibold'; showToast('🎉 全流程审核通过，机构正式接入平台！', 'success'); }
+                else if (p1 || p2 || p3 || p4) { overall.innerHTML = '部分阶段通过'; overall.className = 'badge-step bg-blue-100 text-blue-700'; }
+                
+                // 如果不是最后一步，更新下一步按钮状态
+                if (step < 4) {
+                    const nextStepBtn = row.querySelector(`.btn-audit-step[data-step="${step + 1}"]`);
+                    if (nextStepBtn) {
+                        nextStepBtn.disabled = false;
+                        nextStepBtn.style.opacity = '1';
+                        nextStepBtn.style.cursor = 'pointer';
+                        nextStepBtn.style.backgroundColor = '';
+                        nextStepBtn.style.borderColor = '';
+                        nextStepBtn.style.color = '';
+                        nextStepBtn.style.display = 'inline-flex';
+                    }
+                }
+            } else {
+                if (stepSpan) { stepSpan.innerHTML = '<i class="fa fa-ban mr-1"></i>已拒绝'; stepSpan.className = 'badge-step bg-red-100 text-red-700'; }
+                stepStatusMap[`step${step}`] = '已拒绝';
+                overall.innerHTML = '审核不通过'; overall.className = 'badge-step bg-red-100 text-red-700';
+                showToast(`❌ 步骤${step}审核拒绝，流程终止`, 'error');
+                
+                // 拒绝后禁用所有后续步骤的按钮
+                for (let i = step + 1; i <= 4; i++) {
+                    const nextBtn = row.querySelector(`.btn-audit-step[data-step="${i}"]`);
+                    if (nextBtn) {
+                        nextBtn.disabled = true;
+                        nextBtn.style.opacity = '0.5';
+                        nextBtn.style.cursor = 'not-allowed';
+                        nextBtn.style.backgroundColor = '#e2e8f0';
+                        nextBtn.style.borderColor = '#cbd5e1';
+                        nextBtn.style.color = '#94a3b8';
+                    }
+                }
+            }
+            const actionDiv = row.querySelector('.action-group');
+            if (actionDiv) {
+                const auditBtn = actionDiv.querySelector('.btn-audit-step');
+                if (auditBtn && (stepSpan?.innerHTML.includes('已通过') || stepSpan?.innerHTML.includes('已拒绝'))) auditBtn.style.display = 'none';
+            }
+        }
+
+        function showAccessAuditDialog(rowData, currentStep, stepStatusMap, viewMode = false) {
+            createAuditModal(rowData, currentStep, stepStatusMap, viewMode);
+        }
+
+        // 筛选与事件绑定
+        document.addEventListener('DOMContentLoaded', function() {
+            const keyword = document.getElementById('keywordSearch'), type = document.getElementById('typeFilter'), status = document.getElementById('statusFilter');
+            const queryBtn = document.getElementById('queryBtn'), resetBtn = document.getElementById('resetBtn');
+            const rows = document.querySelectorAll('#access-table-body tr');
+            const filterTable = () => {
+                const kw = keyword.value.toLowerCase().trim(), instType = type.value, st = status.value;
+                rows.forEach(row => {
+                    const name = row.querySelector('.inst-name')?.innerText.toLowerCase() || '';
+                    const product = row.querySelector('.product-name')?.innerText.toLowerCase() || '';
+                    const id = row.querySelector('.apply-id')?.innerText.toLowerCase() || '';
+                    const typeVal = row.querySelector('.inst-type')?.innerText.trim() || '';
+                    const overallSpan = row.querySelector('.overall-status span'); let rowStatus = overallSpan ? overallSpan.innerText.trim() : '';
+                    if (rowStatus.includes('接入完成')) rowStatus = '审核通过'; if (rowStatus.includes('不通过')) rowStatus = '审核不通过'; if (rowStatus.includes('待审核')) rowStatus = '待审核'; if (rowStatus.includes('部分阶段')) rowStatus = '部分通过';
+                    const matchKw = id.includes(kw) || name.includes(kw) || product.includes(kw);
+                    const matchType = !instType || typeVal === instType;
+                    let matchStatus = true;
+                    if (st === '待审核') matchStatus = rowStatus === '待审核' || rowStatus === '部分通过';
+                    else if (st === '审核通过') matchStatus = rowStatus === '审核通过';
+                    else if (st === '审核不通过') matchStatus = rowStatus === '审核不通过';
+                    row.classList.toggle('hidden', !(matchKw && matchType && matchStatus));
+                });
+            };
+            const applyQuickFilter = (stepFilter) => {
+                keyword.value = ''; type.value = ''; status.value = '';
+                rows.forEach(row => {
+                    const overallSpan = row.querySelector('.overall-status span');
+                    let rowStatus = overallSpan ? overallSpan.innerText.trim() : '';
+                    if (rowStatus.includes('审核不通过')) rowStatus = '审核不通过';
+                    let visible = false;
+                    if (stepFilter === 'all-pending') {
+                        const step1 = row.querySelector('.step1-status span')?.innerText.includes('待审核');
+                        const step2 = row.querySelector('.step2-status span')?.innerText.includes('待审核');
+                        const step3 = row.querySelector('.step3-status span')?.innerText.includes('待审核');
+                        const step4 = row.querySelector('.step4-status span')?.innerText.includes('待审核');
+                        visible = (step1 || step2 || step3 || step4) && !rowStatus.includes('审核不通过');
+                    } else {
+                        const stepSpan = row.querySelector(`.step${stepFilter}-status span`);
+                        visible = stepSpan && stepSpan.innerText.includes('待审核');
+                    }
+                    row.classList.toggle('hidden', !visible);
+                });
+                showToast(stepFilter === 'all-pending' ? '已筛选：全部待审核记录' : `已筛选：步骤${stepFilter}待审核记录`, 'info');
+            };
+            document.querySelectorAll('.step-quick-filter').forEach(btn => btn.addEventListener('click', () => applyQuickFilter(btn.getAttribute('data-step-quick'))));
+            queryBtn.addEventListener('click', filterTable);
+            resetBtn.addEventListener('click', () => { keyword.value = ''; type.value = ''; status.value = ''; filterTable(); showToast('筛选条件已重置', 'info'); });
+            keyword.addEventListener('keypress', e => e.key === 'Enter' && filterTable());
+            
+            document.querySelectorAll('.btn-view-detail').forEach(btn => btn.addEventListener('click', () => {
+                const row = btn.closest('tr'); const id = row.dataset.id, name = row.dataset.name, product = row.dataset.product, date = row.dataset.date;
+                // 清理状态文本中的空白字符
+                const cleanStatus = (text) => text?.trim().replace(/[\n\t\r]/g, '') || '';
+                const s1 = cleanStatus(row.querySelector('.step1-status span')?.innerText), 
+                      s2 = cleanStatus(row.querySelector('.step2-status span')?.innerText), 
+                      s3 = cleanStatus(row.querySelector('.step3-status span')?.innerText), 
+                      s4 = cleanStatus(row.querySelector('.step4-status span')?.innerText);
+                let active = 1; 
+                if (s1.includes('待审核')) active = 1; 
+                else if (s2.includes('待审核')) active = 2; 
+                else if (s3.includes('待审核')) active = 3; 
+                else if (s4.includes('待审核')) active = 4;
+                const stepMap = { step1: s1, step2: s2, step3: s3, step4: s4 };
+                // 查看详情模式，不显示审核操作区域
+                showAccessAuditDialog({ id, name, product, applyDate: date }, active, stepMap, true);
+            }));
+            document.querySelectorAll('.btn-audit-step').forEach(btn => btn.addEventListener('click', () => {
+                const row = btn.closest('tr'); const step = parseInt(btn.dataset.step);
+                // 检查前置步骤是否都已通过
+                const canAudit = checkPreStepsPassed(row, step);
+                if (!canAudit) {
+                    showToast(`请先完成并通过步骤${step-1}的审核`, 'error');
+                    return;
+                }
+                // 清理状态文本中的空白字符
+                const cleanStatus = (text) => text?.trim().replace(/[\n\t\r]/g, '') || '';
+                const stepMap = { 
+                    step1: cleanStatus(row.querySelector('.step1-status span')?.innerText), 
+                    step2: cleanStatus(row.querySelector('.step2-status span')?.innerText), 
+                    step3: cleanStatus(row.querySelector('.step3-status span')?.innerText), 
+                    step4: cleanStatus(row.querySelector('.step4-status span')?.innerText) 
+                };
+                showAccessAuditDialog({ id: row.dataset.id, name: row.dataset.name, product: row.dataset.product, applyDate: row.dataset.date }, step, stepMap);
+            }));
+            document.querySelectorAll('.btn-init-exhibition').forEach(btn => btn.addEventListener('click', () => {
+                const id = btn.dataset.id, name = btn.dataset.name, product = btn.dataset.product;
+                initExhibitionApplication(id, name, product);
+            }));
+            filterTable();
+            // 初始化审核按钮状态
+            updateAuditButtonStates();
+        });
+
+        // 发起展业申请
+        function initExhibitionApplication(applyId, orgName, productName) {
+            let confirmModal = document.getElementById('exhibitionConfirmModal');
+            if (confirmModal) confirmModal.remove();
+            
+            confirmModal = document.createElement('div');
+            confirmModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200';
+            confirmModal.style.opacity = '0';
+            confirmModal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden">
+                    <div class="px-6 py-5 bg-gradient-to-r from-emerald-50 to-green-50 border-b border-slate-150">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+                                <i class="fa fa-rocket text-emerald-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">发起展业申请</h3>
+                                <p class="text-xs text-slate-500">确认为该机构发起展业申请</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="bg-slate-50 rounded-xl p-4 mb-6">
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <div class="text-xs text-slate-400 mb-1">申请编号</div>
+                                    <div class="font-mono font-semibold text-slate-800">${applyId}</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400 mb-1">机构名称</div>
+                                    <div class="font-semibold text-blue-800">${orgName}</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400 mb-1">产品名称</div>
+                                    <div class="font-semibold text-purple-800">${productName}</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-400 mb-1">申请类型</div>
+                                    <div class="font-semibold text-emerald-800">展业申请</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-6">
+                            确认发起展业申请后，将为该机构创建展业资格申请单，进入展业审核流程。
+                        </p>
+                        <div class="flex gap-3">
+                            <button id="cancelExhibitionBtn" class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all text-slate-600 text-sm font-medium">
+                                取消
+                            </button>
+                            <button id="confirmExhibitionBtn" class="flex-1 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white rounded-xl font-semibold transition-all shadow-md">
+                                确认发起
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+            setTimeout(() => confirmModal.style.opacity = '1', 10);
+            
+            const closeModal = () => {
+                confirmModal.style.opacity = '0';
+                setTimeout(() => confirmModal.remove(), 200);
+            };
+            
+            document.getElementById('cancelExhibitionBtn')?.addEventListener('click', closeModal);
+            confirmModal.addEventListener('click', (e) => { if(e.target === confirmModal) closeModal(); });
+            
+            document.getElementById('confirmExhibitionBtn')?.addEventListener('click', () => {
+                closeModal();
+                showToast('展业申请已发起，正在跳转...', 'success');
+                setTimeout(() => {
+                    window.location.href = '展业管理.html?applyId=' + applyId + '&orgName=' + encodeURIComponent(orgName);
+                }, 1500);
+            });
+        }
+
+        // 更新审核按钮状态 - 禁用前置步骤未通过的按钮
+        function updateAuditButtonStates() {
+            document.querySelectorAll('.btn-audit-step').forEach(btn => {
+                const row = btn.closest('tr');
+                const step = parseInt(btn.dataset.step);
+                const canAudit = checkPreStepsPassed(row, step);
+                
+                if (!canAudit) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    btn.style.cursor = 'not-allowed';
+                    btn.style.backgroundColor = '#e2e8f0';
+                    btn.style.borderColor = '#cbd5e1';
+                    btn.style.color = '#94a3b8';
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                    btn.style.backgroundColor = '';
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

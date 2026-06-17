@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 部门与人员管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">福建省电子保函服务平台</h1>
+            </div>
+                                        <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警统计分析
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">超级管理员</p>
+                        <p class="text-[10px] text-slate-400">福建省政务中心</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-14 bg-white border-b border-slate-200 flex items-center justify-between px-6 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-base font-bold text-slate-800">部门与人员管理</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">部门与人员管理</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openModal('add')" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-bold shadow-lg shadow-blue-200">
+                        <i class="fa fa-plus"></i>
+                        <span>新增人员</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="flex gap-6">
+                    <!-- 组织架构 -->
+                    <div class="w-72 shrink-0">
+                        <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                            <!-- 标题栏 -->
+                            <div class="p-3 border-b border-slate-100 flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fa fa-sitemap text-slate-500 text-sm"></i>
+                                    <h3 class="text-sm font-bold text-slate-800">组织架构</h3>
+                                </div>
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="openOrgModal('add')" class="w-5 h-5 rounded hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors" title="新增组织">
+                                        <i class="fa fa-plus text-xs"></i>
+                                    </button>
+                                    <button onclick="refreshOrgTree()" class="w-5 h-5 rounded hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors" title="刷新">
+                                        <i class="fa fa-refresh text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 搜索框 -->
+                            <div class="p-3">
+                                <div class="relative">
+                                    <input type="text" id="org-search-input" placeholder="搜索组织..." class="w-full border border-slate-200 rounded-md px-3 py-1.5 text-xs outline-none bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all pl-7">
+                                    <i class="fa fa-search absolute left-2 top-1.5 text-slate-400 text-xs"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- 统计信息 -->
+                            <div class="px-3 py-2 text-xs text-slate-500">
+                                <span>共 <span class="font-bold text-slate-700" id="org-count">0</span> 个组织</span>
+                            </div>
+                            
+                            <!-- 组织树内容 -->
+                            <div class="max-h-[400px] overflow-y-auto">
+                                <ul id="org-tree" class="space-y-0 p-2"></ul>
+                            </div>
+                            
+                            <!-- 操作栏 -->
+                            <div class="px-3 py-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                <button onclick="expandAllOrgs()" class="text-slate-500 hover:text-blue-600 transition-colors">
+                                    <i class="fa fa-plus-square mr-1"></i>展开全部
+                                </button>
+                                <button onclick="collapseAllOrgs()" class="text-slate-500 hover:text-blue-600 transition-colors">
+                                    <i class="fa fa-minus-square mr-1"></i>收起全部
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 用户列表区域 -->
+                    <div class="flex-1">
+                        <!-- 搜索与筛选 -->
+                        <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm mb-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="relative flex-1 max-w-md">
+                                    <input type="text" placeholder="搜索姓名/账号/手机号..." class="w-full border border-slate-200 rounded-md px-4 py-2 pl-9 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-1 focus:ring-blue-500 transition-all">
+                                    <i class="fa fa-search absolute left-3 top-2 text-slate-400"></i>
+                                </div>
+                                <select class="border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-slate-50 focus:ring-1 focus:ring-blue-500">
+                                    <option value="all">所有角色</option>
+                                    <option>超级管理员</option>
+                                    <option>业务审核员</option>
+                                    <option>监管审计员</option>
+                                </select>
+                                <select class="border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-slate-50 focus:ring-1 focus:ring-blue-500">
+                                    <option value="all">所有状态</option>
+                                    <option value="active">启用</option>
+                                    <option value="inactive">禁用</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 用户列表 -->
+                        <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-xs font-bold text-slate-500">
+                                    <tr>
+                                        <th class="px-4 py-3">人员信息</th>
+                                        <th class="px-4 py-3">账号</th>
+                                        <th class="px-4 py-3">所属角色</th>
+                                        <th class="px-4 py-3">所属组织</th>
+                                        <th class="px-4 py-3">最后登录</th>
+                                        <th class="px-4 py-3">状态</th>
+                                        <th class="px-4 py-3">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-slate-100" id="user-table-body">
+                                    <!-- 用户列表动态渲染 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Universal Modal -->
+    <div id="action-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 sticky top-0 z-10">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-800">新增用户</h3>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4" id="modal-content">
+                <input type="hidden" id="form-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">姓名 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="form-name" placeholder="人员真实姓名" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">工号</label>
+                        <input type="text" id="form-employee-id" placeholder="员工编号" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">登录账号 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="form-account" placeholder="建议拼音缩写" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">性别</label>
+                        <select id="form-gender" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="">请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">所属组织</label>
+                        <select id="form-org" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                            <option value="">请选择组织</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">所属角色 <span class="text-rose-500">*</span></label>
+                        <select id="form-role" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                            <option value="">请选择角色</option>
+                            <option>超级管理员</option>
+                            <option>业务审核员</option>
+                            <option>监管审计员</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">手机号码 <span class="text-rose-500">*</span></label>
+                        <input type="tel" id="form-phone" placeholder="11位手机号" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all" required>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">邮箱</label>
+                        <input type="email" id="form-email" placeholder="工作邮箱" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                    </div>
+                </div>
+                <div class="space-y-1" id="password-field">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">初始密码</label>
+                    <input type="password" id="form-password" value="123456" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-100 text-slate-400 font-mono">
+                    <p class="text-[10px] text-slate-400 italic">用户首次登录后需强制修改密码</p>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">状态</label>
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="form-status" id="form-status-active" value="active" checked class="w-4 h-4 text-blue-600">
+                            <span class="ml-2 text-sm text-slate-600">启用</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                            <input type="radio" name="form-status" id="form-status-inactive" value="inactive" class="w-4 h-4 text-blue-600">
+                            <span class="ml-2 text-sm text-slate-600">禁用</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50 sticky bottom-0">
+                <button onclick="closeModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
+                <button onclick="saveUser()" id="modal-submit-btn" class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 部门管理弹窗 -->
+    <div id="org-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 id="org-modal-title" class="text-base font-bold text-slate-800">新增组织</h3>
+                <button onclick="closeOrgModal()" class="w-6 h-6 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 space-y-4">
+                <input type="hidden" id="org-id">
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs font-medium text-slate-600">上级组织</label>
+                    <select id="org-parent" class="w-full border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                        <option value="">无（作为顶级部门）</option>
+                    </select>
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs font-medium text-slate-600">组织名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="org-name" placeholder="请输入组织名称" class="w-full border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs font-medium text-slate-600">组织类型</label>
+                    <select id="org-type" class="w-full border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                        <option value="department">部门</option>
+                    </select>
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs font-medium text-slate-600">负责人</label>
+                    <input type="text" id="org-manager" placeholder="请输入负责人姓名" class="w-full border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                </div>
+                
+                <div class="space-y-1.5">
+                    <label class="text-xs font-medium text-slate-600">描述</label>
+                    <textarea id="org-desc" placeholder="请输入组织描述" rows="3" class="w-full border border-slate-200 rounded-md px-3 py-2 text-sm outline-none bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none"></textarea>
+                </div>
+            </div>
+            <div class="p-4 border-t border-slate-100 flex justify-end space-x-3">
+                <button onclick="closeOrgModal()" class="px-6 py-2 border border-slate-200 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all">取消</button>
+                <button onclick="saveOrg()" class="px-6 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-all">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 机构树数据 - 省级管理中心
+        const orgData = [
+            {
+                id: 'provincial',
+                name: '省级管理中心',
+                type: 'provincial',
+                manager: '超级管理员',
+                description: '省级管理中心',
+                children: [
+                    { id: 'dept-admin', name: '综合管理部', type: 'department', manager: '李明', description: '负责综合行政管理', children: [] },
+                    { id: 'dept-supervise', name: '业务监管部', type: 'department', manager: '张伟', description: '负责业务监管审计', children: [] },
+                    { id: 'dept-ops', name: '系统运维部', type: 'department', manager: '王芳', description: '负责系统运维支持', children: [] },
+                    { id: 'dept-data', name: '数据统计部', type: 'department', manager: '李强', description: '负责数据统计分析', children: [] }
+                ]
+            }
+        ];
+
+        let selectedOrgId = null;
+        let searchKeyword = '';
+
+        function getOrgIcon(type) {
+            switch(type) {
+                case 'provincial': return 'fa-building';
+                case 'city': return 'fa-building-o';
+                case 'city-child': return 'fa-building-o';
+                case 'institution': return 'fa-university';
+                case 'bank': return 'fa-bank';
+                default: return 'fa-folder';
+            }
+        }
+
+        function getOrgIconColor(type) {
+            switch(type) {
+                case 'provincial': return 'text-blue-600';
+                case 'department': return 'text-indigo-500';
+                default: return 'text-slate-500';
+            }
+        }
+
+        function countOrgs(data) {
+            let count = data.length;
+            data.forEach(item => {
+                if (item.children.length > 0) {
+                    count += countOrgs(item.children);
+                }
+            });
+            return count;
+        }
+
+        function updateOrgCount() {
+            const count = countOrgs(orgData);
+            document.getElementById('org-count').textContent = count;
+        }
+
+        function updateSelectedOrgName() {
+            if (selectedOrgId) {
+                const org = findOrgById(orgData, selectedOrgId);
+                document.getElementById('selected-org-name').textContent = org ? org.name : '-';
+            } else {
+                document.getElementById('selected-org-name').textContent = '-';
+            }
+        }
+
+        function findOrgById(data, id) {
+            for (const item of data) {
+                if (item.id === id) return item;
+                if (item.children.length > 0) {
+                    const found = findOrgById(item.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        function renderOrgTree(data, parentElement, level = 0) {
+            data.forEach(item => {
+                const isMatch = !searchKeyword || item.name.toLowerCase().includes(searchKeyword.toLowerCase());
+                
+                if (!isMatch && item.children.length > 0) {
+                    const hasMatchingChild = item.children.some(child => {
+                        const childMatch = child.name.toLowerCase().includes(searchKeyword.toLowerCase());
+                        return childMatch || child.children.length > 0 && child.children.some(c => c.name.toLowerCase().includes(searchKeyword.toLowerCase()));
+                    });
+                    if (!hasMatchingChild) return;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'relative group';
+                li.dataset.orgId = item.id;
+                
+                const paddingLeft = level > 0 ? `pl-${level * 4}` : '';
+                const isSelected = selectedOrgId === item.id;
+                
+                li.innerHTML = `
+                    <div class="flex items-center ${paddingLeft} px-2 py-1.5 rounded cursor-pointer hover:bg-slate-100 transition-colors ${isSelected ? 'bg-blue-50' : ''}" data-org-id="${item.id}">
+                        ${item.children.length > 0 ? `
+                            <button class="w-5 h-5 flex items-center justify-center text-slate-400 hover:text-slate-600 mr-1 org-expand-btn" data-org-id="${item.id}">
+                                <i class="fa fa-chevron-right text-xs transition-transform"></i>
+                            </button>
+                        ` : '<span class="w-5"></span>'}
+                        <i class="fa ${getOrgIcon(item.type)} mr-2 text-sm ${getOrgIconColor(item.type)}"></i>
+                        <span class="text-sm text-slate-700 flex-1 truncate">${item.name}</span>
+                        ${item.type === 'department' || item.type === 'provincial' ? `
+                            <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button class="w-5 h-5 rounded hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors org-edit-btn" data-org-id="${item.id}" title="编辑">
+                                    <i class="fa fa-pencil text-xs"></i>
+                                </button>
+                                ${item.type !== 'provincial' ? `
+                                    <button class="w-5 h-5 rounded hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors org-delete-btn" data-org-id="${item.id}" title="删除">
+                                        <i class="fa fa-trash text-xs"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                parentElement.appendChild(li);
+                
+                if (item.children.length > 0) {
+                    const ul = document.createElement('ul');
+                    ul.className = 'hidden mt-0.5 space-y-0.5';
+                    ul.dataset.parentId = item.id;
+                    li.appendChild(ul);
+                    renderOrgTree(item.children, ul, level + 1);
+                }
+            });
+        }
+
+        function refreshOrgTree() {
+            const tree = document.getElementById('org-tree');
+            tree.innerHTML = '';
+            renderOrgTree(orgData, tree);
+            bindOrgEvents();
+            updateOrgCount();
+            updateSelectedOrgName();
+        }
+
+        function expandAllOrgs() {
+            document.querySelectorAll('ul[data-parent-id]').forEach(ul => {
+                ul.classList.remove('hidden');
+            });
+            document.querySelectorAll('.org-expand-btn i').forEach(icon => {
+                icon.classList.add('rotate-90');
+            });
+        }
+
+        function collapseAllOrgs() {
+            document.querySelectorAll('ul[data-parent-id]').forEach(ul => {
+                ul.classList.add('hidden');
+            });
+            document.querySelectorAll('.org-expand-btn i').forEach(icon => {
+                icon.classList.remove('rotate-90');
+            });
+        }
+
+        function bindOrgEvents() {
+            document.querySelectorAll('.org-expand-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const orgId = this.dataset.orgId;
+                    const ul = document.querySelector(`ul[data-parent-id="${orgId}"]`);
+                    if (ul) {
+                        ul.classList.toggle('hidden');
+                        this.querySelector('i').classList.toggle('rotate-90');
+                    }
+                });
+            });
+
+            document.querySelectorAll('[data-org-id]').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    if (!e.target.closest('button')) {
+                        const orgId = this.dataset.orgId;
+                        selectedOrgId = orgId;
+                        document.querySelectorAll('[data-org-id]').forEach(item => {
+                            item.classList.remove('bg-blue-50');
+                        });
+                        this.classList.add('bg-blue-50');
+                        updateSelectedOrgName();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.org-edit-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const orgId = this.dataset.orgId;
+                    openOrgModal('edit', orgId);
+                });
+            });
+
+            document.querySelectorAll('.org-delete-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const orgId = this.dataset.orgId;
+                    deleteOrg(orgId);
+                });
+            });
+        }
+
+        function initOrgSearch() {
+            const input = document.getElementById('org-search-input');
+            if (input) {
+                input.addEventListener('input', function(e) {
+                    searchKeyword = e.target.value;
+                    refreshOrgTree();
+                });
+            }
+        }
+
+        function buildOrgParentOptions(selectedParentId = '') {
+            const select = document.getElementById('org-parent');
+            let options = '<option value="">无（作为顶级部门）</option>';
+            
+            function buildOptions(data, prefix = '') {
+                data.forEach(item => {
+                    if (item.type === 'provincial' || item.type === 'department') {
+                        const isSelected = selectedParentId === item.id ? 'selected' : '';
+                        options += `<option value="${item.id}" ${isSelected}>${prefix}${item.name}</option>`;
+                        if (item.children.length > 0) {
+                            buildOptions(item.children, prefix + '├─ ');
+                        }
+                    }
+                });
+            }
+            
+            buildOptions(orgData);
+            select.innerHTML = options;
+        }
+
+        // 部门管理弹窗函数
+        function openOrgModal(mode, orgId = null) {
+            const modal = document.getElementById('org-modal');
+            const modalContent = modal.querySelector('div > div');
+            
+            if (mode === 'edit' && orgId) {
+                document.getElementById('org-modal-title').innerText = '编辑部门';
+                const org = findOrgById(orgData, orgId);
+                if (org) {
+                    const parent = findOrgParent(orgData, orgId);
+                    const parentId = parent ? parent.id : '';
+                    buildOrgParentOptions(parentId);
+                    document.getElementById('org-id').value = orgId;
+                    document.getElementById('org-name').value = org.name;
+                    document.getElementById('org-manager').value = org.manager || '';
+                    document.getElementById('org-desc').value = org.description || '';
+                }
+            } else {
+                document.getElementById('org-modal-title').innerText = '新增部门';
+                buildOrgParentOptions('provincial');
+                document.getElementById('org-id').value = '';
+                document.getElementById('org-name').value = '';
+                document.getElementById('org-manager').value = '';
+                document.getElementById('org-desc').value = '';
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeOrgModal() {
+            const modal = document.getElementById('org-modal');
+            const modalContent = modal.querySelector('div > div');
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function saveOrg() {
+            const orgId = document.getElementById('org-id').value;
+            const orgName = document.getElementById('org-name').value.trim();
+            const parentId = document.getElementById('org-parent').value;
+            const manager = document.getElementById('org-manager').value.trim();
+            const desc = document.getElementById('org-desc').value.trim();
+            
+            if (!orgName) {
+                showNotification('请输入部门名称', 'error');
+                document.getElementById('org-name').focus();
+                return;
+            }
+            
+            if (!parentId) {
+                showNotification('请选择上级组织', 'error');
+                document.getElementById('org-parent').focus();
+                return;
+            }
+
+            if (orgId) {
+                const org = findOrgById(orgData, orgId);
+                if (org) {
+                    org.name = orgName;
+                    org.manager = manager;
+                    org.description = desc;
+                    const oldParent = findOrgParent(orgData, orgId);
+                    const newParent = findOrgById(orgData, parentId);
+                    if (oldParent && newParent && oldParent.id !== newParent.id) {
+                        oldParent.children = oldParent.children.filter(item => item.id !== orgId);
+                        newParent.children.push(org);
+                    }
+                    showNotification('部门信息已更新', 'success');
+                }
+            } else {
+                const newId = `dept-${Date.now()}`;
+                const parent = findOrgById(orgData, parentId);
+                if (parent) {
+                    parent.children.push({
+                        id: newId,
+                        name: orgName,
+                        type: 'department',
+                        manager: manager,
+                        description: desc,
+                        children: []
+                    });
+                }
+                showNotification('部门新增成功', 'success');
+            }
+            
+            refreshOrgTree();
+            closeOrgModal();
+        }
+
+        function deleteOrg(orgId) {
+            const org = findOrgById(orgData, orgId);
+            if (!org) return;
+
+            if (confirm(`确定要删除部门 "${org.name}" 吗？`)) {
+                const parent = findOrgParent(orgData, orgId);
+                if (parent) {
+                    parent.children = parent.children.filter(item => item.id !== orgId);
+                    showNotification('部门已删除', 'success');
+                    refreshOrgTree();
+                }
+            }
+        }
+
+        function findOrgParent(data, id) {
+            for (const item of data) {
+                if (item.children.some(child => child.id === id)) {
+                    return item;
+                }
+                if (item.children.length > 0) {
+                    const found = findOrgParent(item.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        // 模拟用户数据 - 省级管理端
+        const userData = [
+            { id: 1, username: 'admin', name: '李明', employeeId: 'P001', gender: 'male', phone: '13888888888', email: 'liming@fujian.gov.cn', orgId: 'dept-admin', orgName: '综合管理部', role: '超级管理员', lastLogin: '2024-05-20 09:30', status: 'active' },
+            { id: 2, username: 'zhangwei', name: '张伟', employeeId: 'P002', gender: 'male', phone: '13999999999', email: 'zhangwei@fujian.gov.cn', orgId: 'dept-supervise', orgName: '业务监管部', role: '监管审计员', lastLogin: '2024-05-20 08:45', status: 'active' },
+            { id: 3, username: 'wangfang', name: '王芳', employeeId: 'P003', gender: 'female', phone: '13777777777', email: 'wangfang@fujian.gov.cn', orgId: 'dept-ops', orgName: '系统运维部', role: '业务审核员', lastLogin: '2024-05-19 16:20', status: 'active' },
+            { id: 4, username: 'liqiang', name: '李强', employeeId: 'P004', gender: 'male', phone: '13666666666', email: 'liqiang@fujian.gov.cn', orgId: 'dept-data', orgName: '数据统计部', role: '业务审核员', lastLogin: '2024-05-19 14:30', status: 'active' },
+            { id: 5, username: 'zhaoyun', name: '赵云', employeeId: 'P005', gender: 'male', phone: '13555555555', email: 'zhaoyun@fujian.gov.cn', orgId: 'dept-admin', orgName: '综合管理部', role: '业务审核员', lastLogin: '2024-05-18 10:15', status: 'inactive' },
+            { id: 6, username: 'sunli', name: '孙丽', employeeId: 'P006', gender: 'female', phone: '13444444444', email: 'sunli@fujian.gov.cn', orgId: 'dept-supervise', orgName: '业务监管部', role: '监管审计员', lastLogin: '2024-05-17 11:00', status: 'active' }
+        ];
+
+        function renderUserTable() {
+            const tbody = document.getElementById('user-table-body');
+            if (!tbody) return;
+
+            tbody.innerHTML = userData.map(user => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3">
+                        <div class="flex items-center">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold mr-3">
+                                ${user.name.charAt(0)}
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-700 text-sm">${user.name}</p>
+                                <p class="text-xs text-slate-400">${user.phone}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-slate-600">${user.username}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-0.5 ${
+                            user.role === '超级管理员' ? 'bg-blue-50 text-blue-600' : 
+                            user.role === '业务审核员' ? 'bg-green-50 text-green-600' : 'bg-slate-50 text-slate-600'
+                        } text-xs font-bold rounded">${user.role}</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-slate-600">${user.orgName}</td>
+                    <td class="px-4 py-3 text-xs text-slate-400">${user.lastLogin}</td>
+                    <td class="px-4 py-3">
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 rounded-full ${user.status === 'active' ? 'bg-green-500' : 'bg-slate-300'} mr-1.5"></span>
+                            <span class="text-xs font-bold ${user.status === 'active' ? 'text-green-600' : 'text-slate-400'}">${user.status === 'active' ? '启用' : '禁用'}</span>
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center space-x-3">
+                            <button onclick="openModal('edit', ${user.id})" class="text-blue-600 font-bold hover:text-blue-700 text-xs">编辑</button>
+                            <button onclick="resetPassword(${user.id})" class="text-orange-500 font-bold hover:text-orange-600 text-xs">重置密码</button>
+                            <button onclick="toggleUserStatus(${user.id})" class="${user.status === 'active' ? 'text-red-500' : 'text-green-500'} font-bold hover:underline text-xs">
+                                ${user.status === 'active' ? '禁用' : '启用'}
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUserTable();
+            refreshOrgTree();
+            initOrgSearch();
+        });
+
+        function buildUserOrgOptions(selectedOrgId = '') {
+            const select = document.getElementById('form-org');
+            let options = '<option value="">请选择组织</option>';
+            
+            function buildOptions(data, prefix = '') {
+                data.forEach(item => {
+                    if (item.type === 'provincial' || item.type === 'department') {
+                        const isSelected = selectedOrgId === item.id ? 'selected' : '';
+                        options += `<option value="${item.id}" ${isSelected}>${prefix}${item.name}</option>`;
+                        if (item.children.length > 0) {
+                            buildOptions(item.children, prefix + '├─ ');
+                        }
+                    }
+                });
+            }
+            
+            buildOptions(orgData);
+            select.innerHTML = options;
+        }
+
+        function openModal(actionType, userId = null) {
+            const modal = document.getElementById('action-modal');
+            const contentContainer = document.getElementById('modal-content');
+            const modalContent = modal.querySelector('div > div');
+            
+            buildUserOrgOptions();
+            
+            let titlePrefix = actionType === 'add' ? '新增' : '编辑';
+            document.getElementById('modal-title').innerText = `${titlePrefix}用户`;
+            document.getElementById('modal-submit-btn').innerText = actionType === 'add' ? '保存' : '保存';
+
+            const user = userId ? userData.find(u => u.id === userId) : null;
+
+            if (actionType === 'edit' && user) {
+                document.getElementById('form-id').value = user.id;
+                document.getElementById('form-name').value = user.name;
+                document.getElementById('form-employee-id').value = user.employeeId || '';
+                document.getElementById('form-account').value = user.username;
+                document.getElementById('form-gender').value = user.gender || '';
+                document.getElementById('form-org').value = user.orgId || '';
+                document.getElementById('form-role').value = user.role;
+                document.getElementById('form-phone').value = user.phone;
+                document.getElementById('form-email').value = user.email || '';
+                document.getElementById('form-password').value = '******';
+                document.getElementById('password-field').classList.add('hidden');
+                document.querySelector(`input[name="form-status"][value="${user.status}"]`).checked = true;
+                document.getElementById('form-account').readOnly = true;
+                document.getElementById('form-account').classList.add('bg-slate-100', 'text-slate-400');
+            } else {
+                document.getElementById('form-id').value = '';
+                document.getElementById('form-name').value = '';
+                document.getElementById('form-employee-id').value = '';
+                document.getElementById('form-account').value = '';
+                document.getElementById('form-gender').value = '';
+                document.getElementById('form-org').value = '';
+                document.getElementById('form-role').value = '';
+                document.getElementById('form-phone').value = '';
+                document.getElementById('form-email').value = '';
+                document.getElementById('form-password').value = generatePassword();
+                document.getElementById('password-field').classList.remove('hidden');
+                document.getElementById('form-status-active').checked = true;
+                document.getElementById('form-account').readOnly = false;
+                document.getElementById('form-account').classList.remove('bg-slate-100', 'text-slate-400');
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+            let password = '';
+            for (let i = 0; i < 8; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        }
+
+        function validatePhone(phone) {
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            return phoneRegex.test(phone);
+        }
+
+        function validateEmail(email) {
+            if (!email) return true;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function saveUser() {
+            const id = document.getElementById('form-id').value;
+            const name = document.getElementById('form-name').value.trim();
+            const account = document.getElementById('form-account').value.trim();
+            const role = document.getElementById('form-role').value;
+            const phone = document.getElementById('form-phone').value.trim();
+            const orgId = document.getElementById('form-org').value;
+            const email = document.getElementById('form-email').value.trim();
+            const status = document.querySelector('input[name="form-status"]:checked').value;
+            
+            if (!name) {
+                showNotification('请填写姓名', 'error');
+                document.getElementById('form-name').focus();
+                return;
+            }
+            
+            if (!account) {
+                showNotification('请填写登录账号', 'error');
+                document.getElementById('form-account').focus();
+                return;
+            }
+            
+            if (!role) {
+                showNotification('请选择所属角色', 'error');
+                document.getElementById('form-role').focus();
+                return;
+            }
+            
+            if (!phone) {
+                showNotification('请填写手机号码', 'error');
+                document.getElementById('form-phone').focus();
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                showNotification('请输入有效的手机号码', 'error');
+                document.getElementById('form-phone').focus();
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showNotification('请输入有效的邮箱地址', 'error');
+                document.getElementById('form-email').focus();
+                return;
+            }
+
+            const org = findOrgById(orgData, orgId);
+            const orgName = org ? org.name : '';
+
+            if (id) {
+                const user = userData.find(u => u.id === parseInt(id));
+                if (user) {
+                    user.name = name;
+                    user.employeeId = document.getElementById('form-employee-id').value.trim();
+                    user.gender = document.getElementById('form-gender').value;
+                    user.orgId = orgId;
+                    user.orgName = orgName;
+                    user.role = role;
+                    user.phone = phone;
+                    user.email = email;
+                    user.status = status;
+                }
+                showNotification('用户信息已更新', 'success');
+            } else {
+                const newId = userData.length > 0 ? Math.max(...userData.map(u => u.id)) + 1 : 1;
+                const password = document.getElementById('form-password').value;
+                userData.push({
+                    id: newId,
+                    username: account,
+                    name,
+                    employeeId: document.getElementById('form-employee-id').value.trim(),
+                    gender: document.getElementById('form-gender').value,
+                    phone,
+                    email,
+                    orgId,
+                    orgName,
+                    role,
+                    lastLogin: '-',
+                    status
+                });
+                showNotification(`用户新增成功！初始密码：${password}`, 'success');
+            }
+            
+            renderUserTable();
+            closeModal();
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('action-modal');
+            const modalContent = modal.querySelector('div > div');
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function toggleNotification(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notification-dropdown');
+            const isHidden = dropdown.classList.contains('hidden');
+            
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+                const closeHandler = (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.add('hidden');
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
+            } else {
+                dropdown.classList.add('hidden');
+            }
+        }
+
+        function toggleUserStatus(userId) {
+            const user = userData.find(u => u.id === userId);
+            if (user) {
+                user.status = user.status === 'active' ? 'inactive' : 'active';
+                renderUserTable();
+                showNotification(`用户 ${user.username} 已${user.status === 'active' ? '启用' : '禁用'}`, 'success');
+            }
+        }
+
+        function resetPassword(userId) {
+            const user = userData.find(u => u.id === userId);
+            if (user) {
+                showNotification(`用户 ${user.username} 的密码已重置为默认密码：123456`, 'info');
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-xl shadow-2xl z-[100] transform transition-all duration-300 translate-y-20 flex items-center space-x-3 ${
+                type === 'success' ? 'bg-emerald-500 text-white' : 
+                type === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-white'
+            }`;
+            
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle';
+            notification.innerHTML = `<i class="fa fa-${icon}"></i><span class="text-sm font-bold">${message}</span>`;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.remove('translate-y-20'), 10);
+            setTimeout(() => {
+                notification.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

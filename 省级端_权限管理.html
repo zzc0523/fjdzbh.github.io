@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 权限管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+                                        <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警统计分析
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">超级管理员</p>
+                        <p class="text-[10px] text-slate-400">福建省政务中心</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">权限管理</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">角色与功能授权</span>
+                </div>
+                <button onclick="openAddRoleModal()" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-bold shadow-lg shadow-blue-200">
+                    <i class="fa fa-plus"></i>
+                    <span>新增角色</span>
+                </button>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 h-full">
+                    <!-- 角色列表 -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest">角色列表</h3>
+                            <button onclick="openAddRoleModal()" class="p-1 text-blue-600 hover:bg-blue-50 rounded transition-colors" title="新增角色">
+                                <i class="fa fa-plus-circle text-lg"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-2" id="roleListContainer">
+                            <button onclick="selectRole(this, '超级管理员', '拥有全省系统最高权限，可管理全模块、全级次机构及底层参数配置')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-200 transition-all">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">超级管理员</span>
+                                    <i class="fa fa-chevron-right text-xs"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 opacity-80">拥有全省系统最高权限</p>
+                            </button>
+                            <button onclick="selectRole(this, '业务审核员', '负责全省业务的最终审核与异常件处理')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">业务审核员</span>
+                                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 text-slate-400">负责全省业务审核</p>
+                            </button>
+                            <button onclick="selectRole(this, '监管审计员', '负责风险预警监控、业务合规性审计及全省统计报表查询')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">监管审计员</span>
+                                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 text-slate-400">负责风险监控审计</p>
+                            </button>
+                            <button onclick="selectRole(this, '数据分析师', '负责数据统计分析、报表生成与导出')" class="role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold">数据分析师</span>
+                                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                                </div>
+                                <p class="text-[10px] mt-1 text-slate-400">负责数据分析与报表</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 权限详情 -->
+                    <div class="lg:col-span-3 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
+                        <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800">权限配置：<span class="text-blue-600">超级管理员</span></h3>
+                                <p class="text-xs text-slate-500 mt-1">勾选右侧功能模块以为该角色授权</p>
+                            </div>
+                            <button class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                保存授权
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-8 space-y-8">
+                            <!-- 模块 1 -->
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">预警处理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">预警规则设置</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">预警统计分析</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">异常业务监控</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 2 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">机构管理</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">平台管理管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">金融机构管理</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">机构准入审核</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">机构考核评价</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 3 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">场景管理</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">场景配置管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">费率配置</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 4 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">门户管理</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">平台资讯管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">帮助中心管理</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">Banner管理</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 5 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">数据报表与监控</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">数据可视化大屏</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">业务统计分析</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">多维统计报表</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">数据导出权限</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 模块 6 -->
+                            <div class="space-y-4">
+                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
+                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
+                                    <h4 class="font-bold text-slate-800">系统配置权限</h4>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">部门与人员管理</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">角色功能授权</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">操作日志查看</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 cursor-pointer">
+                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
+                                            <span class="text-sm text-slate-600">系统参数配置</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Role Modal -->
+    <div id="addRoleModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">新增角色</h3>
+                <button onclick="closeAddRoleModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-8 space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">角色名称 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="roleNameInput" placeholder="请输入角色名称，如：财务审核员" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">角色描述</label>
+                    <textarea id="roleDescInput" placeholder="请简要描述该角色的主要职能..." class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all h-24"></textarea>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-2">初始权限模板</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="radio" name="template" value="blank" checked class="template-radio w-4 h-4 text-blue-600">
+                            <span class="ml-3 text-sm text-slate-600 font-medium">空白模板</span>
+                        </label>
+                        <label class="flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-all">
+                            <input type="radio" name="template" value="inherit" class="template-radio w-4 h-4 text-blue-600">
+                            <span class="ml-3 text-sm text-slate-600 font-medium">继承现有角色</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- 继承角色选择框 (默认隐藏) -->
+                <div id="inheritRoleContainer" class="space-y-1 hidden">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">选择要继承的角色</label>
+                    <select id="inheritRoleSelect" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm outline-none bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                        <!-- 由 JS 动态填充 -->
+                    </select>
+                    <p class="text-[10px] text-slate-400 italic mt-1">创建后将自动复制该角色的所有权限配置</p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
+                <button onclick="closeAddRoleModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
+                <button onclick="saveNewRole()" class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">确认创建</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.template-radio').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const container = document.getElementById('inheritRoleContainer');
+                    if (this.value === 'inherit') {
+                        container.classList.remove('hidden');
+                        populateInheritRoleSelect();
+                    } else {
+                        container.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        function populateInheritRoleSelect() {
+            const select = document.getElementById('inheritRoleSelect');
+            const roles = document.querySelectorAll('.role-btn span.font-bold');
+            select.innerHTML = '';
+            roles.forEach(role => {
+                const option = document.createElement('option');
+                option.value = role.textContent;
+                option.textContent = role.textContent;
+                select.appendChild(option);
+            });
+        }
+
+        function selectRole(btn, roleName, description) {
+            document.querySelectorAll('.role-btn').forEach(r => {
+                r.classList.remove('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
+                r.classList.add('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+            });
+            btn.classList.remove('bg-white', 'border', 'border-slate-200', 'text-slate-600');
+            btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
+            
+            document.querySelector('.text-blue-600').textContent = roleName;
+        }
+
+        function openAddRoleModal() {
+            const modal = document.getElementById('addRoleModal');
+            const content = modal.querySelector('div > div');
+            
+            document.querySelector('input[value="blank"]').checked = true;
+            document.getElementById('inheritRoleContainer').classList.add('hidden');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeAddRoleModal() {
+            const modal = document.getElementById('addRoleModal');
+            const content = modal.querySelector('div > div');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function saveNewRole() {
+            const name = document.getElementById('roleNameInput').value;
+            const desc = document.getElementById('roleDescInput').value || '暂无描述';
+            const templateType = document.querySelector('input[name="template"]:checked').value;
+            const inheritFrom = templateType === 'inherit' ? document.getElementById('inheritRoleSelect').value : null;
+
+            if (!name) {
+                alert('请输入角色名称');
+                return;
+            }
+
+            const container = document.getElementById('roleListContainer');
+            const newRoleBtn = document.createElement('button');
+            newRoleBtn.onclick = function() { selectRole(this, name, desc); };
+            newRoleBtn.className = "role-btn w-full text-left px-4 py-3 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 transition-all group";
+            newRoleBtn.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="font-bold">${name}</span>
+                    <i class="fa fa-chevron-right text-xs opacity-0 group-hover:opacity-100 transition-all"></i>
+                </div>
+                <p class="text-[10px] mt-1 text-slate-400">${desc}</p>
+            `;
+            container.appendChild(newRoleBtn);
+
+            let successMsg = '角色「' + name + '」创建成功';
+            if (inheritFrom) {
+                successMsg += '，已成功继承「' + inheritFrom + '」的权限配置';
+            } else {
+                successMsg += '，请继续为其分配权限';
+            }
+
+            showNotification(successMsg, 'success');
+            closeAddRoleModal();
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed bottom-4 right-4 px-6 py-3 rounded-xl shadow-2xl z-[100] transform transition-all duration-300 translate-y-20 flex items-center space-x-3 ${
+                type === 'success' ? 'bg-emerald-500 text-white' : 
+                type === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-white'
+            }`;
+            
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle';
+            notification.innerHTML = `<i class="fa fa-${icon}"></i><span class="text-sm font-bold">${message}</span>`;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.remove('translate-y-20'), 10);
+            setTimeout(() => {
+                notification.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 金融机构统计报表</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .chart-container {
+            width: 100%;
+            height: 350px;
+        }
+        .custom-table {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .custom-table th {
+            white-space: nowrap;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        .custom-table td {
+            font-size: 0.875rem;
+        }
+        .stat-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+                                        <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警统计分析
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">超级管理员</p>
+                        <p class="text-[10px] text-slate-400">福建省政务中心</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">金融机构统计报表</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">金融机构统计报表</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button onclick="toggleNotification(event)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all relative">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-slate-100 z-50">
+                            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 rounded-t-xl">
+                                <h3 class="text-sm font-bold text-slate-800">系统通知</h3>
+                                <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-bold">3 条未读</span>
+                            </div>
+                            <div class="max-h-96 overflow-y-auto">
+                                <div class="p-4 border-b border-slate-50 hover:bg-blue-50/30 transition-colors cursor-pointer">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600 shrink-0">
+                                            <i class="fa fa-exclamation-triangle text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-bold text-slate-700">费率异常波动预警</p>
+                                            <p class="text-[11px] text-slate-500 mt-1 truncate">福州市投标保函费率波动超过20%</p>
+                                            <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 text-center border-t border-slate-100">
+                                <a href="省级端_消息管理.html" class="text-xs text-blue-600 font-bold hover:underline">查看全部通知</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <button class="flex items-center space-x-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-md hover:bg-blue-100 transition-all text-sm font-medium">
+                        <i class="fa fa-download"></i>
+                        <span>导出报表</span>
+                    </button>
+                </div>
+            </header>
+            <main class="flex-1 overflow-y-auto p-6 space-y-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-1 bg-white rounded-lg border border-slate-200 p-1">
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-all">累计</button>
+                        <button class="px-4 py-2 text-slate-600 rounded-md text-sm font-medium hover:bg-slate-100 transition-all">近一周</button>
+                        <button class="px-4 py-2 text-slate-600 rounded-md text-sm font-medium hover:bg-slate-100 transition-all">近一月</button>
+                        <button class="px-4 py-2 text-slate-600 rounded-md text-sm font-medium hover:bg-slate-100 transition-all">近半年</button>
+                        <button class="px-4 py-2 text-slate-600 rounded-md text-sm font-medium hover:bg-slate-100 transition-all">近一年</button>
+                        <button class="px-4 py-2 text-slate-600 rounded-md text-sm font-medium hover:bg-slate-100 transition-all border-l border-slate-200">自定义</button>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="relative flex items-center bg-white border border-slate-200 rounded-lg">
+                            <i class="fa fa-calendar-o absolute left-3 text-slate-400 text-xs"></i>
+                            <input type="text" placeholder="开始日期" class="pl-9 pr-4 py-2 text-sm bg-transparent focus:outline-none">
+                            <span class="text-slate-300 px-2">至</span>
+                            <input type="text" placeholder="结束日期" class="pr-4 py-2 text-sm bg-transparent focus:outline-none">
+                        </div>
+                        <button class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all flex items-center">
+                            <i class="fa fa-refresh mr-1"></i>重置
+                        </button>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all flex items-center">
+                            <i class="fa fa-search mr-1"></i>查询
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 rounded-xl shadow-lg overflow-hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3">
+                        <div class="stat-card p-6 border-b md:border-b-0 md:border-r border-white/10">
+                            <div class="flex items-center mb-5">
+                                <div class="w-12 h-12 rounded-full bg-orange-400 flex items-center justify-center mr-3">
+                                    <i class="fa fa-university text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-white">银行</h3>
+                                    <span class="text-orange-300 text-xs font-semibold">4家</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计出函</span>
+                                    <span class="font-bold text-white">234单</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计保证金金额</span>
+                                    <span class="font-bold text-white">214万元</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计保费</span>
+                                    <span class="font-bold text-orange-300">1.54万元</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6 border-b md:border-b-0 md:border-r border-white/10">
+                            <div class="flex items-center mb-5">
+                                <div class="w-12 h-12 rounded-full bg-yellow-400 flex items-center justify-center mr-3">
+                                    <i class="fa fa-shield text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-white">保险</h3>
+                                    <span class="text-yellow-300 text-xs font-semibold">1家</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计出函</span>
+                                    <span class="font-bold text-white">212单</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计保证金金额</span>
+                                    <span class="font-bold text-white">120万元</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计保费</span>
+                                    <span class="font-bold text-yellow-300">1.14万元</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="flex items-center mb-5">
+                                <div class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center mr-3">
+                                    <i class="fa fa-landmark text-xl text-white"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-bold text-white">担保</h3>
+                                    <span class="text-gray-300 text-xs font-semibold">1家</span>
+                                </div>
+                            </div>
+                            <div class="space-y-2.5">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计出函</span>
+                                    <span class="font-bold text-white">261单</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计保证金金额</span>
+                                    <span class="font-bold text-white">333万元</span>
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-blue-100">累计保费</span>
+                                    <span class="font-bold text-gray-300">2.43万元</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-slate-100 shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center">
+                            <i class="fa fa-building-o mr-3 text-blue-500"></i>金融机构统计明细
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full custom-table">
+                            <colgroup>
+                                <col style="width: 140px;">
+                                <col style="width: 100px;">
+                                <col style="width: 120px;">
+                                <col style="width: 120px;">
+                                <col style="width: 140px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                                <col style="width: 100px;">
+                            </colgroup>
+                            <thead>
+                                <tr class="bg-gradient-to-r from-blue-50 to-slate-50">
+                                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">金融机构</th>
+                                    <th class="text-center px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">项目数量</th>
+                                    <th class="text-center px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">累计出单数量</th>
+                                    <th class="text-center px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">累计投保企业</th>
+                                    <th class="text-right px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">累计保证金金额</th>
+                                    <th class="text-right px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">累计保费</th>
+                                    <th class="text-center px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">开函占比</th>
+                                    <th class="text-center px-5 py-3 text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-50">
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm">
+                                    <td class="px-5 py-4 font-medium text-slate-800 flex items-center">
+                                        <span class="w-2 h-2 rounded-full bg-blue-500 mr-3"></span>
+                                        泉州银行
+                                    </td>
+                                    <td class="px-5 py-4 text-center text-slate-600">32</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">32</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">67</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">500,000</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">50,000</td>
+                                    <td class="px-5 py-4 text-center">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">0.23</span>
+                                    </td>
+                                    <td class="px-5 py-4 text-center">
+                                        <button onclick="openDetailModal('泉州银行')" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm bg-slate-25">
+                                    <td class="px-5 py-4 font-medium text-slate-800 flex items-center">
+                                        <span class="w-2 h-2 rounded-full bg-green-500 mr-3"></span>
+                                        招商银行
+                                    </td>
+                                    <td class="px-5 py-4 text-center text-slate-600">56</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">56</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">156</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">2,000,000</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">42,000</td>
+                                    <td class="px-5 py-4 text-center">
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full font-medium">0.16</span>
+                                    </td>
+                                    <td class="px-5 py-4 text-center">
+                                        <button onclick="openDetailModal('招商银行')" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm">
+                                    <td class="px-5 py-4 font-medium text-slate-800 flex items-center">
+                                        <span class="w-2 h-2 rounded-full bg-purple-500 mr-3"></span>
+                                        浦发银行
+                                    </td>
+                                    <td class="px-5 py-4 text-center text-slate-600">23</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">23</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">123</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">1,430,000</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">12,000</td>
+                                    <td class="px-5 py-4 text-center">
+                                        <span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">0.12</span>
+                                    </td>
+                                    <td class="px-5 py-4 text-center">
+                                        <button onclick="openDetailModal('浦发银行')" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-blue-50 transition-all duration-150 hover:shadow-sm bg-slate-25">
+                                    <td class="px-5 py-4 font-medium text-slate-800 flex items-center">
+                                        <span class="w-2 h-2 rounded-full bg-amber-500 mr-3"></span>
+                                        新网银行
+                                    </td>
+                                    <td class="px-5 py-4 text-center text-slate-600">32</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">25</td>
+                                    <td class="px-5 py-4 text-center text-slate-600">23</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">430,000</td>
+                                    <td class="px-5 py-4 text-right text-slate-600 font-mono">15,000</td>
+                                    <td class="px-5 py-4 text-center">
+                                        <span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs rounded-full font-medium">0.18</span>
+                                    </td>
+                                    <td class="px-5 py-4 text-center">
+                                        <button onclick="openDetailModal('新网银行')" class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-md text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center mx-auto">
+                                            <i class="fa fa-eye mr-1"></i>查看明细
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-4 border-t border-slate-100 flex items-center justify-between bg-gradient-to-r from-white to-slate-50">
+                        <span class="text-sm text-slate-500">显示 <strong class="text-slate-700">1-4</strong> 条，共 <strong class="text-slate-700">6</strong> 条</span>
+                        <div class="flex items-center space-x-2">
+                            <select class="px-3 py-1.5 border border-slate-200 rounded-lg text-xs bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option>10条/页</option>
+                                <option>20条/页</option>
+                                <option>50条/页</option>
+                                <option>100条/页</option>
+                            </select>
+                            <div class="flex items-center space-x-1">
+                                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-30" disabled>
+                                    <i class="fa fa-chevron-left text-sm"></i>
+                                </button>
+                                <button class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-all shadow-md">1</button>
+                                <button class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all">2</button>
+                                <button class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all">
+                                    <i class="fa fa-chevron-right text-sm"></i>
+                                </button>
+                                <span class="text-xs text-slate-500 mx-2">前往</span>
+                                <input type="text" value="1" class="w-12 h-8 text-center border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none">
+                                <span class="text-xs text-slate-500">页</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div id="detail-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-hidden shadow-2xl">
+            <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
+                <div class="flex items-center">
+                    <span class="text-blue-600 text-lg mr-2">|</span>
+                    <h3 class="text-lg font-bold text-slate-800">查看明细</h3>
+                </div>
+                <button onclick="closeDetailModal()" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-lg transition-all">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+                <div class="mb-6">
+                    <label class="text-sm font-medium text-slate-600 mr-4">金融机构:</label>
+                    <input type="text" id="modal-finance-institution" value="泉州银行" class="px-4 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 w-64">
+                </div>
+                <div class="mb-6">
+                    <h4 class="text-md font-semibold text-slate-800 mb-4">项目数据</h4>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <select class="pl-4 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer hover:border-slate-300 transition-all min-w-[200px]">
+                                <option value="">请选择</option>
+                                <option value="project1">南安市国家篮球训练基地项目</option>
+                                <option value="project2">晋江市晋南片区老旧小区改造项目</option>
+                            </select>
+                            <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">项目名称:</span>
+                        </div>
+                        <div class="relative">
+                            <select class="pl-4 pr-10 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none appearance-none cursor-pointer hover:border-slate-300 transition-all min-w-[200px]">
+                                <option value="">请选择</option>
+                                <option value="bid1">南建标[2025]026号</option>
+                                <option value="bid2">晋政施招20250320...</option>
+                            </select>
+                            <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs">标段编号:</span>
+                        </div>
+                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">查询</button>
+                        <button class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-200 transition-all">重置</button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mb-4">
+                    <button class="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 transition-all flex items-center">
+                        <i class="fa fa-download mr-2"></i>导出报表
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-slate-50">
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">序号</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">项目名称</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">标段编号</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">累计出单数量</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">累计保证金金额</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">累计保费</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">累计投保企业</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">开函占比</th>
+                                <th class="text-left px-4 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">平均出函时间</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr class="hover:bg-blue-50/30 transition-colors">
+                                <td class="px-4 py-3 text-slate-700">1</td>
+                                <td class="px-4 py-3 text-slate-700">南安市国家篮球训练基地项目</td>
+                                <td class="px-4 py-3 text-slate-700">南建标[2025]026号</td>
+                                <td class="px-4 py-3 text-slate-700">12</td>
+                                <td class="px-4 py-3 text-slate-700">150000</td>
+                                <td class="px-4 py-3 text-slate-700">15000</td>
+                                <td class="px-4 py-3 text-slate-700">22</td>
+                                <td class="px-4 py-3 text-slate-700">0.26</td>
+                                <td class="px-4 py-3 text-slate-700">12</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 transition-colors bg-slate-50/50">
+                                <td class="px-4 py-3 text-slate-700">2</td>
+                                <td class="px-4 py-3 text-slate-700">晋江市晋南片区老旧小区改造项目</td>
+                                <td class="px-4 py-3 text-slate-700">晋政施招20250320...</td>
+                                <td class="px-4 py-3 text-slate-700">10</td>
+                                <td class="px-4 py-3 text-slate-700">100000</td>
+                                <td class="px-4 py-3 text-slate-700">10000</td>
+                                <td class="px-4 py-3 text-slate-700">14</td>
+                                <td class="px-4 py-3 text-slate-700">0.15</td>
+                                <td class="px-4 py-3 text-slate-700">14</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 transition-colors">
+                                <td class="px-4 py-3 text-slate-700">3</td>
+                                <td class="px-4 py-3 text-slate-700">泉州台商投资区海丝生态公园项目</td>
+                                <td class="px-4 py-3 text-slate-700">泉台招字〔2025〕...</td>
+                                <td class="px-4 py-3 text-slate-700">8</td>
+                                <td class="px-4 py-3 text-slate-700">100000</td>
+                                <td class="px-4 py-3 text-slate-700">10000</td>
+                                <td class="px-4 py-3 text-slate-700">12</td>
+                                <td class="px-4 py-3 text-slate-700">0.17</td>
+                                <td class="px-4 py-3 text-slate-700">17</td>
+                            </tr>
+                            <tr class="hover:bg-blue-50/30 transition-colors bg-slate-50/50">
+                                <td class="px-4 py-3 text-slate-700">4</td>
+                                <td class="px-4 py-3 text-slate-700">泉州港港城平二...</td>
+                                <td class="px-4 py-3 text-slate-700">泉港招字2025第2号</td>
+                                <td class="px-4 py-3 text-slate-700">12</td>
+                                <td class="px-4 py-3 text-slate-700">150000</td>
+                                <td class="px-4 py-3 text-slate-700">15000</td>
+                                <td class="px-4 py-3 text-slate-700">23</td>
+                                <td class="px-4 py-3 text-slate-700">0.21</td>
+                                <td class="px-4 py-3 text-slate-700">10</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        function toggleNotification(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notification-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+        function refreshData() {
+            console.log('Refreshing data...');
+        }
+        function openDetailModal(institutionName) {
+            document.getElementById('modal-finance-institution').value = institutionName;
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const analysisMenu = document.getElementById('analysis-menu');
+            const analysisArrow = document.getElementById('analysis-menu-arrow');
+            analysisMenu.classList.remove('hidden');
+            analysisArrow.style.transform = 'rotate(180deg)';
+            const institutionChart = echarts.init(document.getElementById('institution-type-chart'));
+            institutionChart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { orient: 'vertical', right: '5%', top: 'center' },
+                series: [{
+                    name: '机构类型',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: { borderRadius: 10, borderColor: '#fff', borderWidth: 2 },
+                    label: { show: false },
+                    emphasis: { label: { show: true, fontSize: 16, fontWeight: 'bold' } },
+                    labelLine: { show: false },
+                    data: [
+                        { value: 78, name: '银行类', itemStyle: { color: '#3B82F6' } },
+                        { value: 45, name: '保险类', itemStyle: { color: '#F59E0B' } },
+                        { value: 23, name: '担保类', itemStyle: { color: '#8B5CF6' } },
+                        { value: 10, name: '其他', itemStyle: { color: '#6B7280' } }
+                    ]
+                }]
+            });
+            const topChart = echarts.init(document.getElementById('top-institution-chart'));
+            topChart.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                xAxis: { type: 'value' },
+                yAxis: {
+                    type: 'category',
+                    data: ['平安保险', '交通银行', '农业银行', '工商银行', '建设银行'],
+                    inverse: true
+                },
+                series: [{
+                    name: '保函数量',
+                    type: 'bar',
+                    data: [4231, 5621, 6954, 7823, 8542],
+                    itemStyle: { borderRadius: [0, 4, 4, 0], color: '#3B82F6' }
+                }]
+            });
+            document.addEventListener('click', () => {
+                const dropdown = document.getElementById('notification-dropdown');
+                if (!dropdown.classList.contains('hidden')) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

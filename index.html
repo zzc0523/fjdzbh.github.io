@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福建省电子保函服务平台 - 导航中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0f172a 100%);
+            min-height: 100vh;
+        }
+        .card {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        .card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+        .glow-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .glow-effect::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.5s ease;
+        }
+        .card:hover .glow-effect::before {
+            left: 100%;
+        }
+        .icon-wrapper {
+            position: relative;
+        }
+        .icon-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120%;
+            height: 120%;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .card:hover .icon-wrapper::after {
+            opacity: 1;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 20px;
+        }
+        .feature-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background: currentColor;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-16 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-lg rounded-2xl mb-6 border border-white/20">
+                <i class="fa fa-shield text-4xl text-blue-400"></i>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight">
+                福建省电子保函服务平台
+            </h1>
+            <p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto">
+                一站式电子保函综合服务平台，覆盖保函申请、验真、理赔全流程
+            </p>
+            <div class="flex items-center justify-center gap-6 mt-8 text-sm text-slate-400">
+                <div class="flex items-center">
+                    <i class="fa fa-users mr-2 text-blue-400"></i>
+                    <span>服务企业 10,000+</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-file-text mr-2 text-green-400"></i>
+                    <span>处理保函 50,000+</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fa fa-shield-check mr-2 text-purple-400"></i>
+                    <span>区块链存证 100%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <a href="门户端_首页.html" class="card group bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 rounded-2xl p-8 text-white block border border-blue-500/30">
+                <div class="glow-effect">
+                    <div class="icon-wrapper text-5xl mb-6">
+                        <i class="fa fa-globe transition-transform duration-300 group-hover:rotate-6"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">门户端</h2>
+                <p class="text-blue-100 mb-5 text-sm leading-relaxed">面向公众的平台门户网站，提供保函查询、验真等服务</p>
+                <ul class="feature-list space-y-3 text-sm text-blue-200">
+                    <li>保函超市</li>
+                    <li>保函验真</li>
+                    <li>帮助中心</li>
+                </ul>
+                <div class="mt-6 flex items-center text-blue-100 text-sm group-hover:text-white transition-colors">
+                    <span>进入</span>
+                    <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <a href="企业端_工作台.html" class="card group bg-gradient-to-br from-green-600 via-green-700 to-green-800 rounded-2xl p-8 text-white block border border-green-500/30">
+                <div class="glow-effect">
+                    <div class="icon-wrapper text-5xl mb-6">
+                        <i class="fa fa-building transition-transform duration-300 group-hover:scale-110"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">企业端</h2>
+                <p class="text-green-100 mb-5 text-sm leading-relaxed">企业用户申请、管理电子保函业务</p>
+                <ul class="feature-list space-y-3 text-sm text-green-200">
+                    <li>保函申请</li>
+                    <li>订单管理</li>
+                    <li>进度查询</li>
+                </ul>
+                <div class="mt-6 flex items-center text-green-100 text-sm group-hover:text-white transition-colors">
+                    <span>进入</span>
+                    <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <a href="机构端_工作台.html" class="card group bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 rounded-2xl p-8 text-white block border border-purple-500/30">
+                <div class="glow-effect">
+                    <div class="icon-wrapper text-5xl mb-6">
+                        <i class="fa fa-university transition-transform duration-300 group-hover:rotate-3"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">机构端</h2>
+                <p class="text-purple-100 mb-5 text-sm leading-relaxed">金融机构进行保函业务管理</p>
+                <ul class="feature-list space-y-3 text-sm text-purple-200">
+                    <li>产品管理</li>
+                    <li>订单管理</li>
+                    <li>退保管理</li>
+                </ul>
+                <div class="mt-6 flex items-center text-purple-100 text-sm group-hover:text-white transition-colors">
+                    <span>进入</span>
+                    <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <a href="市级端_工作台.html" class="card group bg-gradient-to-br from-orange-600 via-orange-700 to-orange-800 rounded-2xl p-8 text-white block border border-orange-500/30">
+                <div class="glow-effect">
+                    <div class="icon-wrapper text-5xl mb-6">
+                        <i class="fa fa-map-marker transition-transform duration-300 group-hover:scale-110"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">市级端</h2>
+                <p class="text-orange-100 mb-5 text-sm leading-relaxed">市级管理部门监管保函业务</p>
+                <ul class="feature-list space-y-3 text-sm text-orange-200">
+                    <li>产品接入审核</li>
+                    <li>订单管理</li>
+                    <li>数据统计</li>
+                </ul>
+                <div class="mt-6 flex items-center text-orange-100 text-sm group-hover:text-white transition-colors">
+                    <span>进入</span>
+                    <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <a href="省级端_工作台.html" class="card group bg-gradient-to-br from-red-600 via-red-700 to-red-800 rounded-2xl p-8 text-white block border border-red-500/30">
+                <div class="glow-effect">
+                    <div class="icon-wrapper text-5xl mb-6">
+                        <i class="fa fa-dashboard transition-transform duration-300 group-hover:rotate-3"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">省级端</h2>
+                <p class="text-red-100 mb-5 text-sm leading-relaxed">省级管理部门综合管理平台</p>
+                <ul class="feature-list space-y-3 text-sm text-red-200">
+                    <li>数据大屏</li>
+                    <li>机构备案审核</li>
+                    <li>机构展业审核</li>
+                </ul>
+                <div class="mt-6 flex items-center text-red-100 text-sm group-hover:text-white transition-colors">
+                    <span>进入</span>
+                    <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <a href="受益人端_保函列表.html" class="card group bg-gradient-to-br from-cyan-600 via-cyan-700 to-cyan-800 rounded-2xl p-8 text-white block border border-cyan-500/30">
+                <div class="glow-effect">
+                    <div class="icon-wrapper text-5xl mb-6">
+                        <i class="fa fa-user-circle transition-transform duration-300 group-hover:scale-110"></i>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">受益人端</h2>
+                <p class="text-cyan-100 mb-5 text-sm leading-relaxed">受益方管理保函与理赔业务</p>
+                <ul class="feature-list space-y-3 text-sm text-cyan-200">
+                    <li>保函管理</li>
+                    <li>理赔管理</li>
+                    <li>验真服务</li>
+                </ul>
+                <div class="mt-6 flex items-center text-cyan-100 text-sm group-hover:text-white transition-colors">
+                    <span>进入</span>
+                    <i class="fa fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <div class="card bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 rounded-2xl p-8 text-white border border-slate-600/30">
+                <div class="text-5xl mb-6">
+                    <i class="fa fa-info-circle"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">项目概览</h2>
+                <p class="text-slate-300 mb-6 text-sm">福建省电子保函服务平台技术预览版</p>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                        <span class="text-slate-400 text-sm">独立端数量</span>
+                        <span class="font-bold text-white">6</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                        <span class="text-slate-400 text-sm">HTML 文件</span>
+                        <span class="font-bold text-white">70+</span>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                        <span class="text-slate-400 text-sm">核心功能</span>
+                        <span class="font-bold text-white">30+</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 rounded-2xl p-8 text-white border border-indigo-500/30">
+                <div class="text-5xl mb-6">
+                    <i class="fa fa-shield-check"></i>
+                </div>
+                <h2 class="text-2xl font-bold mb-3">安全保障</h2>
+                <p class="text-indigo-100 mb-6 text-sm">全方位安全防护体系</p>
+                <div class="space-y-3">
+                    <div class="flex items-center text-sm">
+                        <i class="fa fa-lock mr-3 text-indigo-300"></i>
+                        <span class="text-indigo-200">国密算法加密</span>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <i class="fa fa-chain mr-3 text-indigo-300"></i>
+                        <span class="text-indigo-200">区块链存证</span>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <i class="fa fa-eye mr-3 text-indigo-300"></i>
+                        <span class="text-indigo-200">实时验真</span>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <i class="fa fa-file-signature mr-3 text-indigo-300"></i>
+                        <span class="text-indigo-200">电子签章</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-lg rounded-full border border-white/10">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-slate-400 text-sm">系统运行正常</span>
+            </div>
+            <p class="mt-6 text-slate-500 text-sm">
+                © 2026 福建省电子保函服务平台 - 技术预览版本
+            </p>
+        </div>
+    </div>
+</body>
+</html>
