@@ -36,6 +36,27 @@
                 arrow.style.transform = 'rotate(0deg)';
             }
         }
+
+        function toggleTree(moduleId) {
+            const module = document.getElementById(moduleId);
+            const arrow = document.getElementById('arrow' + moduleId.replace('module', ''));
+            if (module.classList.contains('hidden')) {
+                module.classList.remove('hidden');
+                arrow.style.transform = 'rotate(90deg)';
+            } else {
+                module.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function toggleModule(moduleId) {
+            const checkbox = event.target;
+            const module = document.getElementById(moduleId);
+            const children = module.querySelectorAll('input[type="checkbox"]');
+            children.forEach(child => {
+                child.checked = checkbox.checked;
+            });
+        }
     </script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-900">
@@ -122,116 +143,246 @@
                         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                             <div>
                                 <h3 class="text-lg font-bold text-slate-800">权限配置：<span class="text-blue-600">平台管理员</span></h3>
-                                <p class="text-xs text-slate-500 mt-1">勾选右侧功能模块以为该角色授权</p>
+                                <p class="text-xs text-slate-500 mt-1">勾选功能模块以为该角色授权</p>
                             </div>
                             <button class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
                                 保存授权
                             </button>
                         </div>
-                        <div class="flex-1 overflow-y-auto p-8 space-y-8">
-                            <!-- 模块 1 -->
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
-                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
-                                    <h4 class="font-bold text-slate-800">业务核心功能</h4>
+                        <div class="flex-1 overflow-y-auto p-4">
+                            <ul class="space-y-1">
+                                <!-- 工作台 -->
+                                <li>
+                                    <label class="flex items-center p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer transition-all">
+                                        <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3">
+                                        <span>工作台</span>
+                                    </label>
+                                </li>
+                                <!-- 数据统计 -->
+                                <li>
+                                    <label class="flex items-center p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer transition-all">
+                                        <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3">
+                                        <span>数据统计</span>
+                                    </label>
+                                </li>
+                                <!-- 保函业务管理 -->
+                                <li>
+                                    <button onclick="toggleTree('module1')" class="w-full flex items-center justify-between p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all group">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3" onclick="toggleModule('module1')">
+                                            <span class="font-bold">保函业务管理</span>
+                                        </div>
+                                        <i class="fa fa-angle-down text-sm transition-transform duration-200" id="arrow1"></i>
+                                    </button>
+                                    <ul id="module1" class="ml-4 border-l border-slate-200 space-y-1">
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>订单管理</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>保函管理</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>理赔管理</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- 机构管理 -->
+                                <li>
+                                    <button onclick="toggleTree('module2')" class="w-full flex items-center justify-between p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all group">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3" onclick="toggleModule('module2')">
+                                            <span class="font-bold">机构管理</span>
+                                        </div>
+                                        <i class="fa fa-angle-down text-sm transition-transform duration-200" id="arrow2"></i>
+                                    </button>
+                                    <ul id="module2" class="ml-4 border-l border-slate-200 space-y-1">
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>机构备案</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>产品接入审核</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>展业管理</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- 业务监控 -->
+                                <li>
+                                    <button onclick="toggleTree('module3')" class="w-full flex items-center justify-between p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all group">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3" onclick="toggleModule('module3')">
+                                            <span class="font-bold">业务监控</span>
+                                        </div>
+                                        <i class="fa fa-angle-down text-sm transition-transform duration-200" id="arrow3"></i>
+                                    </button>
+                                    <ul id="module3" class="ml-4 border-l border-slate-200 space-y-1">
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>办理监控</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>服务监控</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- 企业服务 -->
+                                <li>
+                                    <button onclick="toggleTree('module4')" class="w-full flex items-center justify-between p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all group">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3" onclick="toggleModule('module4')">
+                                            <span class="font-bold">企业服务</span>
+                                        </div>
+                                        <i class="fa fa-angle-down text-sm transition-transform duration-200" id="arrow4"></i>
+                                    </button>
+                                    <ul id="module4" class="ml-4 border-l border-slate-200 space-y-1">
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>企业列表</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>企业咨询</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- 政务协同管理 -->
+                                <li>
+                                    <button onclick="toggleTree('module5')" class="w-full flex items-center justify-between p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all group">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3" onclick="toggleModule('module5')">
+                                            <span class="font-bold">政务协同管理</span>
+                                        </div>
+                                        <i class="fa fa-angle-down text-sm transition-transform duration-200" id="arrow5"></i>
+                                    </button>
+                                    <ul id="module5" class="ml-4 border-l border-slate-200 space-y-1">
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>项目数据同步</span>
+                                            </label>
+                                        </li>
+                                        <li>
+                                            <label class="flex items-center py-2 px-4 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/50 rounded-r-md cursor-pointer transition-all">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-3"></span>
+                                                <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded mr-2">
+                                                <span>开函数据同步</span>
+                                            </label>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- 系统管理 -->
+                                <li class="pt-4">
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3">系统管理</span>
+                                </li>
+                                <li>
+                                    <label class="flex items-center p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer transition-all">
+                                        <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3">
+                                        <span>部门与人员管理</span>
+                                    </label>
+                                </li>
+                                <li>
+                                    <label class="flex items-center p-3 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg cursor-pointer transition-all">
+                                        <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded mr-3">
+                                        <span>权限设置</span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- 数据权限配置 -->
+                        <div class="border-t border-slate-200 p-6 bg-slate-50/30">
+                            <h4 class="text-sm font-bold text-slate-800 mb-4">数据权限配置</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- 数据范围 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">数据范围</label>
+                                    <div class="space-y-3">
+                                        <label class="flex items-center space-x-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="radio" name="dataScope" value="all" checked class="w-4 h-4 text-blue-600">
+                                            <div>
+                                                <div class="font-medium text-slate-800">全部数据</div>
+                                                <div class="text-xs text-slate-500">可访问平台所有数据</div>
+                                            </div>
+                                        </label>
+                                        <label class="flex items-center space-x-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="radio" name="dataScope" value="department" class="w-4 h-4 text-blue-600">
+                                            <div>
+                                                <div class="font-medium text-slate-800">本部门数据</div>
+                                                <div class="text-xs text-slate-500">仅可访问本部门数据</div>
+                                            </div>
+                                        </label>
+                                        <label class="flex items-center space-x-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="radio" name="dataScope" value="self" class="w-4 h-4 text-blue-600">
+                                            <div>
+                                                <div class="font-medium text-slate-800">本人数据</div>
+                                                <div class="text-xs text-slate-500">仅可访问本人操作的数据</div>
+                                            </div>
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">保函列表管理</span>
+                                <!-- 数据级别 -->
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">数据级别</label>
+                                    <div class="space-y-3">
+                                        <label class="flex items-center space-x-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="radio" name="dataLevel" value="full" checked class="w-4 h-4 text-blue-600">
+                                            <div>
+                                                <div class="font-medium text-slate-800">完整权限</div>
+                                                <div class="text-xs text-slate-500">查看、编辑、删除</div>
+                                            </div>
                                         </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">保函注销审核</span>
+                                        <label class="flex items-center space-x-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="radio" name="dataLevel" value="edit" class="w-4 h-4 text-blue-600">
+                                            <div>
+                                                <div class="font-medium text-slate-800">编辑权限</div>
+                                                <div class="text-xs text-slate-500">查看、编辑</div>
+                                            </div>
                                         </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">理赔申请审核</span>
-                                        </label>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">机构准入审核</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">保函验真功能</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">流程配置管理</span>
-                                        </label>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">政务协同接口</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">产品上架审核</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 模块 2 -->
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
-                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
-                                    <h4 class="font-bold text-slate-800">数据报表与监控</h4>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">运营看板访问</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">异常业务监控</span>
-                                        </label>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">多维统计报表</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">数据导出权限</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 模块 3 -->
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-3 pb-2 border-b border-slate-100">
-                                    <input type="checkbox" checked class="w-4 h-4 text-blue-600 rounded">
-                                    <h4 class="font-bold text-slate-800">系统管理权限</h4>
-                                </div>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pl-7">
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">人员账号管理</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">角色功能授权</span>
-                                        </label>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">操作日志查看</span>
-                                        </label>
-                                        <label class="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" checked class="w-3.5 h-3.5 text-blue-500 rounded">
-                                            <span class="text-sm text-slate-600">系统参数配置</span>
+                                        <label class="flex items-center space-x-3 p-3 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                                            <input type="radio" name="dataLevel" value="view" class="w-4 h-4 text-blue-600">
+                                            <div>
+                                                <div class="font-medium text-slate-800">查看权限</div>
+                                                <div class="text-xs text-slate-500">仅查看</div>
+                                            </div>
                                         </label>
                                     </div>
                                 </div>
