@@ -401,30 +401,26 @@
                             <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入11位手机号码" id="contactPhone" value="${prefillData ? prefillData.contactPhone : ''}">
                             <p class="text-xs text-slate-500 mt-1">11位手机，符合运营商号段</p>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">联系人邮箱 <span class="text-red-500">*</span></label>
-                            <input type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入电子邮箱" id="contactEmail" value="${prefillData ? prefillData.contactEmail : ''}">
-                            <p class="text-xs text-slate-500 mt-1">用于接收账号信息</p>
-                        </div>
+
                     </div>
                     
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">拟备案保函类型 <span class="text-red-500">*</span></label>
                         <div class="flex flex-wrap gap-4">
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-2" value="投标保函">
+                                <input type="radio" name="guaranteeType" class="mr-2" value="投标保函">
                                 <span>投标保函</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-2" value="履约保函">
+                                <input type="radio" name="guaranteeType" class="mr-2" value="履约保函">
                                 <span>履约保函</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-2" value="预付款保函">
+                                <input type="radio" name="guaranteeType" class="mr-2" value="预付款保函">
                                 <span>预付款保函</span>
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-2" value="质量保函">
+                                <input type="radio" name="guaranteeType" class="mr-2" value="质量保函">
                                 <span>质量保函</span>
                             </label>
                         </div>
@@ -670,7 +666,7 @@
                                                 <td class="px-3 py-2 border">张三</td>
                                                 <td class="px-3 py-2 border">李四</td>
                                                 <td class="px-3 py-2 border">13812345678</td>
-                                                <td class="px-3 py-2 border">投标保函,履约保函</td>
+                                                <td class="px-3 py-2 border">投标保函</td>
                                                 <td class="px-3 py-2 border">该机构资质优良</td>
                                                 <td class="px-3 py-2 border text-red-500">机构已备案</td>
                                                 <td class="px-3 py-2 border text-center">
@@ -686,7 +682,7 @@
                                                 <td class="px-3 py-2 border">王五</td>
                                                 <td class="px-3 py-2 border">赵六</td>
                                                 <td class="px-3 py-2 border">13987654321</td>
-                                                <td class="px-3 py-2 border">履约保函,预付款保函</td>
+                                                <td class="px-3 py-2 border">履约保函</td>
                                                 <td class="px-3 py-2 border">建议通过</td>
                                                 <td class="px-3 py-2 border text-green-500">无错误</td>
                                                 <td class="px-3 py-2 border text-center">
@@ -882,10 +878,6 @@
                                                 <label class="text-sm font-medium text-slate-700 block mb-1">联系人手机</label>
                                                 <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">${tr.querySelector('td:nth-of-type(7)').textContent.trim()}</div>
                                             </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人邮箱</label>
-                                                <div class="px-3 py-2 border border-slate-300 rounded-md bg-slate-50">contact@example.com</div>
-                                            </div>
 
                                         </div>
                                         
@@ -1007,10 +999,6 @@
                                                 <label class="text-sm font-medium text-slate-700 block mb-1">联系人手机 <span class="text-red-500">*</span></label>
                                                 <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" value="${tr.querySelector('td:nth-of-type(7)').textContent.trim()}">
                                             </div>
-                                            <div>
-                                                <label class="text-sm font-medium text-slate-700 block mb-1">联系人邮箱 <span class="text-red-500">*</span></label>
-                                                <input type="email" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-primary focus:border-primary" placeholder="请输入电子邮箱">
-                                            </div>
 
                                         </div>
                                         
@@ -1018,19 +1006,19 @@
                                             <label class="text-sm font-medium text-slate-700 block mb-1">拟备案保函类型 <span class="text-red-500">*</span></label>
                                             <div class="flex flex-wrap gap-4">
                                                 <div class="flex items-center">
-                                                    <input type="checkbox" id="product1" class="mr-2" checked>
+                                                    <input type="radio" name="guaranteeTypeEdit" id="product1" class="mr-2" checked>
                                                     <label for="product1">投标保函</label>
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <input type="checkbox" id="product2" class="mr-2" checked>
+                                                    <input type="radio" name="guaranteeTypeEdit" id="product2" class="mr-2">
                                                     <label for="product2">履约保函</label>
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <input type="checkbox" id="product3" class="mr-2">
+                                                    <input type="radio" name="guaranteeTypeEdit" id="product3" class="mr-2">
                                                     <label for="product3">预付款保函</label>
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <input type="checkbox" id="product4" class="mr-2">
+                                                    <input type="radio" name="guaranteeTypeEdit" id="product4" class="mr-2">
                                                     <label for="product4">质量保函</label>
                                                 </div>
                                             </div>
@@ -1266,7 +1254,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈建华</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈经理</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13500135001</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,履约保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">-</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-24 09:00:00</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">-</div></td>
@@ -1285,7 +1273,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">王建国</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">张三</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13800138001</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,履约保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">该机构资质优良，建议通过</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-15 10:30:00</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">资料齐全，符合要求，审核通过</div></td>
@@ -1302,7 +1290,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">李明</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">李四</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13900139001</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">履约保函,预付款保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">履约保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">机构实力强，风控体系完善，建议通过</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-14 14:20:00</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">资料齐全，符合要求，审核通过</div></td>
@@ -1319,7 +1307,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">张伟</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">赵六</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13600136001</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,质量保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">建议补充相关资质材料后重新提交</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-13 09:15:00</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">缺少资质证明材料，审核不通过</div></td>
@@ -1337,7 +1325,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈静</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">王五</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13700137001</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函,履约保函,预付款保函</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">材料已收悉，正在审核中</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-12 16:45:00</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">待审核</div></td>

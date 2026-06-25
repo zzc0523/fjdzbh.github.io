@@ -60,7 +60,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="机构端_机构认证.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                        <a href="机构端_认证状态.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
                             <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
                             <span>机构认证</span>
                         </a>
@@ -387,8 +387,7 @@
                 4: { 
                     name: '首单验证申请', 
                     details: [
-                        { label: '首单验证日期', value: '2026-03-22' },
-                        { label: '测试订单编号', value: 'TEST20260322001' }
+                        { label: '首单验证日期', value: '2026-03-22' }
                     ], 
                     files: [
                         '首单测试报告.pdf'
@@ -542,6 +541,9 @@
             container.querySelectorAll('.preview-file').forEach(btn => {
                 btn.addEventListener('click', (e) => { e.stopPropagation(); showToast(`预览文件: ${btn.getAttribute('data-file') || '模拟预览'}`, 'info'); });
             });
+            container.querySelectorAll('.download-template').forEach(btn => {
+                btn.addEventListener('click', (e) => { e.stopPropagation(); showToast('模板下载功能已触发', 'info'); });
+            });
         }
 
         function submitApplication(rowData, step) {
@@ -632,9 +634,12 @@
                                 <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
                                 <input type="file" class="hidden" accept=".pdf">
                             </div>
+                            <button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition">
+                                <i class="fa fa-download"></i>下载模板
+                            </button>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">第三方营业执照 <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">第三方营业执照</label>
                             <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition">
                                 <i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>
                                 <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
@@ -648,22 +653,57 @@
                                 <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
                                 <input type="file" class="hidden" accept=".pdf">
                             </div>
+                            <button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition">
+                                <i class="fa fa-download"></i>下载模板
+                            </button>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">金融机构服务承诺函 <span class="text-red-500">*</span></label>
-                                <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-primary transition">
-                                    <i class="fa fa-file-pdf-o text-red-400 text-2xl"></i>
-                                    <p class="text-xs text-slate-500 mt-1">承诺函.pdf</p>
+                                <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition">
+                                    <i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>
+                                    <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
+                                    <input type="file" class="hidden" accept=".pdf">
                                 </div>
+                                <button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition">
+                                    <i class="fa fa-download"></i>下载模板
+                                </button>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">保密协议 <span class="text-red-500">*</span></label>
-                                <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-primary transition">
-                                    <i class="fa fa-file-pdf-o text-red-400 text-2xl"></i>
-                                    <p class="text-xs text-slate-500 mt-1">保密协议.docx</p>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">保密协议、对接协议 <span class="text-red-500">*</span></label>
+                                <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition">
+                                    <i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>
+                                    <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
+                                    <input type="file" class="hidden" accept=".pdf,.doc,.docx">
                                 </div>
+                                <button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition">
+                                    <i class="fa fa-download"></i>下载模板
+                                </button>
                             </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">保险自营平台或自有电子保函服务平台声明</label>
+                            <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition">
+                                <i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>
+                                <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
+                                <p class="text-xs text-slate-400 mt-1">支持 PDF, DOC, DOCX 格式，最大 10MB</p>
+                                <input type="file" class="hidden" accept=".pdf,.doc,.docx">
+                            </div>
+                            <button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition">
+                                <i class="fa fa-download"></i>下载模板
+                            </button>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">金融机构电子保函业务流程说明 <span class="text-red-500">*</span></label>
+                            <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition">
+                                <i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>
+                                <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
+                                <p class="text-xs text-slate-400 mt-1">支持 PDF, DOC, DOCX 格式，最大 10MB</p>
+                                <input type="file" class="hidden" accept=".pdf,.doc,.docx" required>
+                            </div>
+                            <button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition">
+                                <i class="fa fa-download"></i>下载模板
+                            </button>
                         </div>
                     </div>
                 `,
@@ -730,10 +770,7 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">首单验证日期 <span class="text-red-500">*</span></label>
                                 <input type="date" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm">
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">测试订单编号 <span class="text-red-500">*</span></label>
-                                <input type="text" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" placeholder="请输入测试订单编号">
-                            </div>
+
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">首单测试报告 <span class="text-red-500">*</span></label>
