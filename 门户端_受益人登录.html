@@ -62,61 +62,101 @@
                         </div>
                     </div>
                     <div class="md:w-1/2 p-8">
-                        <div class="mb-6">
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">受益人登录</h3>
-                            <p class="text-gray-600">请输入账号密码登录</p>
-                        </div>
-                        
-                        <form class="beneficiary-form">
-                            <div class="login-step active" id="step1">
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 mb-2">受益人账号</label>
-                                    <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary">
-                                </div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 mb-2">密码</label>
-                                    <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary">
-                                </div>
-                                <div class="flex items-center justify-between mb-6">
-                                    <label class="flex items-center">
-                                        <input type="checkbox" class="mr-2">
-                                        <span class="text-gray-600">记住我</span>
-                                    </label>
-                                    <a href="#" class="text-secondary hover:text-beneficiary transition-colors">忘记密码？</a>
-                                </div>
-                                <button type="button" class="w-full bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors next-step">
-                                    下一步
-                                </button>
-                            </div>
-                            
-                            <div class="login-step hidden" id="step2">
-                                <div class="text-center mb-6">
-                                    <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i class="fa fa-mobile text-beneficiary text-3xl"></i>
+                        <div id="login-form">
+                            <form class="beneficiary-form">
+                                <div class="login-step active" id="step1">
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">受益人账号</label>
+                                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary">
                                     </div>
-                                    <h4 class="font-semibold mb-2">短信验证</h4>
-                                    <p class="text-gray-600">我们已向您的手机发送验证码</p>
-                                    <p class="text-gray-500 mt-1">138****6789</p>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">密码</label>
+                                        <input type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary">
+                                    </div>
+                                    <div class="flex items-center justify-between mb-6">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="mr-2">
+                                            <span class="text-gray-600">记住我</span>
+                                        </label>
+                                        <a href="#" class="text-secondary hover:text-beneficiary transition-colors">忘记密码？</a>
+                                    </div>
+                                    <button type="button" class="w-full bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors next-step">
+                                        下一步
+                                    </button>
+                                    <div class="mt-4 text-center">
+                                        <p class="text-gray-600">还没有账号？<a href="#" id="register-link" class="text-beneficiary hover:underline transition-colors">立即注册</a></p>
+                                    </div>
                                 </div>
-                                <div class="mb-4">
-                                    <label class="block text-gray-700 mb-2">验证码</label>
-                                    <div class="flex space-x-4">
-                                        <input type="text" class="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入验证码">
-                                        <button type="button" class="w-32 bg-secondary text-white py-3 rounded-md hover:bg-beneficiary transition-colors">
-                                            重新发送
+                                
+                                <div class="login-step hidden" id="step2">
+                                    <div class="text-center mb-6">
+                                        <div class="w-16 h-16 bg-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <i class="fa fa-mobile text-beneficiary text-3xl"></i>
+                                        </div>
+                                        <h4 class="font-semibold mb-2">短信验证</h4>
+                                        <p class="text-gray-600">我们已向您的手机发送验证码</p>
+                                        <p class="text-gray-500 mt-1">138****6789</p>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-gray-700 mb-2">验证码</label>
+                                        <div class="flex space-x-4">
+                                            <input type="text" class="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入验证码">
+                                            <button type="button" class="w-32 bg-secondary text-white py-3 rounded-md hover:bg-beneficiary transition-colors">
+                                                重新发送
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex space-x-4 mb-6">
+                                        <button type="button" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-md hover:bg-gray-300 transition-colors prev-step">
+                                            上一步
+                                        </button>
+                                        <button type="submit" class="flex-1 bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors">
+                                            登录
                                         </button>
                                     </div>
                                 </div>
-                                <div class="flex space-x-4 mb-6">
-                                    <button type="button" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-md hover:bg-gray-300 transition-colors prev-step">
-                                        上一步
-                                    </button>
-                                    <button type="submit" class="flex-1 bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors">
-                                        登录
-                                    </button>
+                            </form>
+                        </div>
+                        
+                        <div id="register-form" class="hidden">
+                            <form id="register-beneficiary-form">
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">企业名称 <span class="text-red-500">*</span></label>
+                                    <input type="text" id="company-name" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入企业名称">
                                 </div>
-                            </div>
-                        </form>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">统一社会信用代码 <span class="text-red-500">*</span></label>
+                                    <input type="text" id="credit-code" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入统一社会信用代码">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">手机号 <span class="text-red-500">*</span></label>
+                                    <input type="text" id="register-phone" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入手机号">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">密码 <span class="text-red-500">*</span></label>
+                                    <input type="password" id="register-password" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入密码">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 mb-2">确认密码 <span class="text-red-500">*</span></label>
+                                    <input type="password" id="confirm-password" required class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请再次输入密码">
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-gray-700 mb-2">验证码 <span class="text-red-500">*</span></label>
+                                    <div class="flex space-x-4">
+                                        <input type="text" id="register-code" required class="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-beneficiary" placeholder="请输入验证码">
+                                        <button type="button" id="send-code-btn" class="w-32 bg-secondary text-white py-3 rounded-md hover:bg-beneficiary transition-colors">
+                                            获取验证码
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full bg-beneficiary text-white py-3 rounded-md hover:bg-beneficiary/90 transition-colors">
+                                    注册
+                                </button>
+                                <div class="mt-4 text-center">
+                                    <p class="text-gray-600">已有账号？<a href="#" id="login-link" class="text-beneficiary hover:underline transition-colors">立即登录</a></p>
+                                </div>
+                            </form>
+                        </div>
                         
                         <div class="mt-6 text-center">
                             <p class="text-gray-600">返回 <a href="门户端_首页.html" class="text-secondary hover:text-beneficiary transition-colors">首页</a></p>
@@ -209,6 +249,97 @@
             loginForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 window.location.href = '受益人端_保函列表.html';
+            });
+
+            const loginFormContainer = document.getElementById('login-form');
+            const registerFormContainer = document.getElementById('register-form');
+            const registerLink = document.getElementById('register-link');
+            const loginLink = document.getElementById('login-link');
+
+            registerLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                loginFormContainer.classList.add('hidden');
+                registerFormContainer.classList.remove('hidden');
+            });
+
+            loginLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerFormContainer.classList.add('hidden');
+                loginFormContainer.classList.remove('hidden');
+            });
+
+            const sendCodeBtn = document.getElementById('send-code-btn');
+            const registerPhone = document.getElementById('register-phone');
+            let countdown = 0;
+
+            sendCodeBtn.addEventListener('click', function() {
+                const phone = registerPhone.value.trim();
+                if (!/^1[3-9]\d{9}$/.test(phone)) {
+                    alert('请输入正确的手机号');
+                    return;
+                }
+                
+                if (countdown > 0) return;
+                
+                countdown = 60;
+                sendCodeBtn.textContent = `${countdown}秒`;
+                sendCodeBtn.style.backgroundColor = '#6b7280';
+                
+                const timer = setInterval(function() {
+                    countdown--;
+                    if (countdown > 0) {
+                        sendCodeBtn.textContent = `${countdown}秒`;
+                    } else {
+                        clearInterval(timer);
+                        sendCodeBtn.textContent = '获取验证码';
+                        sendCodeBtn.style.backgroundColor = '#3B82F6';
+                    }
+                }, 1000);
+            });
+
+            const registerForm = document.getElementById('register-beneficiary-form');
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const companyName = document.getElementById('company-name').value.trim();
+                const creditCode = document.getElementById('credit-code').value.trim();
+                const phone = document.getElementById('register-phone').value.trim();
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                const code = document.getElementById('register-code').value.trim();
+
+                if (!companyName) {
+                    alert('请输入企业名称');
+                    return;
+                }
+                
+                if (!/^[0-9A-HJ-NP-RT-UW-Y]{2}\d{6}[0-9A-HJ-NP-RT-UW-Y]{10}$/.test(creditCode)) {
+                    alert('请输入正确的统一社会信用代码');
+                    return;
+                }
+                
+                if (!/^1[3-9]\d{9}$/.test(phone)) {
+                    alert('请输入正确的手机号');
+                    return;
+                }
+                
+                if (password.length < 6) {
+                    alert('密码长度不能少于6位');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    alert('两次输入的密码不一致');
+                    return;
+                }
+                
+                if (!code) {
+                    alert('请输入验证码');
+                    return;
+                }
+                
+                alert('注册成功！请登录');
+                loginTab.click();
             });
         });
     </script>

@@ -286,7 +286,7 @@
                 <div class="flex items-center space-x-2">
                     <h2 class="text-lg font-bold text-slate-800">场景管理</h2>
                     <span class="text-slate-400">/</span>
-                    <span class="text-sm text-slate-500">平台保函业务场景维护</span>
+                    <span class="text-sm text-slate-500 text-center">平台保函业务场景维护</span>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="relative">
@@ -459,7 +459,7 @@
                                 <td class="px-6 py-4">
                                     <div class="text-xs text-slate-600"></i>20-1000</div>
                                 </td>
-                                <td class="px-6 py-4"><span class="status-badge bg-slate-100 text-slate-500">已停用</span></td>
+                                <td class="px-6 py-4 text-center"><span class="status-badge bg-slate-100 text-slate-500">已停用</span></td>
                                 <td class="px-6 py-4 text-right space-x-3">
                                     <button onclick="openProductModal('edit')" class="text-blue-600 font-bold hover:underline text-xs">编辑</button>
                                     <button onclick="openFieldConfigModal('农民工工资保函')" class="text-indigo-600 font-bold hover:underline text-xs">配置</button>
@@ -604,31 +604,31 @@
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-50 text-slate-400 font-black uppercase tracking-wider">
                         <tr>
-                            <th class="px-4 py-3">材料名称</th>
-                            <th class="px-4 py-3">必要性</th>
-                            <th class="px-4 py-3">样例/说明</th>
+                            <th class="px-2 py-2 text-center">材料名称</th>
+                            <th class="px-2 py-2 text-center">必要性</th>
+                            <th class="px-2 py-2 text-center">样例/说明</th>
                             <th class="px-4 py-3 text-right">操作</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <tr>
-                            <td class="px-4 py-3 font-medium">中标通知书 / 招标文件</td>
-                            <td class="px-4 py-3"><span class="text-red-500 font-bold">必填</span></td>
+                            <td class="px-2 py-2 font-medium">中标通知书 / 招标文件</td>
+                            <td class="px-2 py-2 text-center"><span class="text-red-500 font-bold">必填</span></td>
                             <td class="px-4 py-3 text-slate-400">需加盖公章扫描件</td>
                             <td class="px-4 py-3 text-right">
                                 <button onclick="this.closest('tr').remove()" class="text-slate-400 hover:text-red-500"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-4 py-3 font-medium">保函申请公函</td>
-                            <td class="px-4 py-3"><span class="text-red-500 font-bold">必填</span></td>
+                            <td class="px-2 py-2 font-medium">保函申请公函</td>
+                            <td class="px-2 py-2 text-center"><span class="text-red-500 font-bold">必填</span></td>
                             <td class="px-4 py-3 text-blue-600 hover:underline cursor-pointer">下载示例</td>
                             <td class="px-4 py-3 text-right">
                                 <button onclick="this.closest('tr').remove()" class="text-slate-400 hover:text-red-500"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                         <tr>
-                            <td class="px-4 py-3 font-medium">反担保补充材料</td>
+                            <td class="px-2 py-2 font-medium">反担保补充材料</td>
                             <td class="px-4 py-3 text-slate-400">选填</td>
                             <td class="px-4 py-3 text-slate-400">-</td>
                             <td class="px-4 py-3 text-right">
@@ -683,7 +683,7 @@
                                 <td class="px-6 py-4">
                                     <input type="number" value="500" class="w-24 px-2 py-1 border border-slate-200 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500">
                                 </td>
-                                <td class="px-6 py-4 text-xs text-slate-500">信用极好，给予最高额度</td>
+                                <td class="px-6 py-4 text-xs text-slate-500 text-center">信用极好，给予最高额度</td>
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="this.closest('tr').remove()" class="text-slate-400 hover:text-red-500"><i class="fa fa-trash"></i></button>
                                 </td>
@@ -700,7 +700,7 @@
                                 <td class="px-6 py-4">
                                     <input type="number" value="200" class="w-24 px-2 py-1 border border-slate-200 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500">
                                 </td>
-                                <td class="px-6 py-4 text-xs text-slate-500">信用优良，给予次高额度</td>
+                                <td class="px-6 py-4 text-xs text-slate-500 text-center">信用优良，给予次高额度</td>
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="this.closest('tr').remove()" class="text-slate-400 hover:text-red-500"><i class="fa fa-trash"></i></button>
                                 </td>
@@ -717,7 +717,7 @@
                                 <td class="px-6 py-4">
                                     <input type="number" value="100" class="w-24 px-2 py-1 border border-slate-200 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500">
                                 </td>
-                                <td class="px-6 py-4 text-xs text-slate-500">信用一般，额度适中</td>
+                                <td class="px-6 py-4 text-xs text-slate-500 text-center">信用一般，额度适中</td>
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="this.closest('tr').remove()" class="text-slate-400 hover:text-red-500"><i class="fa fa-trash"></i></button>
                                 </td>
@@ -735,7 +735,7 @@
 
     <!-- Field Configuration Modal -->
     <div id="field-config-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[70] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-[95vw] max-w-[1600px] overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[92vh]">
+        <div class="bg-white rounded-2xl shadow-2xl w-[95vw] max-w-[1000px] overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[92vh]">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
                 <h3 class="text-lg font-bold text-slate-800">投保字段材料配置</h3>
                 <div class="flex items-center space-x-3">
@@ -758,22 +758,29 @@
             </div>
             
             <div class="flex-1 overflow-y-auto">
-                <table class="w-full text-sm">
+                <table class="w-full text-sm table-layout-fixed">
+                    <colgroup>
+                        <col class="w-10">
+                        <col class="w-20">
+                        <col class="w-8">
+                        <col class="w-10">
+                        <col class="w-10">
+                    </colgroup>
                     <thead class="bg-slate-50 sticky top-0 z-10">
                         <tr class="text-[10px] font-black text-slate-400 uppercase tracking-wider">
-                            <th class="px-4 py-3">字段分类</th>
-                            <th class="px-4 py-3">字段名称</th>
-                            <th class="px-4 py-3">类型</th>
-                            <th class="px-4 py-3 text-center">是否需要</th>
-                            <th class="px-4 py-3 text-center">是否必填</th>
+                            <th class="px-2 py-2 text-center">字段分类</th>
+                            <th class="px-2 py-2 text-center">字段名称</th>
+                            <th class="px-2 py-2 text-center">类型</th>
+                            <th class="px-2 py-2 text-center">是否需要</th>
+                            <th class="px-2 py-2 text-center">是否必填</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">项目名称</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">项目名称</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-1" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -783,7 +790,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-1" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -795,10 +802,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">项目编号</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">项目编号</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-2" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -808,7 +815,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-2" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -820,10 +827,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">标段名称</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">标段名称</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-3" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -833,7 +840,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-3" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -845,10 +852,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">标段编号</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">标段编号</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-4" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -858,7 +865,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-4" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -870,10 +877,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">招标企业</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">招标企业</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-5" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -883,7 +890,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-5" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -895,10 +902,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">招标企业统一社会信用代码</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">招标企业统一社会信用代码</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-6" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -908,7 +915,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-6" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -920,10 +927,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">保证金金额（元）</td>
-                            <td class="px-4 py-3 text-slate-500">数字</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">保证金金额（元）</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">数字</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-7" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -933,7 +940,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-7" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -945,10 +952,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">项目信息</td>
-                            <td class="px-4 py-3">保证金截止时间</td>
-                            <td class="px-4 py-3 text-slate-500">日期</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">项目信息</td>
+                            <td class="px-2 py-2 text-center">保证金截止时间</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">日期</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-8" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -958,7 +965,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-8" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -970,10 +977,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">投保人企业名称</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">投保人企业名称</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-9" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -983,7 +990,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-9" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -995,10 +1002,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">统一社会信用代码</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">统一社会信用代码</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-10" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1008,7 +1015,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-10" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1020,10 +1027,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">资质等级</td>
-                            <td class="px-4 py-3 text-slate-500">下拉框</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">资质等级</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">下拉框</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-11" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1033,7 +1040,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-11" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1045,10 +1052,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">投保企业法定代表人姓名</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">投保企业法定代表人姓名</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-12" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1058,7 +1065,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-12" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1070,10 +1077,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">投保企业法定代表人身份证号</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">投保企业法定代表人身份证号</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-13" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1083,7 +1090,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-13" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1095,10 +1102,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">开户行名称</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">开户行名称</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-14" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1108,7 +1115,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-14" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1120,10 +1127,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">银行账号</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">银行账号</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-15" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1133,7 +1140,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-15" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1145,10 +1152,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">经办人姓名</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">经办人姓名</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-16" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1158,7 +1165,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-16" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1170,10 +1177,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">经办人身份证号</td>
-                            <td class="px-4 py-3 text-slate-500">省市区</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">经办人身份证号</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">省市区</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-17" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1183,7 +1190,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-17" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1195,10 +1202,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">经办人手机号</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">经办人手机号</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-18" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1208,7 +1215,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-18" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1220,10 +1227,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保人信息</td>
-                            <td class="px-4 py-3">联系人电子邮箱</td>
-                            <td class="px-4 py-3 text-slate-500">文本</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保人信息</td>
+                            <td class="px-2 py-2 text-center">联系人电子邮箱</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文本</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-19" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1233,7 +1240,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-19" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1245,10 +1252,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">投保企业营业执照</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">投保企业营业执照</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-20" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1258,7 +1265,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-20" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1270,10 +1277,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">资质证书</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">资质证书</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-21" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1283,7 +1290,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-21" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1295,10 +1302,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">投保企业法定代表人身份证（人像面）</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">投保企业法定代表人身份证（人像面）</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-22" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1308,7 +1315,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-22" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1320,10 +1327,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">投保企业法定代表人身份证（国徽面）</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">投保企业法定代表人身份证（国徽面）</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-23" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1333,7 +1340,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-23" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1345,10 +1352,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">审计报告</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">审计报告</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-24" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1358,7 +1365,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-24" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1370,10 +1377,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">财务报表</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">财务报表</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-25" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1383,7 +1390,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-25" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1395,10 +1402,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">招标文件</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">招标文件</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-26" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1408,7 +1415,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-26" value="是" checked class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1420,10 +1427,10 @@
                             </td>
                         </tr>
                         <tr class="hover:bg-slate-50">
-                            <td class="px-4 py-3 font-medium text-slate-600">投保材料</td>
-                            <td class="px-4 py-3">其他材料</td>
-                            <td class="px-4 py-3 text-slate-500">文件</td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 font-medium text-slate-600 text-center">投保材料</td>
+                            <td class="px-2 py-2 text-center">其他材料</td>
+                            <td class="px-2 py-2 text-slate-500 text-center">文件</td>
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="need-27" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1433,7 +1440,7 @@
                                     <span class="text-xs">否</span>
                                 </label>
                             </td>
-                            <td class="px-4 py-3 text-center">
+                            <td class="px-2 py-2 text-center">
                                 <label class="inline-flex items-center space-x-1">
                                     <input type="radio" name="required-27" value="是" class="text-blue-600">
                                     <span class="text-xs">是</span>
@@ -1612,7 +1619,7 @@
                 <td class="px-6 py-4">
                     <input type="number" placeholder="输入限额" class="w-24 px-2 py-1 border border-slate-200 rounded text-xs outline-none focus:ring-1 focus:ring-blue-500">
                 </td>
-                <td class="px-6 py-4 text-xs text-slate-500">自定义限额配置</td>
+                <td class="px-6 py-4 text-xs text-slate-500 text-center">自定义限额配置</td>
                 <td class="px-6 py-4 text-right">
                     <button onclick="this.closest('tr').remove()" class="text-slate-400 hover:text-red-500"><i class="fa fa-trash"></i></button>
                 </td>

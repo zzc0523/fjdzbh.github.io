@@ -41,9 +41,7 @@
                 <a href="门户端_新闻中心.html" class="text-accent font-medium">平台资讯</a>
                 <a href="门户端_保函验真.html" class="hover:text-accent transition-colors">保函验真</a>
                 <a href="门户端_帮助中心.html" class="hover:text-accent transition-colors">帮助中心</a>
-                <button id="searchBtn" class="text-white hover:text-accent transition-colors ml-4">
-                    <i class="fa fa-search text-xl"></i>
-                </button>
+                
             </div>
             <div class="flex items-center space-x-4">
                 <button id="mobileMenuBtn" class="md:hidden text-white">
@@ -71,21 +69,26 @@
             
             <!-- 搜索和筛选 -->
             <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-                <div class="flex flex-wrap gap-4">
-                    <div class="flex-1 min-w-[300px]">
-                        <div class="relative">
-                            <input type="text" placeholder="搜索资讯..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-10">
-                            <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
+                <!-- 搜索框 -->
+                <div class="flex gap-2 mb-4">
+                    <div class="relative flex-1">
+                        <input type="text" placeholder="搜索资讯..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary pl-10">
+                        <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <span class="text-gray-500 font-medium mr-2">分类：</span>
-                        <div class="flex flex-wrap gap-2">
-                            <button class="news-tab px-5 py-1.5 rounded-full bg-primary text-white shadow-md shadow-primary/20 text-sm font-medium transition-all duration-300" data-category="all">全部</button>
-                            <button class="news-tab px-5 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent" data-category="notice">通知公告</button>
-                            <button class="news-tab px-5 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent" data-category="policy">政策法规</button>
-                            <button class="news-tab px-5 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent" data-category="industry">行业动态</button>
-                        </div>
+                    <button class="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors flex items-center gap-2">
+                        <i class="fa fa-search"></i>
+                        <span>搜索</span>
+                    </button>
+                </div>
+                
+                <!-- 分类筛选 -->
+                <div class="flex items-center gap-3">
+                    <span class="text-gray-500 font-medium">分类：</span>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="news-tab px-5 py-1.5 rounded-full bg-primary text-white shadow-md shadow-primary/20 text-sm font-medium transition-all duration-300" data-category="all">全部</button>
+                        <button class="news-tab px-5 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent" data-category="notice">通知公告</button>
+                        <button class="news-tab px-5 py-1.5 rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-primary text-sm font-medium transition-all duration-300 border border-transparent" data-category="policy">政策法规</button>
+                        
                     </div>
                 </div>
             </div>
@@ -150,23 +153,6 @@
                             <p class="text-gray-600 mb-4">福建省发布电子保函业务管理办法，规范电子保函业务流程和管理要求。办法明确了电子保函的法律效力、办理流程、监管要求等内容，为电子保函业务的健康发展提供了制度保障。</p>
                             <div class="flex justify-between items-center text-gray-500 text-sm">
                                 <span>2026-03-01</span>
-                                <a href="门户端_新闻详情.html" class="text-secondary hover:text-primary transition-colors">阅读全文 <i class="fa fa-arrow-right ml-1"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-lg shadow-md overflow-hidden news-item" data-category="industry">
-                    <div class="flex flex-col md:flex-row">
-                        <div class="md:w-1/3">
-                            <img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=financial%20technology%20industry%20growth%20chart%20digital%20graphs%20purple%20blue&image_size=landscape_4_3" alt="资讯图片" class="w-full h-48 md:h-full object-cover">
-                        </div>
-                        <div class="md:w-2/3 p-6">
-                            <span class="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">行业动态</span>
-                            <h3 class="text-xl font-semibold mt-2 mb-2">电子保函市场发展趋势</h3>
-                            <p class="text-gray-600 mb-4">电子保函市场呈现快速增长趋势，数字化转型成为行业共识。据统计，2025年全国电子保函业务量同比增长超过50%，预计2026年将继续保持高速增长。电子保函的优势在于办理效率高、成本低、安全性强，越来越多的企业开始选择电子保函。</p>
-                            <div class="flex justify-between items-center text-gray-500 text-sm">
-                                <span>2026-02-20</span>
                                 <a href="门户端_新闻详情.html" class="text-secondary hover:text-primary transition-colors">阅读全文 <i class="fa fa-arrow-right ml-1"></i></a>
                             </div>
                         </div>
@@ -335,6 +321,114 @@
             });
         });
     </script>
+
+    <!-- 智能客服悬浮按钮 -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="chatbotBtn" class="w-16 h-16 bg-primary rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors">
+            <i class="fa fa-comments text-white text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- 智能客服对话弹窗 -->
+    <div id="chatbotModal" class="fixed bottom-24 right-6 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="bg-primary text-white p-4 rounded-t-lg flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fa fa-robot text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold">智能客服助手</h3>
+                </div>
+                <button id="closeChatbot" class="text-white hover:text-gray-200">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 h-80 overflow-y-auto" id="chatbotMessages">
+                <div class="flex items-start mb-4">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fa fa-robot text-primary"></i>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                        <p>您好！我是福建省电子保函服务平台的智能客服助手，有什么可以帮助您的吗？</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 p-4">
+                <div class="flex space-x-2 mb-4">
+                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors quick-question">如何申请保函？</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors quick-question">保函验真流程</button>
+                    <button class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors quick-question">费用计算方式</button>
+                </div>
+                <div class="flex">
+                    <input type="text" id="chatbotInput" placeholder="请输入您的问题..." class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <button id="sendMessage" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-3 text-center">
+                    <button id="contactHuman" class="text-primary hover:text-secondary transition-colors text-sm">
+                        <i class="fa fa-user mr-1"></i>转人工客服
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 人工客服接入弹窗 -->
+    <div id="humanServiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">联系人工客服</h3>
+                    <button id="closeHumanService" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="humanServiceForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">姓名</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">联系电话</label>
+                        <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">问题类型</label>
+                        <select class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                            <option value="">请选择问题类型</option>
+                            <option value="application">保函申请</option>
+                            <option value="verification">保函验真</option>
+                            <option value="account">账号问题</option>
+                            <option value="other">其他问题</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">问题描述</label>
+                        <textarea class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                        提交申请
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 问题提交成功确认弹窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-check text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">提交成功</h3>
+            <p class="text-gray-600 mb-6">您的问题已成功提交，客服人员将在24小时内与您联系。</p>
+            <button id="closeSuccess" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                确定
+            </button>
+        </div>
+    </div>
+
 <!-- 搜索弹窗 -->
     <div id="searchModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
@@ -686,10 +780,185 @@
             }
         }
         
+        // 智能客服功能
+        function initChatbot() {
+            const chatbotBtn = document.getElementById('chatbotBtn');
+            const chatbotModal = document.getElementById('chatbotModal');
+            const closeChatbot = document.getElementById('closeChatbot');
+            const sendMessage = document.getElementById('sendMessage');
+            const chatbotInput = document.getElementById('chatbotInput');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            const contactHuman = document.getElementById('contactHuman');
+            const quickQuestions = document.querySelectorAll('.quick-question');
+            
+            const humanServiceModal = document.getElementById('humanServiceModal');
+            const closeHumanService = document.getElementById('closeHumanService');
+            const humanServiceForm = document.getElementById('humanServiceForm');
+            
+            const successModal = document.getElementById('successModal');
+            const closeSuccess = document.getElementById('closeSuccess');
+            
+            if (chatbotBtn && chatbotModal) {
+                chatbotBtn.addEventListener('click', function() {
+                    chatbotModal.classList.toggle('hidden');
+                    if (!chatbotModal.classList.contains('hidden')) {
+                        chatbotModal.classList.add('animate-fade-in');
+                    }
+                });
+            }
+            
+            if (closeChatbot && chatbotModal) {
+                closeChatbot.addEventListener('click', function() {
+                    chatbotModal.classList.add('hidden');
+                });
+            }
+            
+            if (sendMessage && chatbotInput && chatbotMessages) {
+                sendMessage.addEventListener('click', function() {
+                    sendUserMessage();
+                });
+                
+                chatbotInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendUserMessage();
+                    }
+                });
+            }
+            
+            if (quickQuestions.length > 0) {
+                quickQuestions.forEach(button => {
+                    button.addEventListener('click', function() {
+                        chatbotInput.value = this.textContent;
+                        sendUserMessage();
+                    });
+                });
+            }
+            
+            if (contactHuman && humanServiceModal) {
+                contactHuman.addEventListener('click', function() {
+                    chatbotModal.classList.add('hidden');
+                    humanServiceModal.classList.remove('hidden');
+                });
+            }
+            
+            if (closeHumanService && humanServiceModal) {
+                closeHumanService.addEventListener('click', function() {
+                    humanServiceModal.classList.add('hidden');
+                });
+                
+                humanServiceModal.addEventListener('click', function(e) {
+                    if (e.target === humanServiceModal) {
+                        humanServiceModal.classList.add('hidden');
+                    }
+                });
+            }
+            
+            if (humanServiceForm && successModal) {
+                humanServiceForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>提交中...';
+                    submitBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        humanServiceModal.classList.add('hidden');
+                        successModal.classList.remove('hidden');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 1000);
+                });
+            }
+            
+            if (closeSuccess && successModal) {
+                closeSuccess.addEventListener('click', function() {
+                    successModal.classList.add('hidden');
+                });
+                
+                successModal.addEventListener('click', function(e) {
+                    if (e.target === successModal) {
+                        successModal.classList.add('hidden');
+                    }
+                });
+            }
+            
+            function sendUserMessage() {
+                const message = chatbotInput.value.trim();
+                if (message) {
+                    const userMessageHTML = `
+                        <div class="flex items-start mb-4 justify-end animate-fade-in">
+                            <div class="bg-primary text-white rounded-lg p-3 max-w-[80%]">
+                                <p>${message}</p>
+                            </div>
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+                                <i class="fa fa-user text-gray-600"></i>
+                            </div>
+                        </div>
+                    `;
+                    chatbotMessages.insertAdjacentHTML('beforeend', userMessageHTML);
+                    
+                    chatbotInput.value = '';
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    
+                    const typingIndicatorHTML = `
+                        <div class="flex items-start mb-4 typing-indicator">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fa fa-robot text-primary"></i>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                                <div class="flex space-x-1">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    chatbotMessages.insertAdjacentHTML('beforeend', typingIndicatorHTML);
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    
+                    setTimeout(() => {
+                        const typingIndicator = document.querySelector('.typing-indicator');
+                        if (typingIndicator) {
+                            typingIndicator.remove();
+                        }
+                        
+                        let botResponse = "感谢您的咨询。关于您的问题，我需要为您查询相关信息。";
+                        
+                        if (message.includes('申请') && message.includes('保函')) {
+                            botResponse = "申请电子保函的流程如下：1. 注册并登录平台；2. 进入企业工作台；3. 点击'保函申请'；4. 选择保函类型；5. 填写申请信息并上传材料；6. 提交申请等待审核。";
+                        } else if (message.includes('验真')) {
+                            botResponse = "您可以通过以下方式验证保函真伪：1. 在平台首页点击'保函验真'；2. 选择验真方式（输入保函编号、扫描二维码或上传文件）；3. 提交验证信息；4. 系统会实时返回保函状态和详细信息。";
+                        } else if (message.includes('费用') || message.includes('计算')) {
+                            botResponse = "电子保函的费用根据保函类型、金额、有效期等因素计算，费率范围一般为0.1%-1.0%不等。具体费用以金融机构的报价为准，您可以在申请过程中查看详细的费用明细。";
+                        } else if (message.includes('注册') || message.includes('账号')) {
+                            botResponse = "注册账号的流程：1. 点击平台首页的'注册'按钮；2. 填写企业基本信息；3. 上传相关资质文件；4. 完成手机验证；5. 提交注册申请，等待审核通过后即可登录使用。";
+                        } else if (message.includes('登录') || message.includes('密码')) {
+                            botResponse = "如果您忘记了密码，可以点击登录页面的'忘记密码'链接，通过手机验证码重置密码。如果遇到其他登录问题，请联系人工客服获取帮助。";
+                        }
+                        
+                        const botMessageHTML = `
+                            <div class="flex items-start mb-4 animate-fade-in">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-robot text-primary"></i>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                                    <p>${botResponse}</p>
+                                </div>
+                            </div>
+                        `;
+                        chatbotMessages.insertAdjacentHTML('beforeend', botMessageHTML);
+                        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    }, 1500);
+                }
+            }
+        }
+        
         // 初始化功能
         document.addEventListener('DOMContentLoaded', function() {
             initMobileMenu();
             initSearch();
+            initChatbot();
         });
     </script>
     </body>

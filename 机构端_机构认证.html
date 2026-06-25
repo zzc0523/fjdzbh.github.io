@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>机构认证 - 认证信息</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'primary': '0 4px 6px -1px rgba(30, 64, 175, 0.1), 0 2px 4px -1px rgba(30, 64, 175, 0.06)',
+                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-bank"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">金融机构平台</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="机构端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_机构认证.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20">
+                            <i class="fa fa-building mr-3"></i>
+                            <span class="font-medium">机构认证</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_产品管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cubes mr-3 group-hover:text-blue-400"></i>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_订单管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-file-text mr-3 group-hover:text-blue-400"></i>
+                            <span>保函订单</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_退保管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-undo mr-3 group-hover:text-blue-400"></i>
+                            <span>退保管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="机构端_理赔管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-gavel mr-3 group-hover:text-blue-400"></i>
+                            <span>理赔管理</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Bank&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">中国建设银行</p>
+                        <p class="text-[10px] text-slate-400">福建省分行</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- Header -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">机构认证</h2>
+                    <span class="text-slate-400">/</span>
+                    <span class="text-sm text-slate-500">认证信息</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <button class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all relative" onclick="window.location.href='消息列表.html'">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                        </button>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-y-auto p-8 space-y-6">
+                <!-- 备案信息表单 -->
+                <div id="tab-basic" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in duration-300">
+                    <div class="p-5 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-slate-50">
+                        <h2 class="text-lg font-semibold text-slate-800">认证信息</h2>
+                        <div class="mt-2 h-1 w-16 bg-blue-600 rounded-full"></div>
+                    </div>
+
+                    <!-- 资质信息（移至最上方） -->
+                    <div class="p-5">
+                        <div class="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div class="p-4 bg-slate-50/50 border-b border-slate-100">
+                                <h3 class="font-semibold text-slate-800">资质信息</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <!-- 营业执照 -->
+                                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <label class="block text-sm font-semibold text-slate-700 mb-3">营业执照 <span class="text-red-500">*</span></label>
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-20 h-16 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
+                                                <i class="fa fa-file-pdf-o text-slate-400 text-xl"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-slate-600 truncate">营业执照.pdf</p>
+                                                <div class="flex flex-wrap gap-1.5 mt-1">
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="viewFile('营业执照.pdf')">查看</button>
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="uploadFile('营业执照')">重新上传</button>
+                                                    <button class="text-xs text-red-600 hover:text-red-700 hover:underline" onclick="deleteFile('营业执照')">删除</button>
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="ocrRecognition('营业执照')">OCR识别</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 机构logo -->
+                                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <label class="block text-sm font-semibold text-slate-700 mb-3">机构logo <span class="text-red-500">*</span></label>
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-20 h-16 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
+                                                <i class="fa fa-image text-slate-400 text-xl"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-slate-600 truncate">logo.png</p>
+                                                <div class="flex flex-wrap gap-1.5 mt-1">
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="viewFile('logo.png')">查看</button>
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="uploadFile('logo')">重新上传</button>
+                                                    <button class="text-xs text-red-600 hover:text-red-700 hover:underline" onclick="deleteFile('logo')">删除</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 金融许可证 -->
+                                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                        <label class="block text-sm font-semibold text-slate-700 mb-3">金融许可证 <span class="text-red-500">*</span></label>
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-20 h-16 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
+                                                <i class="fa fa-file-pdf-o text-slate-400 text-xl"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm text-slate-600 truncate">金融许可证.pdf</p>
+                                                <div class="flex flex-wrap gap-1.5 mt-1">
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="viewFile('金融许可证.pdf')">查看</button>
+                                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:underline" onclick="uploadFile('金融许可证')">重新上传</button>
+                                                    <button class="text-xs text-red-600 hover:text-red-700 hover:underline" onclick="deleteFile('金融许可证')">删除</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 机构基本信息 -->
+                        <div class="mt-5 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                            <div class="p-4 bg-slate-50/50 border-b border-slate-100">
+                                <h3 class="font-semibold text-slate-800">机构基本信息</h3>
+                            </div>
+                            <div class="p-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                                    <!-- 机构名称 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">机构名称 <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" id="institutionName" value="中国建设银行福建省分行" disabled required>
+                                    </div>
+
+                                    <!-- 机构类型 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">机构类型 <span class="text-red-500">*</span></label>
+                                        <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="institutionType" required>
+                                            <option value="银行" selected>银行</option>
+                                            <option value="保险公司">保险公司</option>
+                                            <option value="担保公司">担保公司</option>
+                                            <option value="其他">其他</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 统一社会信用代码 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">统一社会信用代码 <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" id="unifiedCreditCode" value="91350000158142860A" disabled required>
+                                    </div>
+
+                                    <!-- 经营地址 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">经营地址 <span class="text-red-500">*</span></label>
+                                        <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessAddress" required>
+                                            <option value="">请选择</option>
+                                            <option value="福建省福州市" selected>福建省福州市</option>
+                                            <option value="福建省厦门市">福建省厦门市</option>
+                                            <option value="福建省泉州市">福建省泉州市</option>
+                                            <option value="其他">其他</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 详细地址 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">详细地址 <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="detailedAddress" value="鼓楼区五四路162号" required>
+                                    </div>
+
+                                    <!-- 法定代表人 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">法定代表人姓名 <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="legalRepresentative" value="张行长" required>
+                                    </div>
+
+                                    <!-- 注册资本 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">注册资本 <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="registeredCapital" value="100亿" required>
+                                    </div>
+
+                                    <!-- 企业注册年份 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">企业注册年份 <span class="text-red-500">*</span></label>
+                                        <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="registrationYear" required>
+                                            <option value="">请选择</option>
+                                            <option value="1954" selected>1954</option>
+                                            <option value="1984">1984</option>
+                                            <option value="1988">1988</option>
+                                            <option value="其他">其他</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 开户银行 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">开户银行 <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="openingBank" value="中国建设银行" required>
+                                    </div>
+
+                                    <!-- 开户账号 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">开户账号（基本账户） <span class="text-red-500">*</span></label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="bankAccount" value="1234567890123456789" required>
+                                    </div>
+
+                                    <!-- 联系电话 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">联系电话</label>
+                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="contactPhone" value="0591-87838888">
+                                    </div>
+
+                                    <!-- 电子邮箱 -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">电子邮箱</label>
+                                        <input type="email" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="email" value="fjcb@ccb.com">
+                                    </div>
+
+                                    <!-- 业务范围 -->
+                                    <div class="lg:col-span-3">
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">业务范围 <span class="text-red-500">*</span></label>
+                                        <textarea class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessScope" rows="3" required>电子保函业务、贷款业务、存款业务、结算业务等</textarea>
+                                    </div>
+                        </div>
+                    </div>
+
+                    <!-- 经办人信息 -->
+                    <div class="mt-5 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="p-4 bg-slate-50/50 border-b border-slate-100">
+                            <h3 class="font-semibold text-slate-800">经办人信息</h3>
+                        </div>
+                        <div class="p-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- 经办人 -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">经办人 <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="authorizedPerson" value="张三" required>
+                                </div>
+
+                                <!-- 经办人联系方式 -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">经办人联系方式 <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="authorizedPersonContact" value="13800138001" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="mt-6 flex justify-end space-x-3">
+                            <button type="button" class="px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">取消</button>
+                            <button type="button" class="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">保存修改</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- 查看文件弹窗 -->
+    <div id="viewFileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden transform scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-bold text-slate-800">查看文件</h3>
+                <button onclick="document.getElementById('viewFileModal').classList.add('hidden')" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="bg-gray-100 rounded-md p-4 flex items-center justify-center h-96">
+                    <i class="fa fa-file-pdf-o text-gray-400 text-5xl"></i>
+                </div>
+                <div class="mt-4">
+                    <h4 class="font-medium text-gray-900" id="fileName">营业执照.pdf</h4>
+                    <p class="text-sm text-gray-600 mt-1">文件预览功能待实现</p>
+                </div>
+            </div>
+            <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
+                <button onclick="document.getElementById('viewFileModal').classList.add('hidden')" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 查看文件功能
+        function viewFile(fileName) {
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('viewFileModal').classList.remove('hidden');
+        }
+
+        // 保存修改功能
+        document.querySelector('button[type="button"]:last-child').addEventListener('click', function() {
+            // 表单验证
+            const requiredFields = document.querySelectorAll('input[required], select[required], textarea[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value || field.value === '') {
+                    isValid = false;
+                    // 添加错误样式
+                    field.classList.add('border-red-500');
+                    field.classList.add('focus:ring-red-500');
+                } else {
+                    // 移除错误样式
+                    field.classList.remove('border-red-500');
+                    field.classList.remove('focus:ring-red-500');
+                }
+            });
+            
+            if (isValid) {
+                alert('修改已保存');
+            } else {
+                alert('请填写所有必填字段');
+            }
+        });
+
+        // 取消按钮功能
+        document.querySelector('button[type="button"]:first-child').addEventListener('click', function() {
+            if (confirm('确定要取消修改吗？')) {
+                // 这里可以添加重置表单的逻辑
+                alert('已取消修改');
+            }
+        });
+
+        // 上传文件功能
+        function uploadFile(fileType) {
+            alert('文件上传功能待实现');
+        }
+
+        // OCR识别功能
+        function ocrRecognition(fileType) {
+            // 模拟OCR识别过程
+            alert('正在进行OCR识别，请稍候...');
+            
+            // 模拟识别结果
+            setTimeout(function() {
+                // 识别成功后回填数据
+                if (fileType === '营业执照') {
+                    // 模拟识别结果
+                    const ocrResult = {
+                        institutionName: '中国建设银行福建省分行',
+                        unifiedCreditCode: '91350000158142860A',
+                        legalRepresentative: '张行长',
+                        registeredCapital: '100亿',
+                        businessAddress: '福建省福州市',
+                        detailedAddress: '鼓楼区五四路162号',
+                        businessScope: '电子保函业务、贷款业务、存款业务、结算业务等'
+                    };
+                    
+                    // 回填数据到对应字段
+                    document.getElementById('institutionName').value = ocrResult.institutionName;
+                    document.getElementById('unifiedCreditCode').value = ocrResult.unifiedCreditCode;
+                    document.getElementById('legalRepresentative').value = ocrResult.legalRepresentative;
+                    document.getElementById('registeredCapital').value = ocrResult.registeredCapital;
+                    document.getElementById('businessAddress').value = ocrResult.businessAddress;
+                    document.getElementById('detailedAddress').value = ocrResult.detailedAddress;
+                    document.getElementById('businessScope').value = ocrResult.businessScope;
+                    
+                    alert('OCR识别成功，已自动回填信息！');
+                }
+            }, 1500);
+        }
+
+        // 删除文件功能
+        function deleteFile(fileType) {
+            if (confirm('确定要删除该文件吗？')) {
+                // 模拟删除过程
+                alert('文件已删除');
+                // 这里可以添加实际的删除逻辑
+            }
+        }
+    </script>
+</body>
+</html>

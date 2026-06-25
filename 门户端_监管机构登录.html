@@ -41,9 +41,7 @@
                 <a href="门户端_新闻中心.html" class="hover:text-accent transition-colors">平台资讯</a>
                 <a href="门户端_保函验真.html" class="hover:text-accent transition-colors">保函验真</a>
                 <a href="门户端_帮助中心.html" class="hover:text-accent transition-colors">帮助中心</a>
-                <button id="searchBtn" class="text-white hover:text-accent transition-colors ml-4">
-                    <i class="fa fa-search text-xl"></i>
-                </button>
+                
             </div>
             <div class="flex items-center space-x-4">
                 <button class="md:hidden text-white">
@@ -240,6 +238,219 @@
                 }
             });
         });
+        
+        // 智能客服功能
+        function initChatbot() {
+            const chatbotBtn = document.getElementById('chatbotBtn');
+            const chatbotModal = document.getElementById('chatbotModal');
+            const closeChatbot = document.getElementById('closeChatbot');
+            const sendMessage = document.getElementById('sendMessage');
+            const chatbotInput = document.getElementById('chatbotInput');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            const contactHuman = document.getElementById('contactHuman');
+            
+            const humanServiceModal = document.getElementById('humanServiceModal');
+            const closeHumanService = document.getElementById('closeHumanService');
+            const humanServiceForm = document.getElementById('humanServiceForm');
+            
+            const successModal = document.getElementById('successModal');
+            const closeSuccess = document.getElementById('closeSuccess');
+            
+            if (chatbotBtn && chatbotModal) {
+                chatbotBtn.addEventListener('click', function() {
+                    chatbotModal.classList.toggle('hidden');
+                });
+            }
+            
+            if (closeChatbot && chatbotModal) {
+                closeChatbot.addEventListener('click', function() {
+                    chatbotModal.classList.add('hidden');
+                });
+            }
+            
+            if (sendMessage && chatbotInput && chatbotMessages) {
+                sendMessage.addEventListener('click', function() {
+                    sendUserMessage();
+                });
+                
+                chatbotInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendUserMessage();
+                    }
+                });
+            }
+            
+            if (contactHuman && humanServiceModal) {
+                contactHuman.addEventListener('click', function() {
+                    chatbotModal.classList.add('hidden');
+                    humanServiceModal.classList.remove('hidden');
+                });
+            }
+            
+            if (closeHumanService && humanServiceModal) {
+                closeHumanService.addEventListener('click', function() {
+                    humanServiceModal.classList.add('hidden');
+                });
+                
+                humanServiceModal.addEventListener('click', function(e) {
+                    if (e.target === humanServiceModal) {
+                        humanServiceModal.classList.add('hidden');
+                    }
+                });
+            }
+            
+            if (humanServiceForm && successModal) {
+                humanServiceForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    humanServiceModal.classList.add('hidden');
+                    successModal.classList.remove('hidden');
+                });
+            }
+            
+            if (closeSuccess && successModal) {
+                closeSuccess.addEventListener('click', function() {
+                    successModal.classList.add('hidden');
+                });
+            }
+            
+            function sendUserMessage() {
+                const message = chatbotInput.value.trim();
+                if (message) {
+                    const userMessageHTML = `
+                        <div class="flex items-start mb-4 justify-end">
+                            <div class="bg-primary text-white rounded-lg p-3 max-w-[80%]">
+                                <p>${message}</p>
+                            </div>
+                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+                                <i class="fa fa-user text-gray-600"></i>
+                            </div>
+                        </div>
+                    `;
+                    chatbotMessages.insertAdjacentHTML('beforeend', userMessageHTML);
+                    chatbotInput.value = '';
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    
+                    setTimeout(() => {
+                        let botResponse = "感谢您的咨询。关于您的问题，我需要为您查询相关信息。";
+                        
+                        if (message.includes('申请') && message.includes('保函')) {
+                            botResponse = "申请电子保函的流程如下：1. 注册并登录平台；2. 进入企业工作台；3. 点击'保函申请'；4. 选择保函类型；5. 填写申请信息并上传材料；6. 提交申请等待审核。";
+                        } else if (message.includes('验真')) {
+                            botResponse = "您可以通过以下方式验证保函真伪：1. 在平台首页点击'保函验真'；2. 选择验真方式；3. 提交验证信息；4. 系统会实时返回保函状态和详细信息。";
+                        } else if (message.includes('注册') || message.includes('账号')) {
+                            botResponse = "注册账号的流程：1. 点击平台首页的'注册'按钮；2. 填写企业基本信息；3. 上传相关资质文件；4. 完成手机验证；5. 提交注册申请，等待审核通过后即可登录使用。";
+                        }
+                        
+                        const botMessageHTML = `
+                            <div class="flex items-start mb-4">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fa fa-robot text-primary"></i>
+                                </div>
+                                <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                                    <p>${botResponse}</p>
+                                </div>
+                            </div>
+                        `;
+                        chatbotMessages.insertAdjacentHTML('beforeend', botMessageHTML);
+                        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    }, 1500);
+                }
+            }
+        }
+        
+        initChatbot();
     </script>
+
+    <!-- 智能客服悬浮按钮 -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="chatbotBtn" class="w-16 h-16 bg-primary rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 transition-colors">
+            <i class="fa fa-comments text-white text-2xl"></i>
+        </button>
+    </div>
+
+    <!-- 智能客服对话弹窗 -->
+    <div id="chatbotModal" class="fixed bottom-24 right-6 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="bg-primary text-white p-4 rounded-t-lg flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center mr-3">
+                        <i class="fa fa-robot text-primary"></i>
+                    </div>
+                    <h3 class="font-semibold">智能客服助手</h3>
+                </div>
+                <button id="closeChatbot" class="text-white hover:text-gray-200">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 h-80 overflow-y-auto" id="chatbotMessages">
+                <div class="flex items-start mb-4">
+                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fa fa-robot text-primary"></i>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-3 max-w-[80%]">
+                        <p>您好！我是福建省电子保函服务平台的智能客服助手，有什么可以帮助您的吗？</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 p-4">
+                <div class="flex">
+                    <input type="text" id="chatbotInput" placeholder="请输入您的问题..." class="flex-1 px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <button id="sendMessage" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="mt-3 text-center">
+                    <button id="contactHuman" class="text-primary hover:text-secondary transition-colors text-sm">
+                        <i class="fa fa-user mr-1"></i>转人工客服
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 人工客服接入弹窗 -->
+    <div id="humanServiceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">联系人工客服</h3>
+                    <button id="closeHumanService" class="text-gray-400 hover:text-gray-600">
+                        <i class="fa fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form id="humanServiceForm">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">姓名</label>
+                        <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">联系电话</label>
+                        <input type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-700 mb-2">问题描述</label>
+                        <textarea class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                        提交申请
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 问题提交成功确认弹窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa fa-check text-green-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">提交成功</h3>
+            <p class="text-gray-600 mb-6">您的问题已成功提交，客服人员将在24小时内与您联系。</p>
+            <button id="closeSuccess" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors">
+                确定
+            </button>
+        </div>
+    </div>
 </body>
 </html>
