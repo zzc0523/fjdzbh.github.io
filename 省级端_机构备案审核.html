@@ -305,10 +305,9 @@
                             <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block tracking-wider">申请状态</label>
                             <select class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none">
                                 <option>全部</option>
-                                <option>待初审</option>
-                                <option>待复审</option>
-                                <option>待企业认证</option>
-                                <option>已拒绝</option>
+                                <option>待审核</option>
+                                <option>审核通过</option>
+                                <option>审核不通过</option>
                             </select>
                         </div>
                         <div class="w-40">
@@ -328,117 +327,135 @@
                     </div>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full">
+                        <table class="w-full table-fixed min-w-[1200px]">
                             <thead>
                                 <tr class="bg-slate-50">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">申报地市</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">机构名称</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">统一社会信用代码</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">机构类型</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">拟申报保函类型</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">市级推荐意见</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">申请状态</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">申请时间</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">操作</th>
+                                    <th class="w-24 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">申报地市</th>
+                                    <th class="w-52 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">机构名称</th>
+                                    <th class="w-48 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">统一社会信用代码</th>
+                                    <th class="w-28 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">机构类型</th>
+                                    <th class="w-28 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">机构状态</th>
+                                    <th class="w-36 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">拟申报保函类型</th>
+                                    <th class="w-48 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">市级推荐意见</th>
+                                    <th class="w-28 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">申请状态</th>
+                                    <th class="w-44 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">申请时间</th>
+                                    <th class="w-32 px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap sticky right-0 bg-slate-50 z-10">操作</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200">
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-slate-600">福州市</td>
-                                    <td class="px-6 py-4 text-sm text-slate-800">福建省建设投资有限公司</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">91350000158142860E</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">担保公司</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">投标保函</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">福州市</td>
+                                    <td class="px-6 py-4 text-sm text-slate-800 whitespace-nowrap">福建省建设投资有限公司</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">91350000158142860E</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">担保公司</td>
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge bg-green-100 text-green-700 whitespace-nowrap">已认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">投标保函</td>
                                     <td class="px-6 py-4">
                                         <div class="max-w-[150px] text-xs text-slate-500 truncate" title="该机构资质优良，建议通过">该机构资质优良，建议通过</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-orange-100 text-orange-700">待初审</span>
+                                        <span class="status-badge bg-orange-100 text-orange-700 whitespace-nowrap">待审核</span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-slate-500">2026-04-24 09:00:00</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-2">
+                                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">2026-04-24 09:00:00</td>
+                                    <td class="px-6 py-4 sticky right-0 bg-white z-10">
+                                        <div class="flex items-center space-x-2 whitespace-nowrap">
                                             <button onclick="openDetail('福建省建设投资有限公司')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
                                             <span class="text-slate-300">|</span>
-                                            <button onclick="openAudit('福建省建设投资有限公司', '初审')" class="text-xs text-green-600 hover:text-green-700 font-bold">初审</button>
+                                            <button onclick="openAudit('福建省建设投资有限公司', 'certified')" class="text-xs text-green-600 hover:text-green-700 font-bold">审核</button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-slate-600">厦门市</td>
-                                    <td class="px-6 py-4 text-sm text-slate-800">中国工商银行福建省分行</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">91350000158142860A</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">银行</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">履约保函</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">厦门市</td>
+                                    <td class="px-6 py-4 text-sm text-slate-800 whitespace-nowrap">中国工商银行福建省分行</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">91350000158142860A</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">银行</td>
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge bg-blue-100 text-blue-700 whitespace-nowrap">待分配账号</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">履约保函</td>
                                     <td class="px-6 py-4">
                                         <div class="max-w-[150px] text-xs text-slate-500 truncate" title="该机构资质优良，建议通过">该机构资质优良，建议通过</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-blue-100 text-blue-700">待复审</span>
+                                        <span class="status-badge bg-orange-100 text-orange-700 whitespace-nowrap">待审核</span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-slate-500">2026-04-23 09:00:00</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-2">
+                                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">2026-04-23 09:00:00</td>
+                                    <td class="px-6 py-4 sticky right-0 bg-white z-10">
+                                        <div class="flex items-center space-x-2 whitespace-nowrap">
                                             <button onclick="openDetail('中国工商银行福建省分行')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
                                             <span class="text-slate-300">|</span>
-                                            <button onclick="openAudit('中国工商银行福建省分行', '复审')" class="text-xs text-green-600 hover:text-green-700 font-bold">复审</button>
+                                            <button onclick="openAudit('中国工商银行福建省分行', 'pending_account')" class="text-xs text-green-600 hover:text-green-700 font-bold">审核</button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-slate-600">三明市</td>
-                                    <td class="px-6 py-4 text-sm text-slate-800">中国平安保险福建分公司</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">91350000158142860C</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">保险公司</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">投标保函</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">三明市</td>
+                                    <td class="px-6 py-4 text-sm text-slate-800 whitespace-nowrap">中国平安保险福建分公司</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">91350000158142860C</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">保险公司</td>
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge bg-orange-100 text-orange-700 whitespace-nowrap">待认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">投标保函</td>
                                     <td class="px-6 py-4">
                                         <div class="max-w-[150px] text-xs text-slate-500 truncate" title="该机构资质优良，建议通过认证">该机构资质优良，建议通过认证</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-purple-100 text-purple-700">待企业认证</span>
+                                        <span class="status-badge bg-orange-100 text-orange-700 whitespace-nowrap">待审核</span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-slate-500">2026-04-22 08:00:00</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-2">
+                                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">2026-04-22 08:00:00</td>
+                                    <td class="px-6 py-4 sticky right-0 bg-white z-10">
+                                        <div class="flex items-center space-x-2 whitespace-nowrap">
                                             <button onclick="openDetail('中国平安保险福建分公司')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
+                                            <span class="text-slate-300">|</span>
+                                            <button onclick="openAudit('中国平安保险福建分公司', 'pending_certify')" class="text-xs text-green-600 hover:text-green-700 font-bold">审核</button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-slate-600">泉州市</td>
-                                    <td class="px-6 py-4 text-sm text-slate-800">福建兴业担保有限公司</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">91350000158142860D</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">担保公司</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">预付款保函</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">泉州市</td>
+                                    <td class="px-6 py-4 text-sm text-slate-800 whitespace-nowrap">福建兴业担保有限公司</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">91350000158142860D</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">担保公司</td>
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge bg-green-100 text-green-700 whitespace-nowrap">已认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">预付款保函</td>
                                     <td class="px-6 py-4">
                                         <div class="max-w-[150px] text-xs text-slate-500 truncate" title="资料不全，需补充">资料不全，需补充</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-red-100 text-red-700">已拒绝</span>
+                                        <span class="status-badge bg-red-100 text-red-700 whitespace-nowrap">审核不通过</span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-slate-500">2026-04-21 10:00:00</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="openDetail('福建兴业担保有限公司')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
+                                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">2026-04-21 10:00:00</td>
+                                    <td class="px-6 py-4 sticky right-0 bg-white z-10">
+                                        <div class="flex items-center space-x-2 whitespace-nowrap">
+                                            <button onclick="openDetail('福建兴业担保有限公司', 'reject', '2026-04-21 10:00', '资料不全，需补充金融许可证扫描件，请补充后重新提交。')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 text-sm text-slate-600">漳州市</td>
-                                    <td class="px-6 py-4 text-sm text-slate-800">中国邮政储蓄银行漳州分行</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">91350000158142860E</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">银行</td>
-                                    <td class="px-6 py-4 text-sm text-slate-600">农民工工资保函</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">漳州市</td>
+                                    <td class="px-6 py-4 text-sm text-slate-800 whitespace-nowrap">中国邮政储蓄银行漳州分行</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">91350000158142860E</td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">银行</td>
+                                    <td class="px-6 py-4">
+                                        <span class="status-badge bg-green-100 text-green-700 whitespace-nowrap">已认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 whitespace-nowrap">农民工工资保函</td>
                                     <td class="px-6 py-4">
                                         <div class="max-w-[150px] text-xs text-slate-500 truncate" title="符合要求，同意推荐">符合要求，同意推荐</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-green-100 text-green-700">已通过</span>
+                                        <span class="status-badge bg-green-100 text-green-700 whitespace-nowrap">审核通过</span>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-slate-500">2026-04-20 14:00:00</td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="openDetail('中国邮政储蓄银行漳州分行')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
+                                    <td class="px-6 py-4 text-sm text-slate-500 whitespace-nowrap">2026-04-20 14:00:00</td>
+                                    <td class="px-6 py-4 sticky right-0 bg-white z-10">
+                                        <div class="flex items-center space-x-2 whitespace-nowrap">
+                                            <button onclick="openDetail('中国邮政储蓄银行漳州分行', 'pass', '2026-04-20 14:00', '该机构资质齐全，符合备案条件，同意通过审核。')" class="text-xs text-blue-600 hover:text-blue-700 font-bold">详情</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -479,609 +496,638 @@
     </div>
 
     <div id="detail-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[80vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">机构详情</h3>
-                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fa fa-times"></i>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fa fa-info-circle text-blue-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800">机构备案详情</h3>
+                        <p class="text-xs text-slate-500">查看机构备案的详细信息</p>
+                    </div>
+                </div>
+                <button onclick="closeDetailModal()" class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+                    <i class="fa fa-times text-lg"></i>
                 </button>
             </div>
-            <div class="border-b border-slate-100">
-                <div class="flex">
-                    <button onclick="showTab('certification')" class="px-6 py-3 text-sm font-medium text-blue-600 border-b-2 border-blue-600 bg-blue-50" id="tab-certification">认证信息</button>
-                    <button onclick="showTab('record')" class="px-6 py-3 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50" id="tab-record">备案信息</button>
-                </div>
-            </div>
-            <div class="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
-                <div id="tab-content-certification" class="space-y-6">
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-file-text-o mr-2"></i>资质信息
-                        </h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div class="bg-white rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-center w-12 h-12 bg-red-50 rounded-lg mb-3">
-                                    <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
-                                </div>
-                                <p class="text-sm text-slate-800">营业执照</p>
-                                <p class="text-xs text-slate-500">营业执照.pdf</p>
-                                <button class="text-xs text-blue-600 mt-2 hover:underline">查看</button>
-                            </div>
-                            <div class="bg-white rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-center w-12 h-12 bg-blue-50 rounded-lg mb-3">
-                                    <i class="fa fa-image text-blue-500 text-xl"></i>
-                                </div>
-                                <p class="text-sm text-slate-800">机构logo</p>
-                                <p class="text-xs text-slate-500">logo.png</p>
-                                <button class="text-xs text-blue-600 mt-2 hover:underline">查看</button>
-                            </div>
-                            <div class="bg-white rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-center w-12 h-12 bg-red-50 rounded-lg mb-3">
-                                    <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
-                                </div>
-                                <p class="text-sm text-slate-800">金融许可证</p>
-                                <p class="text-xs text-slate-500">金融许可证.pdf</p>
-                                <button class="text-xs text-blue-600 mt-2 hover:underline">查看</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-building mr-2"></i>机构基本信息
-                        </h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400">机构名称</label>
-                                <p class="text-sm text-slate-800">中国建设银行福州分行</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">机构类型</label>
-                                <p class="text-sm text-slate-800">银行</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">统一社会信用代码</label>
-                                <p class="text-sm text-slate-800">91350100154384286A</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">申请编号</label>
-                                <p class="text-sm text-slate-800">SQ202405001</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">经营地址</label>
-                                <p class="text-sm text-slate-800">福建省福州市</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">详细地址</label>
-                                <p class="text-sm text-slate-800">鼓楼区五四路162号</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">法定代表人</label>
-                                <p class="text-sm text-slate-800">张行长</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">注册资本</label>
-                                <p class="text-sm text-slate-800">100亿</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">企业注册年份</label>
-                                <p class="text-sm text-slate-800">1954</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">开户银行</label>
-                                <p class="text-sm text-slate-800">中国建设银行</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">开户账号（基本账户）</label>
-                                <p class="text-sm text-slate-800">1234567890123456789</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">联系电话</label>
-                                <p class="text-sm text-slate-800">0591-87838888</p>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <label class="text-xs text-slate-400">业务范围</label>
-                            <p class="text-sm text-slate-800">电子保函业务、贷款业务、存款业务、结算业务等</p>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-user-circle mr-2"></i>授权信息
-                        </h4>
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div>
-                                <label class="text-xs text-slate-400">授权人</label>
-                                <p class="text-sm text-slate-800">张三</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">授权人联系方式</label>
-                                <p class="text-sm text-slate-800">13800138001</p>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-xl p-4 border border-slate-100">
-                            <div class="flex items-center">
-                                <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-4">
-                                    <i class="fa fa-file-pdf-o text-red-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm text-slate-800">授权书文件</p>
-                                    <p class="text-xs text-slate-500">授权书.pdf</p>
-                                </div>
-                                <button class="text-sm text-blue-600 hover:underline">查看</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="tab-content-record" class="space-y-6 hidden">
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4">机构基本信息</h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400">机构名称</label>
-                                <p class="text-sm text-slate-800">兴业银行厦门分行</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">机构类型</label>
-                                <p class="text-sm text-slate-800">银行</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">统一社会信用代码</label>
-                                <p class="text-sm text-slate-800">91350000158142860A</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">申报地市</label>
-                                <p class="text-sm text-slate-800">福州市中心</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">法定代表人</label>
-                                <p class="text-sm text-slate-800">张行长</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">注册资本</label>
-                                <p class="text-sm text-slate-800">100亿</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4">联系人信息</h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400">联系人</label>
-                                <p class="text-sm text-slate-800">张三</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">联系电话</label>
-                                <p class="text-sm text-slate-800">13800138001</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">联系人邮箱</label>
-                                <p class="text-sm text-slate-800">fjcb@ccb.com</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4">拟备案保函类型</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-full">投标保函</span>
-                            <span class="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-full">履约保函</span>
-                            <span class="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-full">预付款保函</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4">市级推荐意见</h4>
-                        <p class="text-sm text-slate-600">该机构资质齐全，符合备案条件，同意推荐。</p>
-                    </div>
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4">申请材料</h4>
-                        <div class="bg-white rounded-xl p-4 border border-slate-100">
-                            <div class="flex items-center">
-                                <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-4">
-                                    <i class="fa fa-file-pdf-o text-red-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="text-sm text-slate-800">推荐函.pdf</p>
-                                    <p class="text-xs text-slate-500">市级推荐文件</p>
-                                </div>
-                                <button class="text-sm text-blue-600 hover:underline">查看</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div id="audit-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">初审 - 机构审核</h3>
-                <button onclick="closeAuditModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
-                <div class="space-y-6">
-                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                            <span class="text-sm font-medium text-blue-800">当前处于初审环节，请仔细核对机构信息后进行审核</span>
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-6 py-5">
+                    <div class="bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl p-5 border border-slate-100 mb-5">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mr-4 border border-slate-100">
+                                    <i class="fa fa-building text-blue-500 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-bold text-slate-800" id="detail-org-name">福建省建设投资有限公司</h4>
+                                    <div class="flex items-center mt-1 space-x-3">
+                                        <span class="text-xs text-slate-500" id="detail-org-type">担保公司</span>
+                                        <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                        <span class="status-badge bg-green-100 text-green-700 text-xs px-2 py-0.5" id="detail-org-status">已认证</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400 mb-1">拟备案保函类型</p>
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">投标保函</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-building mr-2"></i>机构基本信息
-                        </h4>
-                        <div class="grid grid-cols-4 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400">机构名称</label>
-                                <p class="text-sm text-slate-800 font-medium" id="audit-org-name">福建省建设投资有限公司</p>
+                    <div id="detail-audit-result" class="hidden mb-5">
+                        <div id="detail-audit-result-pass" class="hidden bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-5 border border-green-100">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fa fa-check-circle text-green-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-base font-bold text-green-800">审核通过</h4>
+                                        <span class="text-xs text-green-600 bg-green-100 px-2.5 py-0.5 rounded-full font-medium" id="detail-audit-time-pass">2026-04-20 14:00</span>
+                                    </div>
+                                    <div class="bg-white/70 rounded-lg p-3 border border-green-100">
+                                        <p class="text-xs text-green-600 mb-1 font-medium">审核意见</p>
+                                        <p class="text-sm text-green-800" id="detail-audit-opinion-pass">该机构资质齐全，符合备案条件，同意通过审核。</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">机构类型</label>
+                        </div>
+                        <div id="detail-audit-result-reject" class="hidden bg-gradient-to-r from-red-50 to-rose-50 rounded-xl p-5 border border-red-100">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fa fa-times-circle text-red-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="text-base font-bold text-red-800">审核不通过</h4>
+                                        <span class="text-xs text-red-600 bg-red-100 px-2.5 py-0.5 rounded-full font-medium" id="detail-audit-time-reject">2026-04-21 10:00</span>
+                                    </div>
+                                    <div class="bg-white/70 rounded-lg p-3 border border-red-100">
+                                        <p class="text-xs text-red-600 mb-1 font-medium">审核意见</p>
+                                        <p class="text-sm text-red-800" id="detail-audit-opinion-reject">申请资料不完整，缺少金融许可证扫描件，请补充后重新提交。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-1 mb-4 border-b border-slate-100">
+                        <button onclick="showDetailTab('city')" id="detail-tab-city" class="px-4 py-2.5 text-sm font-medium text-blue-600 border-b-2 border-blue-600 -mb-px transition-all">
+                            <i class="fa fa-map-marker mr-1.5"></i>市级备案信息
+                        </button>
+                        <button onclick="showDetailTab('cert')" id="detail-tab-cert" class="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 border-b-2 border-transparent hover:border-slate-300 -mb-px transition-all">
+                            <i class="fa fa-id-card-o mr-1.5"></i>机构认证信息
+                        </button>
+                    </div>
+                    <div id="detail-tab-content-city" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">机构名称</label>
+                                <p class="text-sm text-slate-800 font-medium">福建省建设投资有限公司</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">机构类型</label>
                                 <p class="text-sm text-slate-800">担保公司</p>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">统一社会信用代码</label>
-                                <p class="text-sm text-slate-800 font-mono">91350000158142860E</p>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">统一社会信用代码</label>
+                                <p class="text-sm text-slate-800 font-mono">91350000XXXXXXXXXX</p>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">申报地市</label>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">申报地市</label>
                                 <p class="text-sm text-slate-800">福州市</p>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">法定代表人</label>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">法定代表人</label>
                                 <p class="text-sm text-slate-800">张总</p>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">注册资本</label>
-                                <p class="text-sm text-slate-800">5000万元</p>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">联系人姓名</label>
+                                <p class="text-sm text-slate-800">李四</p>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">经营地址</label>
-                                <p class="text-sm text-slate-800">福建省福州市鼓楼区</p>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">联系人手机</label>
+                                <p class="text-sm text-slate-800">139****9999</p>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">联系电话</label>
-                                <p class="text-sm text-slate-800">0591-87838888</p>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">联系人邮箱</label>
+                                <p class="text-sm text-slate-800">lisi@example.com</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">申请时间</label>
+                                <p class="text-sm text-slate-800">2024-05-15</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <label class="text-xs text-slate-400 mb-2 block font-medium">市级推荐意见</label>
+                            <div class="bg-white rounded-lg p-4 border border-slate-200">
+                                <p class="text-sm text-slate-600 leading-relaxed">该机构资质优良，经营状况良好，符合电子保函业务开展条件，建议通过。</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <label class="text-xs text-slate-400 mb-3 block font-medium">附件（推荐函）</label>
+                            <div class="flex items-center p-3 bg-white rounded-lg border border-slate-200">
+                                <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-4">
+                                    <i class="fa fa-file-pdf-o text-red-500 text-lg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-slate-800 font-medium truncate">市级推荐函.pdf</p>
+                                    <p class="text-xs text-slate-400">2.5 MB</p>
+                                </div>
+                                <button class="px-3 py-1.5 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors flex items-center">
+                                    <i class="fa fa-eye mr-1"></i>查看
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-file-text-o mr-2"></i>拟申报保函类型
-                        </h4>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-full">投标保函</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-upload mr-2"></i>资质文件
-                        </h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div class="bg-white rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-center w-12 h-12 bg-red-50 rounded-lg mb-3">
-                                    <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
-                                </div>
-                                <p class="text-sm text-slate-800">营业执照</p>
-                                <p class="text-xs text-slate-500">营业执照.pdf</p>
-                                <button class="text-xs text-blue-600 mt-2 hover:underline">查看</button>
-                            </div>
-                            <div class="bg-white rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-center w-12 h-12 bg-blue-50 rounded-lg mb-3">
-                                    <i class="fa fa-image text-blue-500 text-xl"></i>
-                                </div>
-                                <p class="text-sm text-slate-800">机构logo</p>
-                                <p class="text-xs text-slate-500">logo.png</p>
-                                <button class="text-xs text-blue-600 mt-2 hover:underline">查看</button>
-                            </div>
-                            <div class="bg-white rounded-xl p-4 border border-slate-100">
-                                <div class="flex items-center justify-center w-12 h-12 bg-red-50 rounded-lg mb-3">
-                                    <i class="fa fa-file-pdf-o text-red-500 text-xl"></i>
-                                </div>
-                                <p class="text-sm text-slate-800">金融许可证</p>
-                                <p class="text-xs text-slate-500">金融许可证.pdf</p>
-                                <button class="text-xs text-blue-600 mt-2 hover:underline">查看</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-comment mr-2"></i>市级推荐意见
-                        </h4>
-                        <div class="bg-white rounded-xl p-4 border border-slate-100">
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                                    <i class="fa fa-check text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span class="text-sm font-medium text-slate-700">福州市住建局</span>
-                                        <span class="text-xs text-slate-400">2026-04-24</span>
+                    <div id="detail-tab-content-cert" class="hidden space-y-4">
+                        <div>
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                <span class="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">1</span>
+                                </span>
+                                资质信息
+                            </h5>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 ml-7">
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-3">
+                                        <i class="fa fa-file-pdf-o text-red-500"></i>
                                     </div>
-                                    <p class="text-sm text-slate-600">该机构资质优良，经营状况良好，符合电子保函业务开展条件，建议通过初审。</p>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium truncate">营业执照</p>
+                                        <p class="text-xs text-slate-400">营业执照.pdf</p>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">查看</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-lg mr-3">
+                                        <i class="fa fa-image text-blue-500"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium truncate">机构logo</p>
+                                        <p class="text-xs text-slate-400">logo.png</p>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">查看</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-3">
+                                        <i class="fa fa-file-pdf-o text-red-500"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium truncate">金融许可证</p>
+                                        <p class="text-xs text-slate-400">金融许可证.pdf</p>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">查看</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
-                        <h4 class="text-sm font-bold text-orange-700 mb-4 flex items-center">
-                            <i class="fa fa-edit mr-2"></i>初审操作
-                        </h4>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-sm font-medium text-slate-700 mb-2 block">审核结论</label>
-                                <div class="flex space-x-6">
-                                    <label class="flex items-center space-x-2 cursor-pointer">
-                                        <input type="radio" name="audit-result" value="pass" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-slate-700">
-                                            <i class="fa fa-check-circle text-green-500 mr-1"></i>通过
-                                        </span>
-                                    </label>
-                                    <label class="flex items-center space-x-2 cursor-pointer">
-                                        <input type="radio" name="audit-result" value="reject" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-slate-700">
-                                            <i class="fa fa-times-circle text-red-500 mr-1"></i>拒绝
-                                        </span>
-                                    </label>
+                        <div>
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                <span class="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">2</span>
+                                </span>
+                                机构基本信息
+                            </h5>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 ml-7">
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">机构名称</label>
+                                    <p class="text-sm text-slate-800 font-medium">中国建设银行福建省分行</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">机构类型</label>
+                                    <p class="text-sm text-slate-800">银行</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">统一社会信用代码</label>
+                                    <p class="text-sm text-slate-800 font-mono">91350000158142860A</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">经营地址</label>
+                                    <p class="text-sm text-slate-800">福建省福州市</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">详细地址</label>
+                                    <p class="text-sm text-slate-800">鼓楼区五四路162号</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">法定代表人姓名</label>
+                                    <p class="text-sm text-slate-800">张行长</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">注册资本</label>
+                                    <p class="text-sm text-slate-800">100亿</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">企业注册年份</label>
+                                    <p class="text-sm text-slate-800">1954年</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">开户银行</label>
+                                    <p class="text-sm text-slate-800">中国建设银行</p>
+                                </div>
+                                <div class="md:col-span-2 bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">开户账号（基本账户）</label>
+                                    <p class="text-sm text-slate-800 font-mono">1234567890123456789</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">联系电话</label>
+                                    <p class="text-sm text-slate-800">0591-87838888</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">电子邮箱</label>
+                                    <p class="text-sm text-slate-800">fjcb@ccb.com</p>
+                                </div>
+                                <div class="md:col-span-3 bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">业务范围</label>
+                                    <p class="text-sm text-slate-800">电子保函业务、贷款业务、存款业务、结算业务等</p>
                                 </div>
                             </div>
-                            <div>
-                                <label class="text-sm font-medium text-slate-700 mb-2 block">审核意见</label>
-                                <textarea rows="4" class="w-full px-4 py-3 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none" placeholder="请输入初审意见，如审核通过请说明理由，如拒绝请说明原因..."></textarea>
-                            </div>
-                            <div id="account-section" class="bg-white rounded-xl p-4 border border-slate-200">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h5 class="text-sm font-bold text-slate-700 flex items-center">
-                                        <i class="fa fa-user-plus mr-2 text-green-500"></i>分配机构账号
-                                    </h5>
-                                    <label class="flex items-center cursor-pointer">
-                                        <input type="checkbox" id="auto-generate" checked class="rounded text-green-600 focus:ring-green-500">
-                                        <span class="text-xs text-slate-500 ml-2">自动生成密码</span>
-                                    </label>
+                        </div>
+
+                        <div>
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                <span class="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">3</span>
+                                </span>
+                                经办人信息
+                            </h5>
+                            <div class="grid grid-cols-2 gap-3 ml-7">
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">经办人</label>
+                                    <p class="text-sm text-slate-800">张三</p>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="text-xs text-slate-500 mb-1 block">登录用户名</label>
-                                        <input type="text" id="account-username" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="自动生成或手动输入">
-                                    </div>
-                                    <div>
-                                        <label class="text-xs text-slate-500 mb-1 block">登录密码</label>
-                                        <div class="relative">
-                                            <input type="password" id="account-password" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none pr-10" placeholder="自动生成或手动输入">
-                                            <button onclick="togglePassword()" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                                                <i class="fa fa-eye"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between mt-3">
-                                    <span class="text-xs text-slate-500">* 审核通过后将自动创建机构账号</span>
-                                    <button onclick="generateAccount()" class="text-xs text-blue-600 hover:text-blue-700 hover:underline">
-                                        重新生成
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between pt-2">
-                                <div class="text-xs text-slate-500">
-                                    账号信息将发送至机构联系人邮箱：fjcb@ccb.com
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">经办人联系方式</label>
+                                    <p class="text-sm text-slate-800">13800138001</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end space-x-4">
-                <button onclick="closeAuditModal()" class="px-6 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors flex items-center">
-                    <i class="fa fa-times mr-2"></i>取消
-                </button>
-                <button onclick="submitAudit()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
-                    <i class="fa fa-check mr-2"></i>确认
+
+            <div class="flex items-center justify-end px-6 py-4 border-t border-slate-100 bg-white">
+                <button onclick="closeDetailModal()" class="px-6 py-2.5 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors font-medium text-sm">
+                    关闭
                 </button>
             </div>
         </div>
     </div>
-
-    <div id="review-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">复审 - 机构审核</h3>
-                <button onclick="closeReviewModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fa fa-times"></i>
+    <!-- 审核弹窗 -->
+    <div id="audit-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fa fa-file-text-o text-blue-600 text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800" id="audit-modal-title">机构备案审核</h3>
+                        <p class="text-xs text-slate-500" id="audit-modal-subtitle">审核机构备案申请并填写审核意见</p>
+                    </div>
+                </div>
+                <button onclick="closeAuditModal()" class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+                    <i class="fa fa-times text-lg"></i>
                 </button>
             </div>
-            <div class="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
-                <div class="space-y-6">
-                    <div class="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                            <span class="text-sm font-medium text-blue-800">当前处于复审环节，请仔细核对机构认证信息后进行审核</span>
-                        </div>
-                    </div>
 
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-building mr-2"></i>机构基本信息
-                        </h4>
-                        <div class="grid grid-cols-4 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400">机构名称</label>
-                                <p class="text-sm text-slate-800 font-medium" id="review-org-name">中国工商银行福建省分行</p>
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-6 py-5">
+                    <!-- 机构概览卡片 -->
+                    <div class="bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl p-5 border border-slate-100 mb-5">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center">
+                                <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mr-4 border border-slate-100">
+                                    <i class="fa fa-building text-blue-500 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-base font-bold text-slate-800" id="audit-org-name">福建省建设投资有限公司</h4>
+                                    <div class="flex items-center mt-1 space-x-3">
+                                        <span class="text-xs text-slate-500" id="audit-org-type">担保公司</span>
+                                        <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                        <span class="status-badge bg-green-100 text-green-700 text-xs px-2 py-0.5" id="audit-org-status">已认证</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-xs text-slate-400">机构类型</label>
-                                <p class="text-sm text-slate-800">银行</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">统一社会信用代码</label>
-                                <p class="text-sm text-slate-800 font-mono">91350000158142860A</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">申报地市</label>
-                                <p class="text-sm text-slate-800">厦门市</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">法定代表人</label>
-                                <p class="text-sm text-slate-800">李行长</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">注册资本</label>
-                                <p class="text-sm text-slate-800">50亿元</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">经营地址</label>
-                                <p class="text-sm text-slate-800">福建省厦门市思明区</p>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">联系电话</label>
-                                <p class="text-sm text-slate-800">0592-88888888</p>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400 mb-1">拟备案保函类型</p>
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">投标保函</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-check-circle mr-2 text-green-500"></i>机构已认证信息
-                        </h4>
-                        <div class="grid grid-cols-3 gap-4">
-                            <div class="bg-white rounded-xl p-4 border border-green-100">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fa fa-check text-green-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">营业执照认证</p>
-                                        <p class="text-xs text-green-600">已认证</p>
-                                    </div>
-                                </div>
+                    <!-- 标签页导航 -->
+                    <div class="flex items-center space-x-1 mb-4 border-b border-slate-100">
+                        <button onclick="switchAuditTab('city')" id="audit-tab-city" class="px-4 py-2.5 text-sm font-medium text-blue-600 border-b-2 border-blue-600 -mb-px transition-all">
+                            <i class="fa fa-map-marker mr-1.5"></i>市级备案信息
+                        </button>
+                        <button onclick="switchAuditTab('cert')" id="audit-tab-cert" class="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 border-b-2 border-transparent hover:border-slate-300 -mb-px transition-all">
+                            <i class="fa fa-id-card-o mr-1.5"></i>机构认证信息
+                        </button>
+                    </div>
+
+                    <!-- 市级备案信息 -->
+                    <div id="audit-tab-content-city" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">机构名称</label>
+                                <p class="text-sm text-slate-800 font-medium">福建省建设投资有限公司</p>
                             </div>
-                            <div class="bg-white rounded-xl p-4 border border-green-100">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fa fa-check text-green-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">金融许可证认证</p>
-                                        <p class="text-xs text-green-600">已认证</p>
-                                    </div>
-                                </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">机构类型</label>
+                                <p class="text-sm text-slate-800">担保公司</p>
                             </div>
-                            <div class="bg-white rounded-xl p-4 border border-green-100">
-                                <div class="flex items-center">
-                                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fa fa-check text-green-600"></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">法人身份认证</p>
-                                        <p class="text-xs text-green-600">已认证</p>
-                                    </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">统一社会信用代码</label>
+                                <p class="text-sm text-slate-800 font-mono">91350000XXXXXXXXXX</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">法定代表人</label>
+                                <p class="text-sm text-slate-800">张三</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">联系人姓名</label>
+                                <p class="text-sm text-slate-800">李四</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">联系人手机</label>
+                                <p class="text-sm text-slate-800">139****9999</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <label class="text-xs text-slate-400 mb-2 block font-medium">市级推荐意见</label>
+                            <div class="bg-white rounded-lg p-4 border border-slate-200">
+                                <p class="text-sm text-slate-600 leading-relaxed" id="audit-recommend-opinion">该机构资质优良，经营状况良好，符合电子保函业务开展条件，建议通过。</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <label class="text-xs text-slate-400 mb-3 block font-medium">附件（推荐函）</label>
+                            <div class="flex items-center p-3 bg-white rounded-lg border border-slate-200">
+                                <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-4">
+                                    <i class="fa fa-file-pdf-o text-red-500 text-lg"></i>
                                 </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm text-slate-800 font-medium truncate">市级推荐函.pdf</p>
+                                    <p class="text-xs text-slate-400">2.5 MB</p>
+                                </div>
+                                <button class="px-3 py-1.5 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors flex items-center">
+                                    <i class="fa fa-eye mr-1"></i>查看
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-file-text-o mr-2"></i>备案信息
-                        </h4>
-                        <div class="bg-white rounded-xl p-4 border border-slate-100">
-                            <div class="grid grid-cols-4 gap-4 mb-4">
-                                <div>
-                                    <label class="text-xs text-slate-400">备案编号</label>
-                                    <p class="text-sm text-slate-800 font-mono">BA20260002</p>
-                                </div>
-                                <div>
-                                    <label class="text-xs text-slate-400">备案日期</label>
-                                    <p class="text-sm text-slate-800">2026-04-20</p>
-                                </div>
-                                <div>
-                                    <label class="text-xs text-slate-400">备案状态</label>
-                                    <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
-                                        <i class="fa fa-check mr-1"></i>已备案
-                                    </span>
-                                </div>
-                                <div>
-                                    <label class="text-xs text-slate-400">有效期至</label>
-                                    <p class="text-sm text-slate-800">2027-04-19</p>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400">备案内容</label>
-                                <p class="text-sm text-slate-600">该机构已完成福建省电子保函服务平台备案登记，具备开展电子保函业务资质。</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-xl p-4">
-                        <h4 class="text-sm font-bold text-slate-600 mb-4 flex items-center">
-                            <i class="fa fa-comment mr-2"></i>初审意见
-                        </h4>
-                        <div class="bg-white rounded-xl p-4 border border-slate-100">
-                            <div class="flex items-start">
-                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                                    <i class="fa fa-check text-blue-600"></i>
-                                </div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1">
-                                        <span class="text-sm font-medium text-slate-700">福州市住建局</span>
-                                        <span class="text-xs text-slate-400">2026-04-23</span>
+                    <!-- 机构认证信息 -->
+                    <div id="audit-tab-content-cert" class="hidden space-y-4">
+                        <div>
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                <span class="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">1</span>
+                                </span>
+                                资质信息
+                            </h5>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 ml-7">
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-3">
+                                        <i class="fa fa-file-pdf-o text-red-500"></i>
                                     </div>
-                                    <p class="text-sm text-slate-600">该机构资质优良，建议通过。</p>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium truncate">营业执照</p>
+                                        <p class="text-xs text-slate-400">营业执照.pdf</p>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">查看</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-blue-50 rounded-lg mr-3">
+                                        <i class="fa fa-image text-blue-500"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium truncate">机构logo</p>
+                                        <p class="text-xs text-slate-400">logo.png</p>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">查看</button>
+                                </div>
+                                <div class="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-3">
+                                        <i class="fa fa-file-pdf-o text-red-500"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium truncate">金融许可证</p>
+                                        <p class="text-xs text-slate-400">金融许可证.pdf</p>
+                                    </div>
+                                    <button class="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors">查看</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
-                        <h4 class="text-sm font-bold text-orange-700 mb-4 flex items-center">
-                            <i class="fa fa-edit mr-2"></i>复审操作
-                        </h4>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-sm font-medium text-slate-700 mb-2 block">复审结论</label>
-                                <div class="flex space-x-6">
-                                    <label class="flex items-center space-x-2 cursor-pointer">
-                                        <input type="radio" name="review-result" value="pass" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-slate-700">
-                                            <i class="fa fa-check-circle text-green-500 mr-1"></i>通过
-                                        </span>
-                                    </label>
-                                    <label class="flex items-center space-x-2 cursor-pointer">
-                                        <input type="radio" name="review-result" value="reject" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-slate-700">
-                                            <i class="fa fa-times-circle text-red-500 mr-1"></i>拒绝
-                                        </span>
-                                    </label>
+                        <div>
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                <span class="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">2</span>
+                                </span>
+                                机构基本信息
+                            </h5>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 ml-7">
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">机构名称</label>
+                                    <p class="text-sm text-slate-800 font-medium">中国建设银行福建省分行</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">机构类型</label>
+                                    <p class="text-sm text-slate-800">银行</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">统一社会信用代码</label>
+                                    <p class="text-sm text-slate-800 font-mono">91350000158142860A</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">经营地址</label>
+                                    <p class="text-sm text-slate-800">福建省福州市</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">详细地址</label>
+                                    <p class="text-sm text-slate-800">鼓楼区五四路162号</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">法定代表人姓名</label>
+                                    <p class="text-sm text-slate-800">张行长</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">注册资本</label>
+                                    <p class="text-sm text-slate-800">100亿</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">企业注册年份</label>
+                                    <p class="text-sm text-slate-800">1954年</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">开户银行</label>
+                                    <p class="text-sm text-slate-800">中国建设银行</p>
+                                </div>
+                                <div class="md:col-span-2 bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">开户账号（基本账户）</label>
+                                    <p class="text-sm text-slate-800 font-mono">1234567890123456789</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">联系电话</label>
+                                    <p class="text-sm text-slate-800">0591-87838888</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">电子邮箱</label>
+                                    <p class="text-sm text-slate-800">fjcb@ccb.com</p>
+                                </div>
+                                <div class="md:col-span-3 bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">业务范围</label>
+                                    <p class="text-sm text-slate-800">电子保函业务、贷款业务、存款业务、结算业务等</p>
                                 </div>
                             </div>
-                            <div>
-                                <label class="text-sm font-medium text-slate-700 mb-2 block">复审意见</label>
-                                <textarea rows="4" class="w-full px-4 py-3 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none" placeholder="请输入复审意见，如审核通过请说明理由，如拒绝请说明原因..."></textarea>
-                            </div>
-                            <div class="flex items-center justify-between pt-2">
-                                <div class="text-xs text-slate-500">
-                                    复审人：省级管理员 | 复审时间：<span id="review-time"></span>
+                        </div>
+
+                        <div>
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                                <span class="w-5 h-5 bg-blue-100 rounded flex items-center justify-center mr-2">
+                                    <span class="text-blue-600 text-xs font-bold">3</span>
+                                </span>
+                                经办人信息
+                            </h5>
+                            <div class="grid grid-cols-2 gap-3 ml-7">
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">经办人</label>
+                                    <p class="text-sm text-slate-800">张三</p>
+                                </div>
+                                <div class="bg-slate-50 rounded-lg p-3">
+                                    <label class="text-xs text-slate-400 mb-1 block">经办人联系方式</label>
+                                    <p class="text-sm text-slate-800">13800138001</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- 状态对应操作区 -->
+                <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50">
+                    <!-- 已认证 - 直接审核 -->
+                    <div id="audit-content-certified" class="hidden">
+                        <div class="bg-green-50 rounded-xl p-4 border border-green-100 mb-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fa fa-check-circle text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-green-800">机构已完成认证，可直接进行审核</p>
+                                    <p class="text-xs text-green-600 mt-0.5">请填写审核结论和意见后提交</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-semibold text-slate-700 mb-2.5 block">审核结论 <span class="text-red-500">*</span></label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center cursor-pointer px-4 py-2.5 border border-green-200 bg-green-50/50 rounded-lg hover:bg-green-50 transition-colors">
+                                        <input type="radio" name="audit-result" value="pass" class="mr-2.5 text-green-600">
+                                        <span class="text-sm text-slate-700 font-medium">审核通过</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer px-4 py-2.5 border border-red-200 bg-red-50/50 rounded-lg hover:bg-red-50 transition-colors">
+                                        <input type="radio" name="audit-result" value="reject" class="mr-2.5 text-red-600">
+                                        <span class="text-sm text-slate-700 font-medium">审核不通过</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-semibold text-slate-700 mb-2.5 block">审核意见 <span class="text-red-500">*</span></label>
+                                <textarea rows="3" id="audit-comment" class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none resize-none transition-all" placeholder="请输入审核意见..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 待分配账号 -->
+                    <div id="audit-content-pending-account" class="hidden">
+                        <div class="bg-blue-50 rounded-xl p-4 border border-blue-100 mb-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fa fa-user-plus text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-blue-800">请先为机构分配账号</p>
+                                    <p class="text-xs text-blue-600 mt-0.5">待机构完成认证后，再进行审核</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-4 border border-slate-200">
+                            <h5 class="text-sm font-semibold text-slate-700 mb-3">账号信息</h5>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs text-slate-400 mb-1.5 block">登录账号</label>
+                                    <div class="relative">
+                                        <input type="text" id="account-username" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50" readonly>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-slate-400 mb-1.5 block">初始密码</label>
+                                    <div class="relative">
+                                        <input type="password" id="account-password" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50 pr-10" readonly>
+                                        <button onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                            <i class="fa fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="generateAccount()" class="mt-3 text-xs text-blue-600 hover:text-blue-700 flex items-center">
+                                <i class="fa fa-refresh mr-1"></i>重新生成账号
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 待认证 -->
+                    <div id="audit-content-pending-certify" class="hidden">
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-100 mb-4">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fa fa-clock-o text-orange-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-orange-800">请等待机构完成认证后再进行审核</p>
+                                    <p class="text-xs text-orange-600 mt-0.5">可发送提醒通知催促机构尽快完成认证</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-4 border border-slate-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h5 class="text-sm font-semibold text-slate-700">提醒机构认证</h5>
+                                    <p class="text-xs text-slate-500 mt-1">机构尚未完成认证，点击发送提醒通知</p>
+                                </div>
+                                <button onclick="sendRemindCertify()" class="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm flex items-center shadow-sm">
+                                    <i class="fa fa-paper-plane mr-2"></i>发送提醒
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex justify-end space-x-4">
-                <button onclick="closeReviewModal()" class="px-6 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition-colors flex items-center">
-                    <i class="fa fa-times mr-2"></i>取消
+
+            <div class="flex items-center justify-end space-x-3 px-6 py-4 border-t border-slate-100 bg-white">
+                <button onclick="closeAuditModal()" class="px-5 py-2.5 border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition-colors font-medium text-sm">
+                    取消
                 </button>
-                <button onclick="submitReview()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
-                    <i class="fa fa-check mr-2"></i>提交复审
+                <button id="audit-submit-btn" onclick="submitAudit()" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center font-medium text-sm shadow-sm shadow-blue-500/20">
+                    <i class="fa fa-check mr-2"></i>提交审核
                 </button>
             </div>
         </div>
     </div>
+
 
     <script>
         function toggleSubMenu(menuId) {
@@ -1100,9 +1146,31 @@
             modal.classList.remove('hidden');
         }
 
-        function openDetail(name) {
+        function openDetail(name, status, auditTime, auditOpinion) {
             document.getElementById('detail-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            document.getElementById('detail-org-name').textContent = name;
+            
+            const auditResultContainer = document.getElementById('detail-audit-result');
+            const passResult = document.getElementById('detail-audit-result-pass');
+            const rejectResult = document.getElementById('detail-audit-result-reject');
+            
+            auditResultContainer.classList.add('hidden');
+            passResult.classList.add('hidden');
+            rejectResult.classList.add('hidden');
+            
+            if (status === 'pass') {
+                auditResultContainer.classList.remove('hidden');
+                passResult.classList.remove('hidden');
+                if (auditTime) document.getElementById('detail-audit-time-pass').textContent = auditTime;
+                if (auditOpinion) document.getElementById('detail-audit-opinion-pass').textContent = auditOpinion;
+            } else if (status === 'reject') {
+                auditResultContainer.classList.remove('hidden');
+                rejectResult.classList.remove('hidden');
+                if (auditTime) document.getElementById('detail-audit-time-reject').textContent = auditTime;
+                if (auditOpinion) document.getElementById('detail-audit-opinion-reject').textContent = auditOpinion;
+            }
         }
 
         function closeDetailModal() {
@@ -1110,18 +1178,24 @@
             document.body.style.overflow = '';
         }
 
-        function showTab(tabName) {
-            document.getElementById('tab-certification').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600', 'bg-blue-50');
-            document.getElementById('tab-certification').classList.add('text-slate-500', 'hover:text-slate-700', 'hover:bg-slate-50');
-            document.getElementById('tab-record').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600', 'bg-blue-50');
-            document.getElementById('tab-record').classList.add('text-slate-500', 'hover:text-slate-700', 'hover:bg-slate-50');
+        function showDetailTab(tabName) {
+            const cityTab = document.getElementById('detail-tab-city');
+            const certTab = document.getElementById('detail-tab-cert');
+            const cityContent = document.getElementById('detail-tab-content-city');
+            const certContent = document.getElementById('detail-tab-content-cert');
             
-            document.getElementById('tab-content-certification').classList.add('hidden');
-            document.getElementById('tab-content-record').classList.add('hidden');
+            cityTab.classList.toggle('text-blue-600', tabName === 'city');
+            cityTab.classList.toggle('border-blue-600', tabName === 'city');
+            cityTab.classList.toggle('text-slate-500', tabName !== 'city');
+            cityTab.classList.toggle('border-transparent', tabName !== 'city');
             
-            document.getElementById('tab-' + tabName).classList.remove('text-slate-500', 'hover:text-slate-700', 'hover:bg-slate-50');
-            document.getElementById('tab-' + tabName).classList.add('text-blue-600', 'border-b-2', 'border-blue-600', 'bg-blue-50');
-            document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+            certTab.classList.toggle('text-blue-600', tabName === 'cert');
+            certTab.classList.toggle('border-blue-600', tabName === 'cert');
+            certTab.classList.toggle('text-slate-500', tabName !== 'cert');
+            certTab.classList.toggle('border-transparent', tabName !== 'cert');
+            
+            cityContent.classList.toggle('hidden', tabName !== 'city');
+            certContent.classList.toggle('hidden', tabName !== 'cert');
         }
 
         function generateRandomString(length) {
@@ -1143,9 +1217,9 @@
             document.getElementById('account-password').value = password;
         }
 
-        function togglePassword(event) {
+        function togglePassword() {
             const passwordInput = document.getElementById('account-password');
-            const icon = event.target;
+            const icon = passwordInput.nextElementSibling.querySelector('i');
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.remove('fa-eye');
@@ -1157,46 +1231,73 @@
             }
         }
 
-        function openAudit(name, type) {
-            if (type === '复审') {
-                openReview(name);
-                return;
-            }
+        function switchAuditTab(tab) {
+            document.getElementById('audit-tab-city').classList.toggle('text-blue-600', tab === 'city');
+            document.getElementById('audit-tab-city').classList.toggle('border-blue-600', tab === 'city');
+            document.getElementById('audit-tab-city').classList.toggle('text-slate-500', tab !== 'city');
+            document.getElementById('audit-tab-city').classList.toggle('border-transparent', tab !== 'city');
+            
+            document.getElementById('audit-tab-cert').classList.toggle('text-blue-600', tab === 'cert');
+            document.getElementById('audit-tab-cert').classList.toggle('border-blue-600', tab === 'cert');
+            document.getElementById('audit-tab-cert').classList.toggle('text-slate-500', tab !== 'cert');
+            document.getElementById('audit-tab-cert').classList.toggle('border-transparent', tab !== 'cert');
+            
+            document.getElementById('audit-tab-content-city').classList.toggle('hidden', tab !== 'city');
+            document.getElementById('audit-tab-content-cert').classList.toggle('hidden', tab !== 'cert');
+        }
+
+        let currentAuditStatus = '';
+
+        function openAudit(name, status) {
+            currentAuditStatus = status;
             document.getElementById('audit-org-name').textContent = name;
-            generateAccount();
+            
+            switchAuditTab('city');
+            
+            document.getElementById('audit-content-certified').classList.add('hidden');
+            document.getElementById('audit-content-pending-account').classList.add('hidden');
+            document.getElementById('audit-content-pending-certify').classList.add('hidden');
+            
+            const submitBtn = document.getElementById('audit-submit-btn');
+            const statusBadge = document.getElementById('audit-org-status');
+            
+            if (status === 'certified') {
+                document.getElementById('audit-org-type').textContent = '担保公司';
+                document.getElementById('audit-org-status').textContent = '已认证';
+                statusBadge.className = 'status-badge bg-green-100 text-green-700 text-xs px-2 py-0.5';
+                document.getElementById('audit-modal-title').textContent = '机构备案审核';
+                document.getElementById('audit-modal-subtitle').textContent = '审核机构备案申请并填写审核意见';
+                document.getElementById('audit-content-certified').classList.remove('hidden');
+                document.getElementById('audit-comment').value = '';
+                document.querySelectorAll('input[name="audit-result"]').forEach(r => r.checked = false);
+                submitBtn.innerHTML = '<i class="fa fa-check mr-2"></i>提交审核';
+                submitBtn.className = 'px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center font-medium text-sm shadow-sm shadow-blue-500/20';
+                submitBtn.onclick = submitAudit;
+            } else if (status === 'pending_account') {
+                document.getElementById('audit-org-type').textContent = '银行';
+                document.getElementById('audit-org-status').textContent = '待分配账号';
+                statusBadge.className = 'status-badge bg-blue-100 text-blue-700 text-xs px-2 py-0.5';
+                document.getElementById('audit-modal-title').textContent = '分配机构账号';
+                document.getElementById('audit-modal-subtitle').textContent = '为机构分配登录账号，待认证后进行审核';
+                document.getElementById('audit-content-pending-account').classList.remove('hidden');
+                generateAccount();
+                submitBtn.innerHTML = '<i class="fa fa-send mr-2"></i>确认分配';
+                submitBtn.className = 'px-6 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors flex items-center font-medium text-sm shadow-sm shadow-purple-500/20';
+                submitBtn.onclick = submitAssignAccount;
+            } else if (status === 'pending_certify') {
+                document.getElementById('audit-org-type').textContent = '保险公司';
+                document.getElementById('audit-org-status').textContent = '待认证';
+                statusBadge.className = 'status-badge bg-orange-100 text-orange-700 text-xs px-2 py-0.5';
+                document.getElementById('audit-modal-title').textContent = '机构备案审核';
+                document.getElementById('audit-modal-subtitle').textContent = '等待机构完成认证，可发送提醒通知';
+                document.getElementById('audit-content-pending-certify').classList.remove('hidden');
+                submitBtn.innerHTML = '<i class="fa fa-check mr-2"></i>确定';
+                submitBtn.className = 'px-6 py-2.5 bg-slate-600 text-white rounded-xl hover:bg-slate-700 transition-colors flex items-center font-medium text-sm';
+                submitBtn.onclick = closeAuditModal;
+            }
+            
             document.getElementById('audit-modal').classList.remove('hidden');
             document.body.style.overflow = 'hidden';
-        }
-
-        function openReview(name) {
-            document.getElementById('review-org-name').textContent = name;
-            document.getElementById('review-time').textContent = new Date().toLocaleString('zh-CN');
-            document.getElementById('review-modal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeReviewModal() {
-            document.getElementById('review-modal').classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-
-        function submitReview() {
-            const result = document.querySelector('input[name="review-result"]:checked');
-            const comment = document.querySelector('#review-modal textarea').value;
-            
-            if (!result) {
-                alert('请选择复审结论');
-                return;
-            }
-            
-            if (!comment.trim()) {
-                alert('请填写复审意见');
-                return;
-            }
-
-            const resultText = result.value === 'pass' ? '通过' : '拒绝';
-            alert(`复审已提交！\n复审结论：${resultText}\n复审意见：${comment}`);
-            closeReviewModal();
         }
 
         function closeAuditModal() {
@@ -1206,7 +1307,7 @@
 
         function submitAudit() {
             const result = document.querySelector('input[name="audit-result"]:checked');
-            const comment = document.querySelector('textarea').value;
+            const comment = document.getElementById('audit-comment').value;
             
             if (!result) {
                 alert('请选择审核结论');
@@ -1218,9 +1319,23 @@
                 return;
             }
 
-            const resultText = result.value === 'pass' ? '通过' : '拒绝';
-            alert(`初审已提交！\n审核结论：${resultText}\n审核意见：${comment}`);
+            const resultText = result.value === 'pass' ? '审核通过' : '审核不通过';
+            alert(`审核已提交！\n审核结论：${resultText}\n审核意见：${comment}`);
             closeAuditModal();
+        }
+
+        function submitAssignAccount() {
+            const username = document.getElementById('account-username').value;
+            alert(`账号分配成功！\n登录账号：${username}\n初始密码已发送至机构联系人手机。\n待机构完成认证后可进行审核。`);
+            closeAuditModal();
+        }
+
+        function sendRemindCertify() {
+            const name = document.getElementById('audit-org-name').textContent;
+            if (confirm(`是否发送提醒通知给【${name}】？`)) {
+                alert(`已向【${name}】发送认证提醒通知！`);
+                closeAuditModal();
+            }
         }
 
         document.querySelectorAll('#detail-modal, #audit-modal').forEach(modal => {

@@ -406,6 +406,7 @@
                                 <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-11</td>
                                 <td class="px-6 py-4"><span class="status-badge bg-amber-100 text-amber-700">待审核</span></td>
                                 <td class="px-6 py-4 text-right">
+                                    <button onclick="openReviewModal('view', '中国工商银行泉州分行')" class="px-3 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold hover:bg-slate-200 transition-colors mr-1.5">查看</button>
                                     <button onclick="openReviewModal('business', '中国工商银行泉州分行')" class="px-3 py-1 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 transition-colors">审核</button>
                                 </td>
                             </tr>
@@ -416,7 +417,28 @@
                                 <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-10</td>
                                 <td class="px-6 py-4"><span class="status-badge bg-amber-100 text-amber-700">待审核</span></td>
                                 <td class="px-6 py-4 text-right">
+                                    <button onclick="openReviewModal('view', '中国建设银行福州分行')" class="px-3 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold hover:bg-slate-200 transition-colors mr-1.5">查看</button>
                                     <button onclick="openReviewModal('business', '中国建设银行福州分行')" class="px-3 py-1 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 transition-colors">审核</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 text-slate-700">厦门市</td>
+                                <td class="px-6 py-4 font-bold text-slate-700">中国农业银行厦门分行</td>
+                                <td class="px-6 py-4 text-slate-500">预付款保函</td>
+                                <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-08</td>
+                                <td class="px-6 py-4"><span class="status-badge bg-green-100 text-green-700">已通过</span></td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="openReviewModal('view', '中国农业银行厦门分行', 'pass')" class="px-3 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold hover:bg-slate-200 transition-colors">查看</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 text-slate-700">漳州市</td>
+                                <td class="px-6 py-4 font-bold text-slate-700">福建兴业担保有限公司</td>
+                                <td class="px-6 py-4 text-slate-500">投标保函</td>
+                                <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-05</td>
+                                <td class="px-6 py-4"><span class="status-badge bg-red-100 text-red-700">已驳回</span></td>
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="openReviewModal('view', '福建兴业担保有限公司', 'reject')" class="px-3 py-1 bg-slate-100 text-slate-600 rounded text-xs font-bold hover:bg-slate-200 transition-colors">查看</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -427,130 +449,358 @@
     </div>
 
     <div id="review-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden transform scale-95 transition-transform duration-300">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
-                        <i class="fa fa-check-square-o text-xl"></i>
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col transform scale-95 transition-transform duration-300">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-white flex-shrink-0">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fa fa-check-square-o text-blue-600 text-lg"></i>
                     </div>
                     <div>
-                        <h3 id="modal-title" class="text-lg font-bold text-slate-800">机构展业审核</h3>
-                        <p class="text-xs text-slate-400">请核对申请材料并录入审核结果</p>
+                        <h3 class="text-lg font-bold text-slate-800" id="modal-title">机构展业审核</h3>
+                        <p class="text-xs text-slate-500">审核机构展业申请并填写审核意见</p>
                     </div>
                 </div>
-                <button onclick="closeReviewModal()" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 transition-colors">
+                <button onclick="closeReviewModal()" class="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
                     <i class="fa fa-times text-lg"></i>
                 </button>
             </div>
             
-            <div class="p-0 max-h-[80vh] overflow-y-auto">
-                <div id="modal-content" class="flex flex-col p-6 space-y-8">
-                    <div class="space-y-6">
-                        <div class="bg-slate-50 rounded-xl p-4">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">机构信息</span>
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-6 py-5">
+                    <!-- 机构概览卡片 -->
+                    <div class="bg-gradient-to-br from-slate-50 to-blue-50/30 rounded-xl p-5 border border-slate-100 mb-5">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center">
+                                <img src="https://ui-avatars.com/api/?name=ICBC&background=1e40af&color=fff&size=128" class="w-14 h-14 rounded-xl shadow-sm object-cover mr-4 border border-slate-100" alt="机构logo">
+                                <div>
+                                    <h4 class="text-base font-bold text-slate-800" id="modal-org-name">中国工商银行泉州分行</h4>
+                                    <div class="flex items-center mt-1 space-x-3">
+                                        <span class="text-xs text-slate-500">银行</span>
+                                        <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                        <span class="text-xs text-slate-500">泉州市</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase">机构名称</label>
-                                    <p class="text-sm font-bold text-slate-700" id="modal-org-name">中国工商银行泉州分行</p>
-                                </div>
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase">申报地市</label>
-                                    <p class="text-sm text-slate-700">泉州市</p>
-                                </div>
+                            <div class="text-right">
+                                <p class="text-xs text-slate-400 mb-1">申请产品</p>
+                                <span class="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">投标保函</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 标签页导航 -->
+                    <div class="flex items-center space-x-1 mb-4 border-b border-slate-100">
+                        <button onclick="switchReviewTab('apply')" id="review-tab-apply" class="px-4 py-2.5 text-sm font-medium text-blue-600 border-b-2 border-blue-600 -mb-px transition-all">
+                            <i class="fa fa-file-text-o mr-1.5"></i>申请信息
+                        </button>
+                        <button onclick="switchReviewTab('city')" id="review-tab-city" class="px-4 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 border-b-2 border-transparent hover:border-slate-300 -mb-px transition-all">
+                            <i class="fa fa-sitemap mr-1.5"></i>市级端产品接入审核
+                        </button>
+                    </div>
+
+                    <!-- 申请信息标签页 -->
+                    <div id="review-tab-content-apply" class="space-y-4">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">机构名称</label>
+                                <p class="text-sm text-slate-800 font-medium" id="modal-org-name-apply">中国工商银行泉州分行</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">机构类型</label>
+                                <p class="text-sm text-slate-800">银行</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">申报地市</label>
+                                <p class="text-sm text-slate-800">泉州市</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">产品类型</label>
+                                <p class="text-sm text-slate-800">投标保函</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <label class="text-xs text-slate-400 mb-1 block">申请日期</label>
+                                <p class="text-sm text-slate-800">2026-03-11</p>
                             </div>
                         </div>
 
-                        <div class="bg-slate-50 rounded-xl p-4">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">展业申请信息</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase">产品类型</label>
-                                    <p class="text-sm text-slate-700">投标保函</p>
-                                </div>
-                                <div>
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase">申请日期</label>
-                                    <p class="text-sm text-slate-700">2026-03-11</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-slate-50 rounded-xl p-4">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">申请材料</span>
-                            </div>
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <label class="text-xs text-slate-400 mb-3 block font-medium">申请材料</label>
                             <div class="space-y-2">
-                                <div class="flex items-center p-3 bg-white rounded-lg">
-                                    <i class="fa fa-file-pdf-o text-red-500 mr-3"></i>
-                                    <span class="text-sm text-slate-700">展业申请书.pdf</span>
-                                    <button class="ml-auto text-xs text-blue-600 font-bold hover:underline">查看</button>
+                                <div class="flex items-center p-3 bg-white rounded-lg border border-slate-200">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-4">
+                                        <i class="fa fa-file-pdf-o text-red-500 text-lg"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium">展业申请书.pdf</p>
+                                        <p class="text-xs text-slate-400">1.2 MB</p>
+                                    </div>
+                                    <button class="px-3 py-1.5 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors flex items-center">
+                                        <i class="fa fa-eye mr-1"></i>查看
+                                    </button>
                                 </div>
-                                <div class="flex items-center p-3 bg-white rounded-lg">
-                                    <i class="fa fa-file-pdf-o text-red-500 mr-3"></i>
-                                    <span class="text-sm text-slate-700">产品资质证明.pdf</span>
-                                    <button class="ml-auto text-xs text-blue-600 font-bold hover:underline">查看</button>
+                                <div class="flex items-center p-3 bg-white rounded-lg border border-slate-200">
+                                    <div class="flex items-center justify-center w-10 h-10 bg-red-50 rounded-lg mr-4">
+                                        <i class="fa fa-file-pdf-o text-red-500 text-lg"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-slate-800 font-medium">产品资质证明.pdf</p>
+                                        <p class="text-xs text-slate-400">3.5 MB</p>
+                                    </div>
+                                    <button class="px-3 py-1.5 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors flex items-center">
+                                        <i class="fa fa-eye mr-1"></i>查看
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="audit-section" class="space-y-6 pt-6 border-t border-slate-100">
-                        <section>
-                            <h4 class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center">
-                                <span class="w-1 h-3 bg-amber-500 rounded-full mr-2"></span>审核处理
-                            </h4>
-                            <div class="space-y-6">
-                                <div class="space-y-3">
-                                    <label class="text-xs font-bold text-slate-500 flex items-center justify-between">
-                                        <span>审核结论</span>
-                                        <span class="text-[10px] font-medium text-slate-400">必填项</span>
-                                    </label>
-                                    <div class="flex gap-4">
-                                        <label class="flex-1 relative cursor-pointer group">
-                                            <input type="radio" name="review_result" value="pass" checked class="peer hidden">
-                                            <div class="flex flex-col items-center p-4 border-2 border-slate-100 rounded-2xl bg-slate-50 transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50/50 peer-checked:shadow-lg peer-checked:shadow-emerald-100 group-hover:border-slate-200">
-                                                <div class="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 transition-all peer-checked:bg-emerald-500">
-                                                    <i class="fa fa-check text-slate-400 peer-checked:text-white"></i>
+                    <!-- 市级端产品接入审核标签页 -->
+                    <div id="review-tab-content-city" class="hidden space-y-4">
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <button onclick="switchCityStep(1)" id="city-step-1" class="city-step-tab flex-1 text-center py-2 px-1 rounded-lg border border-emerald-200 bg-emerald-50 transition-all ring-2 ring-blue-400 ring-offset-1">
+                                <div class="text-xs font-medium text-emerald-700">产品材料</div>
+                                <div class="text-[10px] mt-0.5 text-emerald-600">✓ 已通过</div>
+                            </button>
+                            <i class="fa fa-angle-right text-slate-300 text-xs"></i>
+                            <button onclick="switchCityStep(2)" id="city-step-2" class="city-step-tab flex-1 text-center py-2 px-1 rounded-lg border border-emerald-200 bg-emerald-50 transition-all">
+                                <div class="text-xs font-medium text-emerald-700">技术调试</div>
+                                <div class="text-[10px] mt-0.5 text-emerald-600">✓ 已通过</div>
+                            </button>
+                            <i class="fa fa-angle-right text-slate-300 text-xs"></i>
+                            <button onclick="switchCityStep(3)" id="city-step-3" class="city-step-tab flex-1 text-center py-2 px-1 rounded-lg border border-emerald-200 bg-emerald-50 transition-all">
+                                <div class="text-xs font-medium text-emerald-700">上线验收</div>
+                                <div class="text-[10px] mt-0.5 text-emerald-600">✓ 已通过</div>
+                            </button>
+                            <i class="fa fa-angle-right text-slate-300 text-xs"></i>
+                            <button onclick="switchCityStep(4)" id="city-step-4" class="city-step-tab flex-1 text-center py-2 px-1 rounded-lg border border-emerald-200 bg-emerald-50 transition-all">
+                                <div class="text-xs font-medium text-emerald-700">首单验证</div>
+                                <div class="text-[10px] mt-0.5 text-emerald-600">✓ 已通过</div>
+                            </button>
+                        </div>
+
+                        <div id="city-step-content" class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                                <div id="city-step-1-content" class="city-step-content space-y-4">
+                                    <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg">
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">保函类型</div><div class="text-sm font-medium text-slate-800">投标保函</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">接入地市</div><div class="text-sm font-medium text-slate-800">泉州市</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">产品名称</div><div class="text-sm font-medium text-slate-800">投标保函</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">费率标准</div><div class="text-sm font-medium text-slate-800">0.5%-1.2%</div></div>
+                                        <div class="col-span-2"><div class="text-[11px] text-slate-500 mb-0.5">产品介绍</div><div class="text-sm font-medium text-slate-800">为投标企业提供的担保服务，保障投标活动的顺利进行。</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">办理时效</div><div class="text-sm font-medium text-slate-800">最快1个工作日</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">金融机构</div><div class="text-sm font-medium text-slate-800">中国工商银行泉州分行</div></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[11px] text-slate-500 mb-2 font-medium">办理条件</div>
+                                        <div class="text-sm text-slate-700 bg-slate-50 p-3 rounded-lg">1. 企业信用等级A级及以上；2. 无重大违法违规记录；3. 具备相应的资质</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[11px] text-slate-500 mb-2 font-medium">附件材料</div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fa fa-file-pdf-o text-red-400"></i>
+                                                    <span class="text-sm text-slate-700">产品服务协议.pdf</span>
                                                 </div>
-                                                <span class="text-xs font-bold text-slate-500 peer-checked:text-emerald-700">同意申请</span>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
                                             </div>
-                                        </label>
-                                        <label class="flex-1 relative cursor-pointer group">
-                                            <input type="radio" name="review_result" value="reject" class="peer hidden">
-                                            <div class="flex flex-col items-center p-4 border-2 border-slate-100 rounded-2xl bg-slate-50 transition-all peer-checked:border-red-500 peer-checked:bg-red-50/50 peer-checked:shadow-lg peer-checked:shadow-red-100 group-hover:border-slate-200">
-                                                <div class="w-8 h-8 bg-white rounded-full shadow-sm flex items-center justify-center mb-2 transition-all peer-checked:bg-red-500">
-                                                    <i class="fa fa-times text-slate-400 peer-checked:text-white"></i>
-                                                </div>
-                                                <span class="text-xs font-bold text-slate-500 peer-checked:text-red-700">驳回申请</span>
-                                            </div>
-                                        </label>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                        <div class="flex items-center gap-2 mb-1"><i class="fa fa-check-circle text-green-600 text-sm"></i><span class="font-semibold text-green-800 text-sm">审核结果：通过</span></div>
+                                        <div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>产品材料齐全，费率标准符合监管要求，同意进入技术调试阶段。</div>
+                                        <div class="text-xs text-slate-500">审核人：张慧 · 2026-03-16 10:15</div>
                                     </div>
                                 </div>
 
-                                <div id="reject-reason" class="hidden">
-                                    <label class="text-xs font-bold text-slate-500 flex items-center justify-between">
-                                        <span>驳回原因</span>
-                                        <span class="text-[10px] font-medium text-slate-400">必填项</span>
-                                    </label>
-                                    <textarea rows="3" placeholder="请输入驳回原因..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                                <div id="city-step-2-content" class="city-step-content hidden space-y-4">
+                                    <div>
+                                        <div class="text-[11px] text-slate-500 mb-2 font-medium">附件材料（共9份）</div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">交易中心对接函.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">第三方营业执照.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">对接人员授权书.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">金融机构服务承诺函.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-word-o text-blue-400"></i><span class="text-sm text-slate-700">保密协议.docx</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-word-o text-blue-400"></i><span class="text-sm text-slate-700">对接协议.docx</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">保险自营平台声明.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">电子保函业务流程说明.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">机构整改说明.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                        <div class="flex items-center gap-2 mb-1"><i class="fa fa-check-circle text-green-600 text-sm"></i><span class="font-semibold text-green-800 text-sm">审核结果：通过</span></div>
+                                        <div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>技术对接测试通过，接口调用正常，数据加密符合安全规范。</div>
+                                        <div class="text-xs text-slate-500">审核人：王强 · 2026-03-17 14:30</div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label class="text-xs font-bold text-slate-500">审核意见</label>
-                                    <textarea rows="3" placeholder="请输入审核意见（选填）..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                                <div id="city-step-3-content" class="city-step-content hidden space-y-4">
+                                    <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg">
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">数据存储服务器地址</div><div class="text-sm font-medium text-slate-800 font-mono">https://storage.bank-fj.com/v1/data</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">收费标准</div><div class="text-sm font-medium text-slate-800">0.003 (千分之三)</div></div>
+                                        <div class="col-span-2"><div class="text-[11px] text-slate-500 mb-0.5">售后服务电话、技术支持电话</div><div class="text-sm font-medium text-slate-800">400-888-8888 / 0591-88888888</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">apply_url</div><div class="text-sm font-medium text-slate-800 font-mono">https://api.bank-fj.com/apply</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">app_key</div><div class="text-sm font-medium text-slate-800 font-mono">fj_bank_88889999</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">app_secret</div><div class="text-sm font-medium text-slate-800 font-mono">************************</div></div>
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">decrypt_key</div><div class="text-sm font-medium text-slate-800 font-mono">********************************</div></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[11px] text-slate-500 mb-2 font-medium">附件材料</div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">业务系统等级保护证明材料.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">上线验收报告.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                        <div class="flex items-center gap-2 mb-1"><i class="fa fa-check-circle text-green-600 text-sm"></i><span class="font-semibold text-green-800 text-sm">审核结果：通过</span></div>
+                                        <div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>系统上线验收合格，安全扫描通过，符合等级保护要求。</div>
+                                        <div class="text-xs text-slate-500">审核人：赵琳 · 2026-03-18 09:30</div>
+                                    </div>
+                                </div>
+
+                                <div id="city-step-4-content" class="city-step-content hidden space-y-4">
+                                    <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg">
+                                        <div><div class="text-[11px] text-slate-500 mb-0.5">首单验证日期</div><div class="text-sm font-medium text-slate-800">2026-03-22</div></div>
+                                    </div>
+                                    <div>
+                                        <div class="text-[11px] text-slate-500 mb-2 font-medium">附件材料</div>
+                                        <div class="space-y-2">
+                                            <div class="flex justify-between items-center p-3 border border-slate-200 rounded-lg bg-white">
+                                                <div class="flex items-center gap-2"><i class="fa fa-file-pdf-o text-red-400"></i><span class="text-sm text-slate-700">首单测试报告.pdf</span></div>
+                                                <button class="text-blue-600 text-xs font-medium hover:underline">预览</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                        <div class="flex items-center gap-2 mb-1"><i class="fa fa-check-circle text-green-600 text-sm"></i><span class="font-semibold text-green-800 text-sm">审核结果：通过</span></div>
+                                        <div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>首单验证成功，交易流程顺畅，各项指标均达到预期。</div>
+                                        <div class="text-xs text-slate-500">审核人：陈刚 · 2026-03-22 16:00</div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                    <div id="audit-section" class="mt-4 pt-4 border-t border-slate-100">
+                        <h4 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fa fa-gavel mr-2 text-blue-600"></i>审核处理
+                        </h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs font-medium text-slate-500 mb-2 block"><span class="text-red-500 mr-0.5">*</span>审核结论</label>
+                                <div class="flex gap-3">
+                                    <label class="flex-1 relative cursor-pointer group">
+                                        <input type="radio" name="review_result" value="pass" checked class="peer hidden">
+                                        <div class="flex items-center justify-center gap-2 py-2.5 px-3 border-2 border-slate-100 rounded-lg bg-slate-50 transition-all peer-checked:border-emerald-500 peer-checked:bg-emerald-50/50 peer-checked:shadow-sm peer-checked:shadow-emerald-100 group-hover:border-slate-200">
+                                            <div class="w-5 h-5 bg-white rounded-full shadow-sm flex items-center justify-center transition-all peer-checked:bg-emerald-500">
+                                                <i class="fa fa-check text-slate-400 peer-checked:text-white text-xs"></i>
+                                            </div>
+                                            <span class="text-xs font-medium text-slate-500 peer-checked:text-emerald-700">同意申请</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex-1 relative cursor-pointer group">
+                                        <input type="radio" name="review_result" value="reject" class="peer hidden">
+                                        <div class="flex items-center justify-center gap-2 py-2.5 px-3 border-2 border-slate-100 rounded-lg bg-slate-50 transition-all peer-checked:border-red-500 peer-checked:bg-red-50/50 peer-checked:shadow-sm peer-checked:shadow-red-100 group-hover:border-slate-200">
+                                            <div class="w-5 h-5 bg-white rounded-full shadow-sm flex items-center justify-center transition-all peer-checked:bg-red-500">
+                                                <i class="fa fa-times text-slate-400 peer-checked:text-white text-xs"></i>
+                                            </div>
+                                            <span class="text-xs font-medium text-slate-500 peer-checked:text-red-700">驳回申请</span>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
-                        </section>
+
+                            <div id="pass-opinion" class="">
+                                <label class="text-xs font-medium text-slate-500 mb-1 block">审核意见<span class="text-slate-400 ml-1">（选填）</span></label>
+                                <textarea rows="2" placeholder="请输入审核意见..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                            </div>
+
+                            <div id="reject-reason" class="hidden">
+                                <label class="text-xs font-medium text-slate-500 mb-1 block"><span class="text-red-500 mr-0.5">*</span>驳回原因</label>
+                                <textarea id="reject-reason-text" rows="3" placeholder="请输入驳回原因..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="audit-result-section" class="mt-4 pt-4 border-t border-slate-100 hidden">
+                        <h4 class="text-sm font-semibold text-slate-700 mb-3 flex items-center">
+                            <i class="fa fa-file-text-o mr-2 text-blue-600"></i>审核结果
+                        </h4>
+                        <div class="space-y-3">
+                            <div id="audit-result-pass" class="hidden">
+                                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                                    <div class="flex items-center mb-2">
+                                        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fa fa-check text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold text-green-700">审核通过</div>
+                                            <div class="text-xs text-green-600" id="audit-pass-time">2026-03-09 14:30</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="text-xs text-slate-500 mb-1">审核意见</div>
+                                        <div class="text-sm text-slate-700 bg-white/60 rounded-lg p-3" id="audit-pass-opinion">材料齐全，符合展业条件，同意展业申请。</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="audit-result-reject" class="hidden">
+                                <div class="bg-gradient-to-r from-red-50 to-rose-50 rounded-xl p-4 border border-red-100">
+                                    <div class="flex items-center mb-2">
+                                        <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fa fa-times text-white text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold text-red-700">审核驳回</div>
+                                            <div class="text-xs text-red-600" id="audit-reject-time">2026-03-06 10:15</div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <div class="text-xs text-slate-500 mb-1">驳回原因</div>
+                                        <div class="text-sm text-slate-700 bg-white/60 rounded-lg p-3" id="audit-reject-reason">产品资质证明材料不完整，缺少关键的风险评估报告，请补充后重新提交。</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end space-x-4">
-                    <button onclick="closeReviewModal()" class="px-6 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-white transition-all">取消</button>
-                    <button id="submit-btn" onclick="submitReview()" class="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">确认展业通过</button>
-                </div>
+            <div id="review-footer-btns" class="flex items-center justify-end px-6 py-4 border-t border-slate-100 bg-white flex-shrink-0">
+                <button onclick="closeReviewModal()" class="px-6 py-2.5 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200 transition-colors font-medium text-sm mr-3">取消</button>
+                <button id="submit-btn" onclick="submitReview()" class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium text-sm">确认通过</button>
             </div>
         </div>
     </div>
@@ -565,13 +815,74 @@
             }
         }
 
-        function openReviewModal(type, orgName) {
+        function openReviewModal(type, orgName, status) {
             document.getElementById('modal-org-name').textContent = orgName;
+            const applyOrgName = document.getElementById('modal-org-name-apply');
+            if (applyOrgName) applyOrgName.textContent = orgName;
+            
+            const auditSection = document.getElementById('audit-section');
+            const auditResultSection = document.getElementById('audit-result-section');
+            const auditResultPass = document.getElementById('audit-result-pass');
+            const auditResultReject = document.getElementById('audit-result-reject');
+            const footerBtns = document.getElementById('review-footer-btns');
+            
+            if (type === 'view') {
+                if (auditSection) auditSection.classList.add('hidden');
+                if (status) {
+                    if (auditResultSection) auditResultSection.classList.remove('hidden');
+                    if (auditResultPass) auditResultPass.classList.toggle('hidden', status !== 'pass');
+                    if (auditResultReject) auditResultReject.classList.toggle('hidden', status !== 'reject');
+                } else {
+                    if (auditResultSection) auditResultSection.classList.add('hidden');
+                }
+                if (footerBtns) {
+                    const cancelBtn = footerBtns.querySelector('.bg-slate-100');
+                    if (cancelBtn) cancelBtn.style.display = 'none';
+                    const submitBtn = document.getElementById('submit-btn');
+                    if (submitBtn) {
+                        submitBtn.textContent = '关闭';
+                        submitBtn.onclick = closeReviewModal;
+                    }
+                }
+            } else {
+                if (auditSection) auditSection.classList.remove('hidden');
+                if (auditResultSection) auditResultSection.classList.add('hidden');
+                if (footerBtns) {
+                    const cancelBtn = footerBtns.querySelector('.bg-slate-100');
+                    if (cancelBtn) cancelBtn.style.display = '';
+                    const submitBtn = document.getElementById('submit-btn');
+                    if (submitBtn) {
+                        submitBtn.textContent = '确认通过';
+                        submitBtn.onclick = submitReview;
+                    }
+                }
+            }
+            
             document.getElementById('review-modal').classList.remove('hidden');
             setTimeout(() => {
                 document.getElementById('review-modal').classList.remove('opacity-0');
                 document.querySelector('#review-modal > div').classList.remove('scale-95');
             }, 10);
+        }
+
+        function switchReviewTab(tabName) {
+            const applyTab = document.getElementById('review-tab-apply');
+            const cityTab = document.getElementById('review-tab-city');
+            const applyContent = document.getElementById('review-tab-content-apply');
+            const cityContent = document.getElementById('review-tab-content-city');
+            
+            applyTab.classList.toggle('text-blue-600', tabName === 'apply');
+            applyTab.classList.toggle('border-blue-600', tabName === 'apply');
+            applyTab.classList.toggle('text-slate-500', tabName !== 'apply');
+            applyTab.classList.toggle('border-transparent', tabName !== 'apply');
+            
+            cityTab.classList.toggle('text-blue-600', tabName === 'city');
+            cityTab.classList.toggle('border-blue-600', tabName === 'city');
+            cityTab.classList.toggle('text-slate-500', tabName !== 'city');
+            cityTab.classList.toggle('border-transparent', tabName !== 'city');
+            
+            applyContent.classList.toggle('hidden', tabName !== 'apply');
+            cityContent.classList.toggle('hidden', tabName !== 'city');
         }
 
         function closeReviewModal() {
@@ -582,15 +893,49 @@
             }, 300);
         }
 
+        function switchCityStep(step) {
+            const tabs = document.querySelectorAll('.city-step-tab');
+            const contents = document.querySelectorAll('.city-step-content');
+            
+            tabs.forEach((tab, index) => {
+                const isActive = index + 1 === step;
+                if (isActive) {
+                    tab.classList.add('ring-2', 'ring-blue-400', 'ring-offset-1');
+                    tab.classList.remove('border-transparent');
+                } else {
+                    tab.classList.remove('ring-2', 'ring-blue-400', 'ring-offset-1');
+                }
+            });
+            
+            contents.forEach((content, index) => {
+                content.classList.toggle('hidden', index + 1 !== step);
+            });
+        }
+
         document.querySelectorAll('input[name="review_result"]').forEach(radio => {
             radio.addEventListener('change', function() {
-                document.getElementById('reject-reason').style.display = this.value === 'reject' ? 'block' : 'none';
+                const isReject = this.value === 'reject';
+                document.getElementById('pass-opinion').style.display = isReject ? 'none' : 'block';
+                document.getElementById('reject-reason').style.display = isReject ? 'block' : 'none';
                 const btn = document.getElementById('submit-btn');
-                btn.textContent = this.value === 'reject' ? '确认驳回' : '确认展业通过';
+                btn.textContent = isReject ? '确认驳回' : '确认通过';
             });
         });
 
         function submitReview() {
+            const checked = document.querySelector('input[name="review_result"]:checked');
+            if (!checked) {
+                showNotification('error', '请选择审核结论');
+                return;
+            }
+            const result = checked.value;
+            if (result === 'reject') {
+                const rejectReason = document.getElementById('reject-reason-text').value.trim();
+                if (!rejectReason) {
+                    showNotification('error', '请输入驳回原因');
+                    return;
+                }
+            }
             showConfirm('确认提交', '确定要提交审核结果吗？', function() {
                 closeReviewModal();
                 showNotification('success', '审核结果已提交');
