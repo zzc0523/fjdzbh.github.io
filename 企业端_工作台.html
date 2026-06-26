@@ -1117,117 +1117,126 @@
 </head>
 <body class="bg-gray-50 font-sans">
     <!-- 顶部导航栏 -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
-                            <i class="fa fa-shield text-white text-xl"></i>
+    <header class="sticky top-0 z-50 shadow-md">
+        <!-- 上层导航栏 -->
+        <div class="bg-primary">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-14">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa fa-shield text-primary text-xl"></i>
                         </div>
-                        <div>
-                            <h1 class="text-xl font-bold text-gray-900">福建省电子保函服务平台</h1>
-                            <p class="text-xs text-gray-500">企业端</p>
+                        <h1 class="text-xl font-bold text-white">福建省电子保函服务平台</h1>
+                    </div>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="门户端_首页.html" class="text-white hover:text-accent transition-colors">首页</a>
+                        <a href="企业端_保函申请.html" class="text-white hover:text-accent transition-colors">保函超市</a>
+                        <a href="门户端_新闻中心.html" class="text-white hover:text-accent transition-colors">平台资讯</a>
+                        <a href="门户端_保函验真.html" class="text-white hover:text-accent transition-colors">保函验真</a>
+                        <a href="门户端_帮助中心.html" class="text-white hover:text-accent transition-colors">帮助中心</a>
+                        <div class="w-px h-4 bg-white/30 mx-2"></div>
+                        <a href="企业端_工作台.html" class="text-white font-medium border-b-2 border-accent h-14 flex items-center">工作台</a>
+                        <a href="企业端_订单管理.html" class="text-white hover:text-accent transition-colors">订单管理</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative" id="notification-wrapper">
+                            <button class="text-white hover:text-accent relative p-1 transition-colors" id="notification-btn">
+                                <i class="fa fa-bell"></i>
+                                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-primary"></span>
+                            </button>
+                            <!-- 消息下拉菜单 -->
+                            <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
+                                <div class="p-3 border-b border-gray-100 flex justify-between items-center">
+                                    <h3 class="text-sm font-bold text-gray-800">最新通知</h3>
+                                    <a href="企业端_消息中心.html" class="text-xs text-primary hover:underline">查看全部</a>
+                                </div>
+                                <div class="max-h-96 overflow-y-auto">
+                                    <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
+                                        <div class="flex items-start">
+                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fa fa-file-text text-primary text-xs"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-bold text-gray-900 truncate">保函申请审核通过</p>
+                                                <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的投标保函（FJ202603110001）已审核通过，请及时支付保费。</p>
+                                                <p class="text-[10px] text-gray-400 mt-1">10分钟前</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
+                                        <div class="flex items-start">
+                                            <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fa fa-exclamation-triangle text-yellow-600 text-xs"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-bold text-gray-900 truncate">保函即将到期提醒</p>
+                                                <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您有一笔履约保函将于3天后到期，请处理。</p>
+                                                <p class="text-[10px] text-gray-400 mt-1">2小时前</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
+                                        <div class="flex items-start">
+                                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                                <i class="fa fa-check-circle text-green-600 text-xs"></i>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-xs font-bold text-gray-900 truncate">账户认证成功</p>
+                                                <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的企业实名认证已更新成功。</p>
+                                                <p class="text-[10px] text-gray-400 mt-1">昨天</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-2 bg-gray-50 text-center">
+                                    <button class="text-xs text-gray-500 hover:text-primary transition-colors">全部标记为已读</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative" id="user-dropdown-wrapper">
+                            <button class="flex items-center space-x-2 text-white hover:text-accent transition-colors" id="user-dropdown-btn">
+                                <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                                    <i class="fa fa-user text-white text-sm"></i>
+                                </div>
+                                <span class="text-sm hidden md:inline">138****8888</span>
+                                <i class="fa fa-chevron-down text-xs text-white/70"></i>
+                            </button>
+                            <!-- 个人中心下拉菜单 -->
+                            <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
+                                <div class="p-4 border-b border-gray-100">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fa fa-user text-gray-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-bold">138****8888</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="py-2">
+                                    <a href="企业端_企业认证.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                        <i class="fa fa-id-card mr-3 w-5 text-center"></i>
+                                        <span>企业认证</span>
+                                    </a>
+                                    <a href="企业端_发票管理.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                        <i class="fa fa-file-text mr-3 w-5 text-center"></i>
+                                        <span>发票管理</span>
+                                    </a>
+                                    <a href="企业端_我的账户.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                        <i class="fa fa-user-circle mr-3 w-5 text-center"></i>
+                                        <span>我的账户</span>
+                                    </a>
+                                    <div class="border-t border-gray-100 mt-2 pt-2">
+                                        <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors" id="logout-btn">
+                                            <i class="fa fa-sign-out mr-3 w-5 text-center"></i>
+                                            <span>退出登录</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="企业端_工作台.html" class="text-primary font-medium">工作台</a>
-                    <a href="企业端_保函申请.html" class="text-gray-600 hover:text-primary transition-colors">保函申请</a>
-                    <a href="企业端_订单管理.html" class="text-gray-600 hover:text-primary transition-colors">订单管理</a>
-                    <a href="企业端_企业认证.html" class="text-gray-600 hover:text-primary transition-colors">企业认证</a>
-                    <div class="relative" id="notification-wrapper">
-                        <button class="text-gray-600 hover:text-primary relative p-1 transition-colors" id="notification-btn">
-                            <i class="fa fa-bell"></i>
-                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                        </button>
-                        <!-- 消息下拉菜单 -->
-                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
-                            <div class="p-3 border-b border-gray-100 flex justify-between items-center">
-                                <h3 class="text-sm font-bold text-gray-800">最新通知</h3>
-                                <a href="企业端_消息中心.html" class="text-xs text-primary hover:underline">查看全部</a>
-                            </div>
-                            <div class="max-h-96 overflow-y-auto">
-                                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
-                                    <div class="flex items-start">
-                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fa fa-file-text text-primary text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-bold text-gray-900 truncate">保函申请审核通过</p>
-                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的投标保函（FJ202603110001）已审核通过，请及时支付保费。</p>
-                                            <p class="text-[10px] text-gray-400 mt-1">10分钟前</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 transition-colors">
-                                    <div class="flex items-start">
-                                        <div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fa fa-exclamation-triangle text-yellow-600 text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-bold text-gray-900 truncate">保函即将到期提醒</p>
-                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您有一笔履约保函将于3天后到期，请处理。</p>
-                                            <p class="text-[10px] text-gray-400 mt-1">2小时前</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="p-3 hover:bg-gray-50 cursor-pointer transition-colors">
-                                    <div class="flex items-start">
-                                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                            <i class="fa fa-check-circle text-green-600 text-xs"></i>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-bold text-gray-900 truncate">账户认证成功</p>
-                                            <p class="text-[10px] text-gray-500 mt-0.5 line-clamp-2">您的企业实名认证已更新成功。</p>
-                                            <p class="text-[10px] text-gray-400 mt-1">昨天</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-2 bg-gray-50 text-center">
-                                <button class="text-xs text-gray-500 hover:text-primary transition-colors">全部标记为已读</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relative" id="user-dropdown-wrapper">
-                        <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors" id="user-dropdown-btn">
-                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                <i class="fa fa-user text-gray-600"></i>
-                            </div>
-                            <span class="hidden md:inline">138****8888</span>
-                        </button>
-                        <!-- 个人中心下拉菜单 -->
-                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-100 z-[100] overflow-hidden">
-                            <div class="p-4 border-b border-gray-100">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fa fa-user text-gray-600"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-bold">138****8888</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="py-2">
-                                <a href="企业端_发票管理.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                                    <i class="fa fa-file-text mr-3 w-5 text-center"></i>
-                                    <span>发票管理</span>
-                                </a>
-                                <a href="企业端_我的账户.html" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                                    <i class="fa fa-user-circle mr-3 w-5 text-center"></i>
-                                    <span>我的账户</span>
-                                </a>
-                                <div class="border-t border-gray-100 mt-2 pt-2">
-                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-50 transition-colors" id="logout-btn">
-                                        <i class="fa fa-sign-out mr-3 w-5 text-center"></i>
-                                        <span>退出登录</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
             </div>
         </div>
     </header>

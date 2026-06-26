@@ -39,38 +39,45 @@
 </head>
 <body class="bg-gray-50">
     <!-- 顶部导航栏 -->
-    <header class="bg-white shadow-sm sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                        <i class="fa fa-shield text-white text-xl"></i>
+    <header class="sticky top-0 z-40 shadow-md">
+        <!-- 上层：门户导航 -->
+        <div class="bg-primary">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-14">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-3">
+                            <i class="fa fa-shield text-primary text-xl"></i>
+                        </div>
+                        <h1 class="text-lg font-bold text-white">福建省电子保函服务平台</h1>
                     </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-gray-800">福建省电子保函服务平台</h1>
-                        <p class="text-[10px] text-gray-500">企业端</p>
+                    <nav class="hidden md:flex items-center space-x-6">
+                        <a href="门户端_首页.html" class="text-white hover:text-accent transition-colors text-sm">首页</a>
+                        <a href="企业端_保函申请.html" class="text-white hover:text-accent transition-colors text-sm">保函超市</a>
+                        <a href="门户端_新闻中心.html" class="text-white hover:text-accent transition-colors text-sm">平台资讯</a>
+                        <a href="门户端_保函验真.html" class="text-white hover:text-accent transition-colors text-sm">保函验真</a>
+                        <a href="门户端_帮助中心.html" class="text-white hover:text-accent transition-colors text-sm">帮助中心</a>
+                        <div class="w-px h-4 bg-white/30 mx-2"></div>
+                        <a href="企业端_工作台.html" class="text-white hover:text-accent transition-colors text-sm">工作台</a>
+                        <a href="企业端_订单管理.html" class="text-white hover:text-accent transition-colors text-sm">订单管理</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative" id="notification-wrapper">
+                            <button class="text-white hover:text-accent relative p-1 transition-colors" id="notification-btn">
+                                <i class="fa fa-bell"></i>
+                                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-primary"></span>
+                            </button>
+                        </div>
+                        <div class="relative" id="user-dropdown-wrapper">
+                            <button class="flex items-center space-x-2 text-white hover:text-accent transition-colors" id="user-dropdown-btn">
+                                <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center">
+                                    <i class="fa fa-user text-white text-sm"></i>
+                                </div>
+                                <span class="text-sm hidden md:inline">138****8888</span>
+                                <i class="fa fa-chevron-down text-xs text-white/70"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="企业端_工作台.html" class="text-gray-600 hover:text-primary transition-colors">工作台</a>
-                    <a href="企业端_保函申请.html" class="text-gray-600 hover:text-primary transition-colors">保函申请</a>
-                    <a href="企业端_订单管理.html" class="text-gray-600 hover:text-primary transition-colors">订单管理</a>
-                    <a href="企业端_企业认证.html" class="text-primary font-medium">企业认证</a>
-                    <div class="relative" id="notification-wrapper">
-                        <button class="text-gray-600 hover:text-primary relative p-1 transition-colors" id="notification-btn">
-                            <i class="fa fa-bell"></i>
-                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-                        </button>
-                    </div>
-                    <div class="relative" id="user-dropdown-wrapper">
-                        <button class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors" id="user-dropdown-btn">
-                            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                <i class="fa fa-user text-gray-600"></i>
-                            </div>
-                            <span class="hidden md:inline">138****8888</span>
-                        </button>
-                    </div>
-                </nav>
             </div>
         </div>
     </header>
