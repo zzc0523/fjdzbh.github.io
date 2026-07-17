@@ -3,10 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>保函订单</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
+        // 机构端订单数据
+        const institutionOrderData = {
+            'BO202603240001': { id: 'BO202603240001', projectName: '福建省文化中心装修工程', projectCode: 'FZ2026002', sectionName: '室内精装修工程', sectionCode: 'FZ2026002-01', bondType: '履约保函', amount: '2,000,000.00', premium: '待计算', applyTime: '2026-03-24 10:20', status: '申请中', statusCode: 'audit' },
+            'BO202603240012': { id: 'BO202603240012', projectName: '南平市某大桥加固工程', projectCode: 'NP2026008', sectionName: '桥面铺装工程', sectionCode: 'NP2026008-01', bondType: '投标保函', amount: '1,200,000.00', premium: '6,000.00', applyTime: '2026-03-24 11:45', status: '待支付', statusCode: 'unpaid' },
+            'BO202603230001': { id: 'BO202603230001', projectName: '福州市城市轨道交通5号线工程', projectCode: 'FZ2026001', sectionName: '5号线一期工程', sectionCode: 'FZ2026001-01', bondType: '投标保函', amount: '1,000,000.00', premium: '10,000.00', applyTime: '2026-03-23 09:15', status: '已支付', statusCode: 'pending' },
+            'BO202603200003': { id: 'BO202603200003', projectName: '泉州市晋江大桥扩建工程', projectCode: 'QZ2026003', sectionName: '主桥扩建工程', sectionCode: 'QZ2026003-01', bondType: '预付款保函', amount: '2,500,000.00', premium: '25,000.00', applyTime: '2026-03-20 10:45', status: '已出函', statusCode: 'completed' },
+            'BO202603190002': { id: 'BO202603190002', projectName: '漳州市文化中心建设工程', projectCode: 'ZZ2026004', sectionName: '主体工程', sectionCode: 'ZZ2026004-01', bondType: '质量保函', amount: '1,500,000.00', premium: '15,000.00', applyTime: '2026-03-19 16:20', status: '审批不通过', statusCode: 'rejected' },
+            'BO202603180004': { id: 'BO202603180004', projectName: '莆田市体育中心改造工程', projectCode: 'PT2026005', sectionName: '体育馆改造工程', sectionCode: 'PT2026005-01', bondType: '工资保函', amount: '800,000.00', premium: '8,000.00', applyTime: '2026-03-18 11:05', status: '已支付', statusCode: 'pending' },
+            'BO202603150006': { id: 'BO202603150006', projectName: '宁德市新能源产业园配套工程', projectCode: 'ND2026006', sectionName: '配套管道工程', sectionCode: 'ND2026006-01', bondType: '投标保函', amount: '600,000.00', premium: '6,000.00', applyTime: '2026-03-15 09:30', status: '已取消', statusCode: 'cancelled' },
+            'BO202603100007': { id: 'BO202603100007', projectName: '龙岩市第一医院分院装修工程', projectCode: 'LY2026007', sectionName: '门诊楼装修工程', sectionCode: 'LY2026007-01', bondType: '履约保函', amount: '1,800,000.00', premium: '18,000.00', applyTime: '2026-03-10 14:00', status: '退保中', statusCode: 'refunding', refundData: { applyDate: '2026-04-01', reason: '项目取消/流标', applyAmount: '150,000.00' } },
+            'BO202603050008': { id: 'BO202603050008', projectName: '三明市沙县湿地公园景观工程', projectCode: 'SM2026008', sectionName: '景观绿化工程', sectionCode: 'SM2026008-01', bondType: '质量保函', amount: '1,200,000.00', premium: '12,000.00', applyTime: '2026-03-05 10:00', status: '已退保', statusCode: 'refunded', refundData: { applyDate: '2026-02-10', reason: '项目取消/流标', applyAmount: '250,000.00', refundDate: '2026-02-12', refundAmount: '250,000.00' } },
+            'BO202602280009': { id: 'BO202602280009', projectName: '南安市滨江商务区开发工程', projectCode: 'NA2026009', sectionName: '商务区道路工程', sectionCode: 'NA2026009-01', bondType: '预付款保函', amount: '2,000,000.00', premium: '20,000.00', applyTime: '2026-02-28 16:00', status: '拒绝退保', statusCode: 'refuse', refundData: { applyDate: '2026-04-05', reason: '误操作申请', rejectReason: '不符合退保条件，项目已进入开标阶段' } }
+        };
+
+        // 通用模态框函数（参照市级端）
+        function showModal(title, content, buttons = [], size = 'max-w-2xl') {
+            let modal = document.getElementById('modal');
+            if (modal) modal.remove();
+
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+
+            if (buttons.length === 0) {
+                buttons = [{ text: '关闭', className: 'px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors', action: 'close' }];
+            }
+
+            const buttonsHtml = buttons.map(btn => `
+                <button class="${btn.className || 'bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90'}" data-action="${btn.action || 'custom'}">
+                    ${btn.text}
+                </button>
+            `).join('');
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl border border-slate-200 ${size} w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="modal-container">
+                    <div class="flex justify-between items-center border-b border-slate-200 p-4 bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-900">${title}</h3>
+                        <button id="closeModalIcon" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 max-h-[80vh] overflow-y-auto">
+                        ${content}
+                    </div>
+                    <div class="flex justify-end border-t border-slate-200 p-4 space-x-3 bg-slate-50">
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                const container = document.getElementById('modal-container');
+                container.classList.remove('scale-95', 'opacity-0');
+                container.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            function closeModal() {
+                modal.style.opacity = '0';
+                const container = document.getElementById('modal-container');
+                container.classList.remove('scale-100', 'opacity-100');
+                container.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { if (modal.parentNode) modal.remove(); }, 300);
+            }
+
+            document.getElementById('closeModalIcon').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            modal.querySelectorAll('button').forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (buttons[index]?.onClick) {
+                        buttons[index].onClick();
+                    } else if (buttons[index]?.action === 'close') {
+                        closeModal();
+                    }
+                });
+            });
+
+            // Tab切换功能
+            modal.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetTab = tab.getAttribute('data-tab');
+
+                    modal.querySelectorAll('[data-tab]').forEach(t => {
+                        t.classList.remove('border-primary', 'text-primary');
+                        t.classList.add('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+                    });
+
+                    tab.classList.remove('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+                    tab.classList.add('border-primary', 'text-primary');
+
+                    modal.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('active');
+                    });
+
+                    const activePane = modal.querySelector(`#${targetTab}`);
+                    if (activePane) {
+                        activePane.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // 状态徽章样式（参照市级端）
+        function getStatusStyle(status) {
+            switch(status) {
+                case '申请中': return 'bg-blue-100 text-blue-700';
+                case '审批不通过': return 'bg-red-100 text-red-700';
+                case '待支付': return 'bg-rose-100 text-rose-700';
+                case '已支付': return 'bg-emerald-100 text-emerald-700';
+                case '已出函': return 'bg-green-100 text-green-700';
+                case '已取消': return 'bg-gray-100 text-gray-600';
+                case '退保中': return 'bg-orange-100 text-orange-700';
+                case '已退保': return 'bg-gray-100 text-gray-600';
+                case '拒绝退保': return 'bg-red-100 text-red-700';
+                default: return 'bg-blue-100 text-blue-700';
+            }
+        }
+
+        // 打开订单详情（入口：表格 onclick 调用）
+        function openOrderDetail(orderId, statusCode) {
+            const order = institutionOrderData[orderId];
+            if (!order) return;
+            showInstitutionOrderDetail(order);
+        }
+
+        // 生成订单详情弹窗内容（Tab：订单信息 / 保函信息 / 退保信息）
+        function showInstitutionOrderDetail(order) {
+            const showGuaranteeTab = !['申请中', '审批不通过', '已取消'].includes(order.status);
+            const showRefundTab = ['退保中', '已退保', '拒绝退保'].includes(order.status);
+
+            // 计算到期日期（开立日期 + 90天）
+            let expiryDateStr = '-';
+            if (order.applyTime) {
+                const applyDate = new Date(order.applyTime.split(' ')[0]);
+                if (!isNaN(applyDate.getTime())) {
+                    applyDate.setDate(applyDate.getDate() + 90);
+                    expiryDateStr = applyDate.toISOString().split('T')[0];
+                }
+            }
+
+            // 保函信息内容
+            let guaranteeInfoContent = '';
+            if (order.status === '待支付') {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函类型：</span><span class="text-sm text-gray-900">${order.bondType}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保证金金额（元）：</span><span class="text-sm text-gray-900">${order.amount}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函期限：</span><span class="text-sm text-gray-900">90天</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保费（元）：</span><span class="text-sm text-gray-900">${order.premium}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付状态：</span><span class="text-sm text-rose-600">待支付</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付截止：</span><span class="text-sm text-gray-900">2026-03-31 23:59:59</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-2">支付须知</h5>
+                        <div class="border border-gray-200 rounded-md p-4">
+                            <ul class="text-sm text-gray-600 space-y-2 list-disc pl-5">
+                                <li>请在支付截止时间前完成保费支付</li>
+                                <li>支付成功后，系统将自动通知承保机构</li>
+                                <li>如超过支付截止时间未支付，订单将自动取消</li>
+                            </ul>
+                        </div>
+                    </div>`;
+            } else if (order.status === '已支付') {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函类型：</span><span class="text-sm text-gray-900">${order.bondType}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保证金金额（元）：</span><span class="text-sm text-gray-900">${order.amount}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函期限：</span><span class="text-sm text-gray-900">90天</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保费（元）：</span><span class="text-sm text-gray-900">${order.premium}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付状态：</span><span class="text-sm text-emerald-600">已支付</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付时间：</span><span class="text-sm text-gray-900">${order.applyTime}</span></div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (['已出函', '退保中', '已退保', '拒绝退保'].includes(order.status)) {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函类型：</span><span class="text-sm text-gray-900">${order.bondType}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保证金金额（元）：</span><span class="text-sm text-gray-900">${order.amount}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函期限：</span><span class="text-sm text-gray-900">90天</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">开立日期：</span><span class="text-sm text-gray-900">${order.applyTime.split(' ')[0]}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">到期日期：</span><span class="text-sm text-gray-900">${expiryDateStr}</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保费（元）：</span><span class="text-sm text-gray-900">${order.premium}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付状态：</span><span class="text-sm text-emerald-600">已支付</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付时间：</span><span class="text-sm text-gray-900">${order.applyTime}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">发票状态：</span><span class="text-sm text-gray-900">已开具</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">发票编号：</span><span class="text-sm text-gray-900">F${order.id.replace('BO', '')}</span></div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函类型：</span><span class="text-sm text-gray-900">${order.bondType}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保证金金额（元）：</span><span class="text-sm text-gray-900">${order.amount}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保函期限：</span><span class="text-sm text-gray-900">90天</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">保费（元）：</span><span class="text-sm text-gray-900">${order.premium}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-28">支付状态：</span><span class="text-sm text-emerald-600">已支付</span></div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            // 退保信息内容
+            let refundInfoContent = '';
+            const refundData = order.refundData || {};
+            if (order.status === '退保中') {
+                refundInfoContent = `
+                    <div class="border border-gray-200 rounded-md p-4 bg-yellow-50 mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-2">退保状态</h5>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 w-24">当前状态：</span>
+                            <span class="text-sm text-yellow-600">退保审核中</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保申请信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">申请日期：</span><span class="text-sm text-gray-900">${refundData.applyDate || '-'}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">退保原因：</span><span class="text-sm text-gray-900">${refundData.reason || '-'}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">申请金额：</span><span class="text-sm text-gray-900">${refundData.applyAmount || '-'}</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保处理信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">审核状态：</span><span class="text-sm text-orange-600">待审核</span></div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (order.status === '已退保') {
+                refundInfoContent = `
+                    <div class="border border-gray-200 rounded-md p-4 bg-gray-50 mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-2">退保状态</h5>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 w-24">当前状态：</span>
+                            <span class="text-sm text-gray-600">已退保</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保申请信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">申请日期：</span><span class="text-sm text-gray-900">${refundData.applyDate || '-'}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">退保原因：</span><span class="text-sm text-gray-900">${refundData.reason || '-'}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">申请金额：</span><span class="text-sm text-gray-900">${refundData.applyAmount || '-'}</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保处理信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">审核状态：</span><span class="text-sm text-emerald-600">审核通过</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">退保日期：</span><span class="text-sm text-gray-900">${refundData.refundDate || '-'}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">退款金额：</span><span class="text-sm text-gray-900">${refundData.refundAmount || '-'}</span></div>
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (order.status === '拒绝退保') {
+                refundInfoContent = `
+                    <div class="border border-gray-200 rounded-md p-4 bg-red-50 mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-2">退保状态</h5>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 w-24">当前状态：</span>
+                            <span class="text-sm text-red-600">拒绝退保</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保申请信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">申请日期：</span><span class="text-sm text-gray-900">${refundData.applyDate || '-'}</span></div>
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">退保原因：</span><span class="text-sm text-gray-900">${refundData.reason || '-'}</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">处理信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex"><span class="text-sm text-gray-500 w-24">拒绝原因：</span><span class="text-sm text-red-600">${refundData.rejectReason || '-'}</span></div>
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            // 操作按钮（通过 showModal 的 buttons 参数渲染到弹窗底部）
+            const closeDetail = () => { const m = document.getElementById('modal'); if (m) m.remove(); };
+            let buttons = [
+                { text: '关闭', className: 'px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors', action: 'close' }
+            ];
+            if (order.statusCode === 'completed') {
+                buttons.push({ text: '<i class="fa fa-download mr-2"></i>下载保函', className: 'px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors', onClick: () => { closeDetail(); downloadBond(order.id); } });
+            }
+
+            const content = `
+                <div class="border border-gray-200 rounded-md p-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h4 class="text-xl font-semibold text-gray-900">${order.projectName}</h4>
+                            <div class="text-sm text-gray-500 mt-1">订单号：<span>${order.id}</span></div>
+                        </div>
+                        <span class="px-3 py-1 ${getStatusStyle(order.status)} rounded-full text-sm font-medium">${order.status}</span>
+                    </div>
+                    <div class="border-b border-gray-200 mb-6">
+                        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs" role="tablist">
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-primary text-primary rounded-t-lg active" id="project-tab" data-tab="project" type="button" role="tab" aria-controls="project" aria-selected="true">
+                                    <i class="fa fa-building mr-2"></i>订单信息
+                                </button>
+                            </li>
+                            ${showGuaranteeTab ? `
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" id="guarantee-tab" data-tab="guarantee" type="button" role="tab" aria-controls="guarantee" aria-selected="false">
+                                    <i class="fa fa-file-text mr-2"></i>保函信息
+                                </button>
+                            </li>` : ''}
+                            ${showRefundTab ? `
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" id="refund-tab" data-tab="refund" type="button" role="tab" aria-controls="refund" aria-selected="false">
+                                    <i class="fa fa-undo mr-2"></i>退保信息
+                                </button>
+                            </li>` : ''}
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="project">
+                            <div class="space-y-6 mb-6">
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-3">项目信息</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目名称：</span><span class="ml-3 text-sm text-gray-900">${order.projectName}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目编号：</span><span class="ml-3 text-sm text-gray-900">${order.projectCode}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段名称：</span><span class="ml-3 text-sm text-gray-900">${order.sectionName}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段编号：</span><span class="ml-3 text-sm text-gray-900">${order.sectionCode}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">招标企业：</span><span class="ml-3 text-sm text-gray-900">福州市城市建设投资集团有限公司</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金金额（元）：</span><span class="ml-3 text-sm text-gray-900">${order.amount}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金截止时间：</span><span class="ml-3 text-sm text-gray-900">2026-03-18 17:00</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">开标时间：</span><span class="ml-3 text-sm text-gray-900">2026-06-20 10:00</span></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-3">投保企业信息</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">投保企业名称：</span><span class="ml-3 text-sm text-gray-900">福建省建设工程有限公司</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">统一社会信用代码：</span><span class="ml-3 text-sm text-gray-900">91350100MA8RQ1X2Y3</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">法定代表人姓名：</span><span class="ml-3 text-sm text-gray-900">张三</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">法定代表人身份证号：</span><span class="ml-3 text-sm text-gray-900">350102198211302418</span></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-3">经办人信息</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人姓名：</span><span class="ml-3 text-sm text-gray-900">张三</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人身份证：</span><span class="ml-3 text-sm text-gray-900">350102198505202419</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人手机号：</span><span class="ml-3 text-sm text-gray-900">13800138000</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人邮箱：</span><span class="ml-3 text-sm text-gray-900">lisi@example.com</span></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        ${showGuaranteeTab ? `<div class="tab-pane" id="guarantee">${guaranteeInfoContent}</div>` : ''}
+                        ${showRefundTab ? `<div class="tab-pane" id="refund">${refundInfoContent}</div>` : ''}
+                    </div>
+                </div>
+            `;
+
+            showModal('订单详情', content, buttons, 'max-w-4xl');
+        }
         tailwind.config = {
             theme: {
                 extend: {
@@ -91,6 +500,14 @@
             opacity: 0;
             transform: scale(0.95);
             transition: opacity 200ms, transform 200ms;
+        }
+        
+        /* Tab切换样式 */
+        .tab-content .tab-pane {
+            display: none;
+        }
+        .tab-content .tab-pane.active {
+            display: block;
         }
     </style>
 </head>
@@ -196,18 +613,20 @@
                                 <option>退保中</option>
                                 <option>已退保</option>
                                 <option>拒绝退保</option>
-                                <option>理赔中</option>
-                                <option>已理赔</option>
-                                <option>拒绝理赔</option>
+                            </select>
+                            <select id="bondTypeSelect" class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                                <option>全部保函类型</option>
+                                <option>投标保函</option>
+                                <option>履约保函</option>
+                                <option>预付款保函</option>
+                                <option>质量保函</option>
+                                <option>工资保函</option>
                             </select>
                             <button id="searchButton" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors text-sm flex items-center">
                                 <i class="fa fa-search mr-2"></i>查询
                             </button>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors text-sm flex items-center" onclick="openAdvancedFilter()">
-                                <i class="fa fa-filter mr-2"></i>高级筛选
-                            </button>
                             <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors text-sm flex items-center">
                                 <i class="fa fa-download mr-2"></i>导出数据
                             </button>
@@ -215,19 +634,7 @@
                     </div>
                 </div>
                 
-                <!-- 订单状态Tab -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm mb-6">
-                    <div class="flex border-b border-slate-200 overflow-x-auto">
-                        <button class="px-6 py-4 text-sm font-medium text-primary border-b-2 border-primary whitespace-nowrap">全部</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">申请中</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">待支付</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">已支付</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">已出函</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">审批不通过</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">退保中</button>
-                        <button class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-primary transition-colors whitespace-nowrap">理赔中</button>
-                    </div>
-                </div>
+
 
                 <!-- 订单列表 -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -246,8 +653,8 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标段名称</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标段编号</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函金额</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保费</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保费（元）</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
@@ -278,7 +685,7 @@
                                         <div class="text-sm text-gray-900">履约保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥2,000,000.00</div>
+                                        <div class="text-sm text-gray-900">2,000,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-400">待计算</div>
@@ -319,10 +726,10 @@
                                          <div class="text-sm text-gray-900">投标保函</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm text-gray-900">¥1,200,000.00</div>
+                                         <div class="text-sm text-gray-900">1,200,000.00</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm text-gray-900 font-bold">¥6,000.00</div>
+                                         <div class="text-sm text-gray-900 font-bold">6,000.00</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
                                          <div class="text-sm text-gray-900">2026-03-24 11:45</div>
@@ -360,10 +767,10 @@
                                         <div class="text-sm text-gray-900">投标保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥1,000,000.00</div>
+                                        <div class="text-sm text-gray-900">1,000,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥10,000.00</div>
+                                        <div class="text-sm text-gray-900">10,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">2026-03-23 09:15</div>
@@ -403,10 +810,10 @@
                                         <div class="text-sm text-gray-900">预付款保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥2,500,000.00</div>
+                                        <div class="text-sm text-gray-900">2,500,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥25,000.00</div>
+                                        <div class="text-sm text-gray-900">25,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">2026-03-20 10:45</div>
@@ -445,10 +852,10 @@
                                         <div class="text-sm text-gray-900">质量保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥1,500,000.00</div>
+                                        <div class="text-sm text-gray-900">1,500,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥15,000.00</div>
+                                        <div class="text-sm text-gray-900">15,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">2026-03-19 16:20</div>
@@ -486,10 +893,10 @@
                                         <div class="text-sm text-gray-900">工资保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥800,000.00</div>
+                                        <div class="text-sm text-gray-900">800,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">¥8,000.00</div>
+                                        <div class="text-sm text-gray-900">8,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">2026-03-18 11:05</div>
@@ -501,6 +908,170 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603180004', 'pending')">查看</a>
+                                    </td>
+                                </tr>
+                                <!-- 已取消订单 -->
+                                <tr class="order-row hover:bg-gray-50 transition-colors" data-status="cancelled">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="mr-3 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                            <div class="text-sm font-medium text-gray-900">BO202603150006</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">宁德市新能源产业园配套工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">ND2026006</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">配套管道工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">ND2026006-01</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">投标保函</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">600,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">6,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-15 09:30</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                                            已取消
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603150006', 'cancelled')">查看</a>
+                                    </td>
+                                </tr>
+                                <!-- 退保中订单 -->
+                                <tr class="order-row hover:bg-gray-50 transition-colors" data-status="refunding">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="mr-3 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                            <div class="text-sm font-medium text-gray-900">BO202603100007</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">龙岩市第一医院分院装修工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">LY2026007</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">门诊楼装修工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">LY2026007-01</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">履约保函</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">1,800,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">18,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-10 14:00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-50 text-orange-600 border border-orange-200">
+                                            退保中
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603100007', 'refunding')">查看</a>
+                                    </td>
+                                </tr>
+                                <!-- 已退保订单 -->
+                                <tr class="order-row hover:bg-gray-50 transition-colors" data-status="refunded">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="mr-3 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                            <div class="text-sm font-medium text-gray-900">BO202603050008</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">三明市沙县湿地公园景观工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">SM2026008</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">景观绿化工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">SM2026008-01</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">质量保函</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">1,200,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">12,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-05 10:00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
+                                            已退保
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603050008', 'refunded')">查看</a>
+                                    </td>
+                                </tr>
+                                <!-- 拒绝退保订单 -->
+                                <tr class="order-row hover:bg-gray-50 transition-colors" data-status="refuse">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <input type="checkbox" class="mr-3 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                            <div class="text-sm font-medium text-gray-900">BO202602280009</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">南安市滨江商务区开发工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">NA2026009</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">商务区道路工程</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">NA2026009-01</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">预付款保函</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2,000,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">20,000.00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-02-28 16:00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-600 border border-red-200">
+                                            拒绝退保
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202602280009', 'refuse')">查看</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -529,192 +1100,6 @@
         </div>
     </div>
 
-    <!-- 订单详情弹窗 -->
-    <div id="orderDetailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl modal-content max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="p-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-gray-800">订单详情</h3>
-                <button onclick="document.getElementById('orderDetailModal').classList.add('hidden')" class="text-gray-500 hover:text-gray-700">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto flex-1">
-                <!-- 订单基本信息 -->
-                <div class="mb-6">
-                    <h4 class="text-sm font-medium text-gray-700 mb-3">基本信息</h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">订单编号</label>
-                            <input type="text" id="detail-order-id" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="BO202603230001">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">项目名称</label>
-                            <input type="text" id="detail-project-name" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="福州市城市轨道交通5号线工程">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">项目编号</label>
-                            <input type="text" id="detail-project-code" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="FZ2026001">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">标段名称</label>
-                            <input type="text" id="detail-section-name" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="5号线一期工程">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">标段编号</label>
-                            <input type="text" id="detail-section-code" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="FZ2026001-01">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">保函类型</label>
-                            <input type="text" id="detail-bond-type" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="投标保函">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">保函金额</label>
-                            <input type="text" id="detail-bond-amount" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="¥1,000,000.00">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">保费</label>
-                            <input type="text" id="detail-premium" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="¥10,000.00">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">申请时间</label>
-                            <input type="text" id="detail-apply-time" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="2026-03-23 09:15">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">状态</label>
-                            <input type="text" id="detail-status" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="待出函">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 申请人信息 -->
-                <div class="mb-6">
-                    <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
-                        <i class="fa fa-building mr-2 text-primary"></i>申请人基本信息
-                    </h4>
-                    <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg border border-slate-100">
-                        <div class="mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">申请人名称</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700" id="detail-applicant-name" disabled value="福建省建设工程有限公司">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">统一社会信用代码</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 font-mono" id="detail-applicant-code" disabled value="91350000MA348X7Y6Q">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">企业类型</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700" disabled value="有限责任公司">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">注册资本</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700" disabled value="5000万元人民币">
-                        </div>
-                        <div class="col-span-2 mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">注册地址</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700" disabled value="福建省福州市鼓楼区软件园A区">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">联系人</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700" id="detail-applicant-contact" disabled value="张三">
-                        </div>
-                        <div class="mb-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">联系电话</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700" id="detail-applicant-phone" disabled value="13800138000">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">电子邮箱</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-md bg-white text-slate-700 font-mono" disabled value="contact@fjconstruct.com">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 保函信息 -->
-                <div class="mb-6">
-                    <h4 class="text-sm font-medium text-gray-700 mb-3">保函信息</h4>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">保函编号</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">出具日期</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">有效期</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">保函状态</label>
-                            <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50 text-gray-500 disabled:cursor-not-allowed" disabled value="">
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 附件材料 -->
-                <div class="mb-6">
-                    <h4 class="text-sm font-medium text-gray-700 mb-3">附件材料</h4>
-                    <div class="space-y-3">
-                        <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                            <div class="flex items-center p-3 bg-gray-50 border-b border-gray-200">
-                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
-                                    <i class="fa fa-file-pdf-o text-red-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="text-sm font-medium text-gray-900">营业执照.pdf</h5>
-                                    <p class="text-xs text-gray-500">PDF 文件 · 1.2 MB</p>
-                                </div>
-                            </div>
-                            <div class="p-3 flex justify-end space-x-2">
-                                <button class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors text-sm flex items-center">
-                                    <i class="fa fa-eye mr-1"></i> 预览
-                                </button>
-                                <button class="px-3 py-1 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors text-sm flex items-center">
-                                    <i class="fa fa-download mr-1"></i> 下载
-                                </button>
-                            </div>
-                        </div>
-                        <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                            <div class="flex items-center p-3 bg-gray-50 border-b border-gray-200">
-                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mr-3">
-                                    <i class="fa fa-file-doc-o text-blue-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h5 class="text-sm font-medium text-gray-900">项目招标文件.docx</h5>
-                                    <p class="text-xs text-gray-500">Word 文件 · 2.5 MB</p>
-                                </div>
-                            </div>
-                            <div class="p-3 flex justify-end space-x-2">
-                                <button class="px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors text-sm flex items-center">
-                                    <i class="fa fa-eye mr-1"></i> 预览
-                                </button>
-                                <button class="px-3 py-1 bg-gray-50 text-gray-600 rounded-md hover:bg-gray-100 transition-colors text-sm flex items-center">
-                                    <i class="fa fa-download mr-1"></i> 下载
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 处理记录 -->
-                <div class="mb-6">
-                    <h4 class="text-sm font-medium text-gray-700 mb-3">处理记录</h4>
-                    <div class="space-y-3">
-                        <div class="p-3 border border-gray-200 rounded-md bg-gray-50">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-sm font-medium text-gray-900">系统</span>
-                                <span class="text-xs text-gray-500">2026-03-23 09:15</span>
-                            </div>
-                            <p class="text-sm text-gray-700">订单创建成功，等待处理</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 border-t border-gray-200 flex justify-end space-x-4" id="orderDetailActions">
-                <button onclick="document.getElementById('orderDetailModal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">关闭</button>
-                <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors">订单出函</button>
-            </div>
-        </div>
-    </div>
 
     <!-- 高级筛选弹窗 -->
     <div id="advancedFilterModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
@@ -822,7 +1207,7 @@
                             <input type="number" id="auditRate" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="例如: 0.5" step="0.01" oninput="calculatePremium()">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">保费金额 (元) <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">保费（元） <span class="text-red-500">*</span></label>
                             <input type="number" id="auditPremium" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-gray-50" placeholder="自动计算" readonly>
                         </div>
                     </div>
@@ -872,11 +1257,11 @@
                             <span id="issue-project-name" class="font-medium text-slate-900 text-right">-</span>
                         </div>
                         <div class="flex justify-between border-t border-slate-100 pt-2">
-                            <span class="text-slate-500">保函金额</span>
+                            <span class="text-slate-500">保证金金额（元）</span>
                             <span id="issue-bond-amount" class="font-bold text-slate-900">-</span>
                         </div>
                         <div class="flex justify-between border-t border-slate-100 pt-2">
-                            <span class="text-slate-500">保费金额</span>
+                            <span class="text-slate-500">保费（元）</span>
                             <span id="issue-premium" class="font-bold text-blue-600">-</span>
                         </div>
                     </div>
@@ -908,161 +1293,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="p-4 border-t border-gray-200 flex justify-end space-x-4 bg-slate-50/50">
-                <button onclick="document.getElementById('processOrderModal').classList.add('hidden')" class="px-6 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-bold">取消</button>
-                <button onclick="submitOrderIssue()" class="px-8 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors shadow-lg shadow-blue-200 text-sm font-bold">确认提交并出函</button>
+                <div class="p-4 border-t border-gray-200 flex justify-end space-x-4 bg-slate-50/50">
+                    <button onclick="document.getElementById('processOrderModal').classList.add('hidden')" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm font-bold">取消</button>
+                    <button onclick="submitOrderIssue()" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors shadow-lg shadow-blue-200 text-sm font-bold">确认提交并出函</button>
+                </div>
             </div>
         </div>
-    </div>
-
-    <script>
-        // 打开订单详情
-        function openOrderDetail(orderId, status) {
-            const modal = document.getElementById('orderDetailModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('modal-enter');
-            setTimeout(() => {
-                modal.classList.add('modal-enter-active');
-            }, 10);
-            
-            // 更新订单详情
-            document.getElementById('detail-order-id').value = orderId;
-            
-            // 根据订单ID更新项目信息和保费
-            let projectName = '';
-            let projectCode = '';
-            let sectionName = '';
-            let sectionCode = '';
-            let bondType = '';
-            let bondAmount = '';
-            let premium = '';
-            let applyTime = '';
-            let orderStatus = '';
-            
-            switch(orderId) {
-                case 'BO202603230001':
-                    projectName = '福州市城市轨道交通5号线工程';
-                    projectCode = 'FZ2026001';
-                    sectionName = '5号线一期工程';
-                    sectionCode = 'FZ2026001-01';
-                    bondType = '投标保函';
-                    bondAmount = '¥1,000,000.00';
-                    premium = '¥10,000.00';
-                    applyTime = '2026-03-23 09:15';
-                    orderStatus = '待出函';
-                    break;
-                case 'BO202603220005':
-                    projectName = '厦门市翔安国际机场建设工程';
-                    projectCode = 'XM2026002';
-                    sectionName = '航站楼工程';
-                    sectionCode = 'XM2026002-01';
-                    bondType = '履约保函';
-                    bondAmount = '¥5,000,000.00';
-                    premium = '¥50,000.00';
-                    applyTime = '2026-03-22 14:30';
-                    orderStatus = '已完成';
-                    break;
-                case 'BO202603200003':
-                    projectName = '泉州市晋江大桥扩建工程';
-                    projectCode = 'QZ2026003';
-                    sectionName = '主桥扩建工程';
-                    sectionCode = 'QZ2026003-01';
-                    bondType = '预付款保函';
-                    bondAmount = '¥2,500,000.00';
-                    premium = '¥25,000.00';
-                    applyTime = '2026-03-20 10:45';
-                    orderStatus = '已完成';
-                    break;
-                case 'BO202603190002':
-                    projectName = '漳州市文化中心建设工程';
-                    projectCode = 'ZZ2026004';
-                    sectionName = '主体工程';
-                    sectionCode = 'ZZ2026004-01';
-                    bondType = '质量保函';
-                    bondAmount = '¥1,500,000.00';
-                    premium = '¥15,000.00';
-                    applyTime = '2026-03-19 16:20';
-                    orderStatus = '已拒绝';
-                    break;
-                case 'BO202603180004':
-                    projectName = '莆田市体育中心改造工程';
-                    projectCode = 'PT2026005';
-                    sectionName = '体育馆改造工程';
-                    sectionCode = 'PT2026005-01';
-                    bondType = '工资保函';
-                    bondAmount = '¥800,000.00';
-                    premium = '¥8,000.00';
-                    applyTime = '2026-03-18 11:05';
-                    orderStatus = '待出函';
-                    break;
-                default:
-                    projectName = '';
-                    projectCode = '';
-                    sectionName = '';
-                    sectionCode = '';
-                    bondType = '';
-                    bondAmount = '';
-                    premium = '';
-                    applyTime = '';
-                    orderStatus = '';
-            }
-            
-            // 更新详情字段
-            document.getElementById('detail-project-name').value = projectName;
-            document.getElementById('detail-project-code').value = projectCode;
-            document.getElementById('detail-section-name').value = sectionName;
-            document.getElementById('detail-section-code').value = sectionCode;
-            document.getElementById('detail-bond-type').value = bondType;
-            document.getElementById('detail-bond-amount').value = bondAmount;
-            document.getElementById('detail-premium').value = premium;
-            document.getElementById('detail-apply-time').value = applyTime;
-            document.getElementById('detail-status').value = orderStatus;
-            
-            // 根据状态更新操作按钮
-            const actionsContainer = document.getElementById('orderDetailActions');
-            actionsContainer.innerHTML = '';
-            
-            // 添加关闭按钮
-            const closeButton = document.createElement('button');
-            closeButton.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors';
-            closeButton.textContent = '关闭';
-            closeButton.onclick = function() {
-                modal.classList.add('hidden');
-            };
-            actionsContainer.appendChild(closeButton);
-            
-            // 根据状态添加相应的操作按钮
-            if (status === 'pending') {
-                const processButton = document.createElement('button');
-                processButton.className = 'px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors ml-4';
-                processButton.textContent = '订单出函';
-                processButton.onclick = function() {
-                    modal.classList.add('hidden');
-                    issueOrder(orderId);
-                };
-                actionsContainer.appendChild(processButton);
-            } else if (status === 'completed') {
-                const downloadButton = document.createElement('button');
-                downloadButton.className = 'px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors ml-4';
-                downloadButton.textContent = '下载保函';
-                downloadButton.onclick = function() {
-                    alert('保函下载成功');
-                };
-                actionsContainer.appendChild(downloadButton);
-            } else if (status === 'rejected') {
-                const reviewButton = document.createElement('button');
-                reviewButton.className = 'px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors ml-4';
-                reviewButton.textContent = '重新审核';
-                reviewButton.onclick = function() {
-                    modal.classList.add('hidden');
-                    document.getElementById('processOrderModal').classList.remove('hidden');
-                    document.getElementById('process-order-id').value = orderId;
-                };
-                actionsContainer.appendChild(reviewButton);
-            }
-        }
         
+    <script>
         // 订单出函
         function issueOrder(orderId) {
             document.getElementById('processOrderModal').classList.remove('hidden');
@@ -1077,20 +1315,20 @@
                 case 'BO202603230001':
                     projectName = '福州市城市轨道交通5号线工程';
                     bondType = '投标保函';
-                    bondAmount = '¥1,000,000.00';
-                    premium = '¥10,000.00';
+                    bondAmount = '1,000,000.00';
+                    premium = '10,000.00';
                     break;
                 case 'BO202603180004':
                     projectName = '莆田市体育中心改造工程';
                     bondType = '工资保函';
-                    bondAmount = '¥800,000.00';
-                    premium = '¥8,000.00';
+                    bondAmount = '800,000.00';
+                    premium = '8,000.00';
                     break;
                 default:
                     projectName = '示例项目名称';
                     bondType = '履约保函';
-                    bondAmount = '¥500,000.00';
-                    premium = '¥5,000.00';
+                    bondAmount = '500,000.00';
+                    premium = '5,000.00';
             }
             
             document.getElementById('issue-order-id').textContent = orderId;
@@ -1143,14 +1381,23 @@
                 // 状态匹配逻辑
                 const rowStatus = row.dataset.status;
                 const matchesStatus = selectedStatus === '全部状态' || 
-                    (selectedStatus === '待审核' && rowStatus === 'audit') ||
+                    (selectedStatus === '申请中' && rowStatus === 'audit') ||
+                    (selectedStatus === '已取消' && rowStatus === 'cancelled') ||
+                    (selectedStatus === '审批不通过' && rowStatus === 'rejected') ||
                     (selectedStatus === '待支付' && rowStatus === 'unpaid') ||
-                    (selectedStatus === '待出函 (已支付)' && rowStatus === 'pending') ||
-                    (selectedStatus === '已完成' && rowStatus === 'completed') ||
-                    (selectedStatus === '已拒绝' && rowStatus === 'rejected');
+                    (selectedStatus === '已支付' && rowStatus === 'pending') ||
+                    (selectedStatus === '已出函' && rowStatus === 'completed') ||
+                    (selectedStatus === '退保中' && rowStatus === 'refunding') ||
+                    (selectedStatus === '已退保' && rowStatus === 'refunded') ||
+                    (selectedStatus === '拒绝退保' && rowStatus === 'refuse');
+                
+                // 保函类型匹配逻辑
+                const selectedBondType = document.getElementById('bondTypeSelect').value;
+                const bondType = row.querySelector('td:nth-child(6) .text-sm').textContent.trim();
+                const matchesBondType = selectedBondType === '全部保函类型' || bondType === selectedBondType;
                 
                 // 显示或隐藏行
-                if (matchesKeyword && matchesStatus) {
+                if (matchesKeyword && matchesStatus && matchesBondType) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -1269,52 +1516,7 @@
             }, 10);
         }
         
-        // Tab切换功能
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabButtons = document.querySelectorAll('.border-b button');
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // 移除所有Tab的激活状态
-                    tabButtons.forEach(btn => {
-                        btn.classList.remove('text-primary', 'border-b-2', 'border-primary');
-                        btn.classList.add('text-gray-500');
-                    });
-                    
-                    // 添加当前Tab的激活状态
-                    this.classList.remove('text-gray-500');
-                    this.classList.add('text-primary', 'border-b-2', 'border-primary');
-                    
-                    // 根据Tab筛选订单列表
-                    const tabText = this.textContent.trim();
-                    const orderRows = document.querySelectorAll('.order-row');
-                    
-                    orderRows.forEach(row => {
-                        const status = row.getAttribute('data-status');
-                        
-                        switch(tabText) {
-                            case '全部':
-                                row.style.display = '';
-                                break;
-                            case '待审核':
-                                row.style.display = status === 'audit' ? '' : 'none';
-                                break;
-                            case '待支付':
-                                row.style.display = status === 'unpaid' ? '' : 'none';
-                                break;
-                            case '待出函':
-                                row.style.display = status === 'pending' ? '' : 'none';
-                                break;
-                            case '已完成':
-                                row.style.display = status === 'completed' ? '' : 'none';
-                                break;
-                            case '已拒绝':
-                                row.style.display = status === 'rejected' ? '' : 'none';
-                                break;
-                        }
-                    });
-                });
-            });
-        });
+
         
         // 模态窗口动画
         const modals = document.querySelectorAll('[id$="Modal"]');

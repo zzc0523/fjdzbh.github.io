@@ -170,7 +170,7 @@
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">项目编号</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">项目名称</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">保函类型</th>
-                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">保函金额</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">保证金金额（元）</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">开函时间</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">同步状态</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider sticky-col" style="position: sticky; right: 0; background: linear-gradient(to right, #eff6ff, #f8fafc);">操作</th>
@@ -193,7 +193,7 @@
                                             <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-gradient-to-r from-green-100 to-green-50 text-green-700">投标保函</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-blue-600">¥500,000.00</div>
+                                            <div class="text-sm font-semibold text-blue-600">500,000.00</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-slate-600 flex items-center">
@@ -225,7 +225,7 @@
                                             <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700">履约保函</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-blue-600">¥1,000,000.00</div>
+                                            <div class="text-sm font-semibold text-blue-600">1,000,000.00</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-slate-600 flex items-center">
@@ -257,7 +257,7 @@
                                             <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-gradient-to-r from-green-100 to-green-50 text-green-700">投标保函</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-blue-600">¥250,000.00</div>
+                                            <div class="text-sm font-semibold text-blue-600">250,000.00</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-slate-600 flex items-center">
@@ -289,7 +289,7 @@
                                             <span class="px-3 py-1 inline-flex text-xs font-semibold rounded-full bg-gradient-to-r from-green-100 to-green-50 text-green-700">投标保函</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-blue-600">¥800,000.00</div>
+                                            <div class="text-sm font-semibold text-blue-600">800,000.00</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-slate-600 flex items-center">
@@ -357,7 +357,7 @@
                     projectName: '福州市政道路改造项目',
                     bondType: '投标保函',
                     bondAmount: '500000',
-                    bondAmountFormatted: '¥500,000.00',
+                    bondAmountFormatted: '500,000.00',
                     issueTime: '2024-05-27 11:00:00',
                     syncStatus: '待同步',
                     applicant: '福州建设发展有限公司',
@@ -374,7 +374,7 @@
                     projectName: '福州市政道路改造项目',
                     bondType: '履约保函',
                     bondAmount: '1000000',
-                    bondAmountFormatted: '¥1,000,000.00',
+                    bondAmountFormatted: '1,000,000.00',
                     issueTime: '2024-05-27 11:30:00',
                     syncStatus: '已同步',
                     applicant: '福州建设发展有限公司',
@@ -391,7 +391,7 @@
                     projectName: '厦门市办公楼装修工程',
                     bondType: '投标保函',
                     bondAmount: '250000',
-                    bondAmountFormatted: '¥250,000.00',
+                    bondAmountFormatted: '250,000.00',
                     issueTime: '2024-05-27 10:45:00',
                     syncStatus: '同步失败',
                     applicant: '厦门建筑装饰工程公司',
@@ -408,7 +408,7 @@
                     projectName: '泉州市公园建设项目',
                     bondType: '投标保函',
                     bondAmount: '800000',
-                    bondAmountFormatted: '¥800,000.00',
+                    bondAmountFormatted: '800,000.00',
                     issueTime: '2024-05-27 14:00:00',
                     syncStatus: '已同步',
                     applicant: '泉州园林工程有限公司',
@@ -453,7 +453,7 @@
                                     <div class="text-slate-800">${data.bondType}</div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">保函金额（元）</label>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">保证金金额（元）</label>
                                     <div class="text-slate-800">${data.bondAmount}</div>
                                 </div>
                                 <div>

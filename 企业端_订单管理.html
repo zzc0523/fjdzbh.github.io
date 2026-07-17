@@ -48,18 +48,15 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 模拟订单数据
             const orderData = [
-                { id: 'FJ202603110001', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '¥500,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '¥1,500.00', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11', expiry: '2026-06-09', operator: '张三', status: '已出函' },
-                { id: 'FJ202603250002', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '¥100,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '¥300.00', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25', expiry: '2026-06-23', operator: '李四', status: '待支付' },
-                { id: 'FJ202603090001', projectName: '福建省高速公路网建设', type: '预付款保函', amount: '¥1,000,000.00', underwritingInstitution: '中国银行福建省分行', premium: '¥3,000.00', beneficiary: '福建省交通建设集团有限公司', applyTime: '2026-03-09', expiry: '2026-06-07', operator: '王五', status: '已支付' },
-                { id: 'FJ202604010001', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '¥200,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '¥600.00', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01', expiry: '2026-06-30', operator: '赵六', status: '申请中' },
-                { id: 'FJ202604020002', projectName: '福州市城市综合体建设', type: '履约保函', amount: '¥1,500,000.00', underwritingInstitution: '中国农业银行福建省分行', premium: '¥4,500.00', beneficiary: '福州市城乡建设局', applyTime: '2026-04-02', expiry: '2026-07-01', operator: '孙七', status: '审批不通过' },
-                { id: 'FJ202604030003', projectName: '福建省电力设施改造', type: '预付款保函', amount: '¥800,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '¥2,400.00', beneficiary: '福建省电力建设有限公司', applyTime: '2026-04-03', expiry: '2026-07-02', operator: '周八', status: '已取消' },
-                { id: 'FJ202604040004', projectName: '莆田市港口建设工程', type: '投标保函', amount: '¥150,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '¥450.00', beneficiary: '莆田市公共资源交易中心', applyTime: '2026-04-04', expiry: '2026-07-03', operator: '吴九', status: '退保中' },
-                { id: 'FJ202604070007', projectName: '三明市水利枢纽工程', type: '投标保函', amount: '¥250,000.00', underwritingInstitution: '中国银行福建省分行', premium: '¥750.00', beneficiary: '三明市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '郑十', status: '已退保' },
-                { id: 'FJ202604070008', projectName: '泉州市跨海大桥工程', type: '投标保函', amount: '¥250,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '¥750.00', beneficiary: '泉州市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '王十一', status: '拒绝退保' },
-                { id: 'FJ202604080008', projectName: '南平市文化中心建设', type: '履约保函', amount: '¥900,000.00', underwritingInstitution: '中国农业银行福建省分行', premium: '¥2,700.00', beneficiary: '南平市城乡建设局', applyTime: '2026-04-08', expiry: '2026-07-07', operator: '李十二', status: '理赔中' },
-                { id: 'FJ202604090009', projectName: '龙岩市铁路建设工程', type: '预付款保函', amount: '¥600,000.00', underwritingInstitution: '中国银行福建省分行', premium: '¥1,800.00', beneficiary: '龙岩市交通建设集团', applyTime: '2026-04-09', expiry: '2026-07-08', operator: '张十三', status: '已理赔' },
-                { id: 'FJ202604100010', projectName: '宁德市港口物流园区', type: '投标保函', amount: '¥180,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '¥540.00', beneficiary: '宁德市公共资源交易中心', applyTime: '2026-04-10', expiry: '2026-07-09', operator: '刘十四', status: '拒绝理赔' }
+                { id: 'FJ202603110001', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '500,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '1,500.00', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11', expiry: '2026-06-09', operator: '张三', status: '已出函' },
+                { id: 'FJ202603250002', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '100,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '300.00', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25', expiry: '2026-06-23', operator: '李四', status: '待支付' },
+                { id: 'FJ202603090001', projectName: '福建省高速公路网建设', type: '预付款保函', amount: '1,000,000.00', underwritingInstitution: '中国银行福建省分行', premium: '3,000.00', beneficiary: '福建省交通建设集团有限公司', applyTime: '2026-03-09', expiry: '2026-06-07', operator: '王五', status: '已支付' },
+                { id: 'FJ202604010001', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '200,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '600.00', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01', expiry: '2026-06-30', operator: '赵六', status: '申请中' },
+                { id: 'FJ202604020002', projectName: '福州市城市综合体建设', type: '履约保函', amount: '1,500,000.00', underwritingInstitution: '中国农业银行福建省分行', premium: '4,500.00', beneficiary: '福州市城乡建设局', applyTime: '2026-04-02', expiry: '2026-07-01', operator: '孙七', status: '审批不通过' },
+                { id: 'FJ202604030003', projectName: '福建省电力设施改造', type: '预付款保函', amount: '800,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '2,400.00', beneficiary: '福建省电力建设有限公司', applyTime: '2026-04-03', expiry: '2026-07-02', operator: '周八', status: '已取消' },
+                { id: 'FJ202604040004', projectName: '莆田市港口建设工程', type: '投标保函', amount: '150,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '450.00', beneficiary: '莆田市公共资源交易中心', applyTime: '2026-04-04', expiry: '2026-07-03', operator: '吴九', status: '退保中' },
+                { id: 'FJ202604070007', projectName: '三明市水利枢纽工程', type: '投标保函', amount: '250,000.00', underwritingInstitution: '中国银行福建省分行', premium: '750.00', beneficiary: '三明市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '郑十', status: '已退保' },
+                { id: 'FJ202604070008', projectName: '泉州市跨海大桥工程', type: '投标保函', amount: '250,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '750.00', beneficiary: '泉州市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '王十一', status: '拒绝退保' },
             ];
 
             const tableBody = document.querySelector('tbody');
@@ -115,12 +112,12 @@
                                     <i class="fa fa-eye mr-1"></i>查看
                                 </a>
                                 `}
-                                ${['已出函', '退保中', '已退保', '拒绝退保', '理赔中', '已理赔', '拒绝理赔'].includes(item.status) ? `
+                                ${['已出函', '退保中', '已退保', '拒绝退保'].includes(item.status) ? `
                                 <a href="#" class="text-blue-500 hover:text-blue-600 font-bold" title="核验真伪">
                                     <i class="fa fa-shield mr-1"></i>验真
                                 </a>
                                 ` : ''}
-                                ${['已支付', '已出函', '退保中', '已退保', '拒绝退保', '理赔中', '已理赔', '拒绝理赔'].includes(item.status) ? `
+                                ${['已支付', '已出函', '退保中', '已退保', '拒绝退保'].includes(item.status) ? `
                                 <a href="#" class="text-purple-500 hover:text-purple-600 font-bold" title="申请发票">
                                     <i class="fa fa-file-text-o mr-1"></i>发票
                                 </a>
@@ -130,7 +127,7 @@
                                     <i class="fa fa-times-circle mr-1"></i>撤销
                                 </a>
                                 ` : ''}
-                                ${['已出函', '已支付', '拒绝退保', '拒绝理赔'].includes(item.status) ? `
+                                ${['已出函', '已支付', '拒绝退保'].includes(item.status) ? `
                                 <a href="#" class="text-red-500 hover:text-red-600 font-bold" title="申请退费">
                                     <i class="fa fa-undo mr-1"></i>退保
                                 </a>
@@ -158,9 +155,7 @@
                     case '退保中': return 'bg-orange-50 text-orange-600 border border-orange-100';
                     case '已退保': return 'bg-slate-50 text-slate-500 border border-slate-200';
                     case '拒绝退保': return 'bg-red-50 text-red-600 border border-red-100';
-                    case '理赔中': return 'bg-amber-50 text-amber-600 border border-amber-100';
-                    case '已理赔': return 'bg-green-50 text-green-600 border border-green-100';
-                    case '拒绝理赔': return 'bg-red-50 text-red-600 border border-red-100';
+
                     default: return 'bg-blue-50 text-blue-600 border border-blue-100';
                 }
             }
@@ -318,7 +313,7 @@
                                 <p><span class="font-bold">致：</span><span class="border-b border-slate-400 px-2 min-w-[200px] inline-block text-center">${beneficiary}</span>（招标人名称）</p>
                                 
                                 <p class="indent-8">
-                                    鉴于：<span class="border-b border-slate-400 px-2 min-w-[180px] inline-block text-center mx-1">福建省建设工程有限公司</span>（投标人名称，下称“投标人”）根据贵方于 <span class="border-b border-slate-400 px-1 min-w-[48px] inline-block text-center mx-0.5 font-mono">2026</span> 年 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">03</span> 月 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">10</span> 日发出的项目编号为 <span class="border-b border-slate-400 px-2 min-w-[120px] inline-block text-center mx-1 font-mono">FZ-2026-001</span> 的招标文件拟向贵方投标承接项目。根据招标文件，投标人需向贵方提交投标保函。
+                                    鉴于：<span class="border-b border-slate-400 px-2 min-w-[180px] inline-block text-center mx-1">福建省建设工程有限公司</span>（投标人名称，下称“投标人”）根据贵方于 <span class="border-b border-slate-400 px-1 min-w-[48px] inline-block text-center mx-0.5 font-mono">2,026</span> 年 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">03</span> 月 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">10</span> 日发出的项目编号为 <span class="border-b border-slate-400 px-2 min-w-[120px] inline-block text-center mx-1 font-mono">FZ-2026-001</span> 的招标文件拟向贵方投标承接项目。根据招标文件，投标人需向贵方提交投标保函。
                                 </p>
 
                                 <p class="indent-8">
@@ -345,7 +340,7 @@
                                 </p>
 
                                 <p class="indent-8">
-                                    四、本保函一经开立立即生效，于 <span class="border-b border-slate-400 px-1 min-w-[48px] inline-block text-center mx-0.5 font-mono">2026</span> 年 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">06</span> 月 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">11</span> 日失效（如投标文件有效期延长，本保函有效期也作相应延长）。本保函失效后，受益人应立即将本保函正本原件退回投标人，但无论是否退回，本保函自失效日起均视为自动失效，保证人在本保函项下的保证责任和义务自动解除。
+                                    四、本保函一经开立立即生效，于 <span class="border-b border-slate-400 px-1 min-w-[48px] inline-block text-center mx-0.5 font-mono">2,026</span> 年 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">06</span> 月 <span class="border-b border-slate-400 px-1 min-w-[28px] inline-block text-center mx-0.5 font-mono">11</span> 日失效（如投标文件有效期延长，本保函有效期也作相应延长）。本保函失效后，受益人应立即将本保函正本原件退回投标人，但无论是否退回，本保函自失效日起均视为自动失效，保证人在本保函项下的保证责任和义务自动解除。
                                 </p>
 
                                 <p class="indent-8">
@@ -384,7 +379,7 @@
                                         </div>
                                     </div>
                                     <div class="text-xs text-slate-700 pt-8">
-                                        <span class="px-2">2026</span>年<span class="px-2">03</span>月<span class="px-2">11</span>日
+                                        <span class="px-2">2,026</span>年<span class="px-2">03</span>月<span class="px-2">11</span>日
                                     </div>
                                 </div>
                             </div>
@@ -451,8 +446,8 @@
                                 <div class="font-medium">投标保函</div>
                             </div>
                             <div>
-                                <div class="text-sm text-gray-500 mb-1">保函金额</div>
-                                <div class="font-medium">¥100,000.00</div>
+                                <div class="text-sm text-gray-500 mb-1">保证金金额（元）</div>
+                                <div class="font-medium">100,000.00</div>
                             </div>
                             <div>
                                 <div class="text-sm text-gray-500 mb-1">有效期起止日期</div>
@@ -887,12 +882,10 @@
                 // 根据订单状态控制 Tab 可见性
                 const showGuaranteeTab = !['申请中', '审批不通过', '已取消'].includes(data.status);
                 const showRefundTab = data.status.includes('退保');
-                const showClaimTab = data.status.includes('理赔');
 
                 // 根据订单状态生成不同的内容
                 let guaranteeInfoContent = '';
                 let refundInfoContent = '';
-                let claimInfoContent = '';
                 let actionButtons = '';
                 
                 // 保函信息内容
@@ -907,7 +900,7 @@
                                         <span class="text-sm text-gray-900">${data.type}</span>
                                     </div>
                                     <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">保函金额：</span>
+                                        <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
                                         <span class="text-sm text-gray-900">${data.amount}</span>
                                     </div>
                                     <div class="flex">
@@ -924,7 +917,7 @@
                                 <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
                                 <div class="space-y-3">
                                     <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">保费金额：</span>
+                                        <span class="text-sm text-gray-500 w-24">保费（元）：</span>
                                         <span class="text-sm text-gray-900">${data.premium}</span>
                                     </div>
                                     <div class="flex">
@@ -960,7 +953,7 @@
                                         <span class="text-sm text-gray-900">${data.type}</span>
                                     </div>
                                     <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">保函金额：</span>
+                                        <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
                                         <span class="text-sm text-gray-900">${data.amount}</span>
                                     </div>
                                     <div class="flex">
@@ -981,7 +974,7 @@
                                 <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
                                 <div class="space-y-3">
                                     <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">保费金额：</span>
+                                        <span class="text-sm text-gray-500 w-24">保费（元）：</span>
                                         <span class="text-sm text-gray-900">${data.premium}</span>
                                     </div>
                                     <div class="flex">
@@ -1043,10 +1036,6 @@
                                         <span class="text-sm text-gray-500 w-24">审核状态：</span>
                                         <span class="text-sm text-yellow-600">待审核</span>
                                     </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">预计处理时间：</span>
-                                        <span class="text-sm text-gray-900">3-5个工作日</span>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1091,7 +1080,7 @@
                                     </div>
                                     <div class="flex">
                                         <span class="text-sm text-gray-500 w-24">退款金额：</span>
-                                        <span class="text-sm text-gray-900">¥298,500.00</span>
+                                        <span class="text-sm text-gray-900">298,500.00</span>
                                     </div>
                                 </div>
                             </div>
@@ -1133,144 +1122,21 @@
                     `;
                 }
                 
-                // 理赔信息内容
-                if (data.status === '理赔中') {
-                    claimInfoContent = `
-                        <div class="border border-gray-200 rounded-md p-4 bg-yellow-50 mb-6">
-                            <h5 class="text-sm font-medium text-gray-700 mb-3">理赔状态</h5>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-500 w-24">当前状态：</span>
-                                <span class="text-sm text-yellow-600">理赔处理中</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">理赔申请信息</h5>
-                                <div class="space-y-3">
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">申请日期：</span>
-                                        <span class="text-sm text-gray-900">2026-04-01</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">理赔原因：</span>
-                                        <span class="text-sm text-gray-900">申请人未能履行合同义务</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">理赔金额：</span>
-                                        <span class="text-sm text-gray-900">${data.amount}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">理赔处理信息</h5>
-                                <div class="space-y-3">
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">审核状态：</span>
-                                        <span class="text-sm text-yellow-600">待审核</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">预计处理时间：</span>
-                                        <span class="text-sm text-gray-900">5-7个工作日</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else if (data.status === '已理赔') {
-                    claimInfoContent = `
-                        <div class="border border-gray-200 rounded-md p-4 bg-gray-50 mb-6">
-                            <h5 class="text-sm font-medium text-gray-700 mb-3">理赔状态</h5>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-500 w-24">当前状态：</span>
-                                <span class="text-sm text-green-600">已理赔</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">理赔申请信息</h5>
-                                <div class="space-y-3">
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">申请日期：</span>
-                                        <span class="text-sm text-gray-900">2026-04-01</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">理赔原因：</span>
-                                        <span class="text-sm text-gray-900">申请人未能履行合同义务</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">理赔金额：</span>
-                                        <span class="text-sm text-gray-900">${data.amount}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">理赔处理信息</h5>
-                                <div class="space-y-3">
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">审核状态：</span>
-                                        <span class="text-sm text-green-600">审核通过</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">赔付日期：</span>
-                                        <span class="text-sm text-gray-900">2026-04-05</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">赔付金额：</span>
-                                        <span class="text-sm text-gray-900">${data.amount}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                } else if (data.status === '拒绝理赔') {
-                    claimInfoContent = `
-                        <div class="border border-gray-200 rounded-md p-4 bg-red-50 mb-6">
-                            <h5 class="text-sm font-medium text-gray-700 mb-3">理赔状态</h5>
-                            <div class="flex items-center">
-                                <span class="text-sm text-gray-500 w-24">当前状态：</span>
-                                <span class="text-sm text-red-600">拒绝理赔</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">理赔申请信息</h5>
-                                <div class="space-y-3">
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">申请日期：</span>
-                                        <span class="text-sm text-gray-900">2026-04-10</span>
-                                    </div>
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">理赔原因：</span>
-                                        <span class="text-sm text-gray-900">合同争议</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">处理信息</h5>
-                                <div class="space-y-3">
-                                    <div class="flex">
-                                        <span class="text-sm text-gray-500 w-24">拒绝原因：</span>
-                                        <span class="text-sm text-red-600">理赔申请资料不全，且经核实不属于保函责任范围</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }
+
                 
                 // 操作按钮
                   let buttonsHtml = `
-                      ${['已出函', '退保中', '已退保', '拒绝退保', '理赔中', '已理赔', '拒绝理赔'].includes(data.status) ? `
+                      ${['已出函', '退保中', '已退保', '拒绝退保'].includes(data.status) ? `
                       <button onclick="handlePreviewAction()" class="px-4 py-2 border border-primary text-primary rounded-md hover:bg-blue-50 font-bold text-sm">
                           <i class="fa fa-eye mr-2"></i>在线预览
                       </button>
                       ` : ''}
-                      ${['已出函', '退保中', '已退保', '拒绝退保', '理赔中', '已理赔', '拒绝理赔'].includes(data.status) ? `
+                      ${['已出函', '退保中', '已退保', '拒绝退保'].includes(data.status) ? `
                       <button onclick="handleVerifyAction()" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 font-bold text-sm">
                           <i class="fa fa-shield mr-2"></i>验真
                       </button>
                       ` : ''}
-                      ${['已支付', '已出函', '退保中', '已退保', '拒绝退保', '理赔中', '已理赔', '拒绝理赔'].includes(data.status) ? `
+                      ${['已支付', '已出函', '退保中', '已退保', '拒绝退保'].includes(data.status) ? `
                       <button onclick="handleInvoiceAction()" class="px-4 py-2 border border-purple-500 text-purple-500 rounded-md hover:bg-purple-50 font-bold text-sm">
                           <i class="fa fa-file-text-o mr-2"></i>发票申请
                       </button>
@@ -1307,7 +1173,7 @@
                             <i class="fa fa-undo mr-2"></i>申请退保
                         </button>
                     `;
-                 } else if (['已出函', '拒绝退保', '拒绝理赔'].includes(data.status)) {
+                 } else if (['已出函', '拒绝退保'].includes(data.status)) {
                     statusSpecificButtons = `
                         <button onclick="handleDownloadAction()" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 font-bold text-sm">
                             <i class="fa fa-download mr-2"></i>下载保函
@@ -1317,7 +1183,7 @@
                         </button>
                     `;
                 } else {
-                      // 退保中、已退保、理赔中、已理赔
+                      // 退保中、已退保
                       statusSpecificButtons = `
                           <button onclick="handleDownloadAction()" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 font-bold text-sm">
                               <i class="fa fa-download mr-2"></i>下载保函
@@ -1353,7 +1219,7 @@
                             <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs" role="tablist">
                                 <li class="mr-2" role="presentation">
                                     <button class="inline-block p-4 border-b-2 border-primary text-primary rounded-t-lg active" id="project-tab" data-tab="project" type="button" role="tab" aria-controls="project" aria-selected="true">
-                                        <i class="fa fa-building mr-2"></i>项目信息
+                                        <i class="fa fa-building mr-2"></i>订单信息
                                     </button>
                                 </li>
                                 ${showGuaranteeTab ? `
@@ -1370,13 +1236,7 @@
                                     </button>
                                 </li>
                                 ` : ''}
-                                ${showClaimTab ? `
-                                <li role="presentation">
-                                    <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" id="claim-tab" data-tab="claim" type="button" role="tab" aria-controls="claim" aria-selected="false">
-                                        <i class="fa fa-legal mr-2"></i>理赔信息
-                                    </button>
-                                </li>
-                                ` : ''}
+
                             </ul>
                         </div>
 
@@ -1412,58 +1272,83 @@
                                     </div>
                                 </div>
                                 ` : ''}
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div class="space-y-6 mb-6">
                                     <div>
-                                        <h5 class="text-sm font-medium text-gray-700 mb-2">项目基本信息</h5>
-                                        <div class="space-y-3">
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">项目名称：</span>
-                                                <span class="text-sm text-gray-900">${data.projectName}</span>
+                                        <h5 class="text-sm font-medium text-gray-700 mb-3">项目信息</h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目名称：</span>
+                                                <span class="ml-3 text-sm text-gray-900">${data.projectName}</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">项目编号：</span>
-                                                <span class="text-sm text-gray-900">FZ-2026-001</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目编号：</span>
+                                                <span class="ml-3 text-sm text-gray-900">FZ-2026-001</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">项目类型：</span>
-                                                <span class="text-sm text-gray-900">市政工程</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段名称：</span>
+                                                <span class="ml-3 text-sm text-gray-900">标段一</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">招标单位：</span>
-                                                <span class="text-sm text-gray-900">福州市城市建设投资集团有限公司</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段编号：</span>
+                                                <span class="ml-3 text-sm text-gray-900">BD-2026-001</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">开标日期：</span>
-                                                <span class="text-sm text-gray-900">2026-03-20</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">招标企业：</span>
+                                                <span class="ml-3 text-sm text-gray-900">福州市城市建设投资集团有限公司</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">申请时间：</span>
-                                                <span class="text-sm text-gray-900">${data.applyTime}</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金金额（元）：</span>
+                                                <span class="ml-3 text-sm text-gray-900">80,000.00</span>
+                                            </div>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金截止时间：</span>
+                                                <span class="ml-3 text-sm text-gray-900">2026-03-18 17:00</span>
+                                            </div>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">开标时间：</span>
+                                                <span class="ml-3 text-sm text-gray-900">2026-03-20 10:00</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div>
-                                        <h5 class="text-sm font-medium text-gray-700 mb-2">相关方信息</h5>
-                                        <div class="space-y-3">
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">申请人：</span>
-                                                <span class="text-sm text-gray-900">福建省建设工程有限公司</span>
+                                        <h5 class="text-sm font-medium text-gray-700 mb-3">投保企业信息</h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">投保企业名称：</span>
+                                                <span class="ml-3 text-sm text-gray-900">福建省建设工程有限公司</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">受益人：</span>
-                                                <span class="text-sm text-gray-900">${data.beneficiary}</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">统一社会信用代码：</span>
+                                                <span class="ml-3 text-sm text-gray-900">91350100MA8RQ1X2Y3</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">保证人：</span>
-                                                <span class="text-sm text-gray-900">${data.underwritingInstitution}</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">法定代表人姓名：</span>
+                                                <span class="ml-3 text-sm text-gray-900">张三</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">代理机构：</span>
-                                                <span class="text-sm text-gray-900">福建招标采购集团有限公司</span>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">法定代表人身份证号：</span>
+                                                <span class="ml-3 text-sm text-gray-900">350102198211302418</span>
                                             </div>
-                                            <div class="flex">
-                                                <span class="text-sm text-gray-500 w-24">联系人：</span>
-                                                <span class="text-sm text-gray-900">${data.operator}</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-sm font-medium text-gray-700 mb-3">经办人信息</h5>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人姓名：</span>
+                                                <span class="ml-3 text-sm text-gray-900">李四</span>
+                                            </div>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人身份证：</span>
+                                                <span class="ml-3 text-sm text-gray-900">350102198505202419</span>
+                                            </div>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人手机号：</span>
+                                                <span class="ml-3 text-sm text-gray-900">13800138000</span>
+                                            </div>
+                                            <div class="flex items-baseline">
+                                                <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人邮箱：</span>
+                                                <span class="ml-3 text-sm text-gray-900">lisi@example.com</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1484,12 +1369,6 @@
                             </div>
                             ` : ''}
 
-                            <!-- 理赔信息Tab -->
-                            ${showClaimTab ? `
-                            <div class="tab-pane hidden" id="claim">
-                                ${claimInfoContent}
-                            </div>
-                            ` : ''}
                         </div>
 
                         ${actionButtons}
@@ -1839,9 +1718,7 @@
                                 <option value="退保中">退保中</option>
                                 <option value="已退保">已退保</option>
                                 <option value="拒绝退保">拒绝退保</option>
-                                <option value="理赔中">理赔中</option>
-                                <option value="已理赔">已理赔</option>
-                                <option value="拒绝理赔">拒绝理赔</option>
+
                             </select>
                             <button id="search-btn" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90">
                                 <i class="fa fa-search mr-2"></i>查询
@@ -1868,13 +1745,13 @@
                                         保函类型
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        保证金
+                                        保证金金额（元）
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         承保机构
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        保费
+                                        保费（元）
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         受益人

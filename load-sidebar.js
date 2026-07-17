@@ -35,12 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </a>
                 </li>
                 <li>
-                    <a href="市级端_保函管理.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_保函管理.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
-                        <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_保函管理.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
-                        保函管理
-                    </a>
-                </li>
-                <li>
                     <a href="市级端_理赔管理.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_理赔管理.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
                         <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_理赔管理.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
                         理赔管理

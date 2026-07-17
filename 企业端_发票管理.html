@@ -44,11 +44,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 模拟发票申请记录数据
             const invoiceData = [
-                { id: 'INV202603110001', guaranteeId: 'FJ202603110001', projectName: '福州市2026年度市政基础设施建设项目', type: '数电普票', amount: '¥1,500.00', date: '2026-03-11', status: '已开票' },
-                { id: 'INV202603250002', guaranteeId: 'FJ202603250002', projectName: '福州市地铁6号线工程', type: '数电专票', amount: '¥300.00', date: '2026-03-25', status: '待开票' },
-                { id: 'INV202603090001', guaranteeId: 'FJ202603090001', projectName: '福建省2026年公路建设项目', type: '数电普票', amount: '¥3,000.00', date: '2026-03-09', status: '已开票' },
-                { id: 'INV202601010001', guaranteeId: 'FJ202601010001', projectName: '厦门市2026年保障性住房建设项目', type: '数电专票', amount: '¥6,000.00', date: '2026-01-01', status: '已开票' },
-                { id: 'INV202512010001', guaranteeId: 'FJ202512010001', projectName: '泉州市2025年市政道路改造项目', type: '数电普票', amount: '¥1,500.00', date: '2025-12-01', status: '已开票' }
+                { id: 'INV202603110001', guaranteeId: 'FJ202603110001', projectName: '福州市2026年度市政基础设施建设项目', type: '数电普票', amount: '1,500.00', date: '2026-03-11', status: '已开票' },
+                { id: 'INV202603250002', guaranteeId: 'FJ202603250002', projectName: '福州市地铁6号线工程', type: '数电专票', amount: '300.00', date: '2026-03-25', status: '待开票' },
+                { id: 'INV202603090001', guaranteeId: 'FJ202603090001', projectName: '福建省2026年公路建设项目', type: '数电普票', amount: '3,000.00', date: '2026-03-09', status: '已开票' },
+                { id: 'INV202601010001', guaranteeId: 'FJ202601010001', projectName: '厦门市2026年保障性住房建设项目', type: '数电专票', amount: '6,000.00', date: '2026-01-01', status: '已开票' },
+                { id: 'INV202512010001', guaranteeId: 'FJ202512010001', projectName: '泉州市2025年市政道路改造项目', type: '数电普票', amount: '1,500.00', date: '2025-12-01', status: '已开票' }
             ];
 
             const tableBody = document.querySelector('tbody');
@@ -156,9 +156,9 @@
                                     <tbody>
                                         <tr>
                                             <td class="py-2">保函服务费 (FJ202603110001)</td>
-                                            <td class="py-2">¥ 1,415.09</td>
+                                            <td class="py-2">1,415.09</td>
                                             <td class="py-2">6%</td>
-                                            <td class="py-2 text-right">¥ 84.91</td>
+                                            <td class="py-2 text-right">84.91</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -166,9 +166,7 @@
                                     <div class="text-xs font-bold text-gray-800">
                                         价税合计 (大写)：壹仟伍佰元整
                                     </div>
-                                    <div class="text-xl font-black text-blue-600 font-mono">
-                                        ¥ 1,500.00
-                                    </div>
+                                    <div class="text-xl font-black text-blue-600 font-mono">1,500.00</div>
                                 </div>
                                 <!-- 模拟印章 -->
                                 <div class="absolute bottom-4 right-20 w-24 h-24 border-2 border-red-500 rounded-full flex items-center justify-center rotate-[-15deg] opacity-60">
@@ -241,7 +239,7 @@
                                 <p class="text-sm font-bold text-gray-800">${item.guaranteeId}</p>
                             </div>
                             <div>
-                                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">发票金额</p>
+                                <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">发票金额（元）</p>
                                 <p class="text-sm font-bold text-primary">${item.amount}</p>
                             </div>
                             <div class="col-span-2">
