@@ -302,15 +302,17 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
                                 </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单编号</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">企业名称</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单号</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">金额(元)</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">承保机构</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保费（元）</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受益人</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">承保机构</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">企业名称</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">经办人</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单状态</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                             </tr>
                         </thead>
@@ -344,16 +346,16 @@
     <script>
         // 模拟订单数据 - 全市订单
         const orderData = [
-            { id: 'FJ202603110001', enterpriseName: '福建省建设工程有限公司', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '500,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11 10:30:00', status: '已出函', operator: '张三' },
-            { id: 'FJ202603250002', enterpriseName: '厦门市建筑工程集团', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '100,000.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25 14:20:00', status: '待支付', operator: '李四' },
-            { id: 'FJ202603090003', enterpriseName: '泉州市市政工程公司', projectName: '泉州市跨海大桥工程', type: '预付款保函', amount: '1,000,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '泉州市交通建设集团', applyTime: '2026-03-09 09:15:00', status: '已支付', operator: '王五' },
-            { id: 'FJ202604010004', enterpriseName: '漳州市城建集团', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '200,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01 11:45:00', status: '申请中', operator: '赵六' },
-            { id: 'FJ202604020005', enterpriseName: '莆田市建工集团', projectName: '莆田市港口建设工程', type: '履约保函', amount: '1,500,000.00', underwritingInstitution: '中国农业银行福建省分行', beneficiary: '莆田市城乡建设局', applyTime: '2026-04-02 15:30:00', status: '审批不通过', operator: '孙七' },
-            { id: 'FJ202604030006', enterpriseName: '宁德市水利工程公司', projectName: '宁德市水利枢纽工程', type: '预付款保函', amount: '800,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '宁德市水利局', applyTime: '2026-04-03 10:00:00', status: '已取消', operator: '周八' },
-            { id: 'FJ202604040007', enterpriseName: '龙岩市交通建设公司', projectName: '龙岩市铁路建设工程', type: '投标保函', amount: '150,000.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '龙岩市公共资源交易中心', applyTime: '2026-04-04 14:00:00', status: '退保中', operator: '吴九' },
-            { id: 'FJ202604070008', enterpriseName: '三明市建筑工程公司', projectName: '三明市文化中心建设', type: '履约保函', amount: '250,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '三明市城乡建设局', applyTime: '2026-04-07 09:30:00', status: '已退保', operator: '郑十' },
-            { id: 'FJ202604080009', enterpriseName: '南平市建工集团', projectName: '南平市体育中心工程', type: '投标保函', amount: '900,000.00', underwritingInstitution: '中国农业银行福建省分行', beneficiary: '南平市公共资源交易中心', applyTime: '2026-04-08 16:20:00', status: '已出函', operator: '王十一' },
-            { id: 'FJ202604090010', enterpriseName: '平潭综合实验区建设公司', projectName: '平潭综合实验区港口工程', type: '预付款保函', amount: '600,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '平潭综合实验区管委会', applyTime: '2026-04-09 10:45:00', status: '已出函', operator: '李十二' }
+            { id: 'FJ202603110001', enterpriseName: '福建省建设工程有限公司', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '500,000.00', premium: '5,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11 10:30:00', status: '已出函', operator: '张三' },
+            { id: 'FJ202603250002', enterpriseName: '厦门市建筑工程集团', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '100,000.00', premium: '1,000.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25 14:20:00', status: '待支付', operator: '李四' },
+            { id: 'FJ202603090003', enterpriseName: '泉州市市政工程公司', projectName: '泉州市跨海大桥工程', type: '预付款保函', amount: '1,000,000.00', premium: '10,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '泉州市交通建设集团', applyTime: '2026-03-09 09:15:00', status: '已支付', operator: '王五' },
+            { id: 'FJ202604010004', enterpriseName: '漳州市城建集团', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '200,000.00', premium: '2,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01 11:45:00', status: '申请中', operator: '赵六' },
+            { id: 'FJ202604020005', enterpriseName: '莆田市建工集团', projectName: '莆田市港口建设工程', type: '履约保函', amount: '1,500,000.00', premium: '15,000.00', underwritingInstitution: '中国农业银行福建省分行', beneficiary: '莆田市城乡建设局', applyTime: '2026-04-02 15:30:00', status: '审批不通过', operator: '孙七' },
+            { id: 'FJ202604030006', enterpriseName: '宁德市水利工程公司', projectName: '宁德市水利枢纽工程', type: '预付款保函', amount: '800,000.00', premium: '8,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '宁德市水利局', applyTime: '2026-04-03 10:00:00', status: '已取消', operator: '周八' },
+            { id: 'FJ202604040007', enterpriseName: '龙岩市交通建设公司', projectName: '龙岩市铁路建设工程', type: '投标保函', amount: '150,000.00', premium: '1,500.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '龙岩市公共资源交易中心', applyTime: '2026-04-04 14:00:00', status: '退保中', operator: '吴九' },
+            { id: 'FJ202604070008', enterpriseName: '三明市建筑工程公司', projectName: '三明市文化中心建设', type: '履约保函', amount: '250,000.00', premium: '2,500.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '三明市城乡建设局', applyTime: '2026-04-07 09:30:00', status: '已退保', operator: '郑十' },
+            { id: 'FJ202604080009', enterpriseName: '南平市建工集团', projectName: '南平市体育中心工程', type: '投标保函', amount: '900,000.00', premium: '9,000.00', underwritingInstitution: '中国农业银行福建省分行', beneficiary: '南平市公共资源交易中心', applyTime: '2026-04-08 16:20:00', status: '已出函', operator: '王十一' },
+            { id: 'FJ202604090010', enterpriseName: '平潭综合实验区建设公司', projectName: '平潭综合实验区港口工程', type: '预付款保函', amount: '600,000.00', premium: '6,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '平潭综合实验区管委会', applyTime: '2026-04-09 10:45:00', status: '已出函', operator: '李十二' }
         ];
 
         const tableBody = document.getElementById('order-table-body');
@@ -387,9 +389,6 @@
                         <div class="text-sm font-medium text-gray-900">${item.id}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">${item.enterpriseName}</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">${item.projectName}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -399,18 +398,27 @@
                         <div class="text-sm font-bold text-gray-900">${item.amount}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">${item.underwritingInstitution}</div>
+                        <div class="text-sm text-gray-900">${item.premium || '-'}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">${item.beneficiary}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-500">${item.applyTime}</div>
+                        <div class="text-sm text-gray-900">${item.underwritingInstitution}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.enterpriseName}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.operator}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyle(item.status)}">
                             ${item.status}
                         </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${item.applyTime}</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center space-x-2">
@@ -912,16 +920,16 @@
                                             <span class="ml-3 text-sm text-gray-900">${order.projectName}</span>
                                         </div>
                                         <div class="flex items-baseline">
-                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目编号：</span>
-                                            <span class="ml-3 text-sm text-gray-900">FZ-2026-001</span>
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保函类型：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.type}</span>
                                         </div>
                                         <div class="flex items-baseline">
-                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段名称：</span>
-                                            <span class="ml-3 text-sm text-gray-900">标段一</span>
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">受益人：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.beneficiary}</span>
                                         </div>
                                         <div class="flex items-baseline">
-                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段编号：</span>
-                                            <span class="ml-3 text-sm text-gray-900">BD-2026-001</span>
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">承保机构：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.underwritingInstitution}</span>
                                         </div>
                                         <div class="flex items-baseline">
                                             <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">招标企业：</span>

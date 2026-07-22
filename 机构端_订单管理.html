@@ -12,16 +12,16 @@
     <script>
         // 机构端订单数据
         const institutionOrderData = {
-            'BO202603240001': { id: 'BO202603240001', projectName: '福建省文化中心装修工程', projectCode: 'FZ2026002', sectionName: '室内精装修工程', sectionCode: 'FZ2026002-01', bondType: '履约保函', amount: '2,000,000.00', premium: '待计算', applyTime: '2026-03-24 10:20', status: '申请中', statusCode: 'audit' },
-            'BO202603240012': { id: 'BO202603240012', projectName: '南平市某大桥加固工程', projectCode: 'NP2026008', sectionName: '桥面铺装工程', sectionCode: 'NP2026008-01', bondType: '投标保函', amount: '1,200,000.00', premium: '6,000.00', applyTime: '2026-03-24 11:45', status: '待支付', statusCode: 'unpaid' },
-            'BO202603230001': { id: 'BO202603230001', projectName: '福州市城市轨道交通5号线工程', projectCode: 'FZ2026001', sectionName: '5号线一期工程', sectionCode: 'FZ2026001-01', bondType: '投标保函', amount: '1,000,000.00', premium: '10,000.00', applyTime: '2026-03-23 09:15', status: '已支付', statusCode: 'pending' },
-            'BO202603200003': { id: 'BO202603200003', projectName: '泉州市晋江大桥扩建工程', projectCode: 'QZ2026003', sectionName: '主桥扩建工程', sectionCode: 'QZ2026003-01', bondType: '预付款保函', amount: '2,500,000.00', premium: '25,000.00', applyTime: '2026-03-20 10:45', status: '已出函', statusCode: 'completed' },
-            'BO202603190002': { id: 'BO202603190002', projectName: '漳州市文化中心建设工程', projectCode: 'ZZ2026004', sectionName: '主体工程', sectionCode: 'ZZ2026004-01', bondType: '质量保函', amount: '1,500,000.00', premium: '15,000.00', applyTime: '2026-03-19 16:20', status: '审批不通过', statusCode: 'rejected' },
-            'BO202603180004': { id: 'BO202603180004', projectName: '莆田市体育中心改造工程', projectCode: 'PT2026005', sectionName: '体育馆改造工程', sectionCode: 'PT2026005-01', bondType: '工资保函', amount: '800,000.00', premium: '8,000.00', applyTime: '2026-03-18 11:05', status: '已支付', statusCode: 'pending' },
-            'BO202603150006': { id: 'BO202603150006', projectName: '宁德市新能源产业园配套工程', projectCode: 'ND2026006', sectionName: '配套管道工程', sectionCode: 'ND2026006-01', bondType: '投标保函', amount: '600,000.00', premium: '6,000.00', applyTime: '2026-03-15 09:30', status: '已取消', statusCode: 'cancelled' },
-            'BO202603100007': { id: 'BO202603100007', projectName: '龙岩市第一医院分院装修工程', projectCode: 'LY2026007', sectionName: '门诊楼装修工程', sectionCode: 'LY2026007-01', bondType: '履约保函', amount: '1,800,000.00', premium: '18,000.00', applyTime: '2026-03-10 14:00', status: '退保中', statusCode: 'refunding', refundData: { applyDate: '2026-04-01', reason: '项目取消/流标', applyAmount: '150,000.00' } },
-            'BO202603050008': { id: 'BO202603050008', projectName: '三明市沙县湿地公园景观工程', projectCode: 'SM2026008', sectionName: '景观绿化工程', sectionCode: 'SM2026008-01', bondType: '质量保函', amount: '1,200,000.00', premium: '12,000.00', applyTime: '2026-03-05 10:00', status: '已退保', statusCode: 'refunded', refundData: { applyDate: '2026-02-10', reason: '项目取消/流标', applyAmount: '250,000.00', refundDate: '2026-02-12', refundAmount: '250,000.00' } },
-            'BO202602280009': { id: 'BO202602280009', projectName: '南安市滨江商务区开发工程', projectCode: 'NA2026009', sectionName: '商务区道路工程', sectionCode: 'NA2026009-01', bondType: '预付款保函', amount: '2,000,000.00', premium: '20,000.00', applyTime: '2026-02-28 16:00', status: '拒绝退保', statusCode: 'refuse', refundData: { applyDate: '2026-04-05', reason: '误操作申请', rejectReason: '不符合退保条件，项目已进入开标阶段' } }
+            'BO202603240001': { id: 'BO202603240001', projectName: '福建省文化中心装修工程', projectCode: 'FZ2026002', sectionName: '室内精装修工程', sectionCode: 'FZ2026002-01', bondType: '履约保函', amount: '2,000,000.00', premium: '待计算', beneficiary: '福建省文化中心', insurer: '中国人民财产保险', handler: '张明', applyTime: '2026-03-24 10:20', status: '申请中', statusCode: 'audit' },
+            'BO202603240012': { id: 'BO202603240012', projectName: '南平市某大桥加固工程', projectCode: 'NP2026008', sectionName: '桥面铺装工程', sectionCode: 'NP2026008-01', bondType: '投标保函', amount: '1,200,000.00', premium: '6,000.00', beneficiary: '南平市交通运输局', insurer: '中国太平洋保险', handler: '李华', applyTime: '2026-03-24 11:45', status: '待支付', statusCode: 'unpaid' },
+            'BO202603230001': { id: 'BO202603230001', projectName: '福州市城市轨道交通5号线工程', projectCode: 'FZ2026001', sectionName: '5号线一期工程', sectionCode: 'FZ2026001-01', bondType: '投标保函', amount: '1,000,000.00', premium: '10,000.00', beneficiary: '福州地铁集团有限公司', insurer: '中国平安保险', handler: '王强', applyTime: '2026-03-23 09:15', status: '已支付', statusCode: 'pending' },
+            'BO202603200003': { id: 'BO202603200003', projectName: '泉州市晋江大桥扩建工程', projectCode: 'QZ2026003', sectionName: '主桥扩建工程', sectionCode: 'QZ2026003-01', bondType: '预付款保函', amount: '2,500,000.00', premium: '25,000.00', beneficiary: '泉州市交通运输局', insurer: '中国人寿保险', handler: '赵丽', applyTime: '2026-03-20 10:45', status: '已出函', statusCode: 'completed' },
+            'BO202603190002': { id: 'BO202603190002', projectName: '漳州市文化中心建设工程', projectCode: 'ZZ2026004', sectionName: '主体工程', sectionCode: 'ZZ2026004-01', bondType: '质量保函', amount: '1,500,000.00', premium: '15,000.00', beneficiary: '漳州市文化和旅游局', insurer: '中国人民财产保险', handler: '陈伟', applyTime: '2026-03-19 16:20', status: '审批不通过', statusCode: 'rejected' },
+            'BO202603180004': { id: 'BO202603180004', projectName: '莆田市体育中心改造工程', projectCode: 'PT2026005', sectionName: '体育馆改造工程', sectionCode: 'PT2026005-01', bondType: '工资保函', amount: '800,000.00', premium: '8,000.00', beneficiary: '莆田市体育局', insurer: '中国太平洋保险', handler: '张明', applyTime: '2026-03-18 11:05', status: '已支付', statusCode: 'pending' },
+            'BO202603150006': { id: 'BO202603150006', projectName: '宁德市新能源产业园配套工程', projectCode: 'ND2026006', sectionName: '配套管道工程', sectionCode: 'ND2026006-01', bondType: '投标保函', amount: '600,000.00', premium: '6,000.00', beneficiary: '宁德市新能源产业园', insurer: '中国平安保险', handler: '李华', applyTime: '2026-03-15 09:30', status: '已取消', statusCode: 'cancelled' },
+            'BO202603100007': { id: 'BO202603100007', projectName: '龙岩市第一医院分院装修工程', projectCode: 'LY2026007', sectionName: '门诊楼装修工程', sectionCode: 'LY2026007-01', bondType: '履约保函', amount: '1,800,000.00', premium: '18,000.00', beneficiary: '龙岩市第一医院', insurer: '中国人寿保险', handler: '王强', applyTime: '2026-03-10 14:00', status: '退保中', statusCode: 'refunding', refundData: { applyDate: '2026-04-01', reason: '项目取消/流标', applyAmount: '150,000.00' } },
+            'BO202603050008': { id: 'BO202603050008', projectName: '三明市沙县湿地公园景观工程', projectCode: 'SM2026008', sectionName: '景观绿化工程', sectionCode: 'SM2026008-01', bondType: '质量保函', amount: '1,200,000.00', premium: '12,000.00', beneficiary: '三明市城市管理局', insurer: '中国人民财产保险', handler: '赵丽', applyTime: '2026-03-05 10:00', status: '已退保', statusCode: 'refunded', refundData: { applyDate: '2026-02-10', reason: '项目取消/流标', applyAmount: '250,000.00', refundDate: '2026-02-12', refundAmount: '250,000.00' } },
+            'BO202602280009': { id: 'BO202602280009', projectName: '南安市滨江商务区开发工程', projectCode: 'NA2026009', sectionName: '商务区道路工程', sectionCode: 'NA2026009-01', bondType: '预付款保函', amount: '2,000,000.00', premium: '20,000.00', beneficiary: '南安市商务局', insurer: '中国平安保险', handler: '陈伟', applyTime: '2026-02-28 16:00', status: '拒绝退保', statusCode: 'refuse', refundData: { applyDate: '2026-04-05', reason: '误操作申请', rejectReason: '不符合退保条件，项目已进入开标阶段' } }
         };
 
         // 通用模态框函数（参照市级端）
@@ -378,9 +378,9 @@
                                     <h5 class="text-sm font-medium text-gray-700 mb-3">项目信息</h5>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目名称：</span><span class="ml-3 text-sm text-gray-900">${order.projectName}</span></div>
-                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目编号：</span><span class="ml-3 text-sm text-gray-900">${order.projectCode}</span></div>
-                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段名称：</span><span class="ml-3 text-sm text-gray-900">${order.sectionName}</span></div>
-                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">标段编号：</span><span class="ml-3 text-sm text-gray-900">${order.sectionCode}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保函类型：</span><span class="ml-3 text-sm text-gray-900">${order.bondType}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">受益人：</span><span class="ml-3 text-sm text-gray-900">${order.beneficiary || '-'}</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">承保机构：</span><span class="ml-3 text-sm text-gray-900">${order.insurer || '-'}</span></div>
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">招标企业：</span><span class="ml-3 text-sm text-gray-900">福州市城市建设投资集团有限公司</span></div>
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金金额（元）：</span><span class="ml-3 text-sm text-gray-900">${order.amount}</span></div>
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金截止时间：</span><span class="ml-3 text-sm text-gray-900">2026-03-18 17:00</span></div>
@@ -399,7 +399,7 @@
                                 <div>
                                     <h5 class="text-sm font-medium text-gray-700 mb-3">经办人信息</h5>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
-                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人姓名：</span><span class="ml-3 text-sm text-gray-900">张三</span></div>
+                                        <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人姓名：</span><span class="ml-3 text-sm text-gray-900">${order.handler || '张三'}</span></div>
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人身份证：</span><span class="ml-3 text-sm text-gray-900">350102198505202419</span></div>
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人手机号：</span><span class="ml-3 text-sm text-gray-900">13800138000</span></div>
                                         <div class="flex items-baseline"><span class="w-40 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人邮箱：</span><span class="ml-3 text-sm text-gray-900">lisi@example.com</span></div>
@@ -599,7 +599,7 @@
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center space-x-4 flex-1 min-w-[300px]">
                             <div class="relative flex-1">
-                                <input type="text" id="searchInput" placeholder="搜索订单编号、项目名称、项目编号、标段名称、标段编号" class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-full">
+                                <input type="text" id="searchInput" placeholder="搜索订单号、项目名称、保函类型、受益人、承保机构、经办人" class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-full">
                                 <i class="fa fa-search absolute left-3 top-3 text-slate-400"></i>
                             </div>
                             <select id="statusSelect" class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
@@ -645,18 +645,18 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <div class="flex items-center">
                                             <input type="checkbox" class="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
-                                            订单编号
+                                            订单号
                                         </div>
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目编号</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标段名称</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标段编号</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保费（元）</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受益人</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">承保机构</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">经办人</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                                 </tr>
                             </thead>
@@ -673,15 +673,6 @@
                                         <div class="text-sm text-gray-900">福建省文化中心装修工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">FZ2026002</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">室内精装修工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">FZ2026002-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">履约保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -691,12 +682,21 @@
                                         <div class="text-sm text-gray-400">待计算</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-24 10:20</div>
+                                        <div class="text-sm text-gray-900">福建省文化中心</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国人民财产保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">张明</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-100">
                                             申请中
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-24 10:20</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                          <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603240001', 'audit')">查看</a>
@@ -714,15 +714,6 @@
                                          <div class="text-sm text-gray-900">南平市某大桥加固工程</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm text-gray-900">NP2026008</div>
-                                     </td>
-                                     <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm text-gray-900">桥面铺装工程</div>
-                                     </td>
-                                     <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm text-gray-900">NP2026008-01</div>
-                                     </td>
-                                     <td class="px-6 py-4 whitespace-nowrap">
                                          <div class="text-sm text-gray-900">投标保函</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
@@ -732,13 +723,22 @@
                                          <div class="text-sm text-gray-900 font-bold">6,000.00</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
-                                         <div class="text-sm text-gray-900">2026-03-24 11:45</div>
+                                         <div class="text-sm text-gray-900">南平市交通运输局</div>
+                                     </td>
+                                     <td class="px-6 py-4 whitespace-nowrap">
+                                         <div class="text-sm text-gray-900">中国太平洋保险</div>
+                                     </td>
+                                     <td class="px-6 py-4 whitespace-nowrap">
+                                         <div class="text-sm text-gray-900">李华</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-rose-50 text-rose-600 border border-rose-100">
                                             待支付
                                         </span>
                                     </td>
+                                     <td class="px-6 py-4 whitespace-nowrap">
+                                         <div class="text-sm text-gray-900">2026-03-24 11:45</div>
+                                     </td>
                                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                          <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603240012', 'unpaid')">查看</a>
                                      </td>
@@ -755,15 +755,6 @@
                                         <div class="text-sm text-gray-900">福州市城市轨道交通5号线工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">FZ2026001</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">5号线一期工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">FZ2026001-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">投标保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -773,12 +764,21 @@
                                         <div class="text-sm text-gray-900">10,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-23 09:15</div>
+                                        <div class="text-sm text-gray-900">福州地铁集团有限公司</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国平安保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">王强</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
                                             已支付
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-23 09:15</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603230001', 'pending')">查看</a>
@@ -798,15 +798,6 @@
                                         <div class="text-sm text-gray-900">泉州市晋江大桥扩建工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">QZ2026003</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">主桥扩建工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">QZ2026003-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">预付款保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -816,12 +807,21 @@
                                         <div class="text-sm text-gray-900">25,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-20 10:45</div>
+                                        <div class="text-sm text-gray-900">泉州市交通运输局</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国人寿保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">赵丽</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-50 text-green-600 border border-green-100">
                                             已出函
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-20 10:45</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 mr-3 action-btn" onclick="openOrderDetail('BO202603200003', 'completed')">查看</a>
@@ -840,15 +840,6 @@
                                         <div class="text-sm text-gray-900">漳州市文化中心建设工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">ZZ2026004</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">主体工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">ZZ2026004-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">质量保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -858,12 +849,21 @@
                                         <div class="text-sm text-gray-900">15,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-19 16:20</div>
+                                        <div class="text-sm text-gray-900">漳州市文化和旅游局</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国人民财产保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">陈伟</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-600 border border-red-100">
                                             审批不通过
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-19 16:20</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603190002', 'rejected')">查看</a>
@@ -881,15 +881,6 @@
                                         <div class="text-sm text-gray-900">莆田市体育中心改造工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">PT2026005</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">体育馆改造工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">PT2026005-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">工资保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -899,12 +890,21 @@
                                         <div class="text-sm text-gray-900">8,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-18 11:05</div>
+                                        <div class="text-sm text-gray-900">莆田市体育局</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国太平洋保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">张明</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
                                             已支付
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-18 11:05</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603180004', 'pending')">查看</a>
@@ -922,15 +922,6 @@
                                         <div class="text-sm text-gray-900">宁德市新能源产业园配套工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">ND2026006</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">配套管道工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">ND2026006-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">投标保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -940,12 +931,21 @@
                                         <div class="text-sm text-gray-900">6,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-15 09:30</div>
+                                        <div class="text-sm text-gray-900">宁德市新能源产业园</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国平安保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">李华</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
                                             已取消
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-15 09:30</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603150006', 'cancelled')">查看</a>
@@ -963,15 +963,6 @@
                                         <div class="text-sm text-gray-900">龙岩市第一医院分院装修工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">LY2026007</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">门诊楼装修工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">LY2026007-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">履约保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -981,12 +972,21 @@
                                         <div class="text-sm text-gray-900">18,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-10 14:00</div>
+                                        <div class="text-sm text-gray-900">龙岩市第一医院</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国人寿保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">王强</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-50 text-orange-600 border border-orange-200">
                                             退保中
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-10 14:00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603100007', 'refunding')">查看</a>
@@ -1004,15 +1004,6 @@
                                         <div class="text-sm text-gray-900">三明市沙县湿地公园景观工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">SM2026008</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">景观绿化工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">SM2026008-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">质量保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -1022,12 +1013,21 @@
                                         <div class="text-sm text-gray-900">12,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-03-05 10:00</div>
+                                        <div class="text-sm text-gray-900">三明市城市管理局</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国人民财产保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">赵丽</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
                                             已退保
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-03-05 10:00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202603050008', 'refunded')">查看</a>
@@ -1045,15 +1045,6 @@
                                         <div class="text-sm text-gray-900">南安市滨江商务区开发工程</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">NA2026009</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">商务区道路工程</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">NA2026009-01</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">预付款保函</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -1063,12 +1054,21 @@
                                         <div class="text-sm text-gray-900">20,000.00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-900">2026-02-28 16:00</div>
+                                        <div class="text-sm text-gray-900">南安市商务局</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">中国平安保险</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">陈伟</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-600 border border-red-200">
                                             拒绝退保
                                         </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2026-02-28 16:00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 action-btn" onclick="openOrderDetail('BO202602280009', 'refuse')">查看</a>
@@ -1121,16 +1121,16 @@
                         <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入项目名称">
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">项目编号</label>
-                        <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入项目编号">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">受益人</label>
+                        <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入受益人">
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">标段名称</label>
-                        <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入标段名称">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">承保机构</label>
+                        <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入承保机构">
                     </div>
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">标段编号</label>
-                        <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入标段编号">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">经办人</label>
+                        <input type="text" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md" placeholder="请输入经办人">
                     </div>
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 mb-1">保函类型</label>
