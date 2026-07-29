@@ -171,13 +171,16 @@
                         { label: '保函类型', value: rowData.product || '投标保函' },
                         { label: '接入地市', value: '福州市' },
                         { label: '产品名称', value: rowData.product || '投标保函' }, 
-                        { label: '产品介绍', value: '为投标企业提供的担保服务，保障投标活动的顺利进行。' },
-                        { label: '金融机构', value: rowData.name || '中国平安保险福建分公司' },
-                        { label: '费率标准', value: '0.5%-1.2%' }, 
-                        { label: '办理时效', value: '最快1个工作日' },
-                        { label: '办理条件', value: '1. 企业信用等级A级及以上；2. 无重大违法违规记录；3. 具备相应的资质' }
+                        { label: '产品介绍', value: rowData.product === '履约保函' ? '为中标企业提供履约担保，保障合同按约履行，降低业主风险。' : '为投标企业提供的担保服务，保障投标活动的顺利进行。' },
+                        { label: '费率计算方式', value: rowData.product === '履约保函' ? '按区间定价' : '固定费率' }, 
+                        { label: '办理时效', value: '最快1个工作日' }
                     ], 
-                    files: ['产品服务协议.pdf'] 
+                    rateTiers: rowData.product === '履约保函' ? [
+                        { range: '1 （含）— 20000 （含）', rate: '2.8', min: '1000' },
+                        { range: '200000 （不含）— 1000000 （含）', rate: '1.8', min: '1000' },
+                        { range: '1000000 （不含）— +∞', rate: '1.05', min: '-' }
+                    ] : null,
+                    files: [] 
                 },
                 2: { 
                     name: '技术调试申请', 
@@ -223,7 +226,45 @@
             const cfg = stepData[step];
             const detailsHtml = `<div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl mb-5">${cfg.details.map(d => `<div><div class="text-[11px] text-slate-500 mb-0.5">${d.label}</div><div class="text-sm font-medium text-slate-800">${d.value}</div></div>`).join('')}</div>`;
             const filesHtml = `<div class="space-y-2">${cfg.files.map(f => `<div class="flex justify-between items-center p-3 border border-slate-200 rounded-xl bg-white hover:shadow-sm transition"><div class="flex items-center gap-2"><i class="fa fa-file-${f.includes('.pdf') ? 'pdf' : f.includes('.docx') ? 'doc' : 'archive'}-o ${f.includes('.pdf') ? 'text-red-400' : f.includes('.docx') ? 'text-blue-400' : 'text-yellow-400'}"></i><span class="text-sm text-slate-700">${f}</span></div><button class="preview-file text-primary text-xs font-medium hover:underline" data-file="${f}">预览</button></div>`).join('')}</div>`;
-            return { detailsHtml, filesHtml };
+            const rateTiersHtml = (step === 1 && cfg.rateTiers) ? `
+                <div class="mb-5">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">费率区间配置</div>
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50">
+                                <tr class="text-[11px] text-slate-500">
+                                    <th class="px-4 py-3 text-left font-semibold">保证金区间（元）</th>
+                                    <th class="px-4 py-3 text-left font-semibold">费率（%）</th>
+                                    <th class="px-4 py-3 text-left font-semibold">最低保费（元/年）</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${cfg.rateTiers.map(t => `<tr>
+                                    <td class="px-4 py-3">${t.range}</td>
+                                    <td class="px-4 py-3">${t.rate}</td>
+                                    <td class="px-4 py-3">${t.min}</td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            ` : '';
+            const rateFixedHtml = (step === 1 && !cfg.rateTiers) ? `
+                <div class="mb-5">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">费率信息</div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <div class="text-[11px] text-slate-400 mb-1">参考费率（%）</div>
+                            <div class="text-lg font-bold text-slate-800">1.0</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <div class="text-[11px] text-slate-400 mb-1">最低保费（元/年）</div>
+                            <div class="text-lg font-bold text-slate-800">500</div>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+            return { detailsHtml, rateTiersHtml, rateFixedHtml, filesHtml, files: cfg.files };
         }
 
         // 获取审核内容
@@ -299,7 +340,7 @@
                 // 根据步骤状态获取审核记录
                 if (stepStatus.includes('已通过')) {
                     const passRecords = {
-                        1: { comment: '产品材料齐全，费率标准符合监管要求，同意进入技术调试阶段。', auditor: '张慧', auditTime: '2026-03-16 10:15' },
+                        1: { comment: '产品材料齐全，费率计算方式符合监管要求，同意进入技术调试阶段。', auditor: '张慧', auditTime: '2026-03-16 10:15' },
                         2: { comment: '技术对接测试通过，接口调用正常，数据加密符合安全规范。', auditor: '王强', auditTime: '2026-03-17 14:30' },
                         3: { comment: '系统上线验收合格，安全扫描通过，符合等级保护要求。', auditor: '赵琳', auditTime: '2026-03-18 09:30' },
                         4: { comment: '首单验证成功，交易流程顺畅，各项指标均达到预期。', auditor: '陈刚', auditTime: '2026-03-22 16:00' }
@@ -308,7 +349,7 @@
                     record = { status: 'approved', ...stepRecord };
                 } else if (stepStatus.includes('已拒绝')) {
                     const rejectRecords = {
-                        1: { comment: '产品费率标准与备案信息不符，需重新修订后提交。', auditor: '李民', auditTime: '2026-03-17 16:20' },
+                        1: { comment: '产品费率计算方式与备案信息不符，需重新修订后提交。', auditor: '李民', auditTime: '2026-03-17 16:20' },
                         2: { comment: '接口响应超时，需优化系统性能后重新申请测试。', auditor: '王强', auditTime: '2026-03-18 11:45' },
                         3: { comment: '安全扫描发现高危漏洞，修复后重新提交验收申请。', auditor: '赵琳', auditTime: '2026-03-19 10:00' },
                         4: { comment: '首单交易验证失败，需排查问题后重新提交验证申请。', auditor: '陈刚', auditTime: '2026-03-20 09:30' }
@@ -326,7 +367,9 @@
                 return `
                     <div class="space-y-4">
                         ${submitContent.detailsHtml}
-                        ${submitContent.filesHtml}
+                        ${submitContent.rateTiersHtml || ''}
+                        ${submitContent.rateFixedHtml || ''}
+                        ${submitContent.files.length ? submitContent.filesHtml : ''}
                         <div class="flex items-center gap-2 p-3 rounded-xl bg-amber-50 border border-amber-100 mt-4">
                             <i class="fa fa-gavel text-amber-600"></i>
                             <span class="font-semibold text-slate-800">审核记录</span>
@@ -624,9 +667,22 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-sm text-slate-600 mb-6">
+                        <p class="text-sm text-slate-600 mb-4">
                             确认发起展业申请后，将为该机构创建展业资格申请单，进入展业审核流程。
                         </p>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">申请说明<span class="text-red-500 ml-0.5">*</span></label>
+                            <textarea id="exhibitionRemark" rows="3" placeholder="请填写展业申请说明，如展业范围、展业计划等" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300 transition-all resize-none"></textarea>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">附件上传</label>
+                            <div class="border border-dashed border-slate-300 rounded-xl p-4 text-center hover:border-emerald-400 transition-colors cursor-pointer" onclick="document.getElementById('exhibitionFile').click()">
+                                <i class="fa fa-cloud-upload text-slate-400 text-lg mb-1"></i>
+                                <div class="text-xs text-slate-500">点击上传相关材料（如展业方案、授权文件等）</div>
+                                <input type="file" id="exhibitionFile" class="hidden" multiple>
+                            </div>
+                            <div id="exhibitionFileList" class="mt-2 space-y-1.5"></div>
+                        </div>
                         <div class="flex gap-3">
                             <button id="cancelExhibitionBtn" class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all text-slate-600 text-sm font-medium">
                                 取消
@@ -649,7 +705,21 @@
             document.getElementById('cancelExhibitionBtn')?.addEventListener('click', closeModal);
             confirmModal.addEventListener('click', (e) => { if(e.target === confirmModal) closeModal(); });
             
+            document.getElementById('exhibitionFile')?.addEventListener('change', function() {
+                const list = document.getElementById('exhibitionFileList');
+                if (!list) return;
+                list.innerHTML = Array.from(this.files).map(f => `<div class="flex items-center gap-2 text-xs text-slate-600 bg-slate-50 rounded-lg px-2 py-1.5"><i class="fa fa-file-o text-slate-400"></i><span class="truncate">${f.name}</span></div>`).join('');
+            });
+            
             document.getElementById('confirmExhibitionBtn')?.addEventListener('click', () => {
+                const remarkEl = document.getElementById('exhibitionRemark');
+                const fileEl = document.getElementById('exhibitionFile');
+                const remark = remarkEl && remarkEl.value ? remarkEl.value.trim() : '';
+                const files = fileEl ? Array.from(fileEl.files).map(f => f.name) : [];
+                try {
+                    localStorage.setItem('exhibitionApplyRemark', remark);
+                    localStorage.setItem('exhibitionApplyFiles', JSON.stringify(files));
+                } catch(e) {}
                 closeModal();
                 showToast('展业申请已发起，正在跳转...', 'success');
                 setTimeout(() => {

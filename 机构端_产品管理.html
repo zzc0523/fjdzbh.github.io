@@ -344,15 +344,19 @@
                 1: { 
                     name: '产品材料完善', 
                     details: [
-                        { label: '保函类型', value: '投标保函' },
+                        { label: '保函类型', value: rowData.id === 'P002' ? '履约保函' : '投标保函' },
                         { label: '接入地市', value: rowData.city || '厦门市' },
                         { label: '产品名称', value: rowData.name || '投标保函', required: true }, 
-                        { label: '产品介绍', value: '为投标企业提供的担保服务，保障投标活动的顺利进行。', required: true },
-                        { label: '费率标准', value: '0.5%-1.2%' }, 
+                        { label: '产品介绍', value: rowData.id === 'P002' ? '为中标企业提供履约担保，保障合同按约履行，降低业主风险。' : '为投标企业提供的担保服务，保障投标活动的顺利进行。', required: true },
                         { label: '办理时效', value: '最快1个工作日' },
-                        { label: '办理条件', value: '1. 企业信用等级A级及以上；2. 无重大违法违规记录；3. 具备相应的资质' }
+                        { label: '费率计算方式', value: rowData.id === 'P002' ? '按区间定价' : '固定费率' }
                     ], 
-                    files: ['产品服务协议.pdf'] 
+                    rateTiers: rowData.id === 'P002' ? [
+                        { range: '1 （含）— 20000 （含）', rate: '2.8', min: '1000' },
+                        { range: '200000 （不含）— 1000000 （含）', rate: '1.8', min: '1000' },
+                        { range: '1000000 （不含）— +∞', rate: '1.05', min: '-' }
+                    ] : null,
+                    files: [] 
                 },
                 2: { 
                     name: '技术调试申请', 
@@ -397,13 +401,51 @@
             const cfg = stepData[step];
             const detailsHtml = `<div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl mb-5">${cfg.details.map(d => `<div><div class="text-[11px] text-slate-500 mb-0.5">${d.label}</div><div class="text-sm font-medium text-slate-800">${d.value}</div></div>`).join('')}</div>`;
             const filesHtml = `<div class="space-y-2">${cfg.files.map(f => `<div class="flex justify-between items-center p-3 border border-slate-200 rounded-xl bg-white hover:shadow-sm transition"><div class="flex items-center gap-2"><i class="fa fa-file-${f.includes('.pdf') ? 'pdf' : f.includes('.docx') ? 'doc' : 'archive'}-o ${f.includes('.pdf') ? 'text-red-400' : f.includes('.docx') ? 'text-blue-400' : 'text-yellow-400'}"></i><span class="text-sm text-slate-700">${f}</span></div><button class="preview-file text-primary text-xs font-medium hover:underline" data-file="${f}">预览</button></div>`).join('')}</div>`;
-            return { detailsHtml, filesHtml };
+            const rateTiersHtml = (step === 1 && cfg.rateTiers) ? `
+                <div class="mb-5">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">费率区间配置</div>
+                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                        <table class="w-full text-sm">
+                            <thead class="bg-slate-50">
+                                <tr class="text-[11px] text-slate-500">
+                                    <th class="px-4 py-3 text-left font-semibold">保证金区间（元）</th>
+                                    <th class="px-4 py-3 text-left font-semibold">费率（%）</th>
+                                    <th class="px-4 py-3 text-left font-semibold">最低保费（元/年）</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${cfg.rateTiers.map(t => `<tr>
+                                    <td class="px-4 py-3">${t.range}</td>
+                                    <td class="px-4 py-3">${t.rate}</td>
+                                    <td class="px-4 py-3">${t.min}</td>
+                                </tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            ` : '';
+            const rateFixedHtml = (step === 1 && !cfg.rateTiers) ? `
+                <div class="mb-5">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">费率信息</div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <div class="text-[11px] text-slate-400 mb-1">参考费率（%）</div>
+                            <div class="text-lg font-bold text-slate-800">1.0</div>
+                        </div>
+                        <div class="bg-slate-50 rounded-xl p-4">
+                            <div class="text-[11px] text-slate-400 mb-1">最低保费（元/年）</div>
+                            <div class="text-lg font-bold text-slate-800">500</div>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+            return { detailsHtml, rateTiersHtml, rateFixedHtml, filesHtml, files: cfg.files };
         }
 
         function getStepContent(step, stepStatus) {
             if (stepStatus.includes('已拒绝')) {
                 const rejectComments = {
-                    1: '产品费率标准与备案信息不符，需重新修订后提交。',
+                    1: '产品费率计算方式与备案信息不符，需重新修订后提交。',
                     2: '接口响应超时，需优化系统性能后重新申请测试。',
                     3: '安全扫描发现高危漏洞，修复后重新提交验收申请。',
                     4: '首单交易验证失败，需排查问题后重新提交验证申请。'
@@ -411,7 +453,7 @@
                 return `<div class="bg-red-50 p-4 rounded-xl border border-red-200 mb-4"><div class="flex items-center gap-2 mb-2"><i class="fa fa-ban text-red-600"></i><span class="font-semibold text-red-800">审核结果：拒绝</span></div><div class="text-sm text-slate-700 mb-1"><span class="font-medium">审核意见：</span>${rejectComments[step] || '审核未通过，请修改后重新提交。'}</div><div class="text-xs text-slate-500">审核人：平台管理员 · 2026-03-19 10:15</div></div>`;
             } else if (stepStatus.includes('已通过')) {
                 const passComments = {
-                    1: '产品材料齐全，费率标准符合监管要求，同意进入技术调试阶段。',
+                    1: '产品材料齐全，费率计算方式符合监管要求，同意进入技术调试阶段。',
                     2: '技术对接测试通过，接口调用正常，数据加密符合安全规范。',
                     3: '系统上线验收合格，安全扫描通过，符合等级保护要求。',
                     4: '首单验证成功，交易流程顺畅，各项指标均达到预期。'
@@ -471,7 +513,9 @@
                 return `
                     <div class="space-y-4">
                         ${submitContent.detailsHtml}
-                        ${submitContent.filesHtml}
+                        ${submitContent.rateTiersHtml || ''}
+                        ${submitContent.rateFixedHtml || ''}
+                        ${submitContent.files.length ? submitContent.filesHtml : ''}
                         <div class="flex items-center gap-2 p-3 rounded-xl bg-amber-50 border border-amber-100 mt-4">
                             <i class="fa fa-gavel text-amber-600"></i>
                             <span class="font-semibold text-slate-800">审核记录</span>
@@ -498,7 +542,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                             <div><div class="text-[10px] text-slate-400">产品编号</div><div class="font-mono font-medium">${rowData.id}</div></div>
                             <div><div class="text-[10px] text-slate-400">产品名称</div><div class="font-semibold">${rowData.name}</div></div>
-                            <div><div class="text-[10px] text-slate-400">保函类型</div><div>投标保函</div></div>
+                            <div><div class="text-[10px] text-slate-400">保函类型</div><div>${rowData.name}</div></div>
                             <div><div class="text-[10px] text-slate-400">接入地市</div><div>${rowData.city || '-'}</div></div>
                         </div>
                     </div>
@@ -566,6 +610,59 @@
             showToast(`${stepNames[step]}已提交，等待审核`, 'success');
         }
 
+        function toggleRateType() {
+            const fixedSection = document.getElementById('rate-fixed-section');
+            const tierSection = document.getElementById('rate-tier-section');
+            const selected = document.querySelector('input[name="rateType"]:checked');
+            if (!fixedSection || !tierSection) return;
+            if (selected && selected.value === 'fixed') {
+                fixedSection.classList.remove('hidden');
+                tierSection.classList.add('hidden');
+            } else {
+                fixedSection.classList.add('hidden');
+                tierSection.classList.remove('hidden');
+                const tbody = document.getElementById('rate-tier-tbody');
+                if (tbody && tbody.children.length === 0) {
+                    addRateTier();
+                }
+            }
+        }
+
+        function addRateTier() {
+            const tbody = document.getElementById('rate-tier-tbody');
+            if (!tbody) return;
+            const isFirst = tbody.children.length === 0;
+            const tr = document.createElement('tr');
+            tr.className = 'border-t border-slate-200 align-middle';
+            tr.innerHTML = `
+                <td class="px-3 py-3">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <input type="text" class="apply-form-input w-24 px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="${isFirst ? '1' : '下限金额'}">
+                        <span class="text-xs text-slate-500 whitespace-nowrap">（含）—</span>
+                        <input type="text" class="apply-form-input w-28 px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="${isFirst ? '200000' : '上限金额'}">
+                        <span class="text-xs text-slate-500 whitespace-nowrap">${isFirst ? '（含）' : '（不含）'}</span>
+                    </div>
+                </td>
+                <td class="px-3 py-3">
+                    <input type="text" class="apply-form-input w-24 px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="费率">
+                </td>
+                <td class="px-3 py-3">
+                    <input type="text" class="apply-form-input w-28 px-3 py-2 border border-slate-300 rounded-lg text-sm" placeholder="${isFirst ? '1000' : '最低保费'}">
+                </td>
+                <td class="px-3 py-3">
+                    <button type="button" onclick="removeRateTier(this)" class="text-red-500 hover:text-red-600 transition" title="删除">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeRateTier(btn) {
+            const tr = btn && btn.closest ? btn.closest('tr') : null;
+            if (tr) tr.remove();
+        }
+
         function showApplyModal(rowData, currentStep) {
             const steps = [
                 { num: 1, name: '产品材料', key: 'step1' },
@@ -597,30 +694,55 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">产品名称 <span class="text-red-500">*</span></label>
                                 <input type="text" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" value="${rowData.name || ''}" placeholder="请输入产品名称">
                             </div>
-                            <div class="col-span-2">
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">产品介绍 <span class="text-red-500">*</span></label>
-                                <textarea class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm resize-none" rows="2" maxlength="50" placeholder="请输入产品介绍（50字以内）"></textarea>
-                            </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">办理时效 <span class="text-red-500">*</span></label>
                                 <input type="text" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" placeholder="请输入办理时效，如 最快1个工作日">
                             </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">费率标准 <span class="text-red-500">*</span></label>
-                                <input type="text" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" placeholder="请输入费率标准，如 0.5%-1.2%">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">产品介绍 <span class="text-red-500">*</span></label>
+                                <textarea class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm resize-none" rows="2" maxlength="50" placeholder="请输入产品介绍（50字以内）"></textarea>
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">办理条件 <span class="text-red-500">*</span></label>
-                            <textarea class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" rows="3" placeholder="请输入办理条件"></textarea>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">产品服务协议 <span class="text-red-500">*</span></label>
-                            <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition">
-                                <i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>
-                                <p class="text-sm text-slate-600">点击或拖拽上传文件</p>
-                                <p class="text-xs text-slate-400 mt-1">支持 PDF, DOC, DOCX 格式，最大 10MB</p>
-                                <input type="file" class="hidden" accept=".pdf,.doc,.docx">
+                            <div class="col-span-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">费率计算方式 <span class="text-red-500">*</span></label>
+                                <div class="flex items-center gap-6 mb-3">
+                                    <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
+                                        <input type="radio" name="rateType" value="fixed" checked class="text-primary focus:ring-primary" onchange="toggleRateType()">
+                                        固定费率
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer text-sm text-slate-700">
+                                        <input type="radio" name="rateType" value="tier" class="text-primary focus:ring-primary" onchange="toggleRateType()">
+                                        按区间定价
+                                    </label>
+                                </div>
+                                <div id="rate-fixed-section" class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">参考费率（%） <span class="text-red-500">*</span></label>
+                                        <input type="text" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" placeholder="请输入费率，单位：%，两位小数">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">最低保费（元/年）</label>
+                                        <input type="text" class="apply-form-input w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary text-sm" placeholder="请输入金额，单位：元，两位小数">
+                                    </div>
+                                </div>
+                                <div id="rate-tier-section" class="hidden">
+                                    <div class="border border-slate-200 rounded-xl overflow-hidden">
+                                        <table class="w-full text-sm">
+                                            <thead class="bg-slate-50">
+                                                <tr class="text-[11px] text-slate-500">
+                                                    <th class="px-4 py-3 text-left font-semibold">保证金区间（元） <span class="text-red-500">*</span></th>
+                                                    <th class="px-4 py-3 text-left font-semibold">费率（%） <span class="text-red-500">*</span></th>
+                                                    <th class="px-4 py-3 text-left font-semibold">最低保费（元/年）</th>
+                                                    <th class="px-4 py-3 text-left font-semibold">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="rate-tier-tbody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <button type="button" onclick="addRateTier()" class="mt-3 inline-flex items-center gap-1 px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary/90 transition">
+                                        <i class="fa fa-plus"></i>添加
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

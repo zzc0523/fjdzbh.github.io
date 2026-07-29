@@ -143,13 +143,15 @@
                     e.preventDefault();
                     const text = this.textContent.trim();
                     const row = this.closest('tr');
-                    const no = row.querySelector('td:nth-child(2)').textContent.trim();
-                    const projectName = row.querySelector('td:nth-child(3)').textContent.trim();
+                    const projectName = row.querySelector('td:nth-child(2)').textContent.trim();
+                    const no = row.querySelector('td:nth-child(3)').textContent.trim();
                     const bondType = row.querySelector('td:nth-child(4)').textContent.trim();
                     const amount = row.querySelector('td:nth-child(5)').textContent.trim();
-                    const premium = row.querySelector('td:nth-child(6)').textContent.trim();
-                    const validPeriod = row.querySelector('td:nth-child(7)').textContent.trim();
-                    const statusText = row.querySelector('td:nth-child(8)').textContent.trim();
+                    const validPeriod = row.querySelector('td:nth-child(6)').textContent.trim();
+                    const issueTime = row.querySelector('td:nth-child(7)').textContent.trim();
+                    const companyName = row.querySelector('td:nth-child(8)').textContent.trim();
+                    const insurer = row.querySelector('td:nth-child(9)').textContent.trim();
+                    const statusText = row.querySelector('td:nth-child(10)').textContent.trim();
                     const guaranteeNo = no;
 
                     // 状态徽章颜色
@@ -177,8 +179,10 @@
                                             <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保函编号：</span><span class="ml-3 text-sm font-mono text-gray-900">${no}</span></div>
                                             <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目名称：</span><span class="ml-3 text-sm text-gray-900">${projectName}</span></div>
                                             <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保函类型：</span><span class="ml-3 text-sm text-gray-900">${bondType}</span></div>
+                                            <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">投保企业：</span><span class="ml-3 text-sm text-gray-900">${companyName}</span></div>
+                                            <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">出函时间：</span><span class="ml-3 text-sm text-gray-900">${issueTime}</span></div>
+                                            <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">承保机构：</span><span class="ml-3 text-sm text-gray-900">${insurer}</span></div>
                                             <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金金额（元）：</span><span class="ml-3 text-sm font-bold text-gray-900">${amount}</span></div>
-                                            <div class="flex items-baseline"><span class="w-32 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保费（元）：</span><span class="ml-3 text-sm text-gray-900">${premium}</span></div>
                                         </div>
                                     </div>
                                     <div>
@@ -345,7 +349,7 @@
                         showModal(`发起理赔申请 - ${no}`, claimFormHtml, [
                             { text: '取消', action: 'close', className: 'bg-gray-200 text-gray-800 px-4 py-2 rounded-lg' },
                             { text: '确认发起理赔', className: 'bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 shadow-lg shadow-red-200', callback: () => {
-                                showNotification('理赔申请已提交，请在“理赔管理”中跟踪进度', 'success');
+                                showNotification('理赔申请已提交，请在"理赔管理"中跟踪进度', 'success');
                             }}
                         ]);
                     } else if (text === '下载') {
@@ -355,213 +359,7 @@
             });
 
             document.querySelector('.fa-question-circle')?.parentElement.addEventListener('click', () => {
-                showModal('帮助中心', `<div class="space-y-4"><div class="p-3 bg-slate-50 rounded"><b>如何查询？</b><p class="text-sm mt-1">在顶部搜索框输入关键字后点击查询按钮。</p></div><div class="p-3 bg-slate-50 rounded"><b>批量验真？</b><p class="text-sm mt-1">勾选列表项后点击“批量验真”按钮即可。</p></div><div class="p-3 bg-slate-50 rounded"><b>批量下载？</b><p class="text-sm mt-1">勾选列表项后点击“批量下载”按钮即可一键下载多份保函文件。</p></div></div>`);
-            });
-
-            document.getElementById('batch-verify-btn')?.addEventListener('click', function() {
-                const checkedBoxes = document.querySelectorAll('tbody input[type="checkbox"]:checked');
-                if (checkedBoxes.length === 0) {
-                    showNotification('请先勾选要验真的保函', 'error');
-                    return;
-                }
-
-                const selectedItems = [];
-                checkedBoxes.forEach(cb => {
-                    const row = cb.closest('tr');
-                    const no = row.querySelector('td:nth-child(2)').textContent.trim();
-                    const amount = row.querySelector('td:nth-child(5)').textContent.trim();
-                    const guaranteeType = row.querySelector('td:nth-child(4)').textContent.trim();
-                    const status = row.querySelector('td:nth-child(8)').textContent.trim();
-                    selectedItems.push({ no, amount, guaranteeType, status });
-                });
-
-                const generateVerificationReport = () => {
-                    const timestamp = new Date().toLocaleString('zh-CN');
-                    const reportId = 'VR' + Date.now();
-                    
-                    const reportHTML = `
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>电子保函批量验真报告</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background: #fff; }
-        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
-        .header { text-align: center; padding-bottom: 30px; border-bottom: 2px solid #1E40AF; }
-        .header h1 { color: #1E40AF; font-size: 24px; margin: 0; }
-        .header .subtitle { color: #666; font-size: 14px; margin-top: 10px; }
-        .info-row { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px 15px; background: #f8fafc; border-radius: 8px; }
-        .info-label { color: #64748b; font-weight: 500; }
-        .info-value { color: #1e293b; font-weight: 600; }
-        .table-container { margin-top: 20px; }
-        .table-container h3 { color: #1E40AF; font-size: 16px; margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #1E40AF; color: white; padding: 12px 10px; text-align: left; font-weight: 600; font-size: 13px; }
-        td { padding: 12px 10px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-        tr:hover { background: #f8fafc; }
-        .pass-badge { display: inline-flex; align-items: center; padding: 4px 10px; background: #dcfce7; color: #16a34a; border-radius: 20px; font-size: 12px; font-weight: 500; }
-        .pass-badge i { margin-right: 4px; }
-        .blockchain-section { margin-top: 25px; padding: 20px; background: #eff6ff; border-radius: 12px; border-left: 4px solid #3b82f6; }
-        .blockchain-section h4 { color: #1e40af; margin: 0 0 10px 0; display: flex; align-items: center; }
-        .blockchain-section h4 i { margin-right: 8px; }
-        .blockchain-section p { color: #475569; margin: 0; font-size: 14px; line-height: 1.6; }
-        .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; color: #94a3b8; font-size: 12px; }
-        .verify-count { display: inline-flex; align-items: center; padding: 15px 30px; background: #dcfce7; color: #16a34a; border-radius: 10px; font-size: 18px; font-weight: 700; }
-        .verify-count i { margin-right: 10px; font-size: 24px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1><i class="fa fa-file-text-o" style="margin-right: 10px;"></i>电子保函批量验真报告</h1>
-            <p class="subtitle">福建省电子保函服务平台</p>
-        </div>
-        
-        <div style="text-align: center; margin: 25px 0;">
-            <div class="verify-count">
-                <i class="fa fa-check-circle"></i>
-                本次验证 ${selectedItems.length} 笔保函，全部通过
-            </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-            <div class="info-row">
-                <span class="info-label">报告编号</span>
-                <span class="info-value">${reportId}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">验真时间</span>
-                <span class="info-value">${timestamp}</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">受益人</span>
-                <span class="info-value">福建省信息化建设办公室</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">验真状态</span>
-                <span class="info-value" style="color: #16a34a;">全部通过</span>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <h3><i class="fa fa-list" style="margin-right: 8px;"></i>验真明细</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>保函编号</th>
-                        <th>保函类型</th>
-                        <th>保证金金额（元）</th>
-                        <th>状态</th>
-                        <th>验真结果</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${selectedItems.map(item => `
-                    <tr>
-                        <td style="font-family: monospace;">${item.no}</td>
-                        <td>${item.guaranteeType}</td>
-                        <td>${item.amount}</td>
-                        <td>${item.status}</td>
-                        <td><span class="pass-badge"><i class="fa fa-check"></i>通过</span></td>
-                    </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-
-        <div class="blockchain-section">
-            <h4><i class="fa fa-link"></i>区块链验证结果</h4>
-            <p>所有保函数据均已通过福建省政务区块链存证校验，数据完整未被篡改。</p>
-            <p style="margin-top: 10px; font-size: 13px; color: #64748b;">
-                <strong>存证哈希：</strong>
-                <span style="font-family: monospace;">0x${Math.random().toString(16).substring(2, 66)}</span>
-            </p>
-        </div>
-
-        <div class="footer">
-            <p>本报告由福建省电子保函服务平台自动生成</p>
-            <p style="margin-top: 5px;">福建省电子保函服务平台版权所有 © 2026</p>
-        </div>
-    </div>
-</body>
-</html>
-                    `;
-
-                    const blob = new Blob([reportHTML], { type: 'text/html' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `电子保函批量验真报告_${reportId}.html`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-
-                    showNotification('验真报告已下载', 'success');
-                };
-
-                const batchResultContent = `
-                    <div class="space-y-6">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                                <i class="fa fa-check-square-o text-blue-600 text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-xl font-semibold">批量验真结果</h3>
-                                <p class="text-gray-500">共验证 ${selectedItems.length} 笔保函</p>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
-                            <div class="flex items-center mb-3">
-                                <i class="fa fa-check-circle text-green-600 mr-2"></i>
-                                <span class="font-bold text-green-700">全部验证通过</span>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead>
-                                        <tr class="text-left text-sm text-gray-600">
-                                            <th class="pb-2">保函编号</th>
-                                            <th class="pb-2">保函类型</th>
-                                            <th class="pb-2">保证金金额（元）</th>
-                                            <th class="pb-2">验证结果</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${selectedItems.map(item => `
-                                            <tr class="border-t border-green-200">
-                                                <td class="py-2 font-mono text-sm">${item.no}</td>
-                                                <td class="py-2 text-sm">${item.guaranteeType}</td>
-                                                <td class="py-2 text-sm">${item.amount}</td>
-                                                <td class="py-2">
-                                                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full flex items-center">
-                                                        <i class="fa fa-check mr-1"></i>通过
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                            <div class="flex items-start">
-                                <i class="fa fa-link text-blue-600 mr-3 mt-0.5"></i>
-                                <div>
-                                    <h4 class="font-bold text-blue-800 mb-2">区块链验证结果</h4>
-                                    <p class="text-sm text-blue-700">所有保函数据均已通过福建省政务区块链存证校验，数据完整未被篡改。</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                showModal('批量验真完成', batchResultContent, [
-                    { text: '导出验真报告', className: 'px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center', callback: generateVerificationReport },
-                    { text: '关闭', action: 'close', className: 'px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90' }
-                ]);
+                showModal('帮助中心', `<div class="space-y-4"><div class="p-3 bg-slate-50 rounded"><b>如何查询？</b><p class="text-sm mt-1">在顶部搜索框输入关键字后点击查询按钮。</p></div><div class="p-3 bg-slate-50 rounded"><b>批量下载？</b><p class="text-sm mt-1">勾选列表项后点击"批量下载"按钮即可一键下载多份保函文件。</p></div></div>`);
             });
 
             // 批量下载
@@ -575,7 +373,7 @@
                 const nos = [];
                 checkedBoxes.forEach(cb => {
                     const row = cb.closest('tr');
-                    const no = row.querySelector('td:nth-child(2)').textContent.trim();
+                    const no = row.querySelector('td:nth-child(3)').textContent.trim();
                     nos.push(no);
                 });
                 
@@ -614,6 +412,12 @@
             </div>
             <nav class="flex-1 overflow-y-auto py-4 px-3">
                 <ul class="space-y-1">
+                    <li>
+                        <a href="受益人端_企业认证.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all">
+                            <i class="fa fa-building-o mr-3 text-green-400"></i>
+                            <span class="font-bold">企业认证</span>
+                        </a>
+                    </li>
                     <li>
                         <button onclick="toggleSubMenu('guarantee-menu')" class="w-full flex items-center p-3 text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-all group">
                             <i class="fa fa-file-text-o mr-3 text-blue-400"></i>
@@ -680,6 +484,10 @@
                             <input type="text" placeholder="请输入项目名称" class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
                         </div>
                         <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">投保企业</label>
+                            <input type="text" placeholder="请输入投保企业" class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
+                        </div>
+                        <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">保函类型</label>
                             <select class="w-full p-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/50">
                                 <option value="">全部类型</option>
@@ -712,9 +520,6 @@
                                 <input type="checkbox" id="select-all" class="rounded border-gray-300 text-primary focus:ring-primary">
                                 <span class="ml-2 text-sm text-slate-600">全选</span>
                             </label>
-                            <button id="batch-verify-btn" class="text-sm text-blue-600 hover:text-blue-700 flex items-center">
-                                <i class="fa fa-check-circle mr-1"></i>批量验真
-                            </button>
                             <button id="batch-download-btn" class="text-sm text-emerald-600 hover:text-emerald-700 flex items-center">
                                 <i class="fa fa-download mr-1"></i>批量下载
                             </button>
@@ -730,12 +535,14 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8">
                                         <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函编号</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函编号</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保费（元）</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">有效期</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">出函时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">投保企业</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">承保机构</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                                 </tr>
@@ -743,12 +550,14 @@
                             <tbody class="divide-y divide-gray-200">
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">福州市地铁4号线二期工程</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">500,000</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">5,000</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-03-11 至 2026-06-11</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-03-11 10:30</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">福建省建筑工程有限公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">中国建设银行福建省分行</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">已生效</span></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="action-btn text-primary hover:text-primary/80 mr-3">查看</a>
@@ -759,12 +568,14 @@
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110002</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">厦门市地铁5号线一期工程</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110002</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">履约保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2,000,000</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">12,000</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-03-11 至 2027-03-11</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-02-01 09:15</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">福建路桥建设集团</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">中国银行厦门市分行</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">已失效-到期</span></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="action-btn text-primary hover:text-primary/80 mr-3">查看</a>
@@ -774,12 +585,14 @@
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110003</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">泉州市文化中心建设项目</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110003</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">预付款保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">1,000,000</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">8,000</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-03-15 至 2026-09-15</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">2026-03-15 14:00</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">泉州文化投资发展有限公司</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">招商银行泉州分行</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">已生效</span></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="action-btn text-primary hover:text-primary/80 mr-3">查看</a>

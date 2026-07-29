@@ -75,21 +75,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // 发起展业申请
-            const initiateBtn = document.getElementById('initiateBusinessBtn');
-            if (initiateBtn) {
-                initiateBtn.addEventListener('click', function() {
-                    createModal('发起展业申请', `
-                        <div class="space-y-4">
-                            <div><label class="font-bold text-slate-500 block mb-1">选择申请机构 *</label><select class="w-full border p-2 rounded"><option>中国平安保险福建分公司</option></select></div>
-                            <div><label class="font-bold text-slate-500 block mb-1">申请展业产品 *</label><select class="w-full border p-2 rounded"><option>投标保函</option><option>履约保函</option></select></div>
-                            <div><label class="font-bold text-slate-500 block mb-1">申请说明 *</label><textarea class="w-full border p-2 rounded" rows="3"></textarea></div>
-                            <div><label class="font-bold text-slate-500 block mb-1">附件材料 *</label><div class="border-2 border-dashed p-6 text-center rounded">点击上传文件</div></div>
-                        </div>
-                    `);
-                });
-            }
-
             // 查看按钮
             document.querySelectorAll('a.text-primary').forEach(btn => {
                 btn.addEventListener('click', function(e) {
@@ -118,8 +103,8 @@
                         const id = tr.querySelector('td:nth-of-type(1)').textContent.trim();
                         if (confirm(`确定要提交申请 ${id} 吗？`)) {
                             const badge = tr.querySelector('td:nth-of-type(5) span');
-                            badge.textContent = '已提交';
-                            badge.className = 'px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800';
+                            badge.textContent = '审核中';
+                            badge.className = 'px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800';
                             this.remove();
                         }
                     });
@@ -207,12 +192,6 @@
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-lg font-bold text-slate-900">展业管理列表</h2>
-                        <button id="initiateBusinessBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2 shadow-lg shadow-blue-900/20"><i class="fa fa-plus"></i>发起展业申请</button>
-                    </div>
-
-                    <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6 flex items-start space-x-3 text-sm text-blue-700">
-                        <i class="fa fa-info-circle mt-0.5"></i>
-                        <div>只有完成<strong>首单验证审核</strong>并获得“已通过”状态的机构，方可发起展业申请。</div>
                     </div>
 
                     <!-- 快速查询筛选 -->
@@ -229,8 +208,7 @@
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">申请状态</label>
                                 <select id="statusFilter" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
                                     <option value="">全部状态</option>
-                                    <option value="待提交">待提交</option>
-                                    <option value="已提交">已提交</option>
+                                    <option value="审核中">审核中</option>
                                     <option value="审核通过">审核通过</option>
                                     <option value="审核不通过">审核不通过</option>
                                 </select>
@@ -268,15 +246,15 @@
                                     <td class="px-6 py-4 whitespace-nowrap">中国平安保险福建分公司</td>
                                     <td class="px-6 py-4 whitespace-nowrap">投标保函</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-11</td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">待提交</span></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline mr-3">查看</a><a href="#" class="text-blue-500 hover:underline">提交</a></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">审核中</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline">查看</a></td>
                                 </tr>
                                 <tr class="hover:bg-slate-50">
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="font-medium text-slate-900 font-mono">BZ202603100002</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap">中国工商银行福建省分行</td>
                                     <td class="px-6 py-4 whitespace-nowrap">履约保函</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-10</td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">已提交</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">审核中</span></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline">查看</a></td>
                                 </tr>
                                 <tr class="hover:bg-slate-50">
@@ -286,6 +264,14 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-09</td>
                                     <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">审核通过</span></td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline">查看</a></td>
+                                </tr>
+                                <tr class="hover:bg-slate-50">
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="font-medium text-slate-900 font-mono">BZ202603080004</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap">中国农业银行福建省分行</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">预付款保函</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-slate-700">2026-03-08</td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">审核不通过</span></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium"><a href="#" class="text-primary hover:underline mr-3">查看</a><a href="#" class="text-blue-500 hover:underline">编辑</a></td>
                                 </tr>
                             </tbody>
                         </table>

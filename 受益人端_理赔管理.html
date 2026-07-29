@@ -151,11 +151,14 @@
                 const text = link.textContent.trim();
                 const row = link.closest('tr');
                 if (!row) return;
-                const claimNo = row.cells[0]?.innerText;
-                const guaranteeNo = row.cells[1]?.innerText;
-                const enterprise = row.cells[2]?.innerText;
-                const amount = row.cells[3]?.innerText;
-                const status = row.cells[4]?.innerText.trim();
+                    const claimNo = row.cells[0]?.innerText;
+                    const guaranteeNo = row.cells[1]?.innerText;
+                    const projectName = row.cells[2]?.innerText;
+                    const bondType = row.cells[3]?.innerText;
+                    const insurer = row.cells[4]?.innerText;
+                    const enterprise = row.cells[5]?.innerText;
+                    const amount = row.cells[6]?.innerText;
+                    const status = row.cells[7]?.innerText.trim();
 
                 if (text === '详情' || text === '查看') {
                     const detailsContent = `
@@ -189,7 +192,7 @@
                                         </div>
                                         <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
                                             <p class="text-xs text-slate-400 uppercase">项目/合同名称</p>
-                                            <p class="font-medium text-slate-700">${enterprise}</p>
+                                            <p class="font-medium text-slate-700">${projectName}</p>
                                         </div>
                                         <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
                                             <p class="text-xs text-slate-400 uppercase">保证金金额（元）</p>
@@ -321,6 +324,12 @@
             <nav class="flex-1 overflow-y-auto py-4 px-3">
                 <ul class="space-y-1">
                     <li>
+                        <a href="受益人端_企业认证.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all">
+                            <i class="fa fa-building-o mr-3 text-green-400"></i>
+                            <span class="font-bold">企业认证</span>
+                        </a>
+                    </li>
+                    <li>
                         <button onclick="toggleSubMenu('guarantee-menu')" class="w-full flex items-center p-3 text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-all group">
                             <i class="fa fa-file-text-o mr-3 text-blue-400"></i>
                             <span class="font-bold">保函管理</span>
@@ -377,13 +386,17 @@
             </header>
             <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-2">保函编号</label>
                             <input type="text" placeholder="输入单号" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">申请企业</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">项目名称</label>
+                            <input type="text" placeholder="输入项目名称" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">投保企业</label>
                             <input type="text" placeholder="输入企业名称" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
                         </div>
                         <div>
@@ -410,82 +423,112 @@
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
+                    <div class="overflow-x-auto" style="max-width:100%">
+                        <table class="w-full text-sm text-left whitespace-nowrap">
+                            <colgroup>
+                                <col style="min-width:150px">
+                                <col style="min-width:160px">
+                                <col style="min-width:200px">
+                                <col style="min-width:100px">
+                                <col style="min-width:180px">
+                                <col style="min-width:180px">
+                                <col style="min-width:130px">
+                                <col style="min-width:110px">
+                                <col style="min-width:150px">
+                                <col style="min-width:100px" class="sticky-col">
+                            </colgroup>
                             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500">
                                 <tr>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">理赔单号</th>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">保函编号</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">申请企业</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">项目名称</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">保函类型</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">承保机构</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">投保企业</th>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">理赔金额（元）</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">当前状态</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">理赔状态</th>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">提交时间</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider text-right">操作</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider text-right sticky-col" style="position:sticky;right:0;background:#f8fafc;z-index:10;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">操作</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603200001</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601010001</td>
+                                    <td class="px-6 py-4">福州市地铁4号线二期工程</td>
+                                    <td class="px-6 py-4">投标保函</td>
+                                    <td class="px-6 py-4">中国建设银行福建省分行</td>
                                     <td class="px-6 py-4">福建省建设工程有限公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">50,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-[10px] font-bold">待审核</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-20 09:30</td>
-                                    <td class="px-6 py-4 text-right space-x-3">
+                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603200002</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601020002</td>
+                                    <td class="px-6 py-4">厦门市地铁5号线一期工程</td>
+                                    <td class="px-6 py-4">履约保函</td>
+                                    <td class="px-6 py-4">中国银行厦门市分行</td>
                                     <td class="px-6 py-4">厦门市路桥建设集团</td>
                                     <td class="px-6 py-4 font-bold text-red-600">200,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-[10px] font-bold">待审核</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-20 10:15</td>
-                                    <td class="px-6 py-4 text-right space-x-3">
+                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603190005</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601050012</td>
+                                    <td class="px-6 py-4">泉州市文化中心建设项目</td>
+                                    <td class="px-6 py-4">预付款保函</td>
+                                    <td class="px-6 py-4">招商银行泉州分行</td>
                                     <td class="px-6 py-4">泉州市市政工程公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">150,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-[10px] font-bold">待审核</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-19 16:40</td>
-                                    <td class="px-6 py-4 text-right space-x-3">
+                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603180003</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601080055</td>
+                                    <td class="px-6 py-4">福州市水利工程项目</td>
+                                    <td class="px-6 py-4">履约保函</td>
+                                    <td class="px-6 py-4">中国农业银行福州分行</td>
                                     <td class="px-6 py-4">福州市水利建设有限公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">80,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-[10px] font-bold">待赔付</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-18 14:20</td>
-                                    <td class="px-6 py-4 text-right space-x-3">
+                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603150001</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601010009</td>
+                                    <td class="px-6 py-4">龙岩市交通枢纽工程</td>
+                                    <td class="px-6 py-4">投标保函</td>
+                                    <td class="px-6 py-4">中国工商银行龙岩分行</td>
                                     <td class="px-6 py-4">龙岩市交通发展集团</td>
                                     <td class="px-6 py-4 font-bold text-red-600">100,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-bold">已赔付</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-15 11:00</td>
-                                    <td class="px-6 py-4 text-right space-x-3">
+                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
