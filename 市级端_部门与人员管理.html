@@ -185,7 +185,6 @@
                                             <div class="flex items-center space-x-3 text-xs">
                                                 <button class="text-blue-600 font-bold hover:underline" onclick="openModal('edit', {name:'张立伟', account:'fz_zhanglw', role:'平台管理员', phone:'13888888888'})">编辑</button>
                                                 <button class="text-slate-400 font-bold hover:text-slate-600">重置密码</button>
-                                                <button class="text-amber-600 font-bold hover:underline" onclick="openDataPermissionModal('张立伟')">数据权限</button>
                                                 <button class="text-rose-500 font-bold hover:underline">禁用</button>
                                             </div>
                                         </td>
@@ -216,7 +215,6 @@
                                             <div class="flex items-center space-x-3 text-xs">
                                                 <button class="text-blue-600 font-bold hover:underline" onclick="openModal('edit', {name:'李美琪', account:'fz_limq', role:'业务审核员', phone:'13999999999'})">编辑</button>
                                                 <button class="text-slate-400 font-bold hover:text-slate-600">重置密码</button>
-                                                <button class="text-amber-600 font-bold hover:underline" onclick="openDataPermissionModal('李美琪')">数据权限</button>
                                                 <button class="text-rose-500 font-bold hover:underline">禁用</button>
                                             </div>
                                         </td>
@@ -227,42 +225,6 @@
                     </div>
                 </div>
             </main>
-        </div>
-    </div>
-
-    <!-- Data Permission Modal -->
-    <div id="data-permission-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 sticky top-0 z-10">
-                <h3 id="data-permission-title" class="text-lg font-bold text-slate-800">数据权限分配</h3>
-                <button onclick="closeDataPermissionModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-            <div class="p-6 space-y-6">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">人员姓名</label>
-                    <div id="data-permission-username" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm bg-slate-50 font-medium text-slate-700"></div>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h4 class="text-sm font-bold text-slate-700">数据权限范围（勾选组织）</h4>
-                        <div class="flex space-x-2">
-                            <button onclick="checkAllOrgs()" class="text-xs text-blue-600 hover:underline">全选</button>
-                            <button onclick="uncheckAllOrgs()" class="text-xs text-blue-600 hover:underline">取消全选</button>
-                        </div>
-                    </div>
-                    <div id="data-permission-tree" class="border border-slate-200 rounded-xl p-4 bg-slate-50/50 max-h-[400px] overflow-y-auto">
-                    </div>
-                </div>
-                
-                
-            </div>
-            <div class="p-6 border-t border-slate-100 bg-slate-50 flex justify-end space-x-4">
-                <button onclick="closeDataPermissionModal()" class="px-6 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors">取消</button>
-                <button onclick="saveDataPermission()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">保存</button>
-            </div>
         </div>
     </div>
 
@@ -1011,148 +973,6 @@
             
             closeOrgModal();
             refreshOrgTree();
-        }
-
-        function openDataPermissionModal(username) {
-            const modal = document.getElementById('data-permission-modal');
-            document.getElementById('data-permission-username').textContent = username;
-            renderDataPermissionTree();
-            
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modal.querySelector('.bg-white').classList.remove('scale-95');
-            }, 10);
-        }
-
-        function closeDataPermissionModal() {
-            const modal = document.getElementById('data-permission-modal');
-            modal.classList.add('opacity-0');
-            modal.querySelector('.bg-white').classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-
-        function renderDataPermissionTree() {
-            const container = document.getElementById('data-permission-tree');
-            container.innerHTML = '';
-            
-            function renderNode(data, level = 0) {
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center py-2 hover:bg-white rounded-lg px-2 transition-colors';
-                    div.style.paddingLeft = `${level * 16 + 8}px`;
-                    
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.className = 'w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 mr-2';
-                    checkbox.value = item.id;
-                    checkbox.onchange = function() {
-                        toggleOrgCheckbox(item.id, this.checked);
-                    };
-                    
-                    const icon = document.createElement('i');
-                    icon.className = item.children.length > 0 ? 'fa fa-folder text-amber-500 mr-2' : 'fa fa-folder-open text-amber-400 mr-2';
-                    
-                    const span = document.createElement('span');
-                    span.className = 'text-sm text-slate-700';
-                    span.textContent = item.name;
-                    
-                    div.appendChild(checkbox);
-                    div.appendChild(icon);
-                    div.appendChild(span);
-                    container.appendChild(div);
-                    
-                    if (item.children.length > 0) {
-                        renderNode(item.children, level + 1);
-                    }
-                });
-            }
-            
-            renderNode(orgData);
-        }
-
-        function toggleOrgCheckbox(id, checked) {
-            function findAndToggle(data, targetId) {
-                data.forEach(item => {
-                    const checkbox = document.querySelector(`input[type="checkbox"][value="${item.id}"]`);
-                    if (item.id === targetId) {
-                        if (checkbox && checkbox.checked !== checked) {
-                            checkbox.checked = checked;
-                        }
-                    }
-                    if (item.children.length > 0) {
-                        if (item.id === targetId) {
-                            item.children.forEach(child => {
-                                const childCheckbox = document.querySelector(`input[type="checkbox"][value="${child.id}"]`);
-                                if (childCheckbox) {
-                                    childCheckbox.checked = checked;
-                                    findAndToggle([child], child.id);
-                                }
-                            });
-                        } else {
-                            findAndToggle(item.children, targetId);
-                        }
-                    }
-                });
-            }
-            
-            findAndToggle(orgData, id);
-            updateParentCheckbox(id);
-        }
-
-        function updateParentCheckbox(childId) {
-            function findParent(data, childId, parentId = '') {
-                for (const item of data) {
-                    if (item.id === childId) {
-                        return parentId;
-                    }
-                    if (item.children.length > 0) {
-                        const found = findParent(item.children, childId, item.id);
-                        if (found) return found;
-                    }
-                }
-                return '';
-            }
-            
-            const parentId = findParent(orgData, childId);
-            if (parentId) {
-                const parent = findOrgById(orgData, parentId);
-                if (parent) {
-                    const allChecked = parent.children.every(child => {
-                        const checkbox = document.querySelector(`input[type="checkbox"][value="${child.id}"]`);
-                        return checkbox && checkbox.checked;
-                    });
-                    const parentCheckbox = document.querySelector(`input[type="checkbox"][value="${parentId}"]`);
-                    if (parentCheckbox) {
-                        parentCheckbox.checked = allChecked;
-                    }
-                    updateParentCheckbox(parentId);
-                }
-            }
-        }
-
-        function checkAllOrgs() {
-            document.querySelectorAll('#data-permission-tree input[type="checkbox"]').forEach(cb => {
-                cb.checked = true;
-            });
-        }
-
-        function uncheckAllOrgs() {
-            document.querySelectorAll('#data-permission-tree input[type="checkbox"]').forEach(cb => {
-                cb.checked = false;
-            });
-        }
-
-        function saveDataPermission() {
-            const checkedOrgs = Array.from(document.querySelectorAll('#data-permission-tree input[type="checkbox"]:checked'))
-                .map(cb => cb.nextElementSibling.nextElementSibling.textContent);
-            const username = document.getElementById('data-permission-username').textContent;
-            
-            const orgsText = checkedOrgs.length > 0 ? checkedOrgs.join('、') : '无';
-            showNotification(`${username}的数据权限已更新：组织[${orgsText}]`, 'success');
-            closeDataPermissionModal();
         }
 
         // 初始化组织树

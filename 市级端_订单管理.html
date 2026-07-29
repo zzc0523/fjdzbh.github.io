@@ -1121,11 +1121,6 @@
             `;
 
             showModal('验真结果', verifyResultContent, [
-                { text: '下载验真报告', className: 'px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50', onClick: () => {
-                    showNotification('验真报告正在下载...', 'info');
-                    const modal = document.getElementById('modal');
-                    if(modal) modal.remove();
-                }},
                 { text: '关闭', className: 'px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90', onClick: () => {
                     const modal = document.getElementById('modal');
                     if(modal) modal.remove();

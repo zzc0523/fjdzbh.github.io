@@ -6,7 +6,6 @@
     <title>市级运营平台 - 工作台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
     <script src="load-sidebar.js"></script>
     <script>
         tailwind.config = {
@@ -149,7 +148,7 @@
                         </div>
                     </div>
                     <div class="h-8 w-px bg-slate-200"></div>
-                    <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors" onclick="showDetail('帮助中心', '<div class=\'space-y-4\'><p><b>1. 工作台说明：</b>工作台汇总了当前平台的运营核心数据，包括保函数量、金额及待办事项。</p><p><b>2. 业务趋势分析：</b>您可以选择最近7天或30天查看业务量及金额的波动情况。</p><p><b>3. 待办处理：</b>点击右侧待办事项卡片可快速进入相关模块进行处理。</p><p><b>4. 客服支持：</b>如有疑问请联系系统管理员或拨打 400-XXX-XXXX。</p></div>')">
+                    <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors" onclick="showDetail('帮助中心', '<div class=\'space-y-4\'><p><b>1. 工作台说明：</b>工作台汇总了当前平台的运营核心数据，包括保函数量、金额及待办事项。</p><p><b>2. 待办处理：</b>点击待办事项卡片可快速进入相关模块进行处理。</p><p><b>3. 客服支持：</b>如有疑问请联系系统管理员或拨打 400-XXX-XXXX。</p></div>')">
                         <i class="fa fa-question-circle text-lg"></i>
                     </button>
                 </div>
@@ -276,83 +275,41 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- 左侧图表区域 -->
-                    <div class="lg:col-span-2 space-y-8">
-                        <!-- 业务趋势图 -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                            <div class="flex items-center justify-between mb-6">
-                                <div>
-                                    <h4 class="text-lg font-bold text-slate-800">业务趋势分析</h4>
-                                    <p class="text-xs text-slate-400 mt-1">展示最近7天的保函申请数量与担保金额趋势</p>
-                                </div>
-                                <select class="text-sm border-none bg-slate-50 rounded-md px-3 py-1.5 focus:ring-0 text-slate-600">
-                                    <option>最近7天</option>
-                                    <option>最近30天</option>
-                                </select>
-                            </div>
-                            <div class="h-[300px]">
-                                <canvas id="businessTrendChart"></canvas>
-                            </div>
+                <!-- 待办事项区域 -->
+                <div class="space-y-8">
+                    <!-- 待办事项 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div class="flex items-center justify-between mb-6">
+                            <h4 class="text-lg font-bold text-slate-800">待办事项</h4>
+                            <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-full">3条紧急</span>
                         </div>
-
-                        <!-- 两个子图表 -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <!-- 保函类型分布 -->
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                                <h4 class="text-lg font-bold text-slate-800 mb-2">保函类型占比</h4>
-                                <p class="text-xs text-slate-400 mb-6">不同业务类型的保函分布情况</p>
-                                <div class="h-[250px] flex items-center justify-center">
-                                    <canvas id="guaranteeTypeChart"></canvas>
+                        <div class="space-y-4">
+                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="location.href='办理监控.html'">
+                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 shrink-0"></div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-bold text-slate-800">5笔业务处理超时</p>
+                                    <p class="text-xs text-slate-500 mt-1">需立即联系处理机构进行督办</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
                                 </div>
                             </div>
-                            <!-- 机构业务排行 -->
-                            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                                <h4 class="text-lg font-bold text-slate-800 mb-2">机构业务排行</h4>
-                                <p class="text-xs text-slate-400 mb-6">活跃机构的保函签发数量TOP5</p>
-                                <div class="h-[250px]">
-                                    <canvas id="institutionRankingChart"></canvas>
+                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='机构备案.html'">
+                                <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 shrink-0"></div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-bold text-slate-800">2家机构提交准入申请</p>
+                                    <p class="text-xs text-slate-500 mt-1">请尽快完成准入资格初审</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">2小时前</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='数据统计.html'">
+                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 shrink-0"></div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-bold text-slate-800">本月运营报表已生成</p>
+                                    <p class="text-xs text-slate-500 mt-1">请核对数据并提交至省级平台</p>
+                                    <p class="text-[10px] text-slate-400 mt-2">5小时前</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- 右侧侧边栏：待办事项 -->
-                    <div class="space-y-8">
-                        <!-- 待办事项 -->
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                            <div class="flex items-center justify-between mb-6">
-                                <h4 class="text-lg font-bold text-slate-800">待办事项</h4>
-                                <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-full">3条紧急</span>
-                            </div>
-                            <div class="space-y-4">
-                                <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="location.href='办理监控.html'">
-                                    <div class="w-2 h-2 bg-red-500 rounded-full mt-2 shrink-0"></div>
-                                    <div class="ml-4">
-                                        <p class="text-sm font-bold text-slate-800">5笔业务处理超时</p>
-                                        <p class="text-xs text-slate-500 mt-1">需立即联系处理机构进行督办</p>
-                                        <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='机构备案.html'">
-                                    <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 shrink-0"></div>
-                                    <div class="ml-4">
-                                        <p class="text-sm font-bold text-slate-800">2家机构提交准入申请</p>
-                                        <p class="text-xs text-slate-500 mt-1">请尽快完成准入资格初审</p>
-                                        <p class="text-[10px] text-slate-400 mt-2">2小时前</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='数据统计.html'">
-                                    <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 shrink-0"></div>
-                                    <div class="ml-4">
-                                        <p class="text-sm font-bold text-slate-800">本月运营报表已生成</p>
-                                        <p class="text-xs text-slate-500 mt-1">请核对数据并提交至省级平台</p>
-                                        <p class="text-[10px] text-slate-400 mt-2">5小时前</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="w-full mt-6 py-2 text-sm text-slate-500 hover:text-primary font-medium border border-slate-100 rounded-lg hover:bg-slate-50 transition-all" onclick="showDetail('待办事项', '<p>更多待办事项正在加载中...目前所有紧急事项已在工作台列出。</p>')">查看全部待办</button>
-                        </div>
+                        <button class="w-full mt-6 py-2 text-sm text-slate-500 hover:text-primary font-medium border border-slate-100 rounded-lg hover:bg-slate-50 transition-all" onclick="showDetail('待办事项', '<p>更多待办事项正在加载中...目前所有紧急事项已在工作台列出。</p>')">查看全部待办</button>
                     </div>
                 </div>
             </main>
@@ -360,104 +317,6 @@
     </div>
 
     <script>
-        // 设置 Chart.js 的全局默认字体和颜色
-        Chart.defaults.font.family = "'Inter', 'system-ui', 'sans-serif'";
-        Chart.defaults.color = '#94A3B8';
-
-        // 1. 业务趋势图 (Line + Bar 混合图)
-        const trendCtx = document.getElementById('businessTrendChart').getContext('2d');
-        const businessChart = new Chart(trendCtx, {
-            data: {
-                labels: ['3-25', '3-26', '3-27', '3-28', '3-29', '3-30', '3-31'],
-                datasets: [
-                    {
-                        type: 'line',
-                        label: '保函申请量 (笔)',
-                        data: [65, 78, 56, 89, 120, 95, 110],
-                        borderColor: '#1E40AF',
-                        backgroundColor: 'rgba(30, 64, 175, 0.1)',
-                        tension: 0.4,
-                        fill: true,
-                        pointBackgroundColor: '#1E40AF',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        yAxisID: 'y'
-                    },
-                    {
-                        type: 'bar',
-                        label: '担保金额 (千万)',
-                        data: [42, 55, 38, 62, 85, 68, 75],
-                        backgroundColor: 'rgba(59, 130, 246, 0.3)',
-                        borderRadius: 4,
-                        barThickness: 20,
-                        yAxisID: 'y1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        align: 'end',
-                        labels: {
-                            usePointStyle: true,
-                            boxWidth: 8,
-                            padding: 20,
-                            font: { size: 11 }
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        padding: 12,
-                        backgroundColor: 'rgba(31, 41, 55, 0.9)',
-                        titleFont: { size: 13, weight: 'bold' },
-                        bodyFont: { size: 12 }
-                    }
-                },
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        beginAtZero: true,
-                        grid: { color: '#F1F5F9' },
-                        title: { display: true, text: '申请量', font: { size: 10 } }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        beginAtZero: true,
-                        grid: { drawOnChartArea: false },
-                        title: { display: true, text: '金额', font: { size: 10 } }
-                    },
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 11 } }
-                    }
-                }
-            }
-        });
-
-        // 模拟图表切换数据
-        document.querySelector('select').addEventListener('change', function(e) {
-            const isThirtyDays = e.target.value === '最近30天';
-            if (isThirtyDays) {
-                businessChart.data.labels = Array.from({length: 30}, (_, i) => `3-${i+1}`);
-                businessChart.data.datasets[0].data = Array.from({length: 30}, () => Math.floor(Math.random() * 100) + 50);
-                businessChart.data.datasets[1].data = Array.from({length: 30}, () => Math.floor(Math.random() * 60) + 30);
-            } else {
-                businessChart.data.labels = ['3-25', '3-26', '3-27', '3-28', '3-29', '3-30', '3-31'];
-                businessChart.data.datasets[0].data = [65, 78, 56, 89, 120, 95, 110];
-                businessChart.data.datasets[1].data = [42, 55, 38, 62, 85, 68, 75];
-            }
-            businessChart.update();
-        });
-
         // 通知下拉逻辑
         const notificationBtn = document.getElementById('notificationBtn');
         const notificationDropdown = document.getElementById('notificationDropdown');
@@ -472,87 +331,6 @@
         });
 
         notificationDropdown.addEventListener('click', (e) => e.stopPropagation());
-
-        // 2. 保函类型占比图 (Doughnut)
-        const typeCtx = document.getElementById('guaranteeTypeChart').getContext('2d');
-        new Chart(typeCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['投标保函', '履约保函', '预付款保函', '工资保函', '其他'],
-                datasets: [{
-                    data: [45, 25, 15, 10, 5],
-                    backgroundColor: [
-                        '#1E40AF', // primary
-                        '#3B82F6', // secondary
-                        '#60A5FA', // accent
-                        '#93C5FD',
-                        '#DBEAFE'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff',
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '65%',
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            usePointStyle: true,
-                            boxWidth: 8,
-                            padding: 15,
-                            font: { size: 11 }
-                        }
-                    }
-                }
-            }
-        });
-
-        // 3. 机构业务排行 (Horizontal Bar)
-        const rankingCtx = document.getElementById('institutionRankingChart').getContext('2d');
-        new Chart(rankingCtx, {
-            type: 'bar',
-            data: {
-                labels: ['建设银行', '工商银行', '中国银行', '平安保险', '人保财险'],
-                datasets: [{
-                    label: '保函签发数',
-                    data: [320, 285, 240, 195, 150],
-                    backgroundColor: function(context) {
-                        const chart = context.chart;
-                        const {ctx, chartArea} = chart;
-                        if (!chartArea) return null;
-                        const gradient = ctx.createLinearGradient(chartArea.left, 0, chartArea.right, 0);
-                        gradient.addColorStop(0, '#3B82F6');
-                        gradient.addColorStop(1, '#60A5FA');
-                        return gradient;
-                    },
-                    borderRadius: 5,
-                    barThickness: 15
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        grid: { color: '#F1F5F9' },
-                        ticks: { font: { size: 11 } }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { font: { size: 11 } }
-                    }
-                }
-            }
-        });
     </script>
 </body>
 </html>
