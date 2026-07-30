@@ -580,53 +580,6 @@
         }
         window.showConfigModal = showConfigModal;
 
-        // 快捷操作配置弹窗
-        function showQuickActionsConfigModal() {
-            const actions = [
-                { id: 'tbbh', name: '申请投标保函', icon: 'fa-file-text-o', checked: true },
-                { id: 'lybh', name: '申请履约保函', icon: 'fa-file-text', checked: true },
-                { id: 'yfkb', name: '申请预付款保函', icon: 'fa-file-code-o', checked: false },
-                { id: 'qyxx', name: '企业信息维护', icon: 'fa-user-circle-o', checked: true },
-                { id: 'fycq', name: '费用测算工具', icon: 'fa-calculator', checked: false },
-                { id: 'bhjy', name: '保函真伪校验', icon: 'fa-shield', checked: false }
-            ];
-
-            const configHtml = `
-                <div class="space-y-4">
-                    <p class="text-xs text-gray-400 mb-4">请选择您常用的快捷操作入口（建议展示3-4个）</p>
-                    <div class="space-y-2">
-                        ${actions.map(a => `
-                            <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-primary/30 transition-all cursor-pointer group" onclick="this.querySelector('input').click()">
-                                <div class="flex items-center">
-                                    <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
-                                        <i class="fa ${a.icon} text-gray-400 group-hover:text-primary"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-gray-700">${a.name}</span>
-                                </div>
-                                <input type="checkbox" ${a.checked ? 'checked' : ''} class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary" onclick="event.stopPropagation()">
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-
-            showModal('配置快捷操作', configHtml, [
-                {
-                    text: '取消',
-                    className: 'px-6 py-2.5 border border-gray-200 text-gray-500 rounded-xl hover:bg-gray-100 font-bold transition-all'
-                },
-                {
-                    text: '保存配置',
-                    className: 'px-8 py-2.5 bg-primary text-white rounded-xl hover:bg-blue-700 font-bold shadow-lg shadow-blue-200 transition-all active:scale-95',
-                    onClick: () => {
-                        showNotification('快捷操作配置已更新！', 'success');
-                        if (window.closeCurrentModal) window.closeCurrentModal();
-                    }
-                }
-            ], 'max-w-md');
-        }
-        window.showQuickActionsConfigModal = showQuickActionsConfigModal;
-
         // 保函详情快速查看
         window.showGuaranteeDetail = function(id) {
             showNotification(`正在加载保函 ${id} 详情...`, 'info');
@@ -833,7 +786,6 @@
             const tabContents = {
                 'overview': 'overview-content',
                 'tasks': 'tasks-content',
-                'quick-actions': 'quick-actions-content',
                 'analytics': 'analytics-content'
             };
 
@@ -1065,31 +1017,6 @@
                 });
             });
 
-            // 快速操作按钮点击事件
-            const quickActionButtons = document.querySelectorAll('#quick-actions-content button');
-            quickActionButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const actionText = this.querySelector('span').textContent;
-                    
-                    if (actionText === '费用计算') {
-                        // 费用计算按钮使用专门的函数
-                        window.showCalculator();
-                    } else {
-                        showNotification(`正在启动：${actionText}`, 'info');
-                        
-                        setTimeout(() => {
-                            if (['投标保函', '履约保函', '预付款保函', '质量保函'].includes(actionText)) {
-                                window.location.href = '保函申请.html';
-                            } else if (actionText === '保函验证') {
-                                window.location.href = '订单管理.html';
-                            } else {
-                                showNotification(`${actionText}功能正在开发中...`, 'warning');
-                            }
-                        }, 500);
-                    }
-                });
-            });
-
             // 统计分析点击效果
             const analyticsCards = document.querySelectorAll('#analytics-content .border');
             analyticsCards.forEach(card => {
@@ -1250,9 +1177,7 @@
                         <button data-tab="analytics" class="tab-btn px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 whitespace-nowrap transition-all duration-200">
                             <i class="fa fa-bar-chart mr-2"></i>统计分析
                         </button>
-                        <button data-tab="quick-actions" class="tab-btn px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 whitespace-nowrap transition-all duration-200">
-                            <i class="fa fa-bolt mr-2"></i>快速操作
-                        </button>
+
                     </div>
                 </div>
 
@@ -1358,48 +1283,9 @@
                         </div>
                     </div>
 
-                    <!-- 快捷入口 -->
-                    <div class="grid grid-cols-1 gap-6 mb-6">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg font-bold text-gray-800">快捷操作</h3>
-                                <button onclick="window.showQuickActionsConfigModal()" class="text-sm text-gray-400 hover:text-primary transition-colors">配置</button>
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                                <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
-                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
-                                        <i class="fa fa-file-text-o text-gray-400 group-hover:text-primary"></i>
-                                    </div>
-                                    <span class="text-gray-700 font-medium">申请投标保函</span>
-                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
-                                </button>
-                                <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
-                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
-                                        <i class="fa fa-file-text text-gray-400 group-hover:text-primary"></i>
-                                    </div>
-                                    <span class="text-gray-700 font-medium">申请履约保函</span>
-                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
-                                </button>
-                                <button onclick="window.location.href='我的账户.html'" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
-                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
-                                        <i class="fa fa-user-circle-o text-gray-400 group-hover:text-primary"></i>
-                                    </div>
-                                    <span class="text-gray-700 font-medium">企业信息维护</span>
-                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
-                                </button>
-                                <button onclick="window.showCalculator()" class="w-full flex items-center p-3 rounded-lg border border-gray-100 hover:border-primary hover:bg-blue-50/50 transition-all group">
-                                    <div class="w-10 h-10 bg-gray-50 group-hover:bg-blue-100 rounded-lg flex items-center justify-center mr-4 transition-colors">
-                                        <i class="fa fa-calculator text-gray-400 group-hover:text-primary"></i>
-                                    </div>
-                                    <span class="text-gray-700 font-medium">费用计算</span>
-                                    <i class="fa fa-angle-right ml-auto text-gray-300 group-hover:text-primary"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- 待支付任务 -->
-                    <div class="grid grid-cols-1 gap-6 mb-6">
+                    <!-- 待办任务与最新公告 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <div class="flex items-center justify-between mb-6">
                                 <h3 class="text-lg font-bold text-gray-800">待办任务</h3>
@@ -1474,11 +1360,57 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 平台公告（最新公告） -->
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                    <span class="w-1 h-5 bg-orange-400 rounded-full mr-2"></span>
+                                    最新公告
+                                </h3>
+                                <button onclick="window.location.href='消息中心.html'" class="text-[10px] text-gray-400 hover:text-primary flex items-center transition-colors">
+                                    历史公告 <i class="fa fa-angle-right ml-1"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-5" id="announcement-list">
+                                <div onclick="window.showAnnouncement('holiday')" class="group cursor-pointer">
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-500 text-[9px] font-bold">通知</span>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">关于2026年清明节放假期间业务处理的通知</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2026-03-20</span>
+                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div onclick="window.showAnnouncement('maintenance')" class="group cursor-pointer">
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-500 text-[9px] font-bold">维护</span>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">平台系统升级维护公告 (3月15日)</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2026-03-10</span>
+                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                                <div onclick="window.showAnnouncement('feature')" class="group cursor-pointer">
+                                    <div class="flex items-center space-x-2 mb-1.5">
+                                        <span class="px-1.5 py-0.5 rounded bg-green-50 text-green-500 text-[9px] font-bold">上线</span>
+                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">新版保函验证功能上线通知</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[10px] text-gray-400">2026-03-05</span>
+                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="window.location.href='消息中心.html'" class="w-full mt-6 py-2.5 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200">查看更多公告</button>
+                        </div>
                     </div>
 
                     <!-- 申请中的保函与通知 -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="grid grid-cols-1 gap-6 mb-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
                                 <h3 class="text-lg font-bold text-gray-800">申请中的保函</h3>
                                 <a href="企业端_订单管理.html" class="text-sm text-primary hover:underline">查看全部</a>
@@ -1557,98 +1489,9 @@
                                 </table>
                             </div>
                         </div>
-
-                        <!-- 平台公告 -->
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg font-bold text-gray-800 flex items-center">
-                                    <span class="w-1 h-5 bg-orange-400 rounded-full mr-2"></span>
-                                    最新公告
-                                </h3>
-                                <button onclick="window.location.href='消息中心.html'" class="text-[10px] text-gray-400 hover:text-primary flex items-center transition-colors">
-                                    历史公告 <i class="fa fa-angle-right ml-1"></i>
-                                </button>
-                            </div>
-                            <div class="space-y-5" id="announcement-list">
-                                <div onclick="window.showAnnouncement('holiday')" class="group cursor-pointer">
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-500 text-[9px] font-bold">通知</span>
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">关于2026年清明节放假期间业务处理的通知</p>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">2026-03-20</span>
-                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
-                                    </div>
-                                </div>
-                                <div onclick="window.showAnnouncement('maintenance')" class="group cursor-pointer">
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-500 text-[9px] font-bold">维护</span>
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">平台系统升级维护公告 (3月15日)</p>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">2026-03-10</span>
-                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
-                                    </div>
-                                </div>
-                                <div onclick="window.showAnnouncement('feature')" class="group cursor-pointer">
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span class="px-1.5 py-0.5 rounded bg-green-50 text-green-500 text-[9px] font-bold">上线</span>
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">新版保函验证功能上线通知</p>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">2026-03-05</span>
-                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="window.location.href='消息中心.html'" class="w-full mt-6 py-2.5 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200">查看更多公告</button>
-                        </div>
                     </div>
                 </div>
 
-                <!-- 快速操作内容 (已在概览中部分整合，这里提供更完整的工具箱) -->
-                <div id="quick-actions-content" class="hidden">
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                        <h3 class="text-xl font-bold text-gray-800 mb-8 text-center">快捷工具箱</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div class="space-y-6">
-                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b pb-2">保函业务</h4>
-                                <div class="space-y-3">
-                                    <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
-                                        <i class="fa fa-plus-circle mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
-                                        <span class="font-bold text-sm">申请投标保函</span>
-                                    </button>
-                                    <button onclick="window.location.href='保函申请.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
-                                        <i class="fa fa-plus-circle mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
-                                        <span class="font-bold text-sm">申请履约保函</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="space-y-6">
-                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b pb-2">辅助工具</h4>
-                                <div class="space-y-3">
-                                    <button onclick="window.showCalculator()" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
-                                        <i class="fa fa-calculator mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
-                                        <span class="font-bold text-sm">保函费用计算</span>
-                                    </button>
-                                    <button onclick="window.showTemplates()" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
-                                        <i class="fa fa-download mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
-                                        <span class="font-bold text-sm">业务模板下载</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="space-y-6">
-                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] border-b pb-2">其他服务</h4>
-                                <div class="space-y-3">
-                                    <button onclick="window.location.href='我的账户.html'" class="w-full flex items-center p-4 rounded-2xl bg-gray-50 hover:bg-blue-50 hover:text-primary transition-all group">
-                                        <i class="fa fa-shield mr-3 text-lg text-gray-400 group-hover:text-primary"></i>
-                                        <span class="font-bold text-sm">账户安全设置</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- 统计分析内容 -->
                 <div id="analytics-content" class="hidden space-y-6">
