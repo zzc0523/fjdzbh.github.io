@@ -40,8 +40,8 @@
             <!-- 列表 -->
             <div class="flex-1 overflow-y-auto p-6">
                 <table class="w-full border-collapse">
-                    <thead>
-                        <tr class="text-left text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                <thead id="project-list-thead">
+                    <tr class="text-left text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
                             <th class="px-4 py-3 font-medium">序号</th>
                             <th class="px-4 py-3 font-medium">项目名称</th>
                             <th class="px-4 py-3 font-medium">项目编号</th>
@@ -79,6 +79,82 @@
         </div>
     </div>
 
+    <!-- 选择合同弹窗 (质量保函) -->
+    <div id="contract-selection-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeContractSelection()"></div>
+        <div class="bg-white w-[1000px] max-w-[95vw] rounded-xl shadow-2xl relative z-10 overflow-hidden flex flex-col" style="max-height: 90vh;">
+            <!-- 头部 -->
+            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-gray-800">选择合同</h3>
+                <button onclick="closeContractSelection()" class="text-gray-400 hover:text-gray-600 transition-colors text-2xl">&times;</button>
+            </div>
+
+            <!-- 筛选条件 -->
+            <div class="px-6 py-4 border-b border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500 mb-1">合同名称</label>
+                        <input id="contract-search-name" type="text" class="border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入合同名称">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500 mb-1">合同甲方企业名称</label>
+                        <input id="contract-search-company" type="text" class="border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入合同甲方企业名称">
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500 mb-1">合同甲方单位（发包人）</label>
+                        <div class="flex">
+                            <input id="contract-search-party" type="text" class="flex-1 border border-gray-200 rounded-l-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入合同甲方单位（发包人）">
+                            <button type="button" onclick="handleContractSearch()" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors flex items-center">
+                                <i class="fa fa-search mr-1"></i> 查询
+                            </button>
+                            <button type="button" onclick="resetContractSearch()" class="ml-2 border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors flex items-center">
+                                <i class="fa fa-refresh mr-1"></i> 重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 合同列表 -->
+            <div class="flex-1 overflow-y-auto px-6 py-4">
+                <table class="w-full text-sm">
+                    <thead id="contract-list-thead">
+                        <tr class="text-left text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                            <th class="px-2 py-3 font-medium">序号</th>
+                            <th class="px-2 py-3 font-medium">合同名称</th>
+                            <th class="px-2 py-3 font-medium">合同编号</th>
+                            <th class="px-2 py-3 font-medium">合同甲方单位（发包人）</th>
+                            <th class="px-2 py-3 font-medium">合同甲方企业名称</th>
+                            <th class="px-2 py-3 font-medium text-right">合同金额（元）</th>
+                            <th class="px-2 py-3 font-medium text-right">保证金金额（元）</th>
+                            <th class="px-2 py-3 font-medium">保证金起始日期</th>
+                            <th class="px-2 py-3 font-medium">保证金结束日期</th>
+                            <th class="px-2 py-3 font-medium text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contract-list-body"></tbody>
+                </table>
+            </div>
+
+            <!-- 分页/底部 -->
+            <div class="px-6 py-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                <span>共 <span id="contract-total">5</span> 条记录 第1页/共1页</span>
+                <div class="flex items-center space-x-2">
+                    <select class="border border-gray-200 rounded px-2 py-1 text-sm">
+                        <option>15条/页</option>
+                    </select>
+                    <button class="px-3 py-1 border border-gray-200 rounded text-gray-500 hover:bg-gray-50">上页</button>
+                    <button class="px-3 py-1 bg-primary text-white rounded">1</button>
+                    <button class="px-3 py-1 border border-gray-200 rounded text-gray-500 hover:bg-gray-50">2</button>
+                    <button class="px-3 py-1 border border-gray-200 rounded text-gray-500 hover:bg-gray-50">3</button>
+                    <span class="px-2">…</span>
+                    <button class="px-3 py-1 border border-gray-200 rounded text-gray-500 hover:bg-gray-50">下页</button>
+                    <span class="px-2">跳转</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         tailwind.config = {
             theme: {
@@ -110,11 +186,11 @@
             const guaranteeTypeSelect = document.getElementById('guarantee-type-select');
             // 模拟项目数据
             const mockProjects = [
-                { id: 1, name: '泉州市特殊教育职业培训中心（二次）', code: 'SDX-ZB-F-25(0121)', sectionName: '泉州市特殊教育职业培训中心（二次）_第1标段(包)', sectionCode: 'BD-2026-001', openingTime: '2026-05-07T10:00', amount: 800000, tenderCompany: '泉州市至善残疾人职业教育中心', address: '泉州市丰泽区', contractAmount: 12000000 },
-                { id: 2, name: '福州市地铁2号线延伸工程施工项目', code: 'FZ-METRO-2-EXT-01', sectionName: '施工一标段', sectionCode: 'METRO-BD-002', openingTime: '2025-10-01T09:00', amount: 200000, tenderCompany: '福州市地铁集团有限公司', address: '福州市仓山区', contractAmount: 85000000 },
-                { id: 3, name: '厦门市翔安机场快速路南段工程', code: 'XM-AP-RD-S-02', sectionName: '路基土石标段', sectionCode: 'XM-BD-003', openingTime: '2025-10-01T09:00', amount: 300000, tenderCompany: '厦门市路桥建设集团有限公司', address: '厦门市翔安区', contractAmount: 45000000 },
-                { id: 4, name: '泉州市晋江下游防洪岸线生态修复', code: 'QZ-JJ-ECO-03', sectionName: '生态修复标段', sectionCode: 'QZ-BD-004', openingTime: '2025-10-01T09:00', amount: 400000, tenderCompany: '晋江市水利投资建设有限公司', address: '泉州市晋江市', contractAmount: 15000000 },
-                { id: 5, name: '漳州市古雷港经济开发区基础设施', code: 'ZZ-GL-INFRA-04', sectionName: '道路网建设标段', sectionCode: 'ZZ-BD-005', openingTime: '2025-10-01T09:00', amount: 500000, tenderCompany: '福建古雷港经济开发区建设有限公司', address: '漳州市古雷港', contractAmount: 28000000 }
+                { id: 1, name: '泉州市特殊教育职业培训中心（二次）', code: 'SDX-ZB-F-25(0121)', sectionName: '泉州市特殊教育职业培训中心（二次）_第1标段(包)', sectionCode: 'BD-2026-001', openingTime: '2026-05-07T10:00', amount: 800000, tenderCompany: '泉州市至善残疾人职业教育中心', address: '泉州市丰泽区', contractAmount: 12000000, projectType: '服务类', duration: 365 },
+                { id: 2, name: '福州市地铁2号线延伸工程施工项目', code: 'FZ-METRO-2-EXT-01', sectionName: '施工一标段', sectionCode: 'METRO-BD-002', openingTime: '2025-10-01T09:00', amount: 200000, tenderCompany: '福州市地铁集团有限公司', address: '福州市仓山区', contractAmount: 85000000, projectType: '工程类', duration: 730 },
+                { id: 3, name: '厦门市翔安机场快速路南段工程', code: 'XM-AP-RD-S-02', sectionName: '路基土石标段', sectionCode: 'XM-BD-003', openingTime: '2025-10-01T09:00', amount: 300000, tenderCompany: '厦门市路桥建设集团有限公司', address: '厦门市翔安区', contractAmount: 45000000, projectType: '工程类', duration: 540 },
+                { id: 4, name: '泉州市晋江下游防洪岸线生态修复', code: 'QZ-JJ-ECO-03', sectionName: '生态修复标段', sectionCode: 'QZ-BD-004', openingTime: '2025-10-01T09:00', amount: 400000, tenderCompany: '晋江市水利投资建设有限公司', address: '泉州市晋江市', contractAmount: 15000000, projectType: '工程类', duration: 450 },
+                { id: 5, name: '漳州市古雷港经济开发区基础设施', code: 'ZZ-GL-INFRA-04', sectionName: '道路网建设标段', sectionCode: 'ZZ-BD-005', openingTime: '2025-10-01T09:00', amount: 500000, tenderCompany: '福建古雷港经济开发区建设有限公司', address: '漳州市古雷港', contractAmount: 28000000, projectType: '工程类', duration: 710 }
             ];
 
             window.openProjectSelection = function() {
@@ -122,47 +198,97 @@
                 // 如果弹窗已开启，或者正在选择，则直接跳出
                 if (!modal || !modal.classList.contains('hidden') || window._selectingProject) return;
                 
-                modal.classList.remove('hidden');
+                // 记录当前保函类型，用于决定弹窗列表的列与字段（投标保函保持原样，履约保函按图片字段展示）
+                const type = guaranteeTypeSelect ? guaranteeTypeSelect.value : 'bid';
+                window._currentModalType = type;
                 
-                // 初始渲染全部数据
-                renderProjectRows(mockProjects);
+                modal.classList.remove('hidden');
+                renderProjectRows(mockProjects, type);
             };
 
-            function renderProjectRows(projects) {
+            function renderProjectRows(projects, type) {
                 const listBody = document.getElementById('project-list-body');
+                const thead = document.getElementById('project-list-thead');
                 if (!listBody) return;
 
-                if (projects.length === 0) {
-                    listBody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-gray-400 italic">暂无匹配的项目数据</td></tr>`;
-                    return;
+                if (type === 'performance') {
+                    // 履约保函：按图片字段展示（项目类型/项目所在地/计划工期/中标合同价/保证金金额）
+                    if (thead) {
+                        thead.innerHTML = `<tr class="text-left text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                            <th class="px-4 py-3 font-medium">序号</th>
+                            <th class="px-4 py-3 font-medium">项目名称</th>
+                            <th class="px-4 py-3 font-medium">项目类型</th>
+                            <th class="px-4 py-3 font-medium">项目所在地</th>
+                            <th class="px-4 py-3 font-medium">计划工期</th>
+                            <th class="px-4 py-3 font-medium text-right">中标合同价</th>
+                            <th class="px-4 py-3 font-medium text-right">保证金金额（元）</th>
+                            <th class="px-4 py-3 font-medium text-center">操作</th>
+                        </tr>`;
+                    }
+                    if (projects.length === 0) {
+                        listBody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-gray-400 italic">暂无匹配的项目数据</td></tr>`;
+                        return;
+                    }
+                    listBody.innerHTML = projects.map((p, index) => `
+                        <tr class="hover:bg-blue-50/30 transition-colors group cursor-pointer" onclick="selectProject(${p.id}, event)">
+                            <td class="px-4 py-4 text-xs text-gray-400 font-mono">${index + 1}</td>
+                            <td class="px-4 py-4 font-medium text-gray-800 max-w-[200px] truncate" title="${p.name}">${p.name}</td>
+                            <td class="px-4 py-4 text-xs text-gray-500">${p.projectType || '工程类'}</td>
+                            <td class="px-4 py-4 text-xs text-gray-500">${p.address || ''}</td>
+                            <td class="px-4 py-4 text-xs text-gray-500">${p.duration || ''}天</td>
+                            <td class="px-4 py-4 text-right font-bold text-orange-500 font-mono">${(p.contractAmount || 0).toLocaleString()}.00</td>
+                            <td class="px-4 py-4 text-right font-bold text-red-500 font-mono">${(p.amount || 0).toLocaleString()}.00</td>
+                            <td class="px-4 py-4 text-center">
+                                <button type="button" class="bg-primary/10 text-primary px-3 py-1 rounded hover:bg-primary hover:text-white transition-all font-bold text-xs pointer-events-none">选择</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    // 投标保函：保持原样（项目编号/标段名称/标段编号/开标时间/保证金金额）
+                    if (thead) {
+                        thead.innerHTML = `<tr class="text-left text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                            <th class="px-4 py-3 font-medium">序号</th>
+                            <th class="px-4 py-3 font-medium">项目名称</th>
+                            <th class="px-4 py-3 font-medium">项目编号</th>
+                            <th class="px-4 py-3 font-medium">标段名称</th>
+                            <th class="px-4 py-3 font-medium">标段编号</th>
+                            <th class="px-4 py-3 font-medium">开标时间</th>
+                            <th class="px-4 py-3 font-medium text-right">保证金金额（元）</th>
+                            <th class="px-4 py-3 font-medium text-center">操作</th>
+                        </tr>`;
+                    }
+                    if (projects.length === 0) {
+                        listBody.innerHTML = `<tr><td colspan="8" class="px-4 py-12 text-center text-gray-400 italic">暂无匹配的项目数据</td></tr>`;
+                        return;
+                    }
+                    listBody.innerHTML = projects.map((p, index) => `
+                        <tr class="hover:bg-blue-50/30 transition-colors group cursor-pointer" onclick="selectProject(${p.id}, event)">
+                            <td class="px-4 py-4 text-xs text-gray-400 font-mono">${index + 1}</td>
+                            <td class="px-4 py-4 font-medium text-gray-800 max-w-[200px] truncate" title="${p.name}">${p.name}</td>
+                            <td class="px-4 py-4 text-xs font-mono text-gray-500">${p.code}</td>
+                            <td class="px-4 py-4 max-w-[150px] truncate" title="${p.sectionName}">${p.sectionName}</td>
+                            <td class="px-4 py-4 text-xs font-mono text-gray-500">${p.sectionCode}</td>
+                            <td class="px-4 py-4 text-xs text-gray-500">${p.openingTime.replace('T', ' ')}</td>
+                            <td class="px-4 py-4 text-right font-bold text-red-500 font-mono">${p.amount.toLocaleString()}.00</td>
+                            <td class="px-4 py-4 text-center">
+                                <button type="button" class="bg-primary/10 text-primary px-3 py-1 rounded hover:bg-primary hover:text-white transition-all font-bold text-xs pointer-events-none">选择</button>
+                            </td>
+                        </tr>
+                    `).join('');
                 }
-
-                listBody.innerHTML = projects.map((p, index) => `
-                    <tr class="hover:bg-blue-50/30 transition-colors group cursor-pointer" onclick="selectProject(${p.id}, event)">
-                        <td class="px-4 py-4 text-xs text-gray-400 font-mono">${index + 1}</td>
-                        <td class="px-4 py-4 font-medium text-gray-800 max-w-[200px] truncate" title="${p.name}">${p.name}</td>
-                        <td class="px-4 py-4 text-xs font-mono text-gray-500">${p.code}</td>
-                        <td class="px-4 py-4 max-w-[150px] truncate" title="${p.sectionName}">${p.sectionName}</td>
-                        <td class="px-4 py-4 text-xs font-mono text-gray-500">${p.sectionCode}</td>
-                        <td class="px-4 py-4 text-xs text-gray-500">${p.openingTime.replace('T', ' ')}</td>
-                        <td class="px-4 py-4 text-right font-bold text-red-500 font-mono">${p.amount.toLocaleString()}.00</td>
-                        <td class="px-4 py-4 text-center">
-                            <button type="button" class="bg-primary/10 text-primary px-3 py-1 rounded hover:bg-primary hover:text-white transition-all font-bold text-xs pointer-events-none">选择</button>
-                        </td>
-                    </tr>
-                `).join('');
             }
 
             window.handleProjectSearch = function() {
                 const type = document.getElementById('project-search-type').value;
                 const keyword = document.getElementById('project-search-input').value.trim().toLowerCase();
+                const modalType = window._currentModalType || (guaranteeTypeSelect ? guaranteeTypeSelect.value : 'bid');
                 
                 const filtered = mockProjects.filter(p => {
                     const val = String(p[type] || '').toLowerCase();
                     return val.includes(keyword);
                 });
                 
-                renderProjectRows(filtered);
+                renderProjectRows(filtered, modalType);
             };
 
             // 搜索输入框回车触发
@@ -177,6 +303,109 @@
                 if (modal) {
                     modal.classList.add('hidden');
                 }
+            };
+
+            // 质量保函 - 选择合同弹窗
+            const mockContracts = [
+                { id: 1, name: '福州市地铁1号线配套工程', code: 'FZ-METRO-1-2026', partyUnit: '福州市地铁集团有限公司', partyCompany: '福州市地铁集团有限公司', contractAmount: 3000000, bondAmount: 150000, bondStart: '2026-01-01', bondEnd: '2026-12-31' },
+                { id: 2, name: '厦门市软件园三期建设项目', code: 'XM-SP-3-2026', partyUnit: '厦门市软件园管理委员会', partyCompany: '厦门市软件园发展有限公司', contractAmount: 4000000, bondAmount: 200000, bondStart: '2026-02-01', bondEnd: '2027-01-31' },
+                { id: 3, name: '泉州市市政道路改造工程', code: 'QZ-RD-2026', partyUnit: '泉州市市政工程管理处', partyCompany: '泉州市城市建设投资有限公司', contractAmount: 3600000, bondAmount: 180000, bondStart: '2026-03-01', bondEnd: '2026-11-30' },
+                { id: 4, name: '漳州市文化中心建设项目', code: 'ZZ-CULTURE-2026', partyUnit: '漳州市文化广电和旅游局', partyCompany: '漳州市文化产业发展集团', contractAmount: 5000000, bondAmount: 250000, bondStart: '2026-04-01', bondEnd: '2027-03-31' },
+                { id: 5, name: '莆田市港口物流园区基础设施工程', code: 'PT-PORT-2026', partyUnit: '莆田市交通运输局', partyCompany: '莆田市港口开发有限公司', contractAmount: 4500000, bondAmount: 225000, bondStart: '2026-05-01', bondEnd: '2027-04-30' }
+            ];
+
+            function renderContractRows(contracts) {
+                const tbody = document.getElementById('contract-list-body');
+                const totalEl = document.getElementById('contract-total');
+                if (!tbody) return;
+                if (totalEl) totalEl.textContent = contracts.length;
+                if (contracts.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="10" class="px-2 py-12 text-center text-gray-400 italic">暂无匹配的合同数据</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = contracts.map((c, index) => `
+                    <tr class="hover:bg-blue-50/30 transition-colors">
+                        <td class="px-2 py-3 text-xs text-gray-400 font-mono">${index + 1}</td>
+                        <td class="px-2 py-3 font-medium text-gray-800 max-w-[160px] truncate" title="${c.name}">${c.name}</td>
+                        <td class="px-2 py-3 text-xs font-mono text-gray-500">${c.code}</td>
+                        <td class="px-2 py-3 text-xs text-gray-500 max-w-[160px] truncate" title="${c.partyUnit}">${c.partyUnit}</td>
+                        <td class="px-2 py-3 text-xs text-gray-500 max-w-[160px] truncate" title="${c.partyCompany}">${c.partyCompany}</td>
+                        <td class="px-2 py-3 text-right font-bold text-blue-500 font-mono">${c.contractAmount.toLocaleString()}</td>
+                        <td class="px-2 py-3 text-right font-bold text-red-500 font-mono">${c.bondAmount.toLocaleString()}</td>
+                        <td class="px-2 py-3 text-xs text-gray-500">${c.bondStart}</td>
+                        <td class="px-2 py-3 text-xs text-gray-500">${c.bondEnd}</td>
+                        <td class="px-2 py-3 text-center">
+                            <button type="button" onclick="selectContract(${c.id})" class="text-primary hover:underline font-bold text-sm">选择</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            window.openContractSelection = function() {
+                const modal = document.getElementById('contract-selection-modal');
+                if (!modal || !modal.classList.contains('hidden')) return;
+                modal.classList.remove('hidden');
+                renderContractRows(mockContracts);
+            };
+
+            window.closeContractSelection = function() {
+                const modal = document.getElementById('contract-selection-modal');
+                if (modal) modal.classList.add('hidden');
+            };
+
+            window.handleContractSearch = function() {
+                const name = (document.getElementById('contract-search-name').value || '').trim().toLowerCase();
+                const company = (document.getElementById('contract-search-company').value || '').trim().toLowerCase();
+                const party = (document.getElementById('contract-search-party').value || '').trim().toLowerCase();
+                const filtered = mockContracts.filter(c => {
+                    return (!name || c.name.toLowerCase().includes(name))
+                        && (!company || c.partyCompany.toLowerCase().includes(company))
+                        && (!party || c.partyUnit.toLowerCase().includes(party));
+                });
+                renderContractRows(filtered);
+            };
+
+            window.resetContractSearch = function() {
+                ['contract-search-name', 'contract-search-company', 'contract-search-party'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                renderContractRows(mockContracts);
+            };
+
+            window.selectContract = function(id) {
+                const c = mockContracts.find(x => x.id === id);
+                if (!c) return;
+                const setVal = (eid, v) => { const el = document.getElementById(eid); if (el) el.value = v; };
+                setVal('quality-contract-name', c.name);
+                setVal('quality-contract-number', c.code);
+                setVal('quality-contract-party', c.partyUnit);
+                setVal('quality-party-name', c.partyCompany);
+                setVal('quality-contract-amount', c.contractAmount);
+                setVal('quality-bond-amount', c.bondAmount);
+                setVal('quality-bond-start-date', c.bondStart);
+                if (typeof showNotification === 'function') {
+                    showNotification(`已回填合同：${c.name}`, 'success');
+                }
+                closeContractSelection();
+            };
+
+            // 质量保函 - 其他材料（支持多份上传）
+            window.addQualityOtherMaterial = function() {
+                const list = document.getElementById('quality-other-materials-list');
+                if (!list) return;
+                const idx = list.children.length + 1;
+                const wrap = document.createElement('div');
+                wrap.className = 'border-2 border-dashed border-gray-200 rounded-md p-3 flex items-center justify-between hover:border-primary transition-colors';
+                wrap.innerHTML = `
+                    <label class="flex items-center text-sm text-gray-500 cursor-pointer flex-1">
+                        <i class="fa fa-paperclip mr-2"></i>
+                        <span>其他材料 ${idx}</span>
+                        <input type="file" class="hidden" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.zip,.rar">
+                    </label>
+                    <button type="button" onclick="this.parentElement.remove()" class="text-red-500 text-sm hover:underline"><i class="fa fa-trash mr-1"></i>删除</button>
+                `;
+                list.appendChild(wrap);
             };
 
             window.selectProject = function(id, e) {
@@ -214,15 +443,6 @@
                             openingDate.setDate(openingDate.getDate() - 1);
                             deadlineEl.value = openingDate.toISOString().slice(0, 16);
                         }
-                    } else if (type === 'payment') {
-                        // 工资保函回填
-                        fields = {
-                            'payment-project-name': project.name,
-                            'payment-section-name': project.sectionName,
-                            'payment-section-code': project.sectionCode,
-                            'payment-project-address': project.address,
-                            'payment-contract-amount': project.contractAmount
-                        };
                     }
 
                     // 执行回填
@@ -288,22 +508,6 @@
                     desc: '为合同履行提供的担保，保证承包商按照合同约定履行义务。',
                     details: '履约保函是担保人应被保证人的申请向权利人开立的，保证被保证人履行基础合同义务的担保凭证。'
                 },
-                'advance': {
-                    title: '预付款保函',
-                    icon: 'fa-money',
-                    iconBg: 'bg-yellow-100',
-                    iconText: 'text-yellow-600',
-                    desc: '为预付款提供的担保，保证承包商按照合同约定使用预付款。',
-                    details: '预付款保函又称还款担保，是指担保人应被保证人的申请向权利人开立的，保证被保证人在基础合同履行过程中，按照约定退还预付款的担保凭证。'
-                },
-                'payment': {
-                    title: '工资保函',
-                    icon: 'fa-shield',
-                    iconBg: 'bg-red-100',
-                    iconText: 'text-red-600',
-                    desc: '为农民工工资支付提供的担保，保证承包商按时足额支付工资。',
-                    details: '农民工工资支付保函是指担保人为被保证人（承包商）向权利人（监管部门）提供的，保证被保证人按时足额支付农民工工资的担保凭证。'
-                },
                 'quality': {
                     title: '质量保函',
                     icon: 'fa-star',
@@ -311,18 +515,47 @@
                     iconText: 'text-purple-600',
                     desc: '为工程质量提供的担保，保证工程在保修期内符合质量要求。',
                     details: '工程质量保函是指担保人应被保证人的申请向权利人开立的，保证被保证人在工程质量保修期内履行保修义务的担保凭证。'
-                },
-                'other': {
-                    title: '其他保函',
-                    icon: 'fa-ellipsis-h',
-                    iconBg: 'bg-gray-100',
-                    iconText: 'text-gray-400',
-                    desc: '包括关税保函、海事保函、诉讼保函等其他类型的保函产品。',
-                    details: '根据不同业务场景提供的定制化电子担保服务，涵盖关税、海事、诉讼等多种非工程类担保需求。'
                 }
             };
 
             let currentSelectedType = '';
+
+            // 当前登录企业默认经办人信息（自动回填，可修改）
+            const defaultHandler = {
+                name: '张明',
+                id: '350102199001012345',
+                phone: '13805919567',
+                email: 'zhangming@fujian-construction.com'
+            };
+
+            // 经办人信息自动回填（仅在字段为空时回填，保留用户已修改内容），适用于投标保函与履约保函
+            window.fillHandlerInfo = function() {
+                const fields = {
+                    'bid-handler-name': defaultHandler.name,
+                    'bid-handler-id': defaultHandler.id,
+                    'bid-handler-phone': defaultHandler.phone,
+                    'bid-handler-email': defaultHandler.email,
+                    'performance-handler-name': defaultHandler.name,
+                    'performance-handler-id': defaultHandler.id,
+                    'performance-handler-phone': defaultHandler.phone
+                };
+                Object.entries(fields).forEach(([id, val]) => {
+                    const el = document.getElementById(id);
+                    if (el && !el.value.trim()) {
+                        el.value = val;
+                    }
+                });
+            };
+
+            // 履约保函保函期限类型切换：按周期 / 按到期日（控制必填星号）
+            window.togglePerformancePeriodType = function() {
+                const checked = document.querySelector('input[name="performance-period-type"]:checked');
+                const isPeriod = checked && checked.value === 'period';
+                const monthsReq = document.getElementById('performance-months-required');
+                const expiryReq = document.getElementById('performance-expiry-required');
+                if (monthsReq) monthsReq.classList.toggle('hidden', !isPeriod);
+                if (expiryReq) expiryReq.classList.toggle('hidden', isPeriod);
+            };
 
             // 了解详情点击事件
             learnMoreButtons.forEach(button => {
@@ -382,7 +615,7 @@
                         </ul>
 
                         <h4 class="text-lg font-bold text-gray-800 mt-6 mb-3">四、出函时长说明</h4>
-                        <p>金融机构将在收到完整申请材料后1个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                        <p>金融机构将在收到完整申请材料后1个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
                         <p class="mt-2">为确保您的项目顺利进行，建议提前2-3个工作日提交申请，以预留充足的审核时间。</p>
 
                         <blockquote>
@@ -425,7 +658,7 @@
                         </ul>
 
                         <h4 class="text-lg font-bold text-gray-800 mt-6 mb-3">四、出函时长说明</h4>
-                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
 
                         <blockquote>
                             温馨提示：具体费率及限额以金融机构最终审核结果为准。建议提前 3-5 个工作日提交申请。
@@ -467,7 +700,7 @@
                         </ul>
 
                         <h4 class="text-lg font-bold text-gray-800 mt-6 mb-3">四、出函时长说明</h4>
-                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
 
                         <blockquote>
                             温馨提示：具体费率及限额以金融机构最终审核结果为准。建议提前 3-5 个工作日提交申请。
@@ -505,7 +738,7 @@
                         </ul>
 
                         <h4 class="text-lg font-bold text-gray-800 mt-6 mb-3">四、出函时长说明</h4>
-                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
 
                         <blockquote>
                             温馨提示：具体费率及限额以金融机构最终审核结果为准。建议提前 3-5 个工作日提交申请。
@@ -543,7 +776,7 @@
                         </ul>
 
                         <h4 class="text-lg font-bold text-gray-800 mt-6 mb-3">四、出函时长说明</h4>
-                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                        <p>金融机构将在收到完整申请材料后2-3个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
 
                         <blockquote>
                             温馨提示：具体费率及限额以金融机构最终审核结果为准。建议提前 3-5 个工作日提交申请。
@@ -589,7 +822,7 @@
                         </ul>
 
                         <h4 class="text-lg font-bold text-gray-800 mt-6 mb-3">四、出函时长说明</h4>
-                        <p>金融机构将在收到完整申请材料后3-5个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                        <p>金融机构将在收到完整申请材料后3-5个工作日内完成审核。审核通过并支付保费后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
 
                         <blockquote>
                             温馨提示：具体费率及限额以金融机构最终审核结果为准。建议提前 5-7 个工作日提交申请。
@@ -731,6 +964,7 @@
                 const bidFields = document.querySelectorAll('.bid-fields');
                 const paymentFields = document.querySelectorAll('.payment-fields');
                 const qualityFields = document.querySelectorAll('.quality-fields');
+                const performanceFields = document.querySelectorAll('.performance-fields');
                 const enterpriseTitle = document.getElementById('enterprise-info-title');
                 const insuranceSection = document.getElementById('insurance-info-section');
                 const materialsSection = document.getElementById('enterprise-materials-section');
@@ -742,6 +976,9 @@
                     if (enterpriseTitle) enterpriseTitle.textContent = '企业信息';
                     if (insuranceSection) insuranceSection.classList.add('hidden');
                     if (materialsSection) materialsSection.classList.remove('hidden');
+                    
+                    // 自动回填经办人信息（来自登录企业默认经办人，可修改）
+                    window.fillHandlerInfo();
                     
                     // 初始化投标保函的经办人验证功能
                     setTimeout(() => {
@@ -761,6 +998,26 @@
                     if (enterpriseTitle) enterpriseTitle.textContent = '投保人信息';
                     if (insuranceSection) insuranceSection.classList.add('hidden');
                     if (materialsSection) materialsSection.classList.add('hidden');
+                    const qualityMaterials = document.getElementById('quality-materials-section');
+                    if (qualityMaterials) qualityMaterials.classList.remove('hidden');
+                } else if (type === 'performance') {
+                    bidFields.forEach(el => el.classList.add('hidden'));
+                    paymentFields.forEach(el => el.classList.add('hidden'));
+                    qualityFields.forEach(el => el.classList.add('hidden'));
+                    performanceFields.forEach(el => el.classList.remove('hidden'));
+                    if (enterpriseTitle) enterpriseTitle.textContent = '企业信息';
+                    if (insuranceSection) insuranceSection.classList.add('hidden');
+                    if (materialsSection) materialsSection.classList.add('hidden');
+                    const performanceMaterialsSection = document.getElementById('performance-materials-section');
+                    if (performanceMaterialsSection) performanceMaterialsSection.classList.remove('hidden');
+                    const performanceInsuranceSection = document.getElementById('performance-insurance-info-section');
+                    if (performanceInsuranceSection) performanceInsuranceSection.classList.remove('hidden');
+                    const performanceHandlerSection = document.getElementById('performance-handler-info-section');
+                    if (performanceHandlerSection) performanceHandlerSection.classList.remove('hidden');
+                    // 自动回填履约保函经办人信息（姓名/身份证号/手机号），保留用户已修改内容
+                    if (typeof window.fillHandlerInfo === 'function') {
+                        window.fillHandlerInfo();
+                    }
                 } else {
                     // 其他类型默认显示通用字段，隐藏特定字段
                     bidFields.forEach(el => el.classList.add('hidden'));
@@ -811,7 +1068,7 @@
                 const steps = document.querySelectorAll('.step-item');
                 const stepText = document.getElementById('step-text');
                 const stepsNav = document.getElementById('steps-navigation');
-                const stepNames = ['选择项目', '确认订单', '申请保函', '查看结果'];
+                const stepNames = ['填写信息', '确认订单', '申请保函', '查看结果'];
                 
                 // 获取所有需要的视图元素（在函数内部获取，避免作用域问题）
                 const typeSelectionView = document.getElementById('type-selection-view');
@@ -904,7 +1161,7 @@
 
                 // 根据步骤显示对应视图
                 if (step === 1) {
-                    console.log('显示步骤1：选择项目');
+                    console.log('显示步骤1：填写信息');
                     if(applicationFormView) {
                         applicationFormView.classList.remove('hidden');
                         console.log('已显示applicationFormView');
@@ -929,12 +1186,14 @@
                     const bidContent = document.getElementById('bid-confirmation-content');
                     const paymentContent = document.getElementById('payment-confirmation-content');
                     const qualityContent = document.getElementById('quality-confirmation-content');
-                    
+                    const performanceContent = document.getElementById('performance-confirmation-content');
+
                     console.log('当前保函类型:', currentType);
                     console.log('bidContent:', bidContent);
                     console.log('paymentContent:', paymentContent);
                     console.log('qualityContent:', qualityContent);
-                    
+                    console.log('performanceContent:', performanceContent);
+
                     // 先隐藏所有内容区块
                     if(bidContent) {
                         bidContent.classList.add('hidden');
@@ -948,7 +1207,11 @@
                         qualityContent.classList.add('hidden');
                         console.log('隐藏quality-confirmation-content');
                     }
-                    
+                    if(performanceContent) {
+                        performanceContent.classList.add('hidden');
+                        console.log('隐藏performance-confirmation-content');
+                    }
+
                     // 根据类型显示对应内容
                     if (currentType === 'bid') {
                         if(bidContent) {
@@ -959,6 +1222,11 @@
                         if(qualityContent) {
                             qualityContent.classList.remove('hidden');
                             console.log('显示quality-confirmation-content');
+                        }
+                    } else if (currentType === 'performance') {
+                        if(performanceContent) {
+                            performanceContent.classList.remove('hidden');
+                            console.log('显示performance-confirmation-content');
                         }
                     } else {
                         if(paymentContent) {
@@ -1087,8 +1355,18 @@
             window.simulatePaymentSuccess = function() {
                 showNotification('支付成功！正在生成电子保函...', 'success');
                 setTimeout(() => {
-                    updateSteps(5);
+                    updateSteps(4);
                 }, 1500);
+            }
+
+            // 模拟审核通过后跳转至支付步骤：上方流程指示仍停留在"申请保函"(step 3)
+            window.goToPayment = function() {
+                const auditV = document.getElementById('audit-view');
+                const payV = document.getElementById('payment-view');
+                const nav = document.getElementById('steps-navigation');
+                if (auditV) auditV.classList.add('hidden');
+                if (payV) payV.classList.remove('hidden');
+                if (nav) nav.classList.remove('hidden');
             }
 
             // 签署协议相关的交互
@@ -1238,7 +1516,7 @@
                         if (title.includes('审核通过')) {
                             showNotification('正在进入支付页面...', 'success');
                             setTimeout(() => {
-                                window.updateSteps(4);
+                                window.goToPayment();
                                 notificationDropdown.classList.add('hidden');
                             }, 500);
                         } else {
@@ -1542,16 +1820,110 @@
             // 全局函数，用于从选择项目跳转到确认订单页
             window.handleSubmitToConfirm = function() {
                 console.log('===== 执行 handleSubmitToConfirm =====');
-                
-                // 1. 表单验证
-                console.log('开始表单验证');
-                if (!validateForm()) {
-                    console.log('表单验证未通过');
-                    return;
+
+                // 1. 同步经办人信息到确认订单页（仅展示，不可修改）
+                const handlerSync = [
+                    ['bid-handler-name', 'confirm-handler-name'],
+                    ['bid-handler-id', 'confirm-handler-id'],
+                    ['bid-handler-phone', 'confirm-handler-phone'],
+                    ['bid-handler-email', 'confirm-handler-email']
+                ];
+                handlerSync.forEach(([src, dst]) => {
+                    const s = document.getElementById(src);
+                    const d = document.getElementById(dst);
+                    if (s && d) d.value = s.value;
+                });
+
+                // 同步履约保函经办人信息（含邮寄地址）到确认订单页
+                const performanceSync = [
+                    ['performance-handler-name', 'confirm-performance-handler-name'],
+                    ['performance-handler-id', 'confirm-performance-handler-id'],
+                    ['performance-handler-phone', 'confirm-performance-handler-phone'],
+                    ['performance-mail-address', 'confirm-performance-mail-address']
+                ];
+                performanceSync.forEach(([src, dst]) => {
+                    const s = document.getElementById(src);
+                    const d = document.getElementById(dst);
+                    if (s && d) d.value = s.value;
+                });
+
+                // 同步履约保函全部填写内容到确认订单页（仅展示）
+                const setConfirmText = (id, srcId) => {
+                    const s = document.getElementById(srcId);
+                    const d = document.getElementById(id);
+                    if (s && d) d.textContent = s.value || '—';
+                };
+                setConfirmText('confirm-performance-project-name', 'performance-project-name');
+                setConfirmText('confirm-performance-project-type', 'performance-project-type');
+                // 项目所在地（省/市/区 组合）
+                const pProv = document.getElementById('performance-province');
+                const pCity = document.getElementById('performance-city');
+                const pDist = document.getElementById('performance-district');
+                const pAddr = document.getElementById('confirm-performance-project-address');
+                if (pAddr) pAddr.textContent = [pProv, pCity, pDist].map(e => e ? e.value : '').filter(Boolean).join(' ') || '—';
+                setConfirmText('confirm-performance-duration', 'performance-duration');
+                setConfirmText('confirm-performance-contract-price', 'performance-contract-price');
+                setConfirmText('confirm-performance-guarantee-amount', 'performance-guarantee-amount');
+                // 保函期限类型
+                const perfPeriodType = document.querySelector('input[name="performance-period-type"]:checked');
+                const perfPeriodTypeName = perfPeriodType ? (perfPeriodType.value === 'period' ? '按周期申请' : '按到期日申请') : '—';
+                const perfPeriodNameEl = document.getElementById('confirm-performance-period-type-name');
+                if (perfPeriodNameEl) perfPeriodNameEl.textContent = perfPeriodTypeName;
+                setConfirmText('confirm-performance-period-months', 'performance-period-months');
+                setConfirmText('confirm-performance-period-expiry', 'performance-period-expiry');
+                // 受益人
+                setConfirmText('confirm-performance-beneficiary-name', 'performance-beneficiary-name');
+                setConfirmText('confirm-performance-beneficiary-code', 'performance-beneficiary-code');
+
+                // 同步质量保函全部填写内容到确认订单页（仅展示）
+                const qualitySync = [
+                    ['confirm-quality-contract-name', 'quality-contract-name'],
+                    ['confirm-quality-contract-number', 'quality-contract-number'],
+                    ['confirm-quality-contract-party', 'quality-contract-party'],
+                    ['confirm-quality-party-name', 'quality-party-name'],
+                    ['confirm-quality-contract-type', 'quality-contract-type'],
+                    ['confirm-quality-contract-amount', 'quality-contract-amount'],
+                    ['confirm-quality-bond-amount', 'quality-bond-amount'],
+                    ['confirm-quality-bond-start-date', 'quality-bond-start-date'],
+                    ['confirm-quality-address-region', 'quality-address-region'],
+                    ['confirm-quality-address-detail', 'quality-address-detail'],
+                    ['confirm-quality-contract-start', 'quality-contract-start'],
+                    ['confirm-quality-contract-end', 'quality-contract-end'],
+                    ['confirm-quality-sign-date', 'quality-sign-date'],
+                    ['confirm-quality-sign-address', 'quality-sign-address'],
+                    ['confirm-quality-guarantee-start', 'quality-guarantee-start'],
+                    ['confirm-quality-guarantee-end', 'quality-guarantee-end']
+                ];
+                qualitySync.forEach(([d, s]) => setConfirmText(d, s));
+                // 投保材料文件名
+                const getFileName = (inputId) => {
+                    const el = document.getElementById(inputId);
+                    return (el && el.files && el.files.length) ? el.files[0].name : '—';
+                };
+                const qLicenseEl = document.getElementById('confirm-quality-license');
+                if (qLicenseEl) qLicenseEl.textContent = getFileName('quality-license-input');
+                const qContractEl = document.getElementById('confirm-quality-contract-file');
+                if (qContractEl) qContractEl.textContent = getFileName('quality-contract-file-input');
+                const qOtherWrap = document.getElementById('confirm-quality-other-materials');
+                if (qOtherWrap) {
+                    const otherInputs = document.querySelectorAll('#quality-other-materials-list input[type="file"]');
+                    if (otherInputs.length) {
+                        qOtherWrap.innerHTML = '';
+                        otherInputs.forEach(inp => {
+                            const name = (inp.files && inp.files.length) ? inp.files[0].name : '未选择文件';
+                            const span = document.createElement('span');
+                            span.className = 'font-medium text-slate-800';
+                            span.textContent = name;
+                            qOtherWrap.appendChild(span);
+                        });
+                    } else {
+                        qOtherWrap.innerHTML = '<span class="font-medium text-slate-800">—</span>';
+                    }
                 }
-                
-                // 2. 跳转到步骤2（确认订单）
+
+                // 2. 跳转到步骤2（确认订单）— 直接跳转，不做必填校验拦截
                 console.log('跳转到步骤2');
+
                 if (typeof window.updateSteps === 'function') {
                     window.updateSteps(2);
                 } else {
@@ -1865,38 +2237,6 @@
                     '担保公司': []
                 }
             },
-            advance: { // 预付款保函
-                '全省': {
-                    '全部机构': [
-                        { id: 13, name: '浦发银行', type: '银行', rate: '0.2% - 0.4%', duration: '2个工作日', description: '预付款保函专业服务，流程简便，费率透明。', iconColor: 'blue' },
-                        { id: 14, name: '兴业银行', type: '银行', rate: '0.25% - 0.45%', duration: '2-3个工作日', description: '福建本土银行，服务周到，支持预付款保函业务。', iconColor: 'green' }
-                    ],
-                    '银行': [
-                        { id: 13, name: '浦发银行', type: '银行', rate: '0.2% - 0.4%', duration: '2个工作日', description: '预付款保函专业服务，流程简便，费率透明。', iconColor: 'blue' },
-                        { id: 14, name: '兴业银行', type: '银行', rate: '0.25% - 0.45%', duration: '2-3个工作日', description: '福建本土银行，服务周到，支持预付款保函业务。', iconColor: 'green' }
-                    ],
-                    '保险公司': [],
-                    '担保公司': []
-                }
-            },
-            payment: { // 工资保函
-                '全省': {
-                    '全部机构': [
-                        { id: 15, name: '光大银行', type: '银行', rate: '0.15% - 0.35%', duration: '2个工作日', description: '工资保函专业服务，保障农民工工资支付。', iconColor: 'blue' },
-                        { id: 16, name: '华夏保险', type: '保险公司', rate: '0.18% - 0.4%', duration: '3个工作日', description: '专业工资保函服务，支持各类工程项目。', iconColor: 'red' },
-                        { id: 17, name: '福建工程担保公司', type: '担保公司', rate: '0.2% - 0.5%', duration: '2-3个工作日', description: '专注工程担保，工资保函业务经验丰富。', iconColor: 'purple' }
-                    ],
-                    '银行': [
-                        { id: 15, name: '光大银行', type: '银行', rate: '0.15% - 0.35%', duration: '2个工作日', description: '工资保函专业服务，保障农民工工资支付。', iconColor: 'blue' }
-                    ],
-                    '保险公司': [
-                        { id: 16, name: '华夏保险', type: '保险公司', rate: '0.18% - 0.4%', duration: '3个工作日', description: '专业工资保函服务，支持各类工程项目。', iconColor: 'red' }
-                    ],
-                    '担保公司': [
-                        { id: 17, name: '福建工程担保公司', type: '担保公司', rate: '0.2% - 0.5%', duration: '2-3个工作日', description: '专注工程担保，工资保函业务经验丰富。', iconColor: 'purple' }
-                    ]
-                }
-            },
             quality: { // 质量保函
                 '全省': {
                     '全部机构': [
@@ -1911,21 +2251,6 @@
                     ],
                     '担保公司': []
                 }
-            },
-            other: { // 其他保函
-                '全省': {
-                    '全部机构': [
-                        { id: 20, name: '民生银行', type: '银行', rate: '0.3% - 1.0%', duration: '3-5个工作日', description: '提供关税保函、海事保函等多种保函服务。', iconColor: 'blue' },
-                        { id: 21, name: '太平保险', type: '保险公司', rate: '0.35% - 1.2%', duration: '3-5个工作日', description: '提供诉讼保函等各类特殊保函服务。', iconColor: 'red' }
-                    ],
-                    '银行': [
-                        { id: 20, name: '民生银行', type: '银行', rate: '0.3% - 1.0%', duration: '3-5个工作日', description: '提供关税保函、海事保函等多种保函服务。', iconColor: 'blue' }
-                    ],
-                    '保险公司': [
-                        { id: 21, name: '太平保险', type: '保险公司', rate: '0.35% - 1.2%', duration: '3-5个工作日', description: '提供诉讼保函等各类特殊保函服务。', iconColor: 'red' }
-                    ],
-                    '担保公司': []
-                }
             }
         };
 
@@ -1933,10 +2258,7 @@
         const guaranteeTypeDetails = {
             bid: { name: '投标保函', description: '为投标企业提供的担保，保证投标企业按照招标文件的要求参加投标活动。' },
             performance: { name: '履约保函', description: '为合同履行提供的担保，保证承包商按照合同约定履行义务。' },
-            advance: { name: '预付款保函', description: '为预付款提供的担保，保证承包商按照合同约定使用预付款。' },
-            payment: { name: '工资保函', description: '为农民工工资支付提供的担保，保证承包商按时足额支付工资。' },
-            quality: { name: '质量保函', description: '为工程质量提供的担保，保证工程在保修期内符合质量要求。' },
-            other: { name: '其他保函', description: '包括关税保函、海事保函、诉讼保函等其他类型的保函产品。' }
+            quality: { name: '质量保函', description: '为工程质量提供的担保，保证工程在保修期内符合质量要求。' }
         };
 
         // 当前选中的筛选条件
@@ -2147,6 +2469,7 @@
                     </div>
                     <nav class="hidden md:flex items-center space-x-6">
                         <a href="门户端_首页.html" class="text-white hover:text-accent transition-colors">首页</a>
+                        <a href="企业端_项目中心.html" class="text-white hover:text-accent transition-colors">项目中心</a>
                         <a href="企业端_保函申请.html" class="text-white hover:text-accent transition-colors">保函超市</a>
                         <a href="门户端_新闻中心.html" class="text-white hover:text-accent transition-colors">平台资讯</a>
                         <a href="门户端_保函验真.html" class="text-white hover:text-accent transition-colors">保函验真</a>
@@ -2266,8 +2589,8 @@
                         <h3 class="text-base font-bold text-slate-800 flex items-center">
                             申请流程
                         </h3>
-                        <div id="step-text" class="text-sm text-slate-400 font-medium">
-                            步骤 1/4 - 选择项目
+                            <div id="step-text" class="text-sm text-slate-400 font-medium">
+                            步骤 1/4 - 填写信息
                         </div>
                     </div>
                     
@@ -2275,7 +2598,7 @@
                         <!-- 步骤 1 -->
                         <div class="flex flex-col items-center z-10 step-item">
                             <div class="step-circle w-9 h-9 bg-primary rounded-full flex items-center justify-center text-white font-bold shadow-lg shadow-blue-100 transition-all duration-300">1</div>
-                            <span class="step-label text-sm mt-3 text-primary font-bold transition-colors duration-300">选择项目</span>
+                            <span class="step-label text-sm mt-3 text-primary font-bold transition-colors duration-300">填写信息</span>
                         </div>
 
                         <!-- 连线 1-2 -->
@@ -2320,10 +2643,7 @@
                         <div class="flex border-b border-gray-200">
                             <button class="tab-btn active px-8 py-4 text-sm font-medium text-primary border-b-2 border-primary bg-white" data-type="bid">投标保函</button>
                             <button class="tab-btn px-8 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:bg-gray-50" data-type="performance">履约保函</button>
-                            <button class="tab-btn px-8 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:bg-gray-50" data-type="advance">预付款保函</button>
-                            <button class="tab-btn px-8 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:bg-gray-50" data-type="payment">工资保函</button>
                             <button class="tab-btn px-8 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:bg-gray-50" data-type="quality">质量保函</button>
-                            <button class="tab-btn px-8 py-4 text-sm font-medium text-gray-500 border-b-2 border-transparent hover:text-gray-700 hover:bg-gray-50" data-type="other">其他保函</button>
                         </div>
                         
                         <!-- 保函详情 -->
@@ -2523,14 +2843,14 @@
                             <div class="flex flex-col items-center text-center group">
                                 <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform relative z-10">1</div>
                                 <h4 class="font-bold text-gray-800 mb-2">在线申请</h4>
-                                <p class="text-xs text-gray-500 leading-relaxed px-2">登录平台进入“保函超市”选择对应产品，点击“立即申请”。</p>
+                                <p class="text-xs text-gray-500 leading-relaxed px-2">登录平台进入"保函超市"选择对应产品，点击"立即申请"。</p>
                                 <!-- Arrow for desktop -->
                                 <div class="hidden md:block absolute top-6 left-[18%] w-[15%] h-[2px] bg-slate-200 z-0"></div>
                             </div>
                             <!-- Step 2 -->
                             <div class="flex flex-col items-center text-center group">
                                 <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform relative z-10">2</div>
-                                <h4 class="font-bold text-gray-800 mb-2">选择项目</h4>
+                                <h4 class="font-bold text-gray-800 mb-2">填写信息</h4>
                                 <p class="text-xs text-gray-500 leading-relaxed px-2">按照提示填写投保人、项目信息，并上传必要的申请材料。</p>
                                 <!-- Arrow for desktop -->
                                 <div class="hidden md:block absolute top-6 left-[43%] w-[15%] h-[2px] bg-slate-200 z-0"></div>
@@ -2547,7 +2867,7 @@
                             <div class="flex flex-col items-center text-center group">
                                 <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-lg mb-4 shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform relative z-10">4</div>
                                 <h4 class="font-bold text-gray-800 mb-2">获取保函</h4>
-                                <p class="text-xs text-gray-500 leading-relaxed px-2">支付成功后，系统自动生成电子保函，可在“保函管理”中下载使用。</p>
+                                <p class="text-xs text-gray-500 leading-relaxed px-2">支付成功后，系统自动生成电子保函，可在"保函管理"中下载使用。</p>
                             </div>
                         </div>
                     </div>
@@ -2709,10 +3029,39 @@
                                             <i class="fa fa-calendar absolute right-3 top-3 text-gray-400"></i>
                                         </div>
                                     </div>
+
+                                    <!-- 投标保函经办人信息 -->
+                                    <div class="md:col-span-2 mt-2 pt-6 border-t border-gray-100">
+                                        <h4 class="text-base font-bold text-gray-800 mb-4 flex items-center">
+                                            <i class="fa fa-user text-primary mr-2"></i> 经办人信息
+                                        </h4>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 经办人姓名
+                                        </label>
+                                        <input type="text" id="bid-handler-name" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入经办人姓名">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 经办人身份证号
+                                        </label>
+                                        <input type="text" id="bid-handler-id" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入身份证号">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 经办人手机号
+                                        </label>
+                                        <input type="text" id="bid-handler-phone" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入手机号">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2">经办人邮箱</label>
+                                        <input type="email" id="bid-handler-email" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入邮箱">
+                                    </div>
                                 </div>
 
                                 <!-- 工资保函项目信息 (旧逻辑) -->
-                                <div class="payment-fields contents">
+                                <div class="payment-fields hidden contents">
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                             <span class="text-red-500 mr-1">*</span> 项目名称：
@@ -2780,89 +3129,160 @@
                                     </div>
                                 </div>
 
+                                <!-- 履约保函项目信息 -->
+                                <div class="performance-fields hidden contents">
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 项目名称
+                                        </label>
+                                        <div class="flex">
+                                            <input type="text" id="performance-project-name" class="flex-1 border border-gray-200 rounded-l-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="搜索选择，或手动输入文本">
+                                            <button type="button" onclick="openProjectSelection()" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors">选择项目</button>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 项目类型
+                                        </label>
+                                        <select id="performance-project-type" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                            <option value="工程类" selected>工程类</option>
+                                            <option value="货物类">货物类</option>
+                                            <option value="服务类">服务类</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 项目所在地
+                                        </label>
+                                        <div class="flex gap-2">
+                                            <select id="performance-province" class="flex-1 border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                                <option value="">请选择省</option>
+                                                <option>福建省</option>
+                                                <option>广东省</option>
+                                                <option>浙江省</option>
+                                            </select>
+                                            <select id="performance-city" class="flex-1 border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                                <option value="">请选择市</option>
+                                                <option>福州市</option>
+                                                <option>厦门市</option>
+                                                <option>泉州市</option>
+                                            </select>
+                                            <select id="performance-district" class="flex-1 border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                                <option value="">请选择区</option>
+                                                <option>鼓楼区</option>
+                                                <option>思明区</option>
+                                                <option>丰泽区</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 计划工期（天）
+                                        </label>
+                                        <input type="number" id="performance-duration" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="输入数字">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 中标合同价（元）
+                                        </label>
+                                        <input type="number" id="performance-contract-price" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="输入数字">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 保证金金额（元）
+                                        </label>
+                                        <input type="number" id="performance-guarantee-amount" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="输入数字">
+                                    </div>
+                                </div>
+
                                 <!-- 质量保函合同信息 -->
                                 <div class="quality-fields hidden contents">
                                     <div class="flex flex-col md:col-span-2">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 工程合同甲方单位（发包人）
+                                            <span class="text-red-500 mr-1">*</span> 合同名称：
                                         </label>
-                                        <select id="quality-contract-party" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
-                                            <option value="">请选择工程合同甲方单位</option>
-                                            <option value="party1">福州市公共资源交易中心</option>
-                                            <option value="party2">厦门市建设工程交易中心</option>
-                                            <option value="party3">泉州市公共资源交易中心</option>
+                                        <div class="flex">
+                                            <input type="text" id="quality-contract-name" class="flex-1 border border-gray-200 rounded-l-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
+                                            <button type="button" onclick="openContractSelection()" class="bg-primary text-white px-4 py-2 rounded-r-md hover:bg-primary/90 transition-colors flex items-center">
+                                                <i class="fa fa-search mr-1"></i> 选择合同
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 合同编号：
+                                        </label>
+                                        <input type="text" id="quality-contract-number" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 合同甲方单位（发包人）：
+                                        </label>
+                                        <input type="text" id="quality-contract-party" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入合同甲方单位（发包人）">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 合同甲方企业名称：
+                                        </label>
+                                        <input type="text" id="quality-party-name" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                            <span class="text-red-500 mr-1">*</span> 合同类型：
+                                        </label>
+                                        <select id="quality-contract-type" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                            <option>工程类</option>
+                                            <option>货物类</option>
+                                            <option>服务类</option>
                                         </select>
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-2">工程合同甲方企业名称</label>
-                                        <input type="text" id="quality-party-name" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" placeholder="系统自动带出" disabled>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-2">客服电话</label>
-                                        <input type="text" id="quality-customer-service" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" placeholder="系统自动带出" disabled>
-                                    </div>
-                                    <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 工程施工合同编号
+                                            <span class="text-red-500 mr-1">*</span> 合同金额（元）：
                                         </label>
-                                        <input type="text" id="quality-contract-number" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入工程合同编号">
+                                        <input type="number" id="quality-contract-amount" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 工程施工合同名称
+                                            <span class="text-red-500 mr-1">*</span> 保证金金额（元）：
                                         </label>
-                                        <input type="text" id="quality-contract-name" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入工程合同名称">
+                                        <input type="number" id="quality-bond-amount" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-2">工程施工合同类型</label>
-                                        <input type="text" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" value="工程类" disabled>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-2">工程质量保证金起始日期</label>
-                                        <input type="date" id="quality-bond-start-date" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" disabled>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-2">工程质量保证金结束日期</label>
-                                        <input type="date" id="quality-bond-end-date" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" disabled>
+                                        <label class="text-sm font-medium text-gray-700 mb-2">保证金起始日期：</label>
+                                        <input type="date" id="quality-bond-start-date" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 工程地址（省市区）
+                                            <span class="text-red-500 mr-1">*</span> 项目地址（省市区）：
                                         </label>
-                                        <select class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
-                                            <option value="">请选择省市区</option>
-                                            <option value="fuzhou">福建省福州市</option>
-                                            <option value="xiamen">福建省厦门市</option>
-                                            <option value="quanzhou">福建省泉州市</option>
-                                        </select>
+                                        <input type="text" id="quality-address-region" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
                                     </div>
-                                    <div class="flex flex-col md:col-span-2">
-                                        <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 工程详细地址
-                                        </label>
-                                        <input type="text" id="quality-address-detail" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请填写到具体的街道号码">
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2">项目详细地址：</label>
+                                        <input type="text" id="quality-address-detail" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 施工合同起期
+                                            <span class="text-red-500 mr-1">*</span> 合同期起：
                                         </label>
                                         <input type="date" id="quality-contract-start" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 施工合同止期
+                                            <span class="text-red-500 mr-1">*</span> 合同期止：
                                         </label>
                                         <input type="date" id="quality-contract-end" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
                                     </div>
-                                    <div class="flex flex-col md:col-span-2">
+                                    <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                            <span class="text-red-500 mr-1">*</span> 工程施工合同
+                                            <span class="text-red-500 mr-1">*</span> 合同签订日期：
                                         </label>
-                                        <button type="button" id="quality-contract-upload" class="flex-1 border border-dashed border-gray-200 rounded-lg py-6 flex flex-col items-center justify-center text-gray-400 hover:border-primary hover:text-primary hover:bg-blue-50/30 transition-all group">
-                                            <i class="fa fa-cloud-upload text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                                            <span class="text-sm">点击上传工程合同</span>
-                                            <span class="text-[10px] text-gray-400 mt-1">仅支持PDF，大小不超过15M</span>
-                                        </button>
+                                        <input type="date" id="quality-sign-date" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-2">合同签订地址：</label>
+                                        <input type="text" id="quality-sign-address" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
                                     </div>
                                 </div>
                             </div>
@@ -2874,52 +3294,55 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                                 <div class="flex flex-col">
                                     <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                        <span class="text-red-500 mr-1">*</span> 担保起期
+                                        <span class="text-red-500 mr-1">*</span> 担保起期：
                                     </label>
                                     <input type="date" id="quality-guarantee-start" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
                                 </div>
                                 <div class="flex flex-col">
                                     <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                        <span class="text-red-500 mr-1">*</span> 担保止期
+                                        <span class="text-red-500 mr-1">*</span> 担保止期：
                                     </label>
                                     <input type="date" id="quality-guarantee-end" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
                                 </div>
-                                <div class="flex flex-col">
-                                    <label class="text-sm font-medium text-gray-700 mb-2">担保期限（天）</label>
-                                    <input type="number" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" placeholder="系统自动计算" disabled>
-                                </div>
-                                <div class="flex flex-col">
-                                    <label class="text-sm font-medium text-gray-700 mb-2">担保有效期</label>
-                                    <input type="text" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary bg-gray-50" placeholder="系统自动计算" disabled>
-                                </div>
-                                <div class="flex flex-col">
-                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                        <span class="text-red-500 mr-1">*</span> 担保公司
-                                    </label>
-                                    <select class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
-                                        <option value="">请选择担保公司</option>
-                                        <option value="icbc">中国工商银行</option>
-                                        <option value="ccb">中国建设银行</option>
-                                        <option value="abc">中国农业银行</option>
-                                    </select>
-                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 质量保函投保材料 -->
+                        <div class="quality-fields hidden bg-white rounded-lg shadow-md p-8" id="quality-materials-section">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">投保材料</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                                 <div class="flex flex-col">
                                     <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                        <span class="text-red-500 mr-1">*</span> 工程质量保证金金额
+                                        <span class="text-red-500 mr-1">*</span> 投保企业营业执照：
                                     </label>
-                                    <div class="relative">
-                                        <input type="number" id="quality-bond-amount" class="w-full border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary pr-12" placeholder="0.00">
-                                        <span class="absolute right-3 top-2 text-gray-400">元</span>
+                                    <div class="border-2 border-dashed border-blue-300 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex flex-col items-center justify-center">
+                                            <i class="fa fa-image text-2xl mb-2 text-gray-400"></i>
+                                            <span>点击或拖拽上传，允许 JPG、PNG、PDF 格式，大小 &lt; 5M</span>
+                                            <input type="file" id="quality-license-input" class="hidden" accept=".jpg,.jpeg,.png,.pdf">
+                                        </label>
                                     </div>
                                 </div>
                                 <div class="flex flex-col">
                                     <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                        <span class="text-red-500 mr-1">*</span> 保费
+                                        <span class="text-red-500 mr-1">*</span> 项目合同：
                                     </label>
-                                    <div class="relative">
-                                        <input type="number" id="quality-premium" class="w-full border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary pr-12" placeholder="0.00">
-                                        <span class="absolute right-3 top-2 text-gray-400">元</span>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex flex-col items-center justify-center">
+                                            <i class="fa fa-file-text text-2xl mb-2 text-gray-400"></i>
+                                            <span>点击或拖拽上传，允许 JPG、PNG、PDF、WORD 格式，大小 &lt; 10M</span>
+                                            <input type="file" id="quality-contract-file-input" class="hidden" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                                        </label>
                                     </div>
+                                </div>
+                                <div class="flex flex-col md:col-span-2">
+                                    <label class="text-sm font-medium text-gray-700 mb-2">其他材料：<span class="text-gray-400 text-xs ml-2">（支持多份上传）</span></label>
+                                    <div id="quality-other-materials-list" class="space-y-3">
+                                        <!-- 动态追加 -->
+                                    </div>
+                                    <button type="button" onclick="addQualityOtherMaterial()" class="mt-2 text-primary text-sm hover:underline flex items-center">
+                                        <i class="fa fa-plus-circle mr-1"></i> 添加其他材料
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -2929,7 +3352,7 @@
                             <h3 class="text-xl font-bold text-gray-800 mb-6">投保信息</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                                 <!-- 工资保函特有字段 -->
-                                <div class="payment-fields contents">
+                                <div class="payment-fields hidden contents">
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                             <span class="text-red-500 mr-1">*</span> 保证金缴纳比例（%）：
@@ -2985,6 +3408,213 @@
                                 <div class="flex flex-col">
                                     <label class="text-sm font-medium text-gray-700 mb-2">受益人联系电话：</label>
                                     <input type="text" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 履约保函投保信息 -->
+                        <div class="bg-white rounded-lg shadow-md p-8 hidden" id="performance-insurance-info-section">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">投保信息</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 受益人名称：
+                                    </label>
+                                    <input type="text" id="performance-beneficiary-name" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入受益人名称">
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 受益人统一社会信用代码：
+                                    </label>
+                                    <div class="relative">
+                                        <input type="text" id="performance-beneficiary-code" class="w-full border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入" maxlength="18">
+                                        <span class="absolute right-3 top-2.5 text-xs text-gray-400">0/18</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 保函期限类型：
+                                    </label>
+                                    <div class="flex items-center space-x-6 mt-2">
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="performance-period-type" value="period" checked class="mr-2 accent-primary focus:ring-primary" onchange="togglePerformancePeriodType()">
+                                            <span>按周期申请</span>
+                                        </label>
+                                        <label class="flex items-center cursor-pointer">
+                                            <input type="radio" name="performance-period-type" value="expiry" class="mr-2 accent-primary focus:ring-primary" onchange="togglePerformancePeriodType()">
+                                            <span>按到期日申请</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span id="performance-months-required" class="text-red-500 mr-1">*</span> 保函期限周期（个月）
+                                    </label>
+                                    <input type="number" id="performance-period-months" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="输入数字">
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span id="performance-expiry-required" class="text-red-500 mr-1 hidden">*</span> 保函期限到期日：
+                                    </label>
+                                    <input type="date" id="performance-period-expiry" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 履约保函经办人信息 -->
+                        <div class="bg-white rounded-lg shadow-md p-8 hidden" id="performance-handler-info-section">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">经办人信息</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 经办人姓名：
+                                    </label>
+                                    <input type="text" id="performance-handler-name" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入经办人姓名">
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 经办人身份证号：
+                                    </label>
+                                    <input type="text" id="performance-handler-id" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入经办人身份证号" maxlength="18">
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 经办人手机号：
+                                    </label>
+                                    <input type="text" id="performance-handler-phone" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入经办人手机号" maxlength="11">
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2">邮寄地址：</label>
+                                    <input type="text" id="performance-mail-address" class="border border-gray-200 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-primary" placeholder="请输入邮寄地址">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 履约保函投保材料 -->
+                        <div class="bg-white rounded-lg shadow-md p-8 hidden" id="performance-materials-section">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">投保材料</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+                                <!-- 营业执照 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 营业执照：
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".jpg,.jpeg,.bmp,.png,.pdf">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 JPG\BMP\PNG\PDF 格式，大小 &lt; 5M</span>
+                                </div>
+                                <!-- 身份证人像面 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 身份证人像面：
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".jpg,.jpeg,.bmp,.png,.pdf">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 JPG\BMP\PNG\PDF 格式，大小 &lt; 5M</span>
+                                </div>
+                                <!-- 身份证国徽面 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 身份证国徽面：
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".jpg,.jpeg,.bmp,.png,.pdf">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 JPG\BMP\PNG\PDF 格式，大小 &lt; 5M</span>
+                                </div>
+                                <!-- 招标文件 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 招标文件：
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".doc,.docx,.pdf,.zip,.rar">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 WORD\PDF\ZIP\RAR 格式，大小 &lt; 50M</span>
+                                </div>
+                                <!-- 中标通知书 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 中标通知书：
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".doc,.docx,.pdf,.jpg,.jpeg,.bmp,.png">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 word\pdf\JPG\JPEG\BMP\PNG，文件大小 &lt; 10M</span>
+                                </div>
+                                <!-- 施工合同 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                        <span class="text-red-500 mr-1">*</span> 施工合同：
+                                    </label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".doc,.docx,.pdf,.jpg,.jpeg,.bmp,.png">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 word\pdf\JPG\JPEG\BMP\PNG，文件大小 &lt; 10M</span>
+                                </div>
+                                <!-- 资质等级证书 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2">资质等级证书：</label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".jpg,.jpeg,.bmp,.png,.pdf">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 JPG\BMP\PNG\PDF 格式，大小 &lt; 5M（非必填）</span>
+                                </div>
+                                <!-- 安全生产许可证 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2">安全生产许可证：</label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".jpg,.jpeg,.bmp,.png,.pdf">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 JPG\BMP\PNG\PDF 格式，大小 &lt; 5M（非必填）</span>
+                                </div>
+                                <!-- 审计财报 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2">审计财报：</label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".doc,.docx,.pdf,.xls,.xlsx,.zip,.rar">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 WORD\PDF\EXCEL\ZIP\RAR 格式，大小 &lt; 10M（非必填）</span>
+                                </div>
+                                <!-- 财务报告 -->
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-2">财务报告：</label>
+                                    <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors">
+                                        <label class="cursor-pointer text-sm text-gray-500 hover:text-primary flex items-center justify-center">
+                                            <i class="fa fa-upload mr-2"></i> 点击上传
+                                            <input type="file" class="hidden" accept=".doc,.docx,.pdf,.xls,.xlsx,.zip,.rar">
+                                        </label>
+                                    </div>
+                                    <span class="text-xs text-gray-400 mt-1">允许 WORD\PDF\EXCEL\ZIP\RAR 格式，大小 &lt; 10M（非必填）</span>
                                 </div>
                             </div>
                         </div>
@@ -3082,19 +3712,19 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col">
                                         <label class="text-xs text-slate-500 mb-1 flex items-center"><span class="text-red-500 mr-1">*</span> 经办人姓名</label>
-                                        <input type="text" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="李四">
+                                        <input type="text" id="confirm-handler-name" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed" value="李四">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-xs text-slate-500 mb-1 flex items-center"><span class="text-red-500 mr-1">*</span> 经办人身份证号</label>
-                                        <input type="text" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="350102198505202419">
+                                        <input type="text" id="confirm-handler-id" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed" value="350102198505202419">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-xs text-slate-500 mb-1 flex items-center"><span class="text-red-500 mr-1">*</span> 经办人手机号</label>
-                                        <input type="text" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="13800138000">
+                                        <input type="text" id="confirm-handler-phone" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed" value="13800138000">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-xs text-slate-500 mb-1">经办人邮箱</label>
-                                        <input type="email" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="lisi@example.com">
+                                        <input type="email" id="confirm-handler-email" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed" value="lisi@example.com">
                                     </div>
                                 </div>
                             </div>
@@ -3265,116 +3895,71 @@
                             </div>
                         </div>
 
-                        <!-- 质量保函确认内容 -->
-                        <div id="quality-confirmation-content" class="space-y-6">
+                        <!-- 履约保函确认内容 -->
+                        <div id="performance-confirmation-content" class="space-y-6">
+                            <!-- 项目信息 -->
                             <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
                                 <h4 class="font-bold text-slate-800 mb-4 flex items-center">
                                     <i class="fa fa-file-contract text-primary mr-2"></i> 项目信息
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">工程合同甲方单位（发包人）</span>
-                                        <span class="font-medium text-slate-800">福州市公共资源交易中心</span>
+                                        <span class="text-sm text-slate-500">项目名称</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-project-name">—</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程合同甲方企业名称</span>
-                                        <span class="font-medium text-slate-800">福州市公共资源交易中心</span>
+                                        <span class="text-sm text-slate-500">项目类型</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-project-type">—</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">客服电话</span>
-                                        <span class="font-medium text-slate-800">0591-87501234</span>
+                                        <span class="text-sm text-slate-500">项目所在地</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-project-address">—</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程施工合同编号</span>
-                                        <span class="font-medium text-slate-800">GC-HT-2026-015</span>
-                                    </div>
-                                    <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">工程施工合同名称</span>
-                                        <span class="font-medium text-slate-800">福州市2026年度市政基础设施建设项目</span>
+                                        <span class="text-sm text-slate-500">计划工期（天）</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-duration">—</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程施工合同类型</span>
-                                        <span class="font-medium text-slate-800">工程类</span>
+                                        <span class="text-sm text-slate-500">中标合同价（元）</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-contract-price">—</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程质量保证金起始日期</span>
-                                        <span class="font-medium text-slate-800">2026-04-01</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程质量保证金结束日期</span>
-                                        <span class="font-medium text-slate-800">2028-06-15</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程地址（省市区）</span>
-                                        <span class="font-medium text-slate-800">福建省福州市</span>
-                                    </div>
-                                    <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">工程详细地址</span>
-                                        <span class="font-medium text-slate-800">福建省福州市鼓楼区五四路100号</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">施工合同起期</span>
-                                        <span class="font-medium text-slate-800">2026-04-01</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">施工合同止期</span>
-                                        <span class="font-medium text-slate-800">2028-03-31</span>
-                                    </div>
-                                    <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">工程施工合同</span>
-                                        <span class="font-medium text-slate-800">工程施工合同.pdf</span>
+                                        <span class="text-sm text-slate-500">保证金金额（元）</span>
+                                        <span class="font-medium text-red-500 font-bold" id="confirm-performance-guarantee-amount">—</span>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- 投保信息 -->
                             <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
                                 <h4 class="font-bold text-slate-800 mb-4 flex items-center">
-                                    <i class="fa fa-building text-primary mr-2"></i> 企业信息
+                                    <i class="fa fa-shield text-primary mr-2"></i> 投保信息
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">投标企业</span>
-                                        <span class="font-medium text-slate-800">测试建设有限公司</span>
+                                        <span class="text-sm text-slate-500">保函期限类型</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-period-type-name">—</span>
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">投标企业统一社会信用代码</span>
-                                        <span class="font-medium text-slate-800">350122199906784522</span>
+                                        <span class="text-sm text-slate-500">保函期限周期（个月）</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-period-months">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">保函期限到期日</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-period-expiry">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">受益人名称</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-beneficiary-name">—</span>
                                     </div>
                                     <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">基本户账户名称</span>
-                                        <span class="font-medium text-slate-800">测试建设有限公司</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">银行开户行</span>
-                                        <span class="font-medium text-slate-800">中国银行</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">开户账号</span>
-                                        <span class="font-medium text-slate-800">231,231,231</span>
-                                    </div>
-                                    <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">企业地址</span>
-                                        <span class="font-medium text-slate-800">地址</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">企业邮箱</span>
-                                        <span class="font-medium text-slate-800">12@qq.com</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">法定代表人名称</span>
-                                        <span class="font-medium text-slate-800">张三</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">法定代表人身份证号码</span>
-                                        <span class="font-medium text-slate-800">350,102,198,211,302,418</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">法定代表人手机号</span>
-                                        <span class="font-medium text-slate-800">18759361387</span>
+                                        <span class="text-sm text-slate-500">受益人统一社会信用代码</span>
+                                        <span class="font-medium text-slate-800" id="confirm-performance-beneficiary-code">—</span>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- 经办人信息 -->
                             <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
                                 <div class="flex items-center justify-between mb-4">
                                     <h4 class="font-bold text-slate-800 flex items-center">
@@ -3383,24 +3968,112 @@
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col">
-                                        <label class="text-xs text-slate-500 mb-1">经办人姓名</label>
-                                        <input type="text" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="李四">
+                                        <label class="text-xs text-slate-500 mb-1 flex items-center"><span class="text-red-500 mr-1">*</span> 经办人姓名</label>
+                                        <input type="text" id="confirm-performance-handler-name" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-xs text-slate-500 mb-1">经办人身份证号</label>
-                                        <input type="text" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="350102198505202419">
+                                        <label class="text-xs text-slate-500 mb-1 flex items-center"><span class="text-red-500 mr-1">*</span> 经办人身份证号</label>
+                                        <input type="text" id="confirm-performance-handler-id" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-xs text-slate-500 mb-1">经办人手机号</label>
-                                        <input type="text" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="13800138000">
+                                        <label class="text-xs text-slate-500 mb-1 flex items-center"><span class="text-red-500 mr-1">*</span> 经办人手机号</label>
+                                        <input type="text" id="confirm-performance-handler-phone" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-xs text-slate-500 mb-1">经办人邮箱</label>
-                                        <input type="email" class="bg-white border border-slate-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary" value="lisi@example.com">
+                                        <label class="text-xs text-slate-500 mb-1">邮寄地址</label>
+                                        <input type="text" id="confirm-performance-mail-address" readonly disabled class="bg-slate-100 border border-slate-200 rounded px-3 py-1.5 text-sm text-slate-600 cursor-not-allowed">
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- 投保材料 -->
+                            <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
+                                <h4 class="font-bold text-slate-800 mb-4 flex items-center">
+                                    <i class="fa fa-paperclip text-primary mr-2"></i> 投保材料
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">营业执照</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">身份证人像面</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">身份证国徽面</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">招标文件</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">中标通知书</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">施工合同</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">资质等级证书</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">安全生产许可证</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">审计财报</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                    <div class="flex flex-col"><span class="text-sm text-slate-500">财务报告</span><span class="font-medium text-slate-800">以填写信息上传为准</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 质量保函确认内容 -->
+                        <div id="quality-confirmation-content" class="space-y-6">
+                            <!-- 合同信息 -->
+                            <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
+                                <h4 class="font-bold text-slate-800 mb-4 flex items-center">
+                                    <i class="fa fa-file-contract text-primary mr-2"></i> 合同信息
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="flex flex-col md:col-span-2">
+                                        <span class="text-sm text-slate-500">合同名称</span>
+                                        <span id="confirm-quality-contract-name" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同编号</span>
+                                        <span id="confirm-quality-contract-number" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同甲方单位（发包人）</span>
+                                        <span id="confirm-quality-contract-party" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同甲方企业名称</span>
+                                        <span id="confirm-quality-party-name" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同类型</span>
+                                        <span id="confirm-quality-contract-type" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同金额（元）</span>
+                                        <span id="confirm-quality-contract-amount" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">保证金金额（元）</span>
+                                        <span id="confirm-quality-bond-amount" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">保证金起始日期</span>
+                                        <span id="confirm-quality-bond-start-date" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">项目地址（省市区）</span>
+                                        <span id="confirm-quality-address-region" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col md:col-span-2">
+                                        <span class="text-sm text-slate-500">项目详细地址</span>
+                                        <span id="confirm-quality-address-detail" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同期起</span>
+                                        <span id="confirm-quality-contract-start" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同期止</span>
+                                        <span id="confirm-quality-contract-end" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同签订日期</span>
+                                        <span id="confirm-quality-sign-date" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm text-slate-500">合同签订地址</span>
+                                        <span id="confirm-quality-sign-address" class="font-medium text-slate-800">—</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 投保信息 -->
                             <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
                                 <h4 class="font-bold text-slate-800 mb-4 flex items-center">
                                     <i class="fa fa-shield text-primary mr-2"></i> 投保信息
@@ -3408,59 +4081,34 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col">
                                         <span class="text-sm text-slate-500">担保起期</span>
-                                        <span class="font-medium text-slate-800">2026-04-15</span>
+                                        <span id="confirm-quality-guarantee-start" class="font-medium text-slate-800">—</span>
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm text-slate-500">担保止期</span>
-                                        <span class="font-medium text-slate-800">2028-06-15</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">担保期限（天）</span>
-                                        <span class="font-medium text-slate-800">790天</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">担保有效期</span>
-                                        <span class="font-medium text-slate-800">2年2个月</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">担保公司</span>
-                                        <span class="font-medium text-slate-800">中国工商银行</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">工程质量保证金金额</span>
-                                        <span class="font-medium text-slate-800">1,000,000.00</span>
-                                    </div>
-                                    <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">保费（元）</span>
-                                        <span class="font-medium text-slate-800">7,500.00</span>
+                                        <span id="confirm-quality-guarantee-end" class="font-medium text-slate-800">—</span>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- 投保材料 -->
                             <div class="bg-slate-50 rounded-lg p-6 border border-slate-100">
                                 <h4 class="font-bold text-slate-800 mb-4 flex items-center">
-                                    <i class="fa fa-users text-primary mr-2"></i> 被保险人信息
+                                    <i class="fa fa-paperclip text-primary mr-2"></i> 投保材料
                                 </h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">被保险人企业名称</span>
-                                        <span class="font-medium text-slate-800">福州市公共资源交易中心</span>
+                                        <span class="text-sm text-slate-500">投标企业营业执照</span>
+                                        <span id="confirm-quality-license" class="font-medium text-slate-800">—</span>
                                     </div>
                                     <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">被保险人营业执照照片</span>
-                                        <span class="font-medium text-slate-800">被保险人营业执照.jpg</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">统一社会信用代码</span>
-                                        <span class="font-medium text-slate-800">12350000MA12345678</span>
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="text-sm text-slate-500">被保险人地址（省市区）</span>
-                                        <span class="font-medium text-slate-800">福建省福州市</span>
+                                        <span class="text-sm text-slate-500">项目合同</span>
+                                        <span id="confirm-quality-contract-file" class="font-medium text-slate-800">—</span>
                                     </div>
                                     <div class="flex flex-col md:col-span-2">
-                                        <span class="text-sm text-slate-500">被保险人详细地址</span>
-                                        <span class="font-medium text-slate-800">福建省福州市鼓楼区乌山路92号</span>
+                                        <span class="text-sm text-slate-500">其他材料</span>
+                                        <div id="confirm-quality-other-materials" class="flex flex-col space-y-1">
+                                            <span class="font-medium text-slate-800">—</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3691,7 +4339,7 @@
                         <p class="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">您的申请已提交至金融机构，系统正在进行初步验证并排队审核。预计在 <span class="text-primary font-bold">1-2个工作日</span> 内完成。审核通过后将自动开立保函。</p>
                         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
                             <button onclick="window.location.href='工作台.html'" class="w-full sm:w-auto px-8 py-3 border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-50 transition-all font-bold">返回工作台</button>
-                            <button onclick="window.updateSteps(4)" class="w-full sm:w-auto px-8 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 font-bold shadow-lg shadow-blue-100 transition-all active:scale-95">
+                            <button onclick="window.goToPayment()" class="w-full sm:w-auto px-8 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 font-bold shadow-lg shadow-blue-100 transition-all active:scale-95">
                                 模拟审核通过（查看结果） <i class="fa fa-arrow-right ml-2"></i>
                             </button>
                         </div>
@@ -3893,7 +4541,7 @@
                                         <ul class="space-y-4 text-[13px] text-slate-600 leading-relaxed">
                                             <li class="flex items-start">
                                                 <span class="mr-2 shrink-0 font-medium">1.</span>
-                                                <span>保函系统确认到账后，系统将在30分钟内自动出单并以短信的方式通知投保经办人，收到短信后，请及时在“福建省公共资源电子化交易平台-投标保证金缴纳”页面查看保证金缴纳状态是否变更为“已缴纳”，若未变更，请及时联系客服。</span>
+                                                <span>保函系统确认到账后，系统将在30分钟内自动出单并以短信的方式通知投保经办人，收到短信后，请及时在"福建省公共资源电子化交易平台-投标保证金缴纳"页面查看保证金缴纳状态是否变更为"已缴纳"，若未变更，请及时联系客服。</span>
                                             </li>
                                             <li class="flex items-start">
                                                 <span class="mr-2 shrink-0 font-medium">2.</span>
@@ -3901,7 +4549,7 @@
                                             </li>
                                             <li class="flex items-start">
                                                 <span class="mr-2 shrink-0 font-medium">3.</span>
-                                                <span>电子保函单单购买成功后，可在“福建省公共资源电子化交易平台-投标保证金缴纳”页面下载保证金缴纳回执；开标后可下载明文保函。</span>
+                                                <span>电子保函单单购买成功后，可在"福建省公共资源电子化交易平台-投标保证金缴纳"页面下载保证金缴纳回执；开标后可下载明文保函。</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -3925,7 +4573,7 @@
                             <i class="fa fa-check text-emerald-500 text-4xl"></i>
                         </div>
                         <h3 class="text-3xl font-black text-slate-900 mb-4">保函开立成功！</h3>
-                        <p class="text-slate-500 mb-12 max-w-md mx-auto leading-relaxed">您的投标保函已正式签发，具有法律效力。您可以随时在“保函管理”中查看、预览或下载该保函。</p>
+                        <p class="text-slate-500 mb-12 max-w-md mx-auto leading-relaxed">您的投标保函已正式签发，具有法律效力。您可以随时在"保函管理"中查看、预览或下载该保函。</p>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto mb-12">
                             <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 text-left">

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目中心 - 福建省电子保函服务平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        accent: '#3B82F6',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 顶部导航栏 -->
+    <nav class="bg-primary text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <i class="fa fa-shield text-primary text-xl"></i>
+                </div>
+                <div class="text-2xl font-bold">福建省电子保函服务平台</div>
+            </div>
+
+            <!-- 导航链接 -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="门户端_首页.html" class="hover:text-accent transition-colors">首页</a>
+                <a href="门户端_项目中心.html" class="text-accent font-medium">项目中心</a>
+                <a href="门户端_保函超市.html" class="hover:text-accent transition-colors">保函超市</a>
+                <a href="门户端_新闻中心.html" class="hover:text-accent transition-colors">平台资讯</a>
+                <a href="门户端_保函验真.html" class="hover:text-accent transition-colors">保函验真</a>
+                <a href="门户端_帮助中心.html" class="hover:text-accent transition-colors">帮助中心</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button id="mobileMenuBtn" class="md:hidden text-white">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 面包屑导航 -->
+    <div class="bg-white border-b border-gray-200 py-4 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex items-center text-sm text-gray-600">
+                <a href="门户端_首页.html" class="hover:text-primary transition-colors">首页</a>
+                <i class="fa fa-angle-right mx-2"></i>
+                <span class="text-primary">项目中心</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 项目中心主体 -->
+    <section class="py-8 px-4">
+        <div class="container mx-auto max-w-6xl space-y-6">
+
+            <!-- 顶部：标题 + 搜索 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fa fa-line-chart text-primary text-2xl"></i>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-800">项目中心</h1>
+                </div>
+                <div class="flex items-center w-full md:w-auto">
+                    <input id="projectSearch" type="text" class="flex-1 md:w-80 px-4 py-2.5 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-primary text-sm" placeholder="搜索项目名称或标段编号">
+                    <button id="projectSearchBtn" class="bg-primary text-white px-6 py-2.5 rounded-r-md hover:bg-primary/90 transition-colors flex items-center text-sm font-medium whitespace-nowrap">
+                        <i class="fa fa-search mr-2"></i>搜索
+                    </button>
+                </div>
+            </div>
+
+            <!-- 地区筛选 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-4">
+                <h3 class="text-gray-500 font-medium mb-4">选择地区</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="city-btn px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium transition-all duration-300 shadow-sm" data-region="all">全省</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="fuzhou">福州市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="xiamen">厦门市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="quanzhou">泉州市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="zhangzhou">漳州市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="longyan">龙岩市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="sanming">三明市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="nanping">南平市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="ningde">宁德市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="putian">莆田市</button>
+                    <button class="city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300" data-region="pingtan">平潭综合实验区</button>
+                </div>
+            </div>
+
+            <!-- 项目卡片网格 -->
+            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- 卡片 1 -->
+                <div class="project-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col" data-region="quanzhou">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-base">泉州市特殊教育职业培训中心（二次）</h3>
+                <div class="space-y-2.5 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-map-marker text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">标段编号：</span>
+                        <span class="text-gray-800">泉台招字[2025]第8号</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-building text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">招标人：</span>
+                        <span class="text-gray-800">泉州市特殊教育学校</span>
+                    </div>
+                        <div class="flex items-center text-gray-700">
+                            <i class="fa fa-money text-primary w-5"></i>
+                            <span class="text-gray-500 mr-2">保证金金额：</span>
+                            <span class="text-gray-800">800,000 元</span>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fa fa-clock-o mr-1.5"></i>缴纳截止：2028-05-06 17:00:00
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-gray-100">
+                        <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
+                            <i class="fa fa-line-chart mr-2"></i>购买保函
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 2 -->
+                <div class="project-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col" data-region="quanzhou">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-base">金门供水水源保障南高干渠供水替代工程N3标段</h3>
+                <div class="space-y-2.5 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-map-marker text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">标段编号：</span>
+                        <span class="text-gray-800">泉水招字[2025]005号</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-building text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">招标人：</span>
+                        <span class="text-gray-800">泉州市水务投资建设有限公司</span>
+                    </div>
+                        <div class="flex items-center text-gray-700">
+                            <i class="fa fa-money text-primary w-5"></i>
+                            <span class="text-gray-500 mr-2">保证金金额：</span>
+                            <span class="text-gray-800">800,000 元</span>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fa fa-clock-o mr-1.5"></i>缴纳截止：2028-05-06 10:00:00
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-gray-100">
+                        <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
+                            <i class="fa fa-line-chart mr-2"></i>购买保函
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 3 -->
+                <div class="project-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col" data-region="quanzhou">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-base">晋江乡村振兴一期紫帽山生态及旅游基础设施提升项目（河道景观...）</h3>
+                <div class="space-y-2.5 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-map-marker text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">标段编号：</span>
+                        <span class="text-gray-800">晋园施招20250407004</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-building text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">招标人：</span>
+                        <span class="text-gray-800">晋江市水利局</span>
+                    </div>
+                        <div class="flex items-center text-gray-700">
+                            <i class="fa fa-money text-primary w-5"></i>
+                            <span class="text-gray-500 mr-2">保证金金额：</span>
+                            <span class="text-gray-800">160,000 元</span>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fa fa-clock-o mr-1.5"></i>缴纳截止：2028-05-06 09:30:00
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-gray-100">
+                        <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
+                            <i class="fa fa-line-chart mr-2"></i>购买保函
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 4 -->
+                <div class="project-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col" data-region="quanzhou">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-base">泉州住建工程总承包暨模板测试项目</h3>
+                <div class="space-y-2.5 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-map-marker text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">标段编号：</span>
+                        <span class="text-gray-800">EQZ20250325002001</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-building text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">招标人：</span>
+                        <span class="text-gray-800">泉州市住房和城乡建设局</span>
+                    </div>
+                        <div class="flex items-center text-gray-700">
+                            <i class="fa fa-money text-primary w-5"></i>
+                            <span class="text-gray-500 mr-2">保证金金额：</span>
+                            <span class="text-gray-800">2,000 元</span>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fa fa-clock-o mr-1.5"></i>缴纳截止：2028-04-30 09:00:00
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-gray-100">
+                        <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
+                            <i class="fa fa-line-chart mr-2"></i>购买保函
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 5 -->
+                <div class="project-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col" data-region="quanzhou">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-base">泉惠石化工业区2x660MW超超临界热电联产工程第二批辅机...</h3>
+                <div class="space-y-2.5 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-map-marker text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">标段编号：</span>
+                        <span class="text-gray-800">35052025029</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-building text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">招标人：</span>
+                        <span class="text-gray-800">泉惠石化工业园区管委会</span>
+                    </div>
+                        <div class="flex items-center text-gray-700">
+                            <i class="fa fa-money text-primary w-5"></i>
+                            <span class="text-gray-500 mr-2">保证金金额：</span>
+                            <span class="text-gray-800">60,000 元</span>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fa fa-clock-o mr-1.5"></i>缴纳截止：2028-04-25 10:00:00
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-gray-100">
+                        <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
+                            <i class="fa fa-line-chart mr-2"></i>购买保函
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 卡片 6 -->
+                <div class="project-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col" data-region="quanzhou">
+                    <h3 class="font-semibold text-gray-800 mb-4 text-base">惠安县防洪排涝及污水提质增效项目（惠西污水处理厂扩建）建...</h3>
+                <div class="space-y-2.5 text-sm">
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-map-marker text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">标段编号：</span>
+                        <span class="text-gray-800">35052025023</span>
+                    </div>
+                    <div class="flex items-center text-gray-700">
+                        <i class="fa fa-building text-primary w-5"></i>
+                        <span class="text-gray-500 mr-2">招标人：</span>
+                        <span class="text-gray-800">惠安县住房和城乡建设局</span>
+                    </div>
+                        <div class="flex items-center text-gray-700">
+                            <i class="fa fa-money text-primary w-5"></i>
+                            <span class="text-gray-500 mr-2">保证金金额：</span>
+                            <span class="text-gray-800">500,000 元</span>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-medium">
+                                <i class="fa fa-clock-o mr-1.5"></i>缴纳截止：2028-04-17 17:00:00
+                            </span>
+                        </div>
+                    </div>
+                    <div class="mt-5 pt-5 border-t border-gray-100">
+                        <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
+                            <i class="fa fa-line-chart mr-2"></i>购买保函
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 地区筛选交互
+        const pills = document.querySelectorAll('.city-btn');
+        const cards = document.querySelectorAll('.project-card');
+        const activeCls = 'city-btn px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium transition-all duration-300 shadow-sm';
+        const normalCls = 'city-btn px-4 py-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800 text-sm font-medium transition-all duration-300';
+        pills.forEach(function(pill) {
+            pill.addEventListener('click', function() {
+                pills.forEach(function(p) { p.className = normalCls; });
+                this.className = activeCls;
+                const region = this.getAttribute('data-region');
+                cards.forEach(function(card) {
+                    if (region === 'all' || card.getAttribute('data-region') === region) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // 搜索交互（前端过滤）
+        const searchInput = document.getElementById('projectSearch');
+        const searchBtn = document.getElementById('projectSearchBtn');
+        function doFilter() {
+            const q = searchInput.value.trim().toLowerCase();
+            cards.forEach(function(card) {
+                if (!q) { card.style.display = ''; return; }
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.indexOf(q) >= 0 ? '' : 'none';
+            });
+        }
+        searchBtn.addEventListener('click', doFilter);
+        searchInput.addEventListener('keyup', function(e) { if (e.key === 'Enter') doFilter(); });
+    });
+    </script>
+</body>
+</html>
