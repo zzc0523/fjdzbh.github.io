@@ -69,17 +69,7 @@
     <section class="py-12 px-4">
         <div class="container mx-auto max-w-6xl">
             <h1 class="text-3xl font-bold text-gray-800 mb-8">视频教程</h1>
-            
-            <!-- 视频分类 -->
-            <div class="flex flex-wrap gap-4 mb-8">
-                <button class="px-4 py-2 bg-primary text-white rounded-md">全部</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">注册登录</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">保函申请</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">保函验真</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">企业管理</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">其他操作</button>
-            </div>
-            
+
             <!-- 视频列表 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- 视频项 -->
@@ -609,37 +599,6 @@
                     btn.addEventListener('click', function() {
                         alert('视频播放功能已触发');
                         // 这里可以添加实际的视频播放逻辑
-                    });
-                });
-            }
-            
-            // 视频分类标签切换
-            const categoryBtns = document.querySelectorAll('.flex.flex-wrap.gap-4.mb-8 button');
-            const videoItems = document.querySelectorAll('[data-category]');
-            
-            if (categoryBtns.length > 0) {
-                categoryBtns.forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        // 移除所有标签的激活状态
-                        categoryBtns.forEach(b => {
-                            b.classList.remove('bg-primary', 'text-white');
-                            b.classList.add('bg-gray-200', 'text-gray-700');
-                        });
-                        // 激活当前点击的标签
-                        this.classList.remove('bg-gray-200', 'text-gray-700');
-                        this.classList.add('bg-primary', 'text-white');
-                        
-                        // 获取当前分类
-                        const category = this.textContent.trim();
-                        
-                        // 筛选视频
-                        videoItems.forEach(item => {
-                            if (category === '全部' || item.dataset.category === category) {
-                                item.style.display = 'block';
-                            } else {
-                                item.style.display = 'none';
-                            }
-                        });
                     });
                 });
             }

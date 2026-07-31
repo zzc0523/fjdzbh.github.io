@@ -69,16 +69,7 @@
     <section class="py-12 px-4">
         <div class="container mx-auto max-w-6xl">
             <h1 class="text-3xl font-bold text-gray-800 mb-8">手册下载</h1>
-            
-            <!-- 手册分类 -->
-            <div class="flex flex-wrap gap-4 mb-8">
-                <button class="px-4 py-2 bg-primary text-white rounded-md">全部</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">操作指南</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">申请流程</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">技术文档</button>
-                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">政策法规</button>
-            </div>
-            
+
             <!-- 搜索框 -->
             <div class="mb-8">
                 <div class="relative">
@@ -676,37 +667,6 @@
                         navLinks.classList.toggle('shadow-md');
                         navLinks.classList.toggle('z-50');
                     }
-                });
-            }
-            
-            // 手册分类标签切换
-            const categoryBtns = document.querySelectorAll('.flex.flex-wrap.gap-4.mb-8 button');
-            const manualItems = document.querySelectorAll('[data-category]');
-            
-            if (categoryBtns.length > 0) {
-                categoryBtns.forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        // 移除所有标签的激活状态
-                        categoryBtns.forEach(b => {
-                            b.classList.remove('bg-primary', 'text-white');
-                            b.classList.add('bg-gray-200', 'text-gray-700');
-                        });
-                        // 激活当前点击的标签
-                        this.classList.remove('bg-gray-200', 'text-gray-700');
-                        this.classList.add('bg-primary', 'text-white');
-                        
-                        // 获取当前分类
-                        const category = this.textContent.trim();
-                        
-                        // 筛选手册
-                        manualItems.forEach(item => {
-                            if (category === '全部' || item.dataset.category === category) {
-                                item.style.display = 'block';
-                            } else {
-                                item.style.display = 'none';
-                            }
-                        });
-                    });
                 });
             }
             

@@ -393,6 +393,7 @@
                             <span class="text-[10px] text-slate-400 line-clamp-1 mt-0.5">
                                 ${help.category === '常见问题' ? help.content : help.summary}
                             </span>
+                            ${help.category === '常见问题' && help.tag ? `<span class="mt-1 inline-block px-2 py-0.5 rounded text-[10px] bg-slate-100 text-slate-500 w-fit">${help.tag}</span>` : ''}
                         </div>
                     </td>
                     <td class="px-6 py-4">
@@ -442,6 +443,16 @@
             
             if (category === '常见问题') {
                 specificFields = `
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">所属标签</label>
+                        <select id="help-tag" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                            <option value="保函申请" ${data?.tag === '保函申请' ? 'selected' : ''}>保函申请</option>
+                            <option value="保函验真" ${data?.tag === '保函验真' ? 'selected' : ''}>保函验真</option>
+                            <option value="账号管理" ${data?.tag === '账号管理' ? 'selected' : ''}>账号管理</option>
+                            <option value="费用相关" ${data?.tag === '费用相关' ? 'selected' : ''}>费用相关</option>
+                            <option value="其他问题" ${data?.tag === '其他问题' ? 'selected' : ''}>其他问题</option>
+                        </select>
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">详细解答<span class="text-rose-500 ml-1">*</span></label>
                         <textarea id="help-content" rows="6" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" placeholder="请输入针对该问题的详细解答...">${data?.content || ''}</textarea>
@@ -571,6 +582,8 @@
                 const title = document.getElementById('help-title').value;
                 const category = document.getElementById('help-category').value;
                 const content = document.getElementById('help-content').value;
+                const tagEl = document.getElementById('help-tag');
+                const tag = (category === '常见问题' && tagEl) ? tagEl.value : '';
 
                 if (!title.trim()) {
                     showNotification('请输入标题', 'error');
@@ -581,7 +594,7 @@
                     const index = helpData.findIndex(h => h.id === currentEditId);
                     if (index !== -1) {
                         if (category === '常见问题') {
-                            helpData[index] = { ...helpData[index], title, category, content };
+                            helpData[index] = { ...helpData[index], title, category, content, tag };
                         } else {
                             helpData[index] = { ...helpData[index], title, category, summary: content };
                         }
@@ -599,6 +612,7 @@
                     };
                     if (category === '常见问题') {
                         newItem.content = content;
+                        newItem.tag = tag;
                     } else {
                         newItem.summary = content;
                     }
