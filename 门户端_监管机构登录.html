@@ -88,7 +88,7 @@
                                         <input type="checkbox" class="mr-2">
                                         <span class="text-gray-600">记住我</span>
                                     </label>
-                                    <a href="#" class="text-secondary hover:text-primary transition-colors">忘记密码？</a>
+                                    <a href="javascript:void(0)" id="forgotPwdLink" class="text-secondary hover:text-primary transition-colors">忘记密码？</a>
                                 </div>
                                 <button type="button" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors next-step">
                                     下一步
@@ -452,5 +452,131 @@
             </button>
         </div>
     </div>
+    <!-- 忘记密码弹窗 -->
+    <div id="forgotPwdModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 px-4">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-bold text-gray-800">找回密码</h3>
+                <button id="forgotPwdClose" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="px-6 py-6">
+                <div class="flex items-center justify-center mb-6 text-xs">
+                    <span class="fp-step-dot text-primary font-medium" data-step="1">1.验证身份</span>
+                    <span class="flex-1 h-px bg-gray-200 mx-2"></span>
+                    <span class="fp-step-dot text-gray-400" data-step="2">2.短信验证</span>
+                    <span class="flex-1 h-px bg-gray-200 mx-2"></span>
+                    <span class="fp-step-dot text-gray-400" data-step="3">3.重置密码</span>
+                </div>
+
+                <div class="fp-step" data-step="1">
+                    <p class="text-sm text-gray-600 mb-4">请输入您的注册账号或绑定手机号，我们将向您发送短信验证码。</p>
+                    <label class="block text-gray-700 mb-2 text-sm">账号 / 手机号</label>
+                    <input id="fpAccount" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary mb-3" placeholder="请输入账号或手机号">
+                    <p id="fpAccountErr" class="text-red-500 text-sm mb-3 hidden">请输入有效的账号或手机号</p>
+                    <button id="fpSendCode" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors font-medium">获取验证码</button>
+                </div>
+
+                <div class="fp-step hidden" data-step="2">
+                    <div class="text-center mb-4">
+                        <p class="text-sm text-gray-600">验证码已发送至手机</p>
+                        <p class="text-base font-semibold text-gray-800" id="fpMaskPhone">138****6789</p>
+                    </div>
+                    <label class="block text-gray-700 mb-2 text-sm">短信验证码</label>
+                    <div class="flex space-x-3 mb-3">
+                        <input id="fpCode" type="text" class="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请输入6位验证码">
+                        <button id="fpResend" class="w-32 bg-secondary text-white py-3 rounded-md hover:bg-primary transition-colors text-sm whitespace-nowrap">重新发送</button>
+                    </div>
+                    <p id="fpCodeErr" class="text-red-500 text-sm mb-3 hidden">请输入正确的6位验证码</p>
+                    <div class="flex space-x-3">
+                        <button id="fpPrev2" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-md hover:bg-gray-300 transition-colors font-medium">上一步</button>
+                        <button id="fpNext2" class="flex-1 bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors font-medium">下一步</button>
+                    </div>
+                </div>
+
+                <div class="fp-step hidden" data-step="3">
+                    <label class="block text-gray-700 mb-2 text-sm">新密码</label>
+                    <input id="fpNewPwd" type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary mb-3" placeholder="8-20位，含字母和数字">
+                    <label class="block text-gray-700 mb-2 text-sm">确认新密码</label>
+                    <input id="fpConfirmPwd" type="password" class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary mb-1" placeholder="请再次输入新密码">
+                    <p id="fpPwdErr" class="text-red-500 text-sm mb-3 hidden">两次输入的密码不一致</p>
+                    <button id="fpReset" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors font-medium mt-2">重置密码</button>
+                </div>
+
+                <div class="fp-step hidden text-center" data-step="4">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-check text-green-500 text-3xl"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2">密码重置成功</h4>
+                    <p class="text-sm text-gray-600 mb-6">请使用新密码重新登录</p>
+                    <button id="fpFinish" class="w-full bg-primary text-white py-3 rounded-md hover:bg-primary/90 transition-colors font-medium">返回登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        const modal = document.getElementById('forgotPwdModal');
+        const link = document.getElementById('forgotPwdLink');
+        const closeBtn = document.getElementById('forgotPwdClose');
+        function showStep(n){
+            document.querySelectorAll('.fp-step').forEach(function(s){
+                s.classList.toggle('hidden', s.getAttribute('data-step') != n);
+            });
+            document.querySelectorAll('.fp-step-dot').forEach(function(d){
+                const ds = parseInt(d.getAttribute('data-step'));
+                d.classList.toggle('text-primary', ds <= n);
+                d.classList.toggle('font-medium', ds <= n);
+                d.classList.toggle('text-gray-400', ds > n);
+            });
+        }
+        function openModal(){ showStep(1); modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        function closeModal(){ modal.classList.add('hidden'); modal.classList.remove('flex'); resetForm(); }
+        function resetForm(){
+            ['fpAccount','fpCode','fpNewPwd','fpConfirmPwd'].forEach(function(id){ document.getElementById(id).value=''; });
+            ['fpAccountErr','fpCodeErr','fpPwdErr'].forEach(function(id){ document.getElementById(id).classList.add('hidden'); });
+        }
+        link.addEventListener('click', function(e){ e.preventDefault(); openModal(); });
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e){ if(e.target===modal) closeModal(); });
+        document.getElementById('fpSendCode').addEventListener('click', function(){
+            const acc = document.getElementById('fpAccount').value.trim();
+            if(acc.length < 4){ document.getElementById('fpAccountErr').classList.remove('hidden'); return; }
+            document.getElementById('fpAccountErr').classList.add('hidden');
+            showStep(2);
+        });
+        let timer = null;
+        function startCountdown(){
+            const btn = document.getElementById('fpResend');
+            let s = 60; btn.disabled = true; btn.classList.add('opacity-60','cursor-not-allowed');
+            btn.textContent = s + '秒后重发';
+            timer = setInterval(function(){
+                s--;
+                if(s <= 0){ clearInterval(timer); btn.disabled = false; btn.classList.remove('opacity-60','cursor-not-allowed'); btn.textContent = '重新发送'; }
+                else { btn.textContent = s + '秒后重发'; }
+            }, 1000);
+        }
+        document.getElementById('fpResend').addEventListener('click', function(){ if(!this.disabled) startCountdown(); });
+        document.getElementById('fpPrev2').addEventListener('click', function(){ showStep(1); });
+        document.getElementById('fpNext2').addEventListener('click', function(){
+            const code = document.getElementById('fpCode').value.trim();
+            if(code.length < 6){ document.getElementById('fpCodeErr').classList.remove('hidden'); return; }
+            document.getElementById('fpCodeErr').classList.add('hidden');
+            showStep(3);
+        });
+        document.getElementById('fpReset').addEventListener('click', function(){
+            const p1 = document.getElementById('fpNewPwd').value;
+            const p2 = document.getElementById('fpConfirmPwd').value;
+            const err = document.getElementById('fpPwdErr');
+            if(p1.length < 8){ err.textContent = '密码长度至少8位'; err.classList.remove('hidden'); return; }
+            if(p1 !== p2){ err.textContent = '两次输入的密码不一致'; err.classList.remove('hidden'); return; }
+            err.classList.add('hidden');
+            showStep(4);
+        });
+        document.getElementById('fpFinish').addEventListener('click', closeModal);
+    })();
+    </script>
 </body>
 </html>

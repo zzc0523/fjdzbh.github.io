@@ -122,7 +122,8 @@
                 city: '福州市',
                 archiveDate: '2025-03-15',
                 contactPerson: '张经理',
-                contactPhone: '138****5678'
+                contactPhone: '138****5678',
+                legalPerson: '陈建辉'
             },
             '91350200MA2XN3GP5B': {
                 status: 'PENDING_PROVINCE_REVIEW',
@@ -132,7 +133,8 @@
                 submitDate: '2026-04-20',
                 currentStatus: '省级审核中',
                 contactPerson: '李经理',
-                contactPhone: '139****6789'
+                contactPhone: '139****6789',
+                legalPerson: '林志强'
             },
             '91350300MA2XN3GP6C': {
                 status: 'REJECTED_BY_PROVINCE',
@@ -142,7 +144,8 @@
                 rejectDate: '2026-03-10',
                 rejectReason: '资质证明材料不完整，缺少金融许可证；注册资本不符合最低要求；风险控制体系说明不详细',
                 contactPerson: '王经理',
-                contactPhone: '137****7890'
+                contactPhone: '137****7890',
+                legalPerson: '黄文斌'
             }
         };
 
@@ -158,6 +161,87 @@
             }
             
             return orgInfo;
+        }
+
+        // 显示已存在机构的复用提示（含企业信息）
+        function showReuseOrgModal(orgInfo, orgCode) {
+            let modal = document.getElementById('reuseModal');
+            if (modal) { modal.remove(); }
+            modal = document.createElement('div');
+            modal.id = 'reuseModal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60] transition-opacity duration-300';
+            modal.style.opacity = '0';
+
+            const statusLabelMap = {
+                'ARCHIVED': '已完成省级备案',
+                'PENDING_PROVINCE_REVIEW': '省级审核中',
+                'PENDING_CITY_REVIEW': '市级审核中',
+                'REJECTED_BY_PROVINCE': '省级审核不通过',
+                'REJECTED_BY_CITY': '市级审核不通过'
+            };
+            const statusLabel = statusLabelMap[orgInfo.status] || '未知状态';
+
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-lg w-full mx-4 overflow-hidden transition-all duration-300" style="transform:scale(0.95);" id="reuseModalCard">
+                    <div class="flex items-center justify-between border-b border-slate-200 p-5 bg-amber-50">
+                        <h3 class="text-lg font-bold text-slate-900 flex items-center">
+                            <i class="fa fa-info-circle text-amber-500 mr-2"></i>该机构已在机构库中存在
+                        </h3>
+                        <button id="reuseClose" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <p class="text-sm text-slate-600">检测到统一社会信用代码 <span class="font-mono font-semibold text-slate-800">${orgCode}</span> 已在全省机构库中存在备案记录，可直接复用其法定代表人、联系人信息，避免重复录入。</p>
+                        <div class="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">
+                            <div class="flex justify-between"><span class="text-slate-500">机构名称</span><span class="font-medium text-slate-800 text-right">${orgInfo.orgName}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">机构类型</span><span class="font-medium text-slate-800">${orgInfo.orgType}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">备案状态</span><span class="font-medium text-slate-800">${statusLabel}</span></div>
+                            <div class="flex justify-between"><span class="text-slate-500">所在地区</span><span class="font-medium text-slate-800">${orgInfo.city || '-'}</span></div>
+                        </div>
+                        <div class="border border-amber-200 bg-amber-50 rounded-lg p-4">
+                            <p class="text-sm font-semibold text-amber-800 mb-3">是否直接复用以下信息？</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between"><span class="text-slate-600">法定代表人</span><span class="font-medium text-slate-900">${orgInfo.legalPerson || '-'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-600">联系人姓名</span><span class="font-medium text-slate-900">${orgInfo.contactPerson || '-'}</span></div>
+                                <div class="flex justify-between"><span class="text-slate-600">联系人手机号</span><span class="font-medium text-slate-900">${orgInfo.contactPhone || '-'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end border-t border-slate-200 p-5 bg-slate-50 space-x-4">
+                        <button id="reuseCancel" class="border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg hover:bg-slate-100 transition-colors font-medium">手动录入</button>
+                        <button id="reuseConfirm" class="bg-amber-500 text-white px-5 py-2.5 rounded-lg hover:bg-amber-600 transition-all font-medium shadow-sm">直接复用</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            function closeReuse() {
+                modal.style.opacity = '0';
+                const card = document.getElementById('reuseModalCard');
+                if (card) { card.style.transform = 'scale(0.95)'; }
+                setTimeout(() => { if (modal.parentNode) { modal.parentNode.removeChild(modal); } }, 300);
+            }
+
+            document.getElementById('reuseClose').addEventListener('click', closeReuse);
+            document.getElementById('reuseCancel').addEventListener('click', closeReuse);
+            modal.addEventListener('click', function(e) { if (e.target === modal) { closeReuse(); } });
+            document.getElementById('reuseConfirm').addEventListener('click', function() {
+                const setName = (id, val) => { const el = document.getElementById(id); if (el) { el.value = val || ''; } };
+                setName('orgName', orgInfo.orgName);
+                const typeEl = document.getElementById('orgType');
+                if (typeEl && orgInfo.orgType) { typeEl.value = orgInfo.orgType; }
+                setName('legalRep', orgInfo.legalPerson);
+                setName('contactName', orgInfo.contactPerson);
+                setName('contactPhone', orgInfo.contactPhone);
+                closeReuse();
+            });
+
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                const card = document.getElementById('reuseModalCard');
+                if (card) { card.style.transform = 'scale(1)'; }
+            }, 10);
         }
 
         // 显示场景A：已备案冲突提示
@@ -471,27 +555,13 @@
                             if (value.length === 18) {
                                 const result = checkOrgConflict(value);
                                 
-                                if (result && result.status === 'ARCHIVED') {
-                                    checkIcon.innerHTML = '<i class="fa fa-times-circle text-red-500"></i>';
-                                    checkHint.className = 'text-xs text-red-500 mt-1';
-                                    checkHint.textContent = '该机构已完成省级备案，不可重复发起';
-                                    orgCodeInput.classList.add('border-red-500');
-                                    orgCodeInput.classList.remove('border-green-500');
-                                    setTimeout(() => showArchivedConflict(result), 500);
-                                } else if (result && result.status.startsWith('PENDING')) {
-                                    checkIcon.innerHTML = '<i class="fa fa-exclamation-circle text-orange-500"></i>';
-                                    checkHint.className = 'text-xs text-orange-500 mt-1';
-                                    checkHint.textContent = '该机构正在备案中，不可重复发起';
-                                    orgCodeInput.classList.add('border-orange-500');
-                                    orgCodeInput.classList.remove('border-green-500');
-                                    setTimeout(() => showPendingConflict(result), 500);
-                                } else if (result && result.status.startsWith('REJECTED')) {
-                                    checkIcon.innerHTML = '<i class="fa fa-exclamation-triangle text-yellow-500"></i>';
-                                    checkHint.className = 'text-xs text-yellow-600 mt-1';
-                                    checkHint.textContent = '该机构曾有备案被拒绝记录，可重新发起';
-                                    orgCodeInput.classList.add('border-yellow-500');
-                                    orgCodeInput.classList.remove('border-green-500');
-                                    setTimeout(() => showRejectedConflict(result), 500);
+                                if (result && result.status !== 'NEW') {
+                                    checkIcon.innerHTML = '<i class="fa fa-info-circle text-amber-500"></i>';
+                                    checkHint.className = 'text-xs text-amber-600 mt-1';
+                                    checkHint.textContent = '该机构已在机构库中存在，可复用其信息';
+                                    orgCodeInput.classList.add('border-amber-500');
+                                    orgCodeInput.classList.remove('border-green-500', 'border-red-500', 'border-orange-500', 'border-yellow-500');
+                                    setTimeout(() => showReuseOrgModal(result, value), 500);
                                 } else {
                                     checkIcon.innerHTML = '<i class="fa fa-check-circle text-green-500"></i>';
                                     checkHint.className = 'text-xs text-green-600 mt-1';
@@ -519,12 +589,6 @@
                     
                     if (!orgCode || orgCode.length !== 18) {
                         alert('请输入正确的18位统一社会信用代码');
-                        return;
-                    }
-                    
-                    const result = checkOrgConflict(orgCode);
-                    if (result && (result.status === 'ARCHIVED' || result.status.startsWith('PENDING'))) {
-                        alert('该机构存在冲突，无法发起备案');
                         return;
                     }
                     
@@ -665,7 +729,7 @@
                                                 <td class="px-3 py-2 border">91110000XXXXXXXXXX</td>
                                                 <td class="px-3 py-2 border">张三</td>
                                                 <td class="px-3 py-2 border">李四</td>
-                                                <td class="px-3 py-2 border">13,812,345,678</td>
+                                                <td class="px-3 py-2 border">13812345678</td>
                                                 <td class="px-3 py-2 border">投标保函</td>
                                                 <td class="px-3 py-2 border">该机构资质优良</td>
                                                 <td class="px-3 py-2 border text-red-500">机构已备案</td>
@@ -681,7 +745,7 @@
                                                 <td class="px-3 py-2 border">91110000YYYYYYYYYY</td>
                                                 <td class="px-3 py-2 border">王五</td>
                                                 <td class="px-3 py-2 border">赵六</td>
-                                                <td class="px-3 py-2 border">13,987,654,321</td>
+                                                <td class="px-3 py-2 border">13987654321</td>
                                                 <td class="px-3 py-2 border">履约保函</td>
                                                 <td class="px-3 py-2 border">建议通过</td>
                                                 <td class="px-3 py-2 border text-green-500">无错误</td>
@@ -697,7 +761,7 @@
                                                 <td class="px-3 py-2 border">91110000ZZZZZZZZZZ</td>
                                                 <td class="px-3 py-2 border">钱七</td>
                                                 <td class="px-3 py-2 border">孙八</td>
-                                                <td class="px-3 py-2 border">13,712,345,678</td>
+                                                <td class="px-3 py-2 border">13712345678</td>
                                                 <td class="px-3 py-2 border">质量保函</td>
                                                 <td class="px-3 py-2 border">资质良好</td>
                                                 <td class="px-3 py-2 border text-red-500">统一社会信用代码格式错误</td>
@@ -1253,7 +1317,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860E</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈建华</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈经理</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13,500,135,001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13500135001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">-</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-24 09:00:00</div></td>
@@ -1272,7 +1336,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860A</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">王建国</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">张三</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13,800,138,001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13800138001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">该机构资质优良，建议通过</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-15 10:30:00</div></td>
@@ -1289,7 +1353,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860B</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">李明</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">李四</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13,900,139,001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13900139001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">履约保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">机构实力强，风控体系完善，建议通过</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-14 14:20:00</div></td>
@@ -1306,7 +1370,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860D</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">张伟</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">赵六</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13,600,136,001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13600136001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">建议补充相关资质材料后重新提交</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-13 09:15:00</div></td>
@@ -1324,7 +1388,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">91350000158142860C</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">陈静</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">王五</div></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13,700,137,001</div></td>
+                                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">13700137001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">投标保函</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">材料已收悉，正在审核中</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-slate-700">2026-04-12 16:45:00</div></td>

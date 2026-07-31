@@ -249,7 +249,7 @@
 
             // 金融机构数据
             const institutionData = [
-                { id: 'icbc', name: '中国工商银行', logo: 'fa-bank', color: 'text-red-600', bg: 'bg-red-50', rateRange: '0.1% - 0.3%', timeLimit: '1-2个工作日', type: 'bank' },
+                { id: 'icbc', name: '中国工商银行', logo: 'fa-bank', color: 'text-red-600', bg: 'bg-red-50', rateRange: '0.1% - 0.3%', timeLimit: '1-2个工作日', type: 'bank', testing: true },
                 { id: 'ccb', name: '中国建设银行', logo: 'fa-bank', color: 'text-blue-600', bg: 'bg-blue-50', rateRange: '0.12% - 0.35%', timeLimit: '1个工作日', type: 'bank' },
                 { id: 'abc', name: '中国农业银行', logo: 'fa-bank', color: 'text-green-600', bg: 'bg-green-50', rateRange: '0.1% - 0.28%', timeLimit: '2个工作日', type: 'bank' },
                 { id: 'boc', name: '中国银行', logo: 'fa-bank', color: 'text-red-700', bg: 'bg-red-50', rateRange: '0.15% - 0.4%', timeLimit: '1-3个工作日', type: 'bank' },
@@ -645,6 +645,11 @@
                     return `
                         <div class="institution-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default group relative overflow-hidden" data-id="${inst.id}">
                             <div class="absolute top-0 right-0 w-16 h-16 ${inst.bg} -mr-8 -mt-8 rounded-full group-hover:bg-primary group-hover:scale-150 transition-all duration-500 opacity-20 group-hover:opacity-100"></div>
+                            ${inst.testing ? `
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:30;overflow:hidden;">
+                                <span style="font-size:2.25rem;font-weight:900;color:rgba(245,158,11,0.18);transform:rotate(-12deg);letter-spacing:.25em;border:3px solid rgba(245,158,11,0.18);padding:4px 24px;border-radius:12px;user-select:none;white-space:nowrap;">测试中</span>
+                            </div>
+                            <span class="absolute" style="top:12px;left:12px;z-index:40;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px;box-shadow:0 1px 3px rgba(0,0,0,.15);">测试中</span>` : ''}
                             <div class="relative z-10">
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="flex items-center">
@@ -2093,7 +2098,12 @@
             
             // 渲染机构列表
             container.innerHTML = institutions.map(inst => `
-                <div class="bg-white rounded-xl border border-gray-100 p-6">
+                <div class="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
+                    ${inst.id === 1 ? `
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:30;overflow:hidden;">
+                        <span style="font-size:2.25rem;font-weight:900;color:rgba(245,158,11,0.18);transform:rotate(-12deg);letter-spacing:.25em;border:3px solid rgba(245,158,11,0.18);padding:4px 24px;border-radius:12px;user-select:none;white-space:nowrap;">测试中</span>
+                    </div>
+                    <span class="absolute" style="top:12px;left:12px;z-index:40;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px;box-shadow:0 1px 3px rgba(0,0,0,.15);">测试中</span>` : ''}
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-${inst.iconColor === 'green' ? 'green' : inst.iconColor === 'red' ? 'red' : inst.iconColor === 'purple' ? 'purple' : 'blue'}-100 rounded-full flex items-center justify-center">
@@ -2372,7 +2382,11 @@
                     <!-- 机构列表 -->
                     <div id="institutions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- 中国工商银行 -->
-                        <div class="bg-white rounded-xl border border-gray-100 p-6">
+                        <div class="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:30;overflow:hidden;">
+                                <span style="font-size:2.25rem;font-weight:900;color:rgba(245,158,11,0.18);transform:rotate(-12deg);letter-spacing:.25em;border:3px solid rgba(245,158,11,0.18);padding:4px 24px;border-radius:12px;user-select:none;white-space:nowrap;">测试中</span>
+                            </div>
+                            <span class="absolute" style="top:12px;left:12px;z-index:40;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px;box-shadow:0 1px 3px rgba(0,0,0,.15);">测试中</span>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -3143,7 +3157,7 @@
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm text-slate-500">投标企业统一社会信用代码</span>
-                                        <span class="font-medium text-slate-800">350,122,199,906,784,522</span>
+                                        <span class="font-medium text-slate-800">350122199906784522</span>
                                     </div>
                                     <div class="flex flex-col md:col-span-2">
                                         <span class="text-sm text-slate-500">基本户账户名称</span>
@@ -3175,7 +3189,7 @@
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm text-slate-500">法定代表人手机号</span>
-                                        <span class="font-medium text-slate-800">18,759,361,387</span>
+                                        <span class="font-medium text-slate-800">18759361387</span>
                                     </div>
                                 </div>
                             </div>
@@ -3324,7 +3338,7 @@
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm text-slate-500">投标企业统一社会信用代码</span>
-                                        <span class="font-medium text-slate-800">350,122,199,906,784,522</span>
+                                        <span class="font-medium text-slate-800">350122199906784522</span>
                                     </div>
                                     <div class="flex flex-col md:col-span-2">
                                         <span class="text-sm text-slate-500">基本户账户名称</span>
@@ -3356,7 +3370,7 @@
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm text-slate-500">法定代表人手机号</span>
-                                        <span class="font-medium text-slate-800">18,759,361,387</span>
+                                        <span class="font-medium text-slate-800">18759361387</span>
                                     </div>
                                 </div>
                             </div>
