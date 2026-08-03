@@ -148,12 +148,7 @@
                                     预警规则设置
                                 </a>
                             </li>
-                            <li>
-                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
-                                    预警统计分析
-                                </a>
-                            </li>
+                            
                         </ul>
                     </li>
                     <li>
@@ -444,8 +439,9 @@
             if (category === '常见问题') {
                 specificFields = `
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">所属标签</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">所属标签<span class="text-rose-500 ml-1">*</span></label>
                         <select id="help-tag" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-white">
+                            <option value="" ${data?.tag ? '' : 'selected'}>请选择所属标签</option>
                             <option value="保函申请" ${data?.tag === '保函申请' ? 'selected' : ''}>保函申请</option>
                             <option value="保函验真" ${data?.tag === '保函验真' ? 'selected' : ''}>保函验真</option>
                             <option value="账号管理" ${data?.tag === '账号管理' ? 'selected' : ''}>账号管理</option>
@@ -587,6 +583,11 @@
 
                 if (!title.trim()) {
                     showNotification('请输入标题', 'error');
+                    return;
+                }
+
+                if (category === '常见问题' && !tag) {
+                    showNotification('请选择所属标签', 'error');
                     return;
                 }
 

@@ -171,12 +171,7 @@
                                     预警规则设置
                                 </a>
                             </li>
-                            <li>
-                                <a href="省级端_预警统计分析.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
-                                    预警统计分析
-                                </a>
-                            </li>
+                            
                         </ul>
                     </li>
                     <li>
@@ -407,6 +402,7 @@
                                         <th class="px-6 py-4">预警类型</th>
                                         <th class="px-6 py-4">预警等级</th>
                                         <th class="px-6 py-4">核心参数</th>
+                                        <th class="px-6 py-4">规则说明</th>
                                         <th class="px-6 py-4">通知方式</th>
                                         <th class="px-6 py-4 text-center">状态</th>
                                         <th class="px-6 py-4 text-right">操作</th>
@@ -485,10 +481,9 @@
         }
 
         // --- Warning Rules Data ---
+        let currentEditRuleId = null;
         let warningRules = [
-            { id: 1, name: '高频申请失败预警', description: '当同一机构在短时间内申请失败次数过多时触发预警', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
-            { id: 4, name: '单笔大额保函审批', description: '当单笔保函金额超过设定阈值时触发审批预警', type: '金融风险', level: '高风险', params: '金额 > 500万', notify: ['系统', '短信', '邮件'], status: 'enabled' },
-            { id: 6, name: '黑名单企业申请拦截', description: '当黑名单企业提交保函申请时自动拦截并预警', type: '合规红线', level: '高风险', params: '实时拦截', notify: ['系统', '短信'], status: 'enabled' },
+            { id: 1, name: '账户与交易异常', description: '用户短期内频繁操作保函申请或撤销', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
             { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3企业', notify: ['系统', '邮件'], status: 'enabled' },
             { id: 11, name: 'IP异常', description: '不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '> 3企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
         ];
@@ -514,6 +509,9 @@
                         }">${rule.level}</span>
                     </td>
                     <td class="px-6 py-4 font-mono text-xs text-slate-500">${rule.params}</td>
+                    <td class="px-6 py-4 text-slate-500 max-w-xs">
+                        <span class="line-clamp-2">${rule.description || '—'}</span>
+                    </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-1">
                             ${rule.notify.map(n => `<span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">${n}</span>`).join('')}
@@ -587,6 +585,7 @@
         }
 
         function openConfigModal(isEdit = false, ruleData = null) {
+            currentEditRuleId = isEdit ? currentEditRuleId : null;
             document.getElementById('modal-title').innerText = isEdit ? '编辑预警规则' : '配置新预警规则';
             document.getElementById('modal-content-body').innerHTML = `
                 <div class="space-y-5">
@@ -618,7 +617,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="space-y-1.5">
+                            <div class="space-y-1.5" id="display-rule-desc-wrap">
                                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则说明</label>
                                 <div class="bg-white border border-slate-200 rounded-lg px-3 py-3">
                                     <p id="display-rule-desc" class="text-xs text-slate-600 leading-relaxed">-</p>
@@ -649,6 +648,12 @@
                             <i class="fa fa-info-circle text-blue-500 mr-2 mt-0.5"></i>
                             <p id="rule-desc-display" class="text-xs text-blue-700 leading-relaxed">选择预警类型后显示规则说明</p>
                         </div>
+                    </div>
+
+                    <!-- 规则说明（自定义，编辑模式下作为唯一说明入口） -->
+                    <div class="space-y-1.5">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">规则说明<span class="text-rose-500 ml-0.5">*</span></label>
+                        <textarea id="config-rule-desc" rows="3" placeholder="请输入该规则的具体说明（将展示在规则列表中）" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none">${ruleData?.description || ''}</textarea>
                     </div>
                     
                     <!-- 核心参数配置区域 -->
@@ -725,6 +730,9 @@
                 </div>
             `;
             updateConfigForm(isEdit);
+            // 编辑模式下隐藏只读「规则说明」，避免与下方可编辑框重复
+            const descWrap = document.getElementById('display-rule-desc-wrap');
+            if (descWrap) descWrap.classList.toggle('hidden', !!isEdit);
             document.getElementById('alert-modal').classList.add('active');
         }
 
@@ -735,7 +743,7 @@
             const descDisplayEdit = document.getElementById('display-rule-desc');
             
             const descriptions = {
-                '业务异常': '监控业务操作中的异常行为，包括高频申请失败、频繁操作等情况，帮助及时发现业务异常和潜在风险。',
+                '业务异常': '监控账户与交易中的异常行为，包括用户短期内频繁操作保函申请或撤销等情况，帮助及时发现业务异常和潜在风险。',
                 '金融风险': '监控金融相关的风险指标，如大额保函审批、额度使用率等，保障资金安全和合规运营。',
                 '合规红线': '监控合规相关的风险，包括关联关系异常、黑名单匹配、IP异常等，确保业务操作符合合规要求。'
             };
@@ -770,8 +778,8 @@
                                 </label>
                                 <div class="relative group">
                                     <select id="config-biz-dimension" ${isEdit ? 'disabled' : 'onchange="updateBizDimension()"'} class="w-full ${readonlyClass} border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none ${!isEdit ? 'focus:ring-2 focus:ring-blue-500 transition-all' : ''} appearance-none">
-                                        <option value="申请失败次数">申请失败次数</option>
-                                        <option value="连续失败次数">连续失败次数</option>
+                                        <option value="申请操作次数">申请操作次数</option>
+                                        <option value="撤销操作次数">撤销操作次数</option>
                                         <option value="操作频率">操作频率</option>
                                     </select>
                                     <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
@@ -985,6 +993,7 @@
         function editRule(id) {
             const rule = warningRules.find(r => r.id === id);
             if (!rule) return;
+            currentEditRuleId = id;
             
             openConfigModal(true, rule);
             
@@ -996,6 +1005,20 @@
             
             levelSelect.value = rule.level;
             typeSelect.value = rule.type;
+            
+            // 回填监控周期（如有存储）
+            const cycleSelect = document.getElementById('config-rule-cycle');
+            if (cycleSelect && rule.cycle) cycleSelect.value = rule.cycle;
+            
+            // 回填通知策略
+            if (Array.isArray(rule.notify)) {
+                const notifyMap = { '系统消息': '系统', '短信通知': '短信', '邮件抄送': '邮件' };
+                document.querySelectorAll('#alert-modal input[type="checkbox"]').forEach(cb => {
+                    const labelText = cb.parentElement.innerText.trim();
+                    const mapped = notifyMap[labelText] || labelText;
+                    cb.checked = rule.notify.includes(mapped);
+                });
+            }
             
             updateConfigForm(true, rule.name);
             
@@ -1017,7 +1040,6 @@
                     radios.forEach(radio => {
                         if (rule.name.includes('IP') && radio.parentElement.innerText.includes('IP')) radio.checked = true;
                         if (rule.name.includes('关联') && radio.parentElement.innerText.includes('关联')) radio.checked = true;
-                        if (rule.name.includes('黑名单') && radio.parentElement.innerText.includes('黑名单')) radio.checked = true;
                     });
                     const thresholdInput = document.querySelector('#dynamic-params-container input[type="number"]');
                     if (thresholdInput) {
@@ -1034,6 +1056,7 @@
         }
         
         function resetFormFields() {
+            currentEditRuleId = null;
             const nameInput = document.getElementById('config-rule-name');
             const typeSelect = document.getElementById('config-rule-type');
             
@@ -1058,6 +1081,8 @@
                 const name = document.getElementById('config-rule-name').value;
                 const type = document.getElementById('config-rule-type').value;
                 const level = document.getElementById('config-rule-level').value;
+                const descEl = document.getElementById('config-rule-desc');
+                const description = descEl ? descEl.value.trim() : '';
                 
                 if (!name && !title.includes('编辑')) {
                     alert('请输入规则名称');
@@ -1065,10 +1090,32 @@
                 }
 
                 if (title.includes('编辑')) {
-                    const rule = warningRules.find(r => r.name === title.split('：')[1]);
+                    const rule = warningRules.find(r => r.id === currentEditRuleId);
                     if (rule) {
                         rule.level = level;
+                        rule.description = description;
+                        rule.cycle = document.getElementById('config-rule-cycle').value;
+                        // 保存通知策略
+                        const notifyMap = { '系统消息': '系统', '短信通知': '短信', '邮件抄送': '邮件' };
+                        const notify = [];
+                        document.querySelectorAll('#alert-modal input[type="checkbox"]').forEach(cb => {
+                            if (cb.checked) {
+                                const labelText = cb.parentElement.innerText.trim();
+                                notify.push(notifyMap[labelText] || labelText);
+                            }
+                        });
+                        if (notify.length) rule.notify = notify;
+                        // 保存核心参数阈值
+                        const numberInput = document.querySelector('#dynamic-params-container input[type="number"]');
+                        if (numberInput && numberInput.value) {
+                            const unitMatch = rule.params.match(/(万|%|次|企业|小时|天)/);
+                            const unit = unitMatch ? unitMatch[0] : '';
+                            const keyMatch = rule.params.match(/([\u4e00-\u9fa5]+)\s*[><=]/);
+                            const key = keyMatch ? keyMatch[1] : '';
+                            rule.params = (key ? key + ' ' : '') + '> ' + numberInput.value + unit;
+                        }
                     }
+                    currentEditRuleId = null;
                 } else {
                     const newId = warningRules.length > 0 ? Math.max(...warningRules.map(r => r.id)) + 1 : 1;
                     warningRules.unshift({
@@ -1076,6 +1123,7 @@
                         name: name,
                         type: type,
                         level: level,
+                        description: description,
                         params: type === '业务异常' ? '新配置阈值' : '自定义参数',
                         notify: ['系统'],
                         status: 'enabled'
