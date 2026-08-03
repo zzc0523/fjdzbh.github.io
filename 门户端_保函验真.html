@@ -69,7 +69,12 @@
             <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">保函验真</h1>
             
             <!-- 验真表单 -->
-            <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl mx-auto relative">
+                    <!-- 示例图标 -->
+                    <button id="example-btn" title="查看验真成功示例" class="absolute top-4 right-4 w-9 h-9 flex items-center justify-center text-primary bg-blue-50 hover:bg-blue-100 rounded-full transition-colors" aria-label="示例">
+                        <i class="fa fa-lightbulb-o text-lg"></i>
+                    </button>
+
                     <!-- 输入保函编号 -->
                     <div id="number-verify" class="verify-method-content">
                         <div class="mb-6">
@@ -117,9 +122,138 @@
                             });
                         }
 
+                        // 示例图标点击打开验真成功示例弹窗
+                        const exampleBtn = document.getElementById('example-btn');
+                        const exampleModal = document.getElementById('example-modal');
+                        const closeExampleModal = document.getElementById('close-example-modal');
+
+                        if (exampleBtn && exampleModal) {
+                            exampleBtn.addEventListener('click', function() {
+                                exampleModal.classList.remove('hidden');
+                            });
+                        }
+
+                        if (closeExampleModal && exampleModal) {
+                            closeExampleModal.addEventListener('click', function() {
+                                exampleModal.classList.add('hidden');
+                            });
+                        }
+
+                        if (exampleModal) {
+                            exampleModal.addEventListener('click', function(e) {
+                                if (e.target === exampleModal) {
+                                    exampleModal.classList.add('hidden');
+                                }
+                            });
+                        }
+
 
                     });
                 </script>
+            </div>
+
+            <!-- 验真成功示例弹窗 -->
+            <div id="example-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+                <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                    <!-- 弹窗头部 -->
+                    <div class="flex items-center justify-between p-4 border-b bg-gray-50">
+                        <h3 class="text-lg font-semibold text-gray-800">验真成功示例</h3>
+                        <div class="flex items-center space-x-4">
+                            <button id="close-example-modal" class="text-gray-600 hover:text-gray-800 transition-colors p-2 hover:bg-gray-100 rounded-md">
+                                <i class="fa fa-times text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-8">
+                        <div class="flex items-center mb-6">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fa fa-check text-green-600 text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold">保函验证通过</h3>
+                                <p class="text-gray-500">该保函为真实有效的电子保函</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">保函编号</div>
+                                <div class="font-medium">FJETG202603110001</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">保函类型</div>
+                                <div class="font-medium">投标保函</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">保证金金额（元）</div>
+                                <div class="font-medium">100,000.00</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">有效期起止日期</div>
+                                <div class="font-medium">2026-03-11 至 2026-06-11</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">开立机构</div>
+                                <div class="font-medium">中国建设银行福建省分行</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">开立日期</div>
+                                <div class="font-medium">2026-03-11</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">被保证人</div>
+                                <div class="font-medium">福建某某建筑工程有限公司</div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">受益人</div>
+                                <div class="font-medium">福建省公共资源交易中心</div>
+                            </div>
+                        </div>
+
+                        <!-- 区块链验证结果 -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <div class="text-lg font-semibold mb-4 flex items-center">
+                                <i class="fa fa-link text-primary mr-2"></i>区块链验证结果
+                            </div>
+                            <div class="bg-blue-50 border border-blue-100 rounded-lg p-6">
+                                <div class="flex items-start">
+                                    <div class="w-16 h-16 bg-white rounded-lg shadow-sm flex items-center justify-center mr-6 flex-shrink-0">
+                                        <i class="fa fa-cubes text-primary text-3xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <div class="font-bold text-lg text-slate-800">福建省政务区块链存证校验</div>
+                                            <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center">
+                                                <i class="fa fa-check-circle mr-1"></i> 数据校验一致
+                                            </span>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                                            <div class="text-sm">
+                                                <span class="text-gray-500">存证高度：</span>
+                                                <span class="font-mono text-slate-700">#12,854,921</span>
+                                            </div>
+                                            <div class="text-sm">
+                                                <span class="text-gray-500">存证时间：</span>
+                                                <span class="text-slate-700">2026-03-11 10:30:05</span>
+                                            </div>
+                                            <div class="text-sm md:col-span-2">
+                                                <span class="text-gray-500">存证哈希 (Hash)：</span>
+                                                <span class="font-mono text-xs text-slate-600 break-all">0x7f8e9d2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e</span>
+                                            </div>
+                                            <div class="text-sm md:col-span-2 flex items-center mt-1">
+                                                <span class="text-gray-500 mr-2">验证状态：</span>
+                                                <span class="text-green-600 font-medium flex items-center">
+                                                    <i class="fa fa-shield mr-1"></i> 原始保函数据未被篡改，区块链共识校验通过
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
 
@@ -255,10 +389,9 @@
                         </div>
                         <div>
                             <h3 class="font-semibold text-lg mb-2">常见问题</h3>
-                            <ul class="list-disc list-inside text-gray-600 space-y-1">
-                                <li>如果验真失败，可能是保函编号输入错误或保函已失效</li>
-                                <li>如果无法扫描二维码，请尝试使用输入保函编号的方式进行验证</li>
-                            </ul>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                            <li>如果验真失败，可能是保函编号输入错误或保函已失效</li>
+                        </ul>
                         </div>
                     </div>
                 </div>
