@@ -72,7 +72,7 @@
         <div class="flex-1 flex flex-col overflow-hidden">
             <header class="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center shadow-sm">
                 <div class="flex items-center space-x-4"><h1 class="text-xl font-bold text-slate-900">产品接入审核</h1></div>
-                <div class="flex items-center space-x-6"><button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full"><i class="fa fa-bell text-lg"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button><button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full"><i class="fa fa-question-circle text-lg"></i></button></div>
+                <div class="flex items-center space-x-6"><button onclick="openInitAccessModal()" class="flex items-center gap-2 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-all"><i class="fa fa-plus"></i>发起接入产品</button><button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full"><i class="fa fa-bell text-lg"></i><span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button><button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full"><i class="fa fa-question-circle text-lg"></i></button></div>
             </header>
             <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -85,6 +85,7 @@
                             <span><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-xs mr-1">4</span> 首单验证审核</span>
                         </div>
                         <div class="text-xs text-slate-500 hidden md:block"><i class="fa fa-history mr-1"></i>支持查看前置步骤审核记录</div>
+                        <div class="text-xs text-slate-500 hidden md:block"><i class="fa fa-info-circle mr-1 text-primary"></i>由市级端发起的接入，完善产品材料后即直接发起展业审核</div>
                     </div>
 
                     <!-- 筛选栏 -->
@@ -171,9 +172,9 @@
                         { label: '保函类型', value: rowData.product || '投标保函' },
                         { label: '接入地市', value: '福州市' },
                         { label: '产品名称', value: rowData.product || '投标保函' }, 
-                        { label: '产品介绍', value: rowData.product === '履约保函' ? '为中标企业提供履约担保，保障合同按约履行，降低业主风险。' : '为投标企业提供的担保服务，保障投标活动的顺利进行。' },
                         { label: '费率计算方式', value: rowData.product === '履约保函' ? '按区间定价' : '固定费率' }, 
-                        { label: '办理时效', value: '最快1个工作日' }
+                        { label: '办理时效', value: '最快1个工作日' },
+                        { label: '产品介绍', value: rowData.product === '履约保函' ? '为中标企业提供履约担保，保障合同按约履行，降低业主风险。' : '为投标企业提供的担保服务，保障投标活动的顺利进行。' }
                     ], 
                     rateTiers: rowData.product === '履约保函' ? [
                         { range: '1 （含）— 20000 （含）', rate: '2.8', min: '1000' },
@@ -725,6 +726,261 @@
                 setTimeout(() => {
                     window.location.href = '展业管理.html?applyId=' + applyId + '&orgName=' + encodeURIComponent(orgName);
                 }, 1500);
+            });
+        }
+
+        // 发起接入产品（市级端直发，仅需完善产品材料即可发起展业审核）
+        function openInitAccessModal() {
+            let initModal = document.getElementById('initAccessModal');
+            if (initModal) initModal.remove();
+
+            initModal = document.createElement('div');
+            initModal.className = 'fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200';
+            initModal.style.opacity = '0';
+            initModal.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+                    <div class="flex justify-between items-center px-6 py-4 border-b bg-gradient-to-r from-blue-50 to-indigo-50">
+                        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2"><i class="fa fa-plus-circle text-primary"></i>发起接入产品</h3>
+                        <button id="closeInitAccessModal" class="w-8 h-8 rounded-full hover:bg-white/70 flex items-center justify-center transition"><i class="fa fa-times text-slate-400"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 140px);">
+                        <div class="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-100 text-xs text-amber-700 flex items-start gap-2">
+                            <i class="fa fa-info-circle mt-0.5"></i>
+                            <span>由市级端发起的产品接入，仅需完善产品材料，提交后即可直接进入展业审核，无需经过产品审核、技术调试审核、上线验收审核、首单验证审核。</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">机构名称 <span class="text-red-500">*</span></label>
+                                <select id="init-org-name" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">
+                                    <option value="">请选择机构名称</option>
+                                    <option value="中国工商银行福建省分行">中国工商银行福建省分行</option>
+                                    <option value="中国农业银行福建省分行">中国农业银行福建省分行</option>
+                                    <option value="中国银行福建省分行">中国银行福建省分行</option>
+                                    <option value="中国建设银行福建省分行">中国建设银行福建省分行</option>
+                                    <option value="交通银行福建省分行">交通银行福建省分行</option>
+                                    <option value="福建海峡银行">福建海峡银行</option>
+                                    <option value="兴业银行福州分行">兴业银行福州分行</option>
+                                    <option value="中国人保财险福建省分公司">中国人保财险福建省分公司</option>
+                                    <option value="中国平安财险福建分公司">中国平安财险福建分公司</option>
+                                    <option value="阳光保险福建分公司">阳光保险福建分公司</option>
+                                    <option value="福建省融资担保有限责任公司">福建省融资担保有限责任公司</option>
+                                    <option value="福州市融资担保有限公司">福州市融资担保有限公司</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">机构类型 <span class="text-red-500">*</span></label>
+                                <select id="init-org-type" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">
+                                    <option value="银行">银行</option>
+                                    <option value="保险公司">保险公司</option>
+                                    <option value="担保公司">担保公司</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">保函类型 <span class="text-red-500">*</span></label>
+                                <select id="init-product" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">
+                                    <option value="投标保函">投标保函</option>
+                                    <option value="履约保函">履约保函</option>
+                                    <option value="预付款保函">预付款保函</option>
+                                    <option value="电子保函">电子保函</option>
+                                    <option value="投标保证保险">投标保证保险</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">接入地市 <span class="text-red-500">*</span></label>
+                                <input id="init-city" type="text" value="福州市" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">产品名称 <span class="text-red-500">*</span></label>
+                                <input id="init-product-name" type="text" placeholder="请输入产品名称" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">产品介绍 <span class="text-red-500">*</span></label>
+                                <textarea id="init-desc" rows="2" placeholder="请输入产品介绍" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">办理时效</label>
+                                <input id="init-time" type="text" value="最快1个工作日" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">
+                            </div>
+                        </div>
+
+                        <!-- 费率计算方式 -->
+                        <div class="mt-4">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">费率计算方式 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center gap-6">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="init-rate-type" value="固定费率" checked class="w-4 h-4 text-primary focus:ring-primary">
+                                    <span class="text-sm text-slate-700">固定费率</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="init-rate-type" value="按区间定价" class="w-4 h-4 text-primary focus:ring-primary">
+                                    <span class="text-sm text-slate-700">按区间定价</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 费率区间配置 -->
+                        <div class="mt-4" id="init-rate-config"></div>
+                    </div>
+                    <div class="flex justify-end gap-3 border-t px-6 py-4 bg-slate-50/90">
+                        <button id="cancelInitAccess" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">取消</button>
+                        <button id="submitInitAccess" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-paper-plane"></i>提交并发起展业审核</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(initModal);
+            setTimeout(() => initModal.style.opacity = '1', 10);
+
+            const closeModal = () => { initModal.style.opacity = '0'; setTimeout(() => initModal.remove(), 200); };
+            document.getElementById('closeInitAccessModal')?.addEventListener('click', closeModal);
+            document.getElementById('cancelInitAccess')?.addEventListener('click', closeModal);
+            initModal.addEventListener('click', (e) => { if (e.target === initModal) closeModal(); });
+
+            // 费率配置切换（参照机构端产品材料完善）
+            const rateConfigBox = document.getElementById('init-rate-config');
+            const getRateType = () => {
+                return document.querySelector('input[name="init-rate-type"]:checked')?.value || '固定费率';
+            };
+
+            const createFixedRateHtml = () => {
+                return '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">' +
+                    '<div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">参考费率（%） <span class="text-red-500">*</span></label>' +
+                    '<input id="init-fixed-rate" type="number" step="0.01" placeholder="请输入费率，单位：%，两位小数" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm"></div>' +
+                    '<div><label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">最低保费（元/年）</label>' +
+                    '<input id="init-fixed-min-premium" type="number" step="0.01" placeholder="请输入金额，单位：元，两位小数" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm"></div>' +
+                    '</div>';
+            };
+
+            const createTierRowHtml = (startVal, startOpen, endVal, endOpen, rateVal, minVal) => {
+                const startText = startOpen === '不含' ? '（不含）' : '（含）';
+                const endText = endOpen === '不含' ? '（不含）' : '（含）';
+                const isEndInf = endVal === '+∞';
+                const endInputAttr = isEndInf ? 'readonly' : '';
+                return '<div class="init-tier-row flex flex-wrap md:flex-nowrap items-center gap-2 md:gap-3 bg-slate-50 rounded-xl p-3 mb-2">' +
+                    '<div class="flex-1 min-w-[140px]"><label class="block text-[11px] text-slate-400 mb-1">保证金区间（元） <span class="text-red-500">*</span></label>' +
+                        '<div class="flex items-center gap-1">' +
+                            '<input type="number" step="0.01" value="' + startVal + '" class="init-tier-start w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary">' +
+                            '<span class="text-xs text-slate-500">' + startText + '</span>' +
+                            '<span class="text-slate-400">—</span>' +
+                            '<input type="text" value="' + endVal + '" ' + endInputAttr + ' class="init-tier-end w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary">' +
+                            '<span class="text-xs text-slate-500 end-open-text">' + endText + '</span>' +
+                        '</div></div>' +
+                    '<div class="w-full md:w-32"><label class="block text-[11px] text-slate-400 mb-1">费率（%） <span class="text-red-500">*</span></label>' +
+                        '<input type="number" step="0.01" value="' + (rateVal || '') + '" placeholder="费率" class="init-tier-rate w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary"></div>' +
+                    '<div class="w-full md:w-36"><label class="block text-[11px] text-slate-400 mb-1">最低保费（元/年）</label>' +
+                        '<input type="number" step="0.01" value="' + (minVal || '') + '" placeholder="1000" class="init-tier-min w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-primary"></div>' +
+                    '<div class="flex items-end justify-end md:justify-center h-full pt-4 md:pt-0"><button type="button" class="btn-remove-tier w-8 h-8 flex items-center justify-center text-red-500 hover:bg-red-50 rounded-lg transition" title="删除"><i class="fa fa-trash-o"></i></button></div>' +
+                '</div>';
+            };
+
+            const createTiersHtml = () => {
+                return '<div id="init-tiers-list" class="border border-slate-200 rounded-xl p-4 bg-white">' +
+                    createTierRowHtml('1', '含', '200000', '含', '2.8', '1000') +
+                    createTierRowHtml('200000', '不含', '1000000', '含', '1.8', '1000') +
+                    createTierRowHtml('1000000', '不含', '+∞', '不含', '1.05', '') +
+                    '</div>' +
+                    '<button type="button" id="btn-add-tier" class="mt-3 inline-flex items-center gap-1 px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary/90 transition"><i class="fa fa-plus"></i>添加行</button>';
+            };
+
+            const renderRateConfig = () => {
+                if (!rateConfigBox) return;
+                rateConfigBox.innerHTML = getRateType() === '按区间定价' ? createTiersHtml() : createFixedRateHtml();
+                bindTierEvents();
+            };
+
+            const bindTierEvents = () => {
+                if (getRateType() !== '按区间定价') return;
+                const list = document.getElementById('init-tiers-list');
+                if (!list) return;
+                list.querySelectorAll('.btn-remove-tier').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const rows = list.querySelectorAll('.init-tier-row');
+                        if (rows.length <= 1) { showToast('至少保留一行费率区间', 'warning'); return; }
+                        this.closest('.init-tier-row').remove();
+                    });
+                });
+                const addBtn = document.getElementById('btn-add-tier');
+                if (addBtn) {
+                    addBtn.addEventListener('click', function() {
+                        const prevEnd = list.lastElementChild?.querySelector('.init-tier-end')?.value || '+∞';
+                        const nextStart = prevEnd === '+∞' ? '1000000' : (parseFloat(prevEnd) || 0) + 1;
+                        const div = document.createElement('div');
+                        div.innerHTML = createTierRowHtml(String(nextStart), '不含', '+∞', '不含', '', '');
+                        list.appendChild(div.firstElementChild);
+                        bindTierEvents();
+                    });
+                }
+            };
+
+            document.querySelectorAll('input[name="init-rate-type"]').forEach(r => r.addEventListener('change', renderRateConfig));
+            renderRateConfig();
+
+            document.getElementById('submitInitAccess')?.addEventListener('click', () => {
+                const orgName = document.getElementById('init-org-name').value.trim();
+                const orgType = document.getElementById('init-org-type').value;
+                const product = document.getElementById('init-product').value;
+                const productName = document.getElementById('init-product-name').value.trim();
+                const city = document.getElementById('init-city').value.trim() || '福州市';
+                const rateType = document.querySelector('input[name="init-rate-type"]:checked')?.value || '固定费率';
+                const time = document.getElementById('init-time').value.trim();
+                const desc = document.getElementById('init-desc').value.trim();
+
+                if (!orgName) { showToast('请选择机构名称', 'error'); return; }
+                if (!productName) { showToast('请填写产品名称', 'error'); return; }
+                if (!desc) { showToast('请填写产品介绍', 'error'); return; }
+
+                // 生成一个市级直发接入编号
+                const seq = String(Math.floor(Math.random() * 9000) + 1000);
+                const applyId = 'AP2026' + seq;
+                const today = new Date();
+                const applyDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+                insertCityInitRow({
+                    id: applyId, name: orgName, product, productName, orgType, city, rate: rateType, time, desc, date: applyDate
+                });
+                closeModal();
+                showToast('产品材料已完善，已发起展业审核', 'success');
+            });
+        }
+
+        // 在表格顶部插入一条市级端直发记录（仅需完善产品材料，跳过四步审核）
+        function insertCityInitRow(data) {
+            const tbody = document.getElementById('access-table-body');
+            if (!tbody) return;
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50/60 bg-blue-50/40';
+            tr.setAttribute('data-id', data.id);
+            tr.setAttribute('data-name', data.name);
+            tr.setAttribute('data-product', data.productName || data.product);
+            tr.setAttribute('data-date', data.date);
+            tr.setAttribute('data-city-init', '1');
+            tr.innerHTML = `
+                <td class="apply-id px-4 py-3 font-mono">${data.id}</td>
+                <td class="inst-name px-4 py-3 font-medium">${data.name}<span class="ml-1 inline-block align-middle text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">市级直发</span></td>
+                <td class="product-name px-4 py-3">${data.productName || data.product}</td>
+                <td class="inst-type px-4 py-3">${data.orgType}</td>
+                <td class="step1-status px-3 py-3 text-center"><span class="badge-step bg-green-100 text-green-700"><i class="fa fa-check-circle-o"></i>已完善</span></td>
+                <td class="step2-status px-3 py-3 text-center"><span class="badge-step bg-slate-100 text-slate-400">免审核</span></td>
+                <td class="step3-status px-3 py-3 text-center"><span class="badge-step bg-slate-100 text-slate-400">免审核</span></td>
+                <td class="step4-status px-3 py-3 text-center"><span class="badge-step bg-slate-100 text-slate-400">免审核</span></td>
+                <td class="overall-status px-3 py-3 text-center"><span class="badge-step bg-indigo-100 text-indigo-700">待展业审核</span></td>
+                <td class="px-4 py-3"><div class="action-group">
+                    <button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button>
+                    <button class="btn-init-exhibition bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-xs px-3 py-1.5 rounded-full shadow-sm transition-all" data-id="${data.id}" data-name="${data.name}" data-product="${data.product}"><i class="fa fa-rocket mr-1"></i>发起展业审核</button>
+                </div></td>
+            `;
+            tbody.insertBefore(tr, tbody.firstChild);
+
+            // 重新绑定新行的事件
+            const detailBtn = tr.querySelector('.btn-view-detail');
+            if (detailBtn) detailBtn.addEventListener('click', () => {
+                const stepMap = {
+                    step1: '已完善', step2: '免审核', step3: '免审核', step4: '免审核'
+                };
+                showAccessAuditDialog({ id: data.id, name: data.name, product: data.productName || data.product, city: data.city, applyDate: data.date, cityInit: true }, 1, stepMap, true);
+            });
+            const exhBtn = tr.querySelector('.btn-init-exhibition');
+            if (exhBtn) exhBtn.addEventListener('click', () => {
+                initExhibitionApplication(data.id, data.name, data.product);
             });
         }
 

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理端 - 投保材料管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .checkbox-custom {
+            appearance: none;
+            width: 1rem;
+            height: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            background-color: #fff;
+            cursor: pointer;
+            position: relative;
+        }
+        .checkbox-custom:checked {
+            background-color: #1E40AF;
+            border-color: #1E40AF;
+        }
+        .checkbox-custom:checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                    <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_投保材料管理.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20 transition-all group">
+                            <i class="fa fa-file-text-o mr-3"></i>
+                            <span class="font-medium">投保材料管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shrink-0">
+                <div class="flex items-center text-sm text-slate-500">
+                    <span class="font-medium text-slate-900">投保材料管理</span>
+                    <span class="mx-2">/</span>
+                    <span>材料列表</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-slate-400 hover:text-slate-600 relative">
+                        <i class="fa fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold">省</div>
+                        <span class="text-sm font-medium text-slate-700">省级管理员</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- Search Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-5">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <label class="text-sm font-medium text-slate-700 whitespace-nowrap">材料名称</label>
+                                <input id="search-name" type="text" placeholder="请输入材料名称" class="w-64 border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="searchMaterials()" class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-800 transition-colors">
+                                    <i class="fa fa-search mr-2"></i>查询
+                                </button>
+                                <button onclick="resetSearch()" class="inline-flex items-center px-4 py-2 bg-white text-slate-600 border border-slate-300 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+                                    <i class="fa fa-refresh mr-2"></i>重置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar -->
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold text-slate-800">材料列表</h2>
+                        <button onclick="openMaterialModal()" class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-800 transition-colors shadow-sm">
+                            <i class="fa fa-plus mr-2"></i>新增材料
+                        </button>
+                    </div>
+
+                    <!-- Table Card -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left">
+                                <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-6 py-4 w-12">
+                                            <input type="checkbox" id="select-all" class="checkbox-custom" onclick="toggleSelectAll()">
+                                        </th>
+                                        <th class="px-6 py-4">材料名称</th>
+                                        <th class="px-6 py-4">支持格式</th>
+                                        <th class="px-6 py-4">大小限制</th>
+                                        <th class="px-6 py-4">数量限制</th>
+                                        <th class="px-6 py-4">创建时间</th>
+                                        <th class="px-6 py-4 text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="material-table-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                                    <!-- rows rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="empty-tip" class="hidden py-16 text-center text-slate-400">
+                            <i class="fa fa-inbox text-4xl mb-3"></i>
+                            <p>暂无数据</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="material-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeMaterialModal()"></div>
+        <div class="bg-white w-[560px] max-w-[95vw] rounded-xl shadow-2xl relative z-10 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900">编辑材料</h3>
+                <button onclick="closeMaterialModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+            <div class="px-6 py-5 space-y-5">
+                <input type="hidden" id="material-id">
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700">材料名称 <span class="text-rose-500">*</span></label>
+                    <input id="material-name" type="text" placeholder="请输入材料名称" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700">支持格式 <span class="text-rose-500">*</span></label>
+                    <div id="format-options" class="grid grid-cols-4 gap-3">
+                        <!-- checkboxes rendered by JS -->
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700">大小限制 <span class="text-rose-500">*</span></label>
+                    <div class="flex items-center gap-3">
+                        <input id="material-size" type="number" min="1" placeholder="请输入大小限制" class="flex-1 border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        <select id="material-size-unit" class="border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all bg-white">
+                            <option value="MB">MB</option>
+                            <option value="KB">KB</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-slate-700">数量限制 <span class="text-rose-500">*</span></label>
+                    <div class="flex items-center gap-3">
+                        <input id="material-count" type="number" min="1" placeholder="请输入数量限制" class="flex-1 border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                        <span class="text-sm text-slate-500 bg-slate-100 px-3 py-2.5 rounded-lg">份</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50">
+                <button onclick="closeMaterialModal()" class="px-5 py-2 bg-white text-slate-700 border border-slate-300 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">取消</button>
+                <button onclick="saveMaterial()" class="px-5 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-800 transition-colors inline-flex items-center">
+                    <i class="fa fa-check mr-2"></i>保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const FORMATS = ['zip', 'rar', 'pdf', 'jpg', 'png', 'gif', 'bmp', 'doc', 'docx', 'xls', 'xlsx'];
+
+        let materials = [
+            { id: '1', name: '项目合同', formats: ['pdf', 'doc', 'docx'], size: 10, sizeUnit: 'MB', count: 1, createdAt: '2026-06-01 10:30:00' },
+            { id: '2', name: '营业执照', formats: ['pdf', 'jpg', 'png'], size: 5, sizeUnit: 'MB', count: 1, createdAt: '2026-06-02 14:20:00' },
+            { id: '3', name: '投保企业法定代表人身份证（人面像）', formats: ['jpg', 'png'], size: 2, sizeUnit: 'MB', count: 1, createdAt: '2026-06-03 09:15:00' },
+            { id: '4', name: '投保企业法定代表人身份证（国徽面）', formats: ['jpg', 'png'], size: 2, sizeUnit: 'MB', count: 1, createdAt: '2026-06-04 11:30:00' },
+            { id: '5', name: '审计报告', formats: ['pdf'], size: 20, sizeUnit: 'MB', count: 1, createdAt: '2026-06-05 14:00:00' },
+            { id: '6', name: '财务报表', formats: ['pdf', 'xls', 'xlsx'], size: 10, sizeUnit: 'MB', count: 1, createdAt: '2026-06-06 10:45:00' },
+            { id: '7', name: '被保险人营业执照照片', formats: ['jpg', 'png'], size: 5, sizeUnit: 'MB', count: 1, createdAt: '2026-06-07 16:20:00' },
+            { id: '8', name: '其他材料', formats: ['pdf', 'doc', 'docx', 'jpg', 'png', 'zip', 'rar'], size: 50, sizeUnit: 'MB', count: 5, createdAt: '2026-06-08 09:00:00' }
+        ];
+
+        function formatDisplay(formats) {
+            return (formats || []).map(f => f.toUpperCase()).join(', ');
+        }
+
+        function renderFormatsCheckboxes(selected) {
+            const container = document.getElementById('format-options');
+            container.innerHTML = FORMATS.map(fmt => {
+                const checked = (selected || []).includes(fmt) ? 'checked' : '';
+                return `
+                    <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                        <input type="checkbox" name="format" value="${fmt}" ${checked} class="checkbox-custom">
+                        <span>${fmt}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('material-table-body');
+            const emptyTip = document.getElementById('empty-tip');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '';
+                emptyTip.classList.remove('hidden');
+                return;
+            }
+            emptyTip.classList.add('hidden');
+            tbody.innerHTML = data.map((item, idx) => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <input type="checkbox" class="checkbox-custom row-checkbox" data-id="${item.id}">
+                    </td>
+                    <td class="px-6 py-4 font-medium text-slate-800">${item.name}</td>
+                    <td class="px-6 py-4 text-slate-600">${formatDisplay(item.formats)}</td>
+                    <td class="px-6 py-4 text-slate-600">${item.size}${item.sizeUnit || 'MB'}</td>
+                    <td class="px-6 py-4 text-slate-600">${item.count}份</td>
+                    <td class="px-6 py-4 text-slate-500">${item.createdAt}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button onclick="editMaterial('${item.id}')" class="inline-flex items-center px-3 py-1.5 bg-primary text-white text-xs font-medium rounded hover:bg-blue-800 transition-colors">
+                            编辑
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function searchMaterials() {
+            const keyword = document.getElementById('search-name').value.trim().toLowerCase();
+            if (!keyword) {
+                renderTable(materials);
+                return;
+            }
+            const filtered = materials.filter(item => item.name.toLowerCase().includes(keyword));
+            renderTable(filtered);
+        }
+
+        function resetSearch() {
+            document.getElementById('search-name').value = '';
+            renderTable(materials);
+        }
+
+        function toggleSelectAll() {
+            const checked = document.getElementById('select-all').checked;
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = checked);
+        }
+
+        function openMaterialModal(id) {
+            const isEdit = !!id;
+            const item = isEdit ? materials.find(m => m.id === id) : null;
+            document.getElementById('modal-title').textContent = isEdit ? '编辑材料' : '新增材料';
+            document.getElementById('material-id').value = isEdit ? item.id : '';
+            document.getElementById('material-name').value = isEdit ? item.name : '';
+            document.getElementById('material-size').value = isEdit ? item.size : '';
+            document.getElementById('material-size-unit').value = isEdit ? (item.sizeUnit || 'MB') : 'MB';
+            document.getElementById('material-count').value = isEdit ? item.count : '';
+            renderFormatsCheckboxes(isEdit ? item.formats : []);
+            document.getElementById('material-modal').classList.remove('hidden');
+        }
+
+        function closeMaterialModal() {
+            document.getElementById('material-modal').classList.add('hidden');
+        }
+
+        function editMaterial(id) {
+            openMaterialModal(id);
+        }
+
+        function saveMaterial() {
+            const id = document.getElementById('material-id').value;
+            const name = document.getElementById('material-name').value.trim();
+            const size = document.getElementById('material-size').value;
+            const sizeUnit = document.getElementById('material-size-unit').value;
+            const count = document.getElementById('material-count').value;
+            const checkedFormats = Array.from(document.querySelectorAll('input[name="format"]:checked')).map(cb => cb.value);
+
+            if (!name) { alert('请输入材料名称'); return; }
+            if (checkedFormats.length === 0) { alert('请选择支持格式'); return; }
+            if (!size || size <= 0) { alert('请输入大小限制'); return; }
+            if (!count || count <= 0) { alert('请输入数量限制'); return; }
+
+            const now = new Date();
+            const timeStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+
+            if (id) {
+                const idx = materials.findIndex(m => m.id === id);
+                if (idx > -1) {
+                    materials[idx] = { ...materials[idx], name, formats: checkedFormats, size, sizeUnit, count };
+                }
+            } else {
+                materials.unshift({ id: Date.now().toString(), name, formats: checkedFormats, size, sizeUnit, count, createdAt: timeStr });
+            }
+
+            closeMaterialModal();
+            renderTable(materials);
+        }
+
+        function toggleSubMenu(id) {
+            const el = document.getElementById(id);
+            const arrow = document.getElementById(id.replace('-menu', '-menu-arrow'));
+            if (el) {
+                el.classList.toggle('hidden');
+                if (arrow) arrow.classList.toggle('rotate-180');
+            }
+        }
+
+        // 键盘事件
+        document.getElementById('search-name').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') searchMaterials();
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function () {
+            renderTable(materials);
+        });
+    </script>
+</body>
+</html>
