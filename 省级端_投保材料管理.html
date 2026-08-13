@@ -315,9 +315,6 @@
                     <!-- Toolbar -->
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-slate-800">材料列表</h2>
-                        <button onclick="openMaterialModal()" class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-blue-800 transition-colors shadow-sm">
-                            <i class="fa fa-plus mr-2"></i>新增材料
-                        </button>
                     </div>
 
                     <!-- Table Card -->
@@ -326,9 +323,6 @@
                             <table class="w-full text-left">
                                 <thead class="bg-slate-50 text-xs font-bold text-slate-500 uppercase tracking-wider">
                                     <tr>
-                                        <th class="px-6 py-4 w-12">
-                                            <input type="checkbox" id="select-all" class="checkbox-custom" onclick="toggleSelectAll()">
-                                        </th>
                                         <th class="px-6 py-4">材料名称</th>
                                         <th class="px-6 py-4">支持格式</th>
                                         <th class="px-6 py-4">大小限制</th>
@@ -364,7 +358,7 @@
                 <input type="hidden" id="material-id">
                 <div class="space-y-2">
                     <label class="text-sm font-medium text-slate-700">材料名称 <span class="text-rose-500">*</span></label>
-                    <input id="material-name" type="text" placeholder="请输入材料名称" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                    <input id="material-name" type="text" placeholder="请输入材料名称" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed">
                 </div>
                 <div class="space-y-2">
                     <label class="text-sm font-medium text-slate-700">支持格式 <span class="text-rose-500">*</span></label>
@@ -441,9 +435,6 @@
             emptyTip.classList.add('hidden');
             tbody.innerHTML = data.map((item, idx) => `
                 <tr class="hover:bg-slate-50 transition-colors">
-                    <td class="px-6 py-4">
-                        <input type="checkbox" class="checkbox-custom row-checkbox" data-id="${item.id}">
-                    </td>
                     <td class="px-6 py-4 font-medium text-slate-800">${item.name}</td>
                     <td class="px-6 py-4 text-slate-600">${formatDisplay(item.formats)}</td>
                     <td class="px-6 py-4 text-slate-600">${item.size}${item.sizeUnit || 'MB'}</td>
@@ -473,17 +464,13 @@
             renderTable(materials);
         }
 
-        function toggleSelectAll() {
-            const checked = document.getElementById('select-all').checked;
-            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = checked);
-        }
-
         function openMaterialModal(id) {
             const isEdit = !!id;
             const item = isEdit ? materials.find(m => m.id === id) : null;
             document.getElementById('modal-title').textContent = isEdit ? '编辑材料' : '新增材料';
             document.getElementById('material-id').value = isEdit ? item.id : '';
             document.getElementById('material-name').value = isEdit ? item.name : '';
+            document.getElementById('material-name').disabled = isEdit;
             document.getElementById('material-size').value = isEdit ? item.size : '';
             document.getElementById('material-size-unit').value = isEdit ? (item.sizeUnit || 'MB') : 'MB';
             document.getElementById('material-count').value = isEdit ? item.count : '';
