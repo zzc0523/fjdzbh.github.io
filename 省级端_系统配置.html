@@ -512,12 +512,49 @@
                             </div>
                         </div>
                         <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                            <h3 class="font-bold text-slate-800 flex items-center"><i class="fa fa-th-list text-blue-600 mr-2"></i> 门户底部栏配置</h3>
+                            <p class="text-xs text-slate-400">配置公众门户底部栏展示信息，保存后同步至门户端所有页面。</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">版权所有</label>
+                                    <input type="text" id="footer-copyright" value="福州无比欢信息科技有限公司" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">技术支持</label>
+                                    <input type="text" id="footer-tech" value="福州无比欢信息科技有限公司" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">服务邮箱</label>
+                                    <input type="email" id="footer-email" value="mk@sxzhengxin.net" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                                <div class="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">服务电话</label>
+                                    <input type="text" id="footer-phone" value="029-85325100" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none bg-white focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                                <div class="md:col-span-2 p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-3">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">微信公众号</label>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-24 h-24 border border-dashed border-slate-200 rounded-lg flex items-center justify-center bg-white overflow-hidden shrink-0" id="footer-qr-preview">
+                                            <img src="images/qrcode.png" class="w-full h-full object-cover" alt="微信公众号二维码">
+                                        </div>
+                                        <div class="space-y-2">
+                                            <input type="file" id="footer-qr-input" accept="image/*" class="hidden" onchange="previewFooterQR(this)">
+                                            <button type="button" onclick="document.getElementById('footer-qr-input').click()" class="px-3 py-1.5 bg-blue-600 text-white rounded text-xs font-bold hover:bg-blue-700 transition-all">
+                                                <i class="fa fa-upload mr-1"></i>上传图片
+                                            </button>
+                                            <p class="text-[10px] text-slate-400">建议尺寸: 200x200px，支持 JPG/PNG</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
                             <h3 class="font-bold text-slate-800 flex items-center"><i class="fa fa-shield text-blue-600 mr-2"></i> 安全设置</h3>
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                                 <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100">
                                     <div>
                                         <p class="text-sm font-bold text-slate-700">双因子认证 (2FA)</p>
-                                        <p class="text-[10px] text-slate-400">敏感操作强制要求短信/邮件验证</p>
+                                        <p class="text-[10px] text-slate-400">敏感操作强制要求登录密码验证</p>
                                     </div>
                                     <div class="relative inline-block w-10 mr-2 align-middle select-none">
                                         <input type="checkbox" name="toggle" id="toggle-2fa" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer right-5"/>
@@ -576,6 +613,17 @@
                     location.reload();
                 }, 1000);
             }
+        }
+
+        function previewFooterQR(input) {
+            const file = input.files && input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const preview = document.getElementById('footer-qr-preview');
+                preview.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover" alt="微信公众号二维码">`;
+            };
+            reader.readAsDataURL(file);
         }
 
         function showToast(message, type = 'success') {
