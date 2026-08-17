@@ -220,21 +220,9 @@
                                         <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-slate-50" id="unifiedCreditCode" value="91350000158142860A" disabled required>
                                     </div>
 
-                                    <!-- 经营地址 -->
+                                    <!-- 注册地址 -->
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">经营地址 <span class="text-red-500">*</span></label>
-                                        <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessAddress" required>
-                                            <option value="">请选择</option>
-                                            <option value="福建省福州市" selected>福建省福州市</option>
-                                            <option value="福建省厦门市">福建省厦门市</option>
-                                            <option value="福建省泉州市">福建省泉州市</option>
-                                            <option value="其他">其他</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- 详细地址 -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">详细地址 <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">注册地址 <span class="text-red-500">*</span></label>
                                         <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="detailedAddress" value="鼓楼区五四路162号" required>
                                     </div>
 
@@ -247,19 +235,16 @@
                                     <!-- 注册资本 -->
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-600 mb-2">注册资本 <span class="text-red-500">*</span></label>
-                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="registeredCapital" value="100亿" required>
+                                        <div class="flex items-center">
+                                            <input type="number" class="flex-1 border border-slate-200 rounded-l-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="registeredCapital" value="10000" required>
+                                            <span class="border border-l-0 border-slate-200 bg-slate-50 text-slate-500 text-sm px-3 py-2 rounded-r-lg">万元</span>
+                                        </div>
                                     </div>
 
-                                    <!-- 企业注册年份 -->
+                                    <!-- 成立日期 -->
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">企业注册年份 <span class="text-red-500">*</span></label>
-                                        <select class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="registrationYear" required>
-                                            <option value="">请选择</option>
-                                            <option value="1954" selected>1,954</option>
-                                            <option value="1984">1,984</option>
-                                            <option value="1988">1,988</option>
-                                            <option value="其他">其他</option>
-                                        </select>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">成立日期 <span class="text-red-500">*</span></label>
+                                        <input type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="establishDate" required>
                                     </div>
 
                                     <!-- 开户银行 -->
@@ -286,9 +271,9 @@
                                         <input type="email" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="email" value="fjcb@ccb.com">
                                     </div>
 
-                                    <!-- 业务范围 -->
+                                    <!-- 经营范围 -->
                                     <div class="lg:col-span-3">
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">业务范围 <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">经营范围 <span class="text-red-500">*</span></label>
                                         <textarea class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessScope" rows="3" required>电子保函业务、贷款业务、存款业务、结算业务等</textarea>
                                     </div>
                         </div>
@@ -410,7 +395,6 @@
                         unifiedCreditCode: '91350000158142860A',
                         legalRepresentative: '张行长',
                         registeredCapital: '100亿',
-                        businessAddress: '福建省福州市',
                         detailedAddress: '鼓楼区五四路162号',
                         businessScope: '电子保函业务、贷款业务、存款业务、结算业务等'
                     };
@@ -420,7 +404,6 @@
                     document.getElementById('unifiedCreditCode').value = ocrResult.unifiedCreditCode;
                     document.getElementById('legalRepresentative').value = ocrResult.legalRepresentative;
                     document.getElementById('registeredCapital').value = ocrResult.registeredCapital;
-                    document.getElementById('businessAddress').value = ocrResult.businessAddress;
                     document.getElementById('detailedAddress').value = ocrResult.detailedAddress;
                     document.getElementById('businessScope').value = ocrResult.businessScope;
                     
