@@ -405,14 +405,14 @@
                     </td>
                     <td class="px-6 py-4 text-slate-500 font-mono text-xs">${help.date}</td>
                     <td class="px-6 py-4 text-slate-500 text-xs">
-                        ${help.category === '视频教程' ? `<i class="fa fa-video-camera mr-1"></i>视频文件` : 
-                          help.category === '手册下载' ? `<i class="fa fa-file-text-o mr-1"></i>手册文件` : 
+                        ${help.category === '视频教程' ? `${help.reads} 次观看` : 
+                          help.category === '手册下载' ? `${help.reads} 次下载` : 
                           `${help.reads} 次阅读`}
                     </td>
                     <td class="px-6 py-4">
                         <span class="flex items-center">
                             <span class="w-2 h-2 rounded-full ${help.status === 'published' ? 'bg-emerald-500' : 'bg-amber-500'} mr-2"></span>
-                            <span class="text-xs ${help.status === 'published' ? 'text-emerald-600' : 'text-amber-600'} font-bold">${help.status === 'published' ? '已发布' : '草稿'}</span>
+                            <span class="text-xs ${help.status === 'published' ? 'text-emerald-600' : 'text-amber-600'} font-bold">${help.status === 'published' ? '已发布' : '已下架'}</span>
                         </span>
                     </td>
                     <td class="px-6 py-4">
