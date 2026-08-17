@@ -820,6 +820,15 @@
 
                         <!-- 费率区间配置 -->
                         <div class="mt-4" id="init-rate-config"></div>
+
+                        <!-- 接入方式 -->
+                        <div class="mt-4">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">接入方式 <span class="text-red-500">*</span></label>
+                            <select id="init-access-mode" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm" required>
+                                <option value="API接入" selected>API接入</option>
+                                <option value="线下对接">线下对接</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="flex justify-end gap-3 border-t px-6 py-4 bg-slate-50/90">
                         <button id="cancelInitAccess" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">取消</button>

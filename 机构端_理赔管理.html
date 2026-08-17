@@ -173,6 +173,7 @@
                                     <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">待审核</span>
                                 </td>
                                 <td class="px-6 py-4">
+                                    <button class="text-orange-600 font-bold hover:underline mr-3" onclick="openAuditModal('CL20260311001')">审核</button>
                                     <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260311001')">详情</button>
                                 </td>
                             </tr>
@@ -192,6 +193,7 @@
                                     <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">待审核</span>
                                 </td>
                                 <td class="px-6 py-4">
+                                    <button class="text-orange-600 font-bold hover:underline mr-3" onclick="openAuditModal('CL20260310024')">审核</button>
                                     <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260310024')">详情</button>
                                 </td>
                             </tr>
@@ -211,6 +213,7 @@
                                     <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-indigo-100 text-indigo-700">待赔付</span>
                                 </td>
                                 <td class="px-6 py-4">
+                                    <button class="text-indigo-600 font-bold hover:underline mr-3" onclick="openPaymentModal('CL20260309005')">赔付</button>
                                     <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260309005')">详情</button>
                                 </td>
                             </tr>
@@ -350,13 +353,28 @@
                 <!-- 审核意见 -->
                 <div class="space-y-4">
                     <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">审核意见</h4>
-                    <textarea class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none h-32" placeholder="请在此输入审核详细意见或驳回原因..."></textarea>
+                    <div class="space-y-3">
+                        <label class="block text-xs font-bold text-slate-500 uppercase">选择审核结果 <span class="text-rose-500">*</span></label>
+                        <div class="flex space-x-6">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="claimAuditResult" value="approved" class="w-4 h-4 text-blue-600 focus:ring-blue-500" checked onchange="toggleClaimRejectReason()">
+                                <span class="text-sm font-medium text-slate-700">审核通过</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="claimAuditResult" value="rejected" class="w-4 h-4 text-blue-600 focus:ring-blue-500" onchange="toggleClaimRejectReason()">
+                                <span class="text-sm font-medium text-slate-700">审核拒绝</span>
+                            </label>
+                        </div>
+                        <div id="claimRejectReasonArea" class="hidden">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">拒绝原因 <span class="text-rose-500">*</span></label>
+                            <textarea id="claimRejectReason" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none h-24" placeholder="请填写审核拒绝的原因（必填）..."></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
-                <button onclick="closeAuditModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">暂存进度</button>
-                <button class="px-6 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-100 transition-all">驳回申请</button>
-                <button class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="submitAudit()">审核通过</button>
+                <button onclick="closeAuditModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
+                <button class="px-8 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="submitAudit()">确认提交</button>
             </div>
         </div>
     </div>
@@ -515,15 +533,29 @@
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-            <div class="p-8 space-y-6">
+            <div class="p-8 space-y-6 overflow-y-auto max-h-[70vh]">
                 <div class="grid grid-cols-2 gap-6 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
                     <div>
-                        <p class="text-[10px] text-slate-400 uppercase mb-1">应赔付金额</p>
+                        <p class="text-[10px] text-slate-400 uppercase mb-1">应赔付金额（元）</p>
                         <p class="text-xl font-black text-indigo-700">150,000.00</p>
                     </div>
                     <div>
                         <p class="text-[10px] text-slate-400 uppercase mb-1">收款单位</p>
                         <p class="text-sm font-bold text-slate-700">福州市财政局</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">赔付信息</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">赔付时间 <span class="text-rose-500">*</span></label>
+                            <input id="paymentTime" type="datetime-local" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">实际赔付金额（元）<span class="text-rose-500">*</span></label>
+                            <input id="paymentAmount" type="number" min="0" step="0.01" value="150000.00" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
                     </div>
                 </div>
 
@@ -542,7 +574,7 @@
                 </div>
 
                 <div class="space-y-4">
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">上传赔付凭证 <span class="text-rose-500">*</span></h4>
+                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">上传赔付证明文件 <span class="text-rose-500">*</span></h4>
                     <div class="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-indigo-400 transition-colors cursor-pointer group bg-slate-50/30">
                         <i class="fa fa-cloud-upload text-4xl text-slate-300 group-hover:text-indigo-500 mb-2 transition-colors"></i>
                         <p class="text-xs text-slate-500 group-hover:text-indigo-600 transition-colors">点击或拖拽银行转账回单到此处上传</p>
@@ -552,7 +584,7 @@
             </div>
             <div class="p-6 border-t border-slate-100 flex justify-end space-x-3 bg-slate-50/50">
                 <button onclick="closePaymentModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
-                <button class="px-8 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all" onclick="confirmPayment()">确认已赔付</button>
+                <button class="px-8 py-2 bg-indigo-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all" onclick="confirmPayment()">确认赔付</button>
             </div>
         </div>
     </div>
@@ -577,8 +609,33 @@
             }, 300);
         }
 
+        function toggleClaimRejectReason() {
+            const radios = document.getElementsByName('claimAuditResult');
+            let result = 'approved';
+            radios.forEach(r => { if (r.checked) result = r.value; });
+            const area = document.getElementById('claimRejectReasonArea');
+            if (result === 'rejected') {
+                area.classList.remove('hidden');
+            } else {
+                area.classList.add('hidden');
+                document.getElementById('claimRejectReason').value = '';
+            }
+        }
+
         function submitAudit() {
-            alert('审核通过已提交，理赔款项将进入支付流程。');
+            const radios = document.getElementsByName('claimAuditResult');
+            let result = 'approved';
+            radios.forEach(r => { if (r.checked) result = r.value; });
+            if (result === 'rejected') {
+                const reason = document.getElementById('claimRejectReason').value.trim();
+                if (!reason) {
+                    alert('审核拒绝时，拒绝原因为必填项，请填写后提交。');
+                    return;
+                }
+                alert('审核已拒绝，拒绝原因已记录。');
+            } else {
+                alert('审核通过已提交，理赔款项将进入支付流程。');
+            }
             closeAuditModal();
         }
 
@@ -642,7 +699,17 @@
         }
 
         function confirmPayment() {
-            alert('赔付凭证已上传，该笔理赔流程已完成。');
+            const payTime = document.getElementById('paymentTime').value;
+            const payAmount = document.getElementById('paymentAmount').value;
+            if (!payTime) {
+                alert('请填写赔付时间。');
+                return;
+            }
+            if (!payAmount || Number(payAmount) <= 0) {
+                alert('请填写有效的实际赔付金额。');
+                return;
+            }
+            alert('赔付处理已完成，理赔状态已更新为「已赔付」。');
             closePaymentModal();
         }
     </script>
