@@ -217,6 +217,8 @@
                         industry: 'construction',
                         registeredCapital: '10000',
                         establishmentDate: '2010-01-01',
+                        businessTermStart: '2010-01-01',
+                        longTerm: true,
                         registeredAddress: '福建省福州市鼓楼区五四路123号',
                         businessScope: '建筑工程施工、市政工程、装修装饰工程、机电设备安装工程等',
                         legalPerson: '张三'
@@ -229,6 +231,13 @@
                     document.getElementById('industry').value = ocrResult.industry;
                     document.getElementById('registered-capital').value = ocrResult.registeredCapital;
                     document.getElementById('establishment-date').value = ocrResult.establishmentDate;
+                    if (ocrResult.businessTermStart) {
+                        document.getElementById('business-term-start').value = ocrResult.businessTermStart;
+                    }
+                    if (document.getElementById('long-term-check')) {
+                        document.getElementById('long-term-check').checked = !!ocrResult.longTerm;
+                        if (typeof toggleLongTerm === 'function') toggleLongTerm();
+                    }
                     document.getElementById('registered-address').value = ocrResult.registeredAddress;
                     document.getElementById('business-scope').value = ocrResult.businessScope;
                     document.getElementById('legal-person-name').value = ocrResult.legalPerson;
@@ -630,6 +639,10 @@
                                 <div class="flex justify-between">
                                     <span class="text-sm text-gray-500">成立日期:</span>
                                     <span class="text-sm text-gray-800">2010-01-01</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-gray-500">营业期限:</span>
+                                    <span class="text-sm text-gray-800">2010-01-01 至 长期</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-sm text-gray-500">认证时间:</span>

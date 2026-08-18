@@ -156,8 +156,21 @@
                                     机构展业审核
                                 </a>
                             </li>
+                            <li>
+                                <a href="省级端_金融机构列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构列表
+                                </a>
+                            </li>
                         </ul>
                     </li>
+                                        <li>
+                        <a href="省级端_产品管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cubes mr-3 group-hover:text-blue-400"></i>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
                             <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
@@ -199,6 +212,30 @@
                             </li>
                         </ul>
                     </li>
+                    <li>
+                        <button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn">
+                            <div class="flex items-center">
+                                <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">企业服务</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow"></i>
+                        </button>
+                        <ul id="service-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_企业列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业列表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业咨询
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="pt-4 pb-2 px-3">
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
                     </li>
@@ -357,7 +394,6 @@
                                     <th class="px-6 py-4">平台名称</th>
                                     <th class="px-6 py-4">机构编码</th>
                                     <th class="px-6 py-4">管理员</th>
-                                    <th class="px-6 py-4">用户数</th>
                                     <th class="px-6 py-4">入驻时间</th>
                                     <th class="px-6 py-4">状态</th>
                                     <th class="px-6 py-4">操作</th>
@@ -378,15 +414,14 @@
                                     </td>
                                     <td class="px-6 py-4 font-mono text-slate-500">FZ-2026001</td>
                                     <td class="px-6 py-4 text-slate-700 font-bold">张三</td>
-                                    <td class="px-6 py-4 text-slate-500 font-mono">32</td>
                                     <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-01</td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-emerald-100 text-emerald-700">正常</span>
+                                        <span id="status-福州市级平台" class="status-badge bg-emerald-100 text-emerald-700">启用</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-3 text-blue-600">
                                             <button onclick="openModal('edit')" class="hover:underline font-bold transition-all">维护信息</button>
-                                            <button onclick="confirmDelete('福州市级平台')" class="text-rose-500 hover:underline font-bold transition-all">注销</button>
+                                            <button id="toggle-福州市级平台" onclick="toggleStatus('福州市级平台')" class="text-amber-500 hover:underline font-bold transition-all">停用</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -404,15 +439,14 @@
                                     </td>
                                     <td class="px-6 py-4 font-mono text-slate-500">XM-2026002</td>
                                     <td class="px-6 py-4 text-slate-700 font-bold">李四</td>
-                                    <td class="px-6 py-4 text-slate-500 font-mono">28</td>
                                     <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-02</td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-emerald-100 text-emerald-700">正常</span>
+                                        <span id="status-厦门市级平台" class="status-badge bg-emerald-100 text-emerald-700">启用</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-3 text-blue-600">
                                             <button onclick="openModal('edit')" class="hover:underline font-bold transition-all">维护信息</button>
-                                            <button onclick="confirmDelete('厦门市级平台')" class="text-rose-500 hover:underline font-bold transition-all">注销</button>
+                                            <button id="toggle-厦门市级平台" onclick="toggleStatus('厦门市级平台')" class="text-amber-500 hover:underline font-bold transition-all">停用</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -430,15 +464,14 @@
                                     </td>
                                     <td class="px-6 py-4 font-mono text-slate-500">QZ-2026003</td>
                                     <td class="px-6 py-4 text-slate-700 font-bold">王五</td>
-                                    <td class="px-6 py-4 text-slate-500 font-mono">25</td>
                                     <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-03</td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-amber-100 text-amber-700">暂停</span>
+                                        <span id="status-泉州市级平台" class="status-badge bg-slate-200 text-slate-500">停用</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-3 text-blue-600">
                                             <button onclick="openModal('edit')" class="hover:underline font-bold transition-all">维护信息</button>
-                                            <button onclick="confirmDelete('泉州市级平台')" class="text-rose-500 hover:underline font-bold transition-all">注销</button>
+                                            <button id="toggle-泉州市级平台" onclick="toggleStatus('泉州市级平台')" class="text-emerald-600 hover:underline font-bold transition-all">启用</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -456,15 +489,14 @@
                                     </td>
                                     <td class="px-6 py-4 font-mono text-slate-500">ZZ-2026004</td>
                                     <td class="px-6 py-4 text-slate-700 font-bold">赵六</td>
-                                    <td class="px-6 py-4 text-slate-500 font-mono">18</td>
                                     <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-04</td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-emerald-100 text-emerald-700">正常</span>
+                                        <span id="status-漳州市级平台" class="status-badge bg-emerald-100 text-emerald-700">启用</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-3 text-blue-600">
                                             <button onclick="openModal('edit')" class="hover:underline font-bold transition-all">维护信息</button>
-                                            <button onclick="confirmDelete('漳州市级平台')" class="text-rose-500 hover:underline font-bold transition-all">注销</button>
+                                            <button id="toggle-漳州市级平台" onclick="toggleStatus('漳州市级平台')" class="text-amber-500 hover:underline font-bold transition-all">停用</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -482,15 +514,14 @@
                                     </td>
                                     <td class="px-6 py-4 font-mono text-slate-500">PT-2026005</td>
                                     <td class="px-6 py-4 text-slate-700 font-bold">孙七</td>
-                                    <td class="px-6 py-4 text-slate-500 font-mono">15</td>
                                     <td class="px-6 py-4 text-slate-500 font-mono text-xs">2026-03-05</td>
                                     <td class="px-6 py-4">
-                                        <span class="status-badge bg-emerald-100 text-emerald-700">正常</span>
+                                        <span id="status-莆田市级平台" class="status-badge bg-emerald-100 text-emerald-700">启用</span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex space-x-3 text-blue-600">
                                             <button onclick="openModal('edit')" class="hover:underline font-bold transition-all">维护信息</button>
-                                            <button onclick="confirmDelete('莆田市级平台')" class="text-rose-500 hover:underline font-bold transition-all">注销</button>
+                                            <button id="toggle-莆田市级平台" onclick="toggleStatus('莆田市级平台')" class="text-amber-500 hover:underline font-bold transition-all">停用</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -588,23 +619,6 @@
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div id="delete-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform duration-300">
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fa fa-trash-o text-2xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-slate-800 mb-2">确认删除机构？</h3>
-                <p class="text-sm text-slate-500">您确定要删除机构“<span id="delete-inst-name" class="font-bold text-slate-700"></span>”吗？此操作不可撤销。</p>
-            </div>
-            <div class="p-4 bg-slate-50 flex justify-center space-x-3">
-                <button onclick="closeDeleteModal()" class="px-6 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all">取消</button>
-                <button onclick="handleDelete()" class="px-6 py-2 bg-rose-500 text-white rounded-lg text-sm font-bold shadow-lg shadow-rose-200 hover:bg-rose-600 transition-all">确认删除</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         function toggleSubMenu(menuId) {
             const menu = document.getElementById(menuId);
@@ -668,32 +682,29 @@
             }
         }
 
-        let currentDeleteName = '';
-        function confirmDelete(name) {
-            currentDeleteName = name;
-            document.getElementById('delete-inst-name').innerText = name;
-            const modal = document.getElementById('delete-modal');
-            const content = modal.querySelector('div > div');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-            }, 10);
+        function renderStatusBadge(span, status) {
+            if (status === '启用') {
+                span.className = 'status-badge bg-emerald-100 text-emerald-700';
+                span.innerText = '启用';
+            } else {
+                span.className = 'status-badge bg-slate-200 text-slate-500';
+                span.innerText = '停用';
+            }
         }
 
-        function closeDeleteModal() {
-            const modal = document.getElementById('delete-modal');
-            const content = modal.querySelector('div > div');
-            modal.classList.add('opacity-0');
-            content.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
-        }
-
-        function handleDelete() {
-            closeDeleteModal();
-            showToast(`机构“${currentDeleteName}”已成功删除`, 'success');
+        function toggleStatus(name) {
+            const span = document.getElementById('status-' + name);
+            const btn = document.getElementById('toggle-' + name);
+            const newStatus = span.innerText === '启用' ? '停用' : '启用';
+            renderStatusBadge(span, newStatus);
+            if (newStatus === '启用') {
+                btn.innerText = '停用';
+                btn.className = 'text-amber-500 hover:underline font-bold transition-all';
+            } else {
+                btn.innerText = '启用';
+                btn.className = 'text-emerald-600 hover:underline font-bold transition-all';
+            }
+            showToast(`平台“${name}”已${newStatus}`, 'success');
         }
 
         function showToast(message, type = 'success') {

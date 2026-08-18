@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业列表 - 省级管理平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neutral-dark': '#1F2937'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <aside class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20">
+                            <i class="fa fa-dashboard mr-3"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_金融机构列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构列表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                                        <li>
+                        <a href="省级端_产品管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cubes mr-3 group-hover:text-blue-400"></i>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    <li>
+                        <a href="省级端_投保材料管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-file-text-o mr-3 group-hover:text-blue-400"></i>
+                            <span>投保材料管理</span>
+                        </a>
+                    </li>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn">
+                            <div class="flex items-center">
+                                <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">企业服务</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow" style="transform: rotate(180deg);"></i>
+                        </button>
+                        <ul id="service-menu" class="mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_企业列表.html" class="flex items-center py-2 px-4 text-sm bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white mr-2"></span>
+                                    企业列表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业咨询
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=DC2626&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">省级管理员</p>
+                        <p class="text-[10px] text-slate-400">管理员账号</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white" onclick="alert('登出功能待实现')">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">企业列表</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <input type="text" placeholder="搜索企业名称..." class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                        <i class="fa fa-search mr-2"></i>搜索
+                    </button>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <h3 class="font-bold text-slate-800">企业列表</h3>
+                    </div>
+                    <div class="p-6">
+<table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">企业名称</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">统一社会信用代码</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">联系人</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">联系电话</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">注册时间</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-100">
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">福建建工建设有限公司</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">913500001234567890</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">张三</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13800138001</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2024-05-20 09:30:00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">已认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        <button onclick="showDetailModal('1')" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">查看详情</button>
+                                        <button onclick="showResetPasswordModal('1')" class="px-3 py-1.5 border border-slate-300 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-50 transition-all">重置密码</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">厦门市建筑工程公司</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">913502009876543210</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">李四</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13900139002</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2024-05-19 14:20:00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">未认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        <button onclick="showDetailModal('2')" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">查看详情</button>
+                                        <button onclick="showResetPasswordModal('2')" class="px-3 py-1.5 border border-slate-300 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-50 transition-all">重置密码</button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">泉州市建设发展集团</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">913505001122334455</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">王五</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13600136003</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">2024-05-18 16:45:00</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600">未认证</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                        <button onclick="showDetailModal('3')" class="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">查看详情</button>
+                                        <button onclick="showResetPasswordModal('3')" class="px-3 py-1.5 border border-slate-300 text-slate-600 text-xs font-medium rounded-lg hover:bg-slate-50 transition-all">重置密码</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm text-gray-500">共 45 条记录，当前显示 1-3 条</span>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 text-slate-600 bg-slate-100 text-xs font-medium rounded hover:bg-slate-200 transition-colors">上一页</button>
+                                <button class="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded">1</button>
+                                <button class="px-3 py-1 text-slate-600 bg-slate-100 text-xs font-medium rounded hover:bg-slate-200 transition-colors">2</button>
+                                <button class="px-3 py-1 text-slate-600 bg-slate-100 text-xs font-medium rounded hover:bg-slate-200 transition-colors">3</button>
+                                <button class="px-3 py-1 text-slate-600 bg-slate-100 text-xs font-medium rounded hover:bg-slate-200 transition-colors">下一页</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+<!-- 查看详情弹窗 -->
+    <div id="detailModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex items-center justify-between flex-shrink-0">
+                <h3 class="text-lg font-bold text-white">企业详情</h3>
+                <button onclick="closeDetailModal()" class="text-white hover:text-blue-200 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div class="flex items-center space-x-4 mb-6">
+                    <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center">
+                        <span class="text-white text-2xl font-bold" id="detailCompanyInitial">建</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-800" id="detailCompanyName">福建建工建设有限公司</h2>
+                        <div class="flex items-center space-x-3 mt-1">
+                            <span id="detailStatusBadge" class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">已认证</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 企业基本信息 -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-500 mb-4">企业基本信息</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">企业全称:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailName">福建建工建设有限公司</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">统一社会信用代码:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailCreditCode">913500001234567890</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">企业类型:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailCompanyType">有限责任公司</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">所属行业:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailIndustry">建筑业</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">注册资本:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailCapital">10,000万元</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">成立日期:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailEstablishDate">2010-01-01</span>
+                        </div>
+                        <div class="flex justify-between col-span-2">
+                            <span class="text-sm text-gray-500">注册地址:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailAddress">福建省福州市鼓楼区五四路123号</span>
+                        </div>
+                        <div class="flex col-span-2">
+                            <span class="text-sm text-gray-500 flex-shrink-0">经营范围:</span>
+                            <span class="text-sm text-gray-800 ml-2" id="detailBusinessScope">建筑工程施工、市政工程、装修装饰工程等</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 经办人信息 -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-500 mb-4">经办人信息</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">经办人姓名:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailContact">李四</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">经办人身份证号:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailAgentId">350103********5678</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">经办人手机号:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailPhone">138****8888</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">经办人邮箱:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailEmail">zhangsan@example.com</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 法定代表人信息 -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-500 mb-4">法定代表人信息</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">法定代表人姓名:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailLegalPerson">张三</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">法定代表人身份证号:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailLegalPersonId">350102********1234</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">法定代表人手机号:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailLegalPersonPhone">138****8888</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">法定代表人邮箱:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailLegalPersonEmail">zhangsan@example.com</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 认证信息 -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-500 mb-4">认证信息</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">认证时间:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailCertTime">2024-05-20</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">注册时间:</span>
+                            <span class="text-sm text-gray-800 text-right" id="detailRegTime">2024-05-20 09:30:00</span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="mt-6">
+                    <h4 class="text-sm font-bold text-gray-500 mb-4">企业资质</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 bg-gray-50 rounded-lg px-4 py-3">
+                            <i class="fa fa-file-pdf-o text-red-400"></i>
+                            <span class="text-gray-700 text-sm">营业执照副本</span>
+                            <span class="text-green-500 text-xs">已上传</span>
+                            <div class="ml-auto flex space-x-4">
+                                <button onclick="previewFile('营业执照副本')" class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">预览</button>
+                                <button onclick="downloadFile('营业执照副本.pdf')" class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">下载</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 bg-gray-50 rounded-lg px-4 py-3">
+                            <i class="fa fa-file-pdf-o text-red-400"></i>
+                            <span class="text-gray-700 text-sm">授权委托书</span>
+                            <span class="text-green-500 text-xs">已上传</span>
+                            <div class="ml-auto flex space-x-4">
+                                <button onclick="previewFile('授权委托书')" class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">预览</button>
+                                <button onclick="downloadFile('授权委托书.pdf')" class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">下载</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h4 class="text-sm font-bold text-gray-500 mb-4">审核记录</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-check text-green-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-800 font-medium">审核通过</span>
+                                    <span class="text-gray-400 text-xs">2024-05-20 10:30:00</span>
+                                </div>
+                                <p class="text-gray-500 text-sm mt-1">企业资料齐全，审核通过</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fa fa-clock-o text-blue-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-800 font-medium">提交注册申请</span>
+                                    <span class="text-gray-400 text-xs">2024-05-20 09:30:00</span>
+                                </div>
+                                <p class="text-gray-500 text-sm mt-1">企业提交注册申请</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-gray-50 border-t border-gray-200 flex-shrink-0">
+                <button onclick="closeDetailModal()" class="w-full px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 审核弹窗 -->
+    <div id="auditModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">企业注册审核</h3>
+                <button onclick="closeAuditModal()" class="text-white hover:text-blue-200 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="mb-6">
+                    <h4 class="font-semibold text-slate-800 mb-3">企业信息</h4>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="text-slate-500">企业名称：</span>
+                            <span id="auditCompanyName" class="text-slate-800 font-medium">厦门市建筑工程公司</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500">统一社会信用代码：</span>
+                            <span id="auditCreditCode" class="text-slate-800">913502009876543210</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500">联系人：</span>
+                            <span id="auditContact" class="text-slate-800">李四</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500">联系电话：</span>
+                            <span id="auditPhone" class="text-slate-800">13900139002</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h4 class="font-semibold text-slate-800 mb-3">审核意见</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="auditResult" value="pass" checked class="w-4 h-4 text-green-600">
+                            <span class="text-sm text-slate-700">审核通过</span>
+                        </label>
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="auditResult" value="reject" class="w-4 h-4 text-red-600">
+                            <span class="text-sm text-slate-700">审核驳回</span>
+                        </label>
+                    </div>
+                    <textarea id="auditComment" rows="3" placeholder="请输入审核意见（选填）" class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeAuditModal()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg font-medium hover:bg-slate-200 transition-colors">取消</button>
+                    <button onclick="submitAudit()" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">确认审核</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示弹窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa fa-check text-2xl text-green-600"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">操作成功</h3>
+                <p class="text-slate-500 text-sm mb-6" id="successMessage">审核已完成</p>
+                <button onclick="closeSuccessModal()" class="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 重置密码弹窗 -->
+    <div id="resetPasswordModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white">重置密码</h3>
+                <button onclick="closeResetPasswordModal()" class="text-white hover:text-blue-200 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-start space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <i class="fa fa-key text-amber-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">确定要将 <span id="resetCompanyName" class="font-semibold text-slate-800"></span> 的登录密码重置为默认密码吗？重置后该企业需使用默认密码重新登录。</p>
+                </div>
+                <div class="bg-slate-50 rounded-lg px-4 py-3 mb-6 flex items-center space-x-2">
+                    <span class="text-xs text-slate-500">默认密码：</span>
+                    <span class="text-sm font-mono font-semibold text-slate-800">123456</span>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeResetPasswordModal()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg font-medium hover:bg-slate-200 transition-colors">取消</button>
+                    <button onclick="confirmResetPassword()" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">确认重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 文件预览弹窗 -->
+    <div id="filePreviewModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] mx-4 overflow-hidden flex flex-col">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex items-center justify-between">
+                <h3 id="filePreviewTitle" class="text-lg font-bold text-white">文件预览</h3>
+                <button onclick="closeFilePreview()" class="text-white hover:text-blue-200 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 flex-1 overflow-auto flex items-center justify-center bg-gray-50">
+                <div class="text-center text-gray-400">
+                    <i class="fa fa-file-pdf-o text-6xl mb-4"></i>
+                    <p class="text-sm text-gray-600" id="filePreviewName">营业执照副本.pdf</p>
+                    <p class="text-xs mt-2">（示例预览，实际为上传的证件扫描件）</p>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-100 flex justify-end space-x-3">
+                <button onclick="closeFilePreview()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-lg font-medium hover:bg-slate-200 transition-colors">关闭</button>
+                <button onclick="downloadCurrentFile()" class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all shadow-sm">下载</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const companies = {
+            '1': { 
+                name: '福建建工建设有限公司', 
+                code: '913500001234567890', 
+                companyType: '有限责任公司',
+                industry: '建筑业',
+                contact: '李四', 
+                agentId: '350103********5678',
+                phone: '138****8888',
+                email: 'zhangsan@example.com',
+                address: '福建省福州市鼓楼区五四路123号',
+                regTime: '2024-05-20 09:30:00',
+                status: '已认证',
+                statusClass: 'bg-green-100 text-green-700',
+                legalPerson: '张三',
+                legalPersonId: '350102********1234',
+                legalPersonPhone: '138****8888',
+                legalPersonEmail: 'zhangsan@example.com',
+                businessScope: '建筑工程施工、市政工程、装修装饰工程等',
+                capital: '10,000万元',
+                establishDate: '2010-01-01',
+                certTime: '2024-05-20'
+            },
+            '2': { 
+                name: '厦门市建筑工程公司', 
+                code: '913502009876543210', 
+                companyType: '有限责任公司',
+                industry: '建筑业',
+                contact: '李四', 
+                agentId: '350204********1234',
+                phone: '139****9999',
+                email: 'lisi@example.com',
+                address: '福建省厦门市思明区中山路100号',
+                regTime: '2024-05-19 14:20:00',
+                status: '未认证',
+                statusClass: 'bg-gray-100 text-gray-600',
+                legalPerson: '张三',
+                legalPersonId: '350203********5678',
+                legalPersonPhone: '139****9999',
+                legalPersonEmail: 'lisi@example.com',
+                businessScope: '建筑工程施工、装修装饰工程',
+                capital: '5,000万元',
+                establishDate: '2015-06-15',
+                certTime: '-'
+            },
+            '3': { 
+                name: '泉州市建设发展集团', 
+                code: '913505001122334455', 
+                companyType: '股份有限公司',
+                industry: '建筑业',
+                contact: '王五', 
+                agentId: '350505********5678',
+                phone: '136****6666',
+                email: 'wangwu@example.com',
+                address: '福建省泉州市丰泽区刺桐路500号',
+                regTime: '2024-05-18 16:45:00',
+                status: '未认证',
+                statusClass: 'bg-gray-100 text-gray-600',
+                legalPerson: '赵六',
+                legalPersonId: '350501********1234',
+                legalPersonPhone: '136****6666',
+                legalPersonEmail: 'wangwu@example.com',
+                businessScope: '市政工程、园林绿化工程',
+                capital: '8,000万元',
+                establishDate: '2012-03-20',
+                certTime: '-'
+            }
+        };
+
+        function showDetailModal(companyId) {
+            const company = companies[companyId];
+            if (company) {
+                const setText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = text;
+                };
+
+                setText('detailCompanyInitial', company.name.charAt(0));
+                setText('detailCompanyName', company.name);
+                setText('detailCreditCode', company.code);
+                setText('detailRegTime', company.regTime);
+                setText('detailName', company.name);
+                setText('detailCompanyType', company.companyType);
+                setText('detailIndustry', company.industry);
+                setText('detailAgentId', company.agentId);
+                setText('detailLegalPersonId', company.legalPersonId);
+                setText('detailLegalPersonPhone', company.legalPersonPhone);
+                setText('detailLegalPersonEmail', company.legalPersonEmail);
+                setText('detailContact', company.contact);
+                setText('detailPhone', company.phone);
+                setText('detailEmail', company.email);
+                setText('detailAddress', company.address);
+                
+                const statusBadge = document.getElementById('detailStatusBadge');
+                if (statusBadge) {
+                    statusBadge.textContent = company.status === '已通过' ? '已认证' : company.status === '审核中' ? '审核中' : '已驳回';
+                    statusBadge.className = `px-2 py-0.5 ${company.statusClass} rounded text-xs font-medium`;
+                }
+
+                setText('detailLegalPerson', company.legalPerson);
+                setText('detailBusinessScope', company.businessScope);
+                setText('detailCapital', company.capital);
+                setText('detailEstablishDate', company.establishDate);
+                setText('detailCertTime', company.certTime);
+            }
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu) {
+                menu.classList.toggle('hidden');
+                if (arrow) {
+                    arrow.classList.toggle('rotate-180');
+                }
+            }
+        }
+
+        function showAuditModal(companyId) {
+            const company = companies[companyId];
+            if (company) {
+                document.getElementById('auditCompanyName').textContent = company.name;
+                document.getElementById('auditCreditCode').textContent = company.code;
+                document.getElementById('auditContact').textContent = company.contact;
+                document.getElementById('auditPhone').textContent = company.phone;
+            }
+            document.getElementById('auditModal').classList.remove('hidden');
+        }
+
+        function closeAuditModal() {
+            document.getElementById('auditModal').classList.add('hidden');
+            document.getElementById('auditComment').value = '';
+            document.querySelector('input[name="auditResult"][value="pass"]').checked = true;
+        }
+
+        function submitAudit() {
+            const result = document.querySelector('input[name="auditResult"]:checked').value;
+            const comment = document.getElementById('auditComment').value;
+            
+            closeAuditModal();
+            
+            document.getElementById('successMessage').textContent = result === 'pass' ? '审核通过，企业已成功注册' : '审核驳回，已通知企业';
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        let currentResetCompanyId = null;
+
+        function showResetPasswordModal(companyId) {
+            const company = companies[companyId];
+            currentResetCompanyId = companyId;
+            if (company) {
+                document.getElementById('resetCompanyName').textContent = company.name;
+            }
+            document.getElementById('resetPasswordModal').classList.remove('hidden');
+        }
+
+        function closeResetPasswordModal() {
+            document.getElementById('resetPasswordModal').classList.add('hidden');
+            currentResetCompanyId = null;
+        }
+
+        function confirmResetPassword() {
+            const company = companies[currentResetCompanyId];
+            const name = company ? company.name : '';
+            closeResetPasswordModal();
+            document.getElementById('successMessage').textContent = `${name} 的登录密码已重置为默认密码 123456`;
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        let currentPreviewFileName = '';
+
+        function previewFile(fileName) {
+            currentPreviewFileName = fileName + '.pdf';
+            document.getElementById('filePreviewTitle').textContent = fileName + ' 预览';
+            document.getElementById('filePreviewName').textContent = fileName + '.pdf';
+            document.getElementById('filePreviewModal').classList.remove('hidden');
+        }
+
+        function closeFilePreview() {
+            document.getElementById('filePreviewModal').classList.add('hidden');
+        }
+
+        function downloadFile(fileName) {
+            triggerDownload(fileName);
+        }
+
+        function downloadCurrentFile() {
+            triggerDownload(currentPreviewFileName);
+        }
+
+        function triggerDownload(fileName) {
+            const content = '福建省电子保函服务平台 - 文件下载（示例）\n文件名称：' + fileName + '\n注：此为演示文件，实际内容为上传的证件扫描件。';
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

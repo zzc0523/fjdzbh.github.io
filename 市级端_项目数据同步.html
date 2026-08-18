@@ -117,6 +117,9 @@
                         </div>
                     </div>
 
+                    <!-- 操作按钮区 -->
+                    <div class="px-6 pt-2 pb-1 flex items-center space-x-3" id="action-bar"></div>
+
                     <!-- 项目数据表格 -->
                     <div class="p-6">
                         <div class="relative overflow-x-auto">
@@ -223,6 +226,111 @@
         </div>
     </div>
 
+    <!-- 新增项目弹窗 -->
+    <div id="add-project-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] p-4 sm:p-6">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">新增项目</h3>
+                <button onclick="closeAddProjectModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <form id="add-project-form" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">项目名称 <span class="text-red-500">*</span></label>
+                            <input id="np-projectName" required type="text" placeholder="请输入项目名称" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">项目编号 <span class="text-red-500">*</span></label>
+                            <input id="np-projectCode" required type="text" placeholder="如 XM20260818001" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">标段名称 <span class="text-red-500">*</span></label>
+                            <input id="np-sectionName" required type="text" placeholder="请输入标段名称" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">标段编号 <span class="text-red-500">*</span></label>
+                            <input id="np-sectionCode" required type="text" placeholder="如 BD-001" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">保证金金额（元） <span class="text-red-500">*</span></label>
+                            <input id="np-bidAmount" required type="number" min="0" placeholder="如 500000" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">保证金截止时间 <span class="text-red-500">*</span></label>
+                            <input id="np-bidDeadline" required type="datetime-local" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">开标时间 <span class="text-red-500">*</span></label>
+                            <input id="np-bidOpenTime" required type="datetime-local" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">招标企业 <span class="text-red-500">*</span></label>
+                            <input id="np-tenderer" required type="text" placeholder="请输入招标企业名称" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">招标企业统一社会信用代码 <span class="text-red-500">*</span></label>
+                            <input id="np-tendererCreditCode" required type="text" maxlength="18" placeholder="请输入18位统一社会信用代码" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">企业地址</label>
+                            <input id="np-tendererAddress" type="text" placeholder="请输入招标企业地址" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">联系人</label>
+                            <input id="np-tendererContact" type="text" placeholder="请输入联系人姓名" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">联系电话</label>
+                            <input id="np-tendererPhone" type="text" placeholder="请输入联系电话" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">数据来源</label>
+                            <input id="np-dataSource" type="text" placeholder="如 公共资源交易中心" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="border-t border-slate-100 px-6 py-4 flex justify-end space-x-3">
+                <button onclick="closeAddProjectModal()" class="px-6 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors">取消</button>
+                <button onclick="submitAddProject()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">保存</button>
+            </div>
+        </div>
+    </div>
+    <!-- 批量导入弹窗 -->
+    <div id="import-project-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] p-4 sm:p-6">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">批量导入项目</h3>
+                <button onclick="closeImportModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 space-y-5">
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-700 flex items-start space-x-2">
+                    <i class="fa fa-info-circle mt-0.5"></i>
+                    <span>请下载导入模板，按模板填写项目数据后上传 Excel 文件（支持 .xlsx / .xls），单次最多导入 500 条。</span>
+                </div>
+                <div>
+                    <button onclick="downloadTemplate()" class="inline-flex items-center px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors">
+                        <i class="fa fa-download mr-2"></i>下载导入模板
+                    </button>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1.5">选择文件 <span class="text-red-500">*</span></label>
+                    <input id="import-file" type="file" accept=".xlsx,.xls" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <div id="import-result" class="hidden bg-green-50 border border-green-100 rounded-lg p-4 text-sm text-green-700"></div>
+            </div>
+            <div class="border-t border-slate-100 px-6 py-4 flex justify-end space-x-3">
+                <button onclick="closeImportModal()" class="px-6 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors">取消</button>
+                <button onclick="submitImport()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">开始导入</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function syncProjectData(type) {
             const syncType = type === 'incremental' ? '增量同步' : '全量同步';
@@ -241,7 +349,7 @@
             }, 1500);
         }
 
-        function viewProjectDetail(projectId) {
+        function viewProjectDetail(projectId, extra) {
             const projectData = {
                 'XM20240527001': {
                     projectName: '福州市政道路改造项目',
@@ -280,6 +388,12 @@
             };
 
             const data = projectData[projectId] || projectData['XM20240527001'];
+            if (extra) {
+                try {
+                    const parsed = typeof extra === 'string' ? JSON.parse(extra) : extra;
+                    Object.assign(data, parsed);
+                } catch (e) {}
+            }
 
             const modal = document.createElement('div');
             modal.id = 'detail-modal';
@@ -315,8 +429,8 @@
                                     <div class="text-slate-800">${data.tenderer}</div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">企业编号</label>
-                                    <div class="text-slate-800">${data.tendererCode}</div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">招标企业统一社会信用代码</label>
+                                    <div class="text-slate-800">${data.tendererCreditCode || data.tendererCode}</div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-slate-600 mb-1">企业地址</label>
@@ -419,6 +533,129 @@
             `;
             document.body.appendChild(modal);
         }
+
+        // 新增项目
+        function openAddProjectModal() {
+            const modal = document.getElementById('add-project-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeAddProjectModal() {
+            const modal = document.getElementById('add-project-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('add-project-form').reset();
+        }
+
+        function formatDateTimeLocal(value) {
+            if (!value) return '';
+            return value.replace('T', ' ') + ':00';
+        }
+
+        function submitAddProject() {
+            const form = document.getElementById('add-project-form');
+            if (!form.reportValidity()) return;
+            const projectName = document.getElementById('np-projectName').value.trim();
+            const projectCode = document.getElementById('np-projectCode').value.trim();
+            const sectionName = document.getElementById('np-sectionName').value.trim();
+            const sectionCode = document.getElementById('np-sectionCode').value.trim();
+            const tenderer = document.getElementById('np-tenderer').value.trim();
+            const tendererCreditCode = document.getElementById('np-tendererCreditCode').value.trim();
+            const tendererAddress = document.getElementById('np-tendererAddress').value.trim();
+            const tendererContact = document.getElementById('np-tendererContact').value.trim();
+            const tendererPhone = document.getElementById('np-tendererPhone').value.trim();
+            const dataSource = document.getElementById('np-dataSource').value.trim();
+            const bidAmount = document.getElementById('np-bidAmount').value.trim();
+            const bidDeadline = formatDateTimeLocal(document.getElementById('np-bidDeadline').value);
+            const bidOpenTime = formatDateTimeLocal(document.getElementById('np-bidOpenTime').value);
+            const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+            const tbody = document.querySelector('table tbody');
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-gray-50 transition-colors';
+            tr.dataset.extra = JSON.stringify({
+                tendererCreditCode: tendererCreditCode,
+                tendererAddress: tendererAddress,
+                tendererContact: tendererContact,
+                tendererPhone: tendererPhone,
+                dataSource: dataSource
+            });
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${projectName}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${projectCode}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${sectionName}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${sectionCode}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${tenderer}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${Number(bidAmount).toLocaleString()}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${bidDeadline}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${bidOpenTime}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${now}</div></td>
+                <td class="px-6 py-4 whitespace-nowrap sticky-col" style="position: sticky; right: 0; background-color: white;">
+                    <button onclick="viewProjectDetail('${projectCode}', this.closest('tr').dataset.extra)" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                        <i class="fa fa-eye mr-1"></i>查看
+                    </button>
+                </td>
+            `;
+            tbody.insertBefore(tr, tbody.firstChild);
+
+            closeAddProjectModal();
+            showSuccessModal('新增成功', `项目 ${projectCode} 已添加`);
+        }
+
+        // 批量导入
+        function openImportModal() {
+            const modal = document.getElementById('import-project-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('import-result').classList.add('hidden');
+            document.getElementById('import-file').value = '';
+        }
+
+        function closeImportModal() {
+            const modal = document.getElementById('import-project-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function downloadTemplate() {
+            showSuccessModal('模板下载', '已生成项目导入模板（ProjectTemplate.xlsx）');
+        }
+
+        function submitImport() {
+            const fileInput = document.getElementById('import-file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('请选择要导入的 Excel 文件');
+                return;
+            }
+            const fileName = fileInput.files[0].name;
+            showLoadingModal('正在解析并导入项目数据...');
+            setTimeout(() => {
+                hideLoadingModal();
+                const successCount = 12;
+                const failCount = 1;
+                const resultBox = document.getElementById('import-result');
+                resultBox.classList.remove('hidden');
+                resultBox.innerHTML = `<div class="flex items-start space-x-2"><i class="fa fa-check-circle mt-0.5"></i><div>文件「${fileName}」导入完成：成功 ${successCount} 条，失败 ${failCount} 条。（示例数据，实际请对接解析服务）</div></div>`;
+                closeImportModal();
+                showSuccessModal('导入完成', `成功导入 ${successCount} 条项目数据`);
+            }, 1800);
+        }
+
+        // 将新增项目、批量导入按钮渲染到查询条件下方、列表上方的左侧
+        (function () {
+            const bar = document.getElementById('action-bar');
+            if (bar) {
+                bar.innerHTML = `
+                    <button onclick="openAddProjectModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-700 transition-all">
+                        <i class="fa fa-plus mr-2"></i>新增项目
+                    </button>
+                    <button onclick="openImportModal()" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-purple-200 hover:bg-purple-700 transition-all">
+                        <i class="fa fa-upload mr-2"></i>批量导入
+                    </button>
+                `;
+            }
+        })();
     </script>
 </body>
 </html>

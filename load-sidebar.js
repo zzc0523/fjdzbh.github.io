@@ -95,29 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </ul>
         </li>
         <li>
-            <button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn">
-                <div class="flex items-center">
-                    <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
-                    <span class="font-bold">企业服务</span>
-                </div>
-                <i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow"></i>
-            </button>
-            <ul id="service-menu" class="` + (currentPage.startsWith('市级端_企业') ? '' : 'hidden') + ` mt-2 ml-4 border-l border-slate-700 space-y-1">
-                <li>
-                    <a href="市级端_企业列表.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_企业列表.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
-                        <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_企业列表.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
-                        企业列表
-                    </a>
-                </li>
-                <li>
-                    <a href="市级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_企业咨询.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
-                        <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_企业咨询.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
-                        企业咨询
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li>
             <button onclick="toggleSubMenu('gov-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="gov-menu-btn">
                 <div class="flex items-center">
                     <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>

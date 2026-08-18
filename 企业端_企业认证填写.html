@@ -217,6 +217,24 @@
                             <input type="date" id="establishment-date" required value="2010-01-01" 
                                 class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
                         </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="block text-sm font-medium text-gray-700">
+                                    营业期限 <span class="text-red-500">*</span>
+                                </label>
+                                <label class="flex items-center text-sm text-gray-600 cursor-pointer select-none">
+                                    <input type="checkbox" id="business-term-long" class="mr-1.5 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                    长期
+                                </label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="date" id="business-term-start" required value="2010-01-01" 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                                <span class="text-gray-400 text-sm flex-shrink-0">至</span>
+                                <input type="date" id="business-term-end" required value="2030-01-01" 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all">
+                            </div>
+                        </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 注册地址 <span class="text-red-500">*</span>
@@ -400,6 +418,32 @@
         function viewMaterial(type) {
             alert('查看' + (type === 'license' ? '营业执照' : '授权委托书') + '文件');
         }
+
+        // 营业期限：长期勾选时禁用结束日期
+        document.addEventListener('DOMContentLoaded', function () {
+            const longCheck = document.getElementById('business-term-long');
+            const endInput = document.getElementById('business-term-end');
+            const startInput = document.getElementById('business-term-start');
+            if (longCheck && endInput) {
+                function toggleLong() {
+                    if (longCheck.checked) {
+                        endInput.value = '';
+                        endInput.disabled = true;
+                        endInput.classList.add('bg-gray-100', 'text-gray-400');
+                        endInput.placeholder = '长期';
+                        endInput.removeAttribute('required');
+                    } else {
+                        endInput.disabled = false;
+                        endInput.classList.remove('bg-gray-100', 'text-gray-400');
+                        endInput.placeholder = '';
+                        if (!endInput.value) endInput.value = '2030-01-01';
+                        endInput.setAttribute('required', '');
+                    }
+                }
+                longCheck.addEventListener('change', toggleLong);
+                toggleLong();
+            }
+        });
     </script>
 </body>
 </html>

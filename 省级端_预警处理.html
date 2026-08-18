@@ -186,8 +186,21 @@
                                     机构展业审核
                                 </a>
                             </li>
+                            <li>
+                                <a href="省级端_金融机构列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构列表
+                                </a>
+                            </li>
                         </ul>
                     </li>
+                                        <li>
+                        <a href="省级端_产品管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cubes mr-3 group-hover:text-blue-400"></i>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
+
                     <li>
                         <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
                             <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
@@ -229,6 +242,30 @@
                             </li>
                         </ul>
                     </li>
+                    <li>
+                        <button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn">
+                            <div class="flex items-center">
+                                <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">企业服务</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow"></i>
+                        </button>
+                        <ul id="service-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_企业列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业列表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业咨询
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="pt-4 pb-2 px-3">
                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
                     </li>

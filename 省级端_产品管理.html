@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>省级管理端 - 产品管理</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: { colors: { primary: '#1E40AF', secondary: '#3B82F6', accent: '#60A5FA', neutral: '#F3F4F6', 'neutral-dark': '#1F2937' }, fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] } } } };
+</script>
+<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>.status-badge{padding:2px 8px;border-radius:9999px;font-size:12px;font-weight:600}</style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-900">
+<div class="flex h-screen overflow-hidden">
+<aside class="sidebar w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+<div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+<div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-shield"></i></div>
+<h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+</div>
+<nav class="flex-1 overflow-y-auto py-4 px-3"><ul class="space-y-1">
+<li><a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i><span>工作台</span></a></li>
+<li><a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i><span>数据可视化大屏</span></a></li>
+<li><button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><div class="flex items-center"><i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i><span class="font-bold">业务统计分析</span></div><i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i></button>
+<ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+<li><a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>金融机构统计报表</a></li>
+<li><a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>项目统计报表</a></li>
+<li><a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>退保统计报表</a></li>
+<li><a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>理赔统计报表</a></li>
+<li><a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>企业统计报表</a></li>
+<li><a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>受益人统计报表</a></li>
+</ul></li>
+<li><button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><div class="flex items-center"><i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i><span class="font-bold">预警管理</span></div><i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i></button>
+<ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+<li><a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>预警处理</a></li>
+<li><a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>预警规则设置</a></li>
+</ul></li>
+<li><a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-globe mr-3 group-hover:text-blue-400"></i><span>平台管理</span></a></li>
+<li><button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><div class="flex items-center"><i class="fa fa-building mr-3 group-hover:text-blue-400"></i><span class="font-bold">金融机构管理</span></div><i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i></button>
+<ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+<li><a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>机构备案审核</a></li>
+<li><a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>机构展业审核</a></li>
+<li><a href="省级端_金融机构列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>金融机构列表</a></li>
+</ul></li>
+<li><a href="省级端_产品管理.html" class="flex items-center p-3 bg-blue-600 text-white rounded-lg shadow-lg shadow-blue-900/20"><i class="fa fa-cubes mr-3"></i><span>产品管理</span></a></li>
+<li><a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-cube mr-3 group-hover:text-blue-400"></i><span>场景管理</span></a></li>
+<li><a href="省级端_投保材料管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-file-text-o mr-3 group-hover:text-blue-400"></i><span>投保材料管理</span></a></li>
+<li><button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><div class="flex items-center"><i class="fa fa-globe mr-3 group-hover:text-blue-400"></i><span class="font-bold">门户管理</span></div><i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i></button>
+<ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+<li><a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>平台资讯</a></li>
+<li><a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>帮助中心</a></li>
+<li><a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>Banner管理</a></li>
+</ul></li>
+<li><button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn"><div class="flex items-center"><i class="fa fa-users mr-3 group-hover:text-blue-400"></i><span class="font-bold">企业服务</span></div><i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow"></i></button>
+<ul id="service-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+<li><a href="省级端_企业列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>企业列表</a></li>
+<li><a href="省级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>企业咨询</a></li>
+</ul></li>
+<li class="pt-4 pb-2 px-3"><span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span></li>
+<li><a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i><span>消息管理</span></a></li>
+<li><a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-users mr-3 group-hover:text-blue-400"></i><span>部门与人员管理</span></a></li>
+<li><a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i><span>权限管理</span></a></li>
+<li><button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group"><div class="flex items-center"><i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i><span class="font-bold">日志管理</span></div><i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i></button>
+<ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+<li><a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>操作日志</a></li>
+<li><a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub"><span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>登录日志</a></li>
+</ul></li>
+</ul></nav>
+<div class="p-4 border-t border-slate-700 flex items-center space-x-3">
+<div class="w-9 h-9 bg-slate-700 rounded-full flex items-center justify-center"><i class="fa fa-user"></i></div>
+<div><p class="text-sm font-semibold">省级管理员</p><p class="text-xs text-slate-400">省级管理端</p></div>
+</div>
+</aside>
+<main class="flex-1 overflow-y-auto">
+<header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
+<div><h2 class="text-xl font-bold text-slate-800">产品管理</h2><p class="text-sm text-slate-500 mt-0.5">管理全省电子保函产品，支持上架、下架控制</p></div>
+<div class="flex items-center space-x-3"><button onclick="openAddModal()" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-sm font-bold shadow-lg shadow-blue-200"><i class="fa fa-plus"></i><span>新增产品</span></button></div>
+</header>
+<div class="p-8">
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 mb-5">
+<div class="grid grid-cols-5 gap-4">
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">产品名称</label><input type="text" id="filterName" placeholder="请输入产品名称" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">金融机构</label><select id="filterInst" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">全部</option><option>中国工商银行福建省分行</option><option>中国建设银行福建省分行</option><option>福建省融资担保有限责任公司</option><option>中国人保财险福建省分公司</option><option>交通银行福建省分行</option></select></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">适用场景</label><select id="filterScene" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">全部</option><option>投标保函</option><option>履约保函</option><option>质量保函</option></select></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">接入地市</label><select id="filterProv" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">全部</option><option>福州市</option><option>厦门市</option><option>泉州市</option><option>漳州市</option><option>莆田市</option></select></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">状态</label><select id="filterStatus" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">全部</option><option>已上架</option><option>已下架</option></select></div>
+</div>
+<div class="flex justify-end space-x-3 mt-4"><button onclick="resetFilter()" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-100 transition-all">重置</button><button onclick="applyFilter()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">查询</button></div>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+<div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between"><h3 class="text-base font-bold text-slate-800">产品列表</h3><span class="text-xs text-slate-500">共 <span id="totalCount">0</span> 个产品</span></div>
+<table class="w-full text-sm"><thead><tr class="bg-slate-50 text-slate-500 text-left">
+<th class="px-5 py-3">展示排序</th><th class="px-5 py-3">产品名称</th><th class="px-5 py-3">金融机构</th><th class="px-5 py-3">适用场景</th><th class="px-5 py-3">接入地市</th><th class="px-5 py-3">费率(%)</th><th class="px-5 py-3">状态</th><th class="px-5 py-3">操作</th>
+</tr></thead><tbody id="tableBody"></tbody></table>
+<div id="emptyHint" class="hidden py-16 text-center text-slate-400"><i class="fa fa-folder-open text-4xl mb-3"></i><p>暂无符合条件的产品</p></div>
+<div class="flex items-center justify-between px-5 py-4 border-t border-slate-100"><span class="text-xs text-slate-500">显示 <span id="pageStart">0</span>-<span id="pageEnd">0</span>，共 <span id="totalCount2">0</span> 条</span><div class="flex items-center space-x-1" id="pager"></div></div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+<!-- 新增/编辑产品弹窗 -->
+<div id="add-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-300 overflow-y-auto">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl my-8 overflow-hidden transform scale-95 transition-transform duration-300">
+<div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between"><h3 id="add-modal-title" class="text-lg font-bold text-slate-800 flex items-center"><span class="w-1 h-5 bg-blue-500 rounded-full mr-3"></span>新增产品</h3><button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 transition-all"><i class="fa fa-times text-lg"></i></button></div>
+<div class="p-6 space-y-5">
+<div><h4 class="text-sm font-bold text-slate-800 mb-3">产品基础信息</h4>
+<div class="grid grid-cols-2 gap-x-6 gap-y-4">
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>产品名称</label><input type="text" id="add-name" placeholder="请输入产品名称" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>金融机构</label><select id="add-inst" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">请选择金融机构</option><option>中国工商银行福建省分行</option><option>中国建设银行福建省分行</option><option>福建省融资担保有限责任公司</option><option>中国人保财险福建省分公司</option><option>交通银行福建省分行</option></select></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>适用场景</label><select id="add-scene" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">请选择适用场景</option><option>投标保函</option><option>履约保函</option><option>质量保函</option></select></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>接入地市</label><select id="add-province" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">请选择地市</option><option>福州市</option><option>厦门市</option><option>泉州市</option><option>漳州市</option><option>莆田市</option></select></div>
+<div class="col-span-2"><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>费率计算方式</label>
+<div class="flex items-center space-x-6 mt-2">
+<label class="flex items-center text-sm text-slate-700 cursor-pointer"><input type="radio" name="calcType" value="fixed" checked onchange="toggleCalcType()" class="mr-2 text-blue-600 focus:ring-blue-500">固定费率</label>
+<label class="flex items-center text-sm text-slate-700 cursor-pointer"><input type="radio" name="calcType" value="section" onchange="toggleCalcType()" class="mr-2 text-blue-600 focus:ring-blue-500">按区间定价</label>
+</div></div>
+<div id="fixed-rate-box" class="col-span-2 grid grid-cols-2 gap-x-6 gap-y-4">
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>参考费率（%）</label><input type="number" step="0.01" id="add-rate" placeholder="请输入费率，单位：%，两位小数" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">最低保费（元/年）</label><input type="number" step="0.01" id="add-min-premium" placeholder="请输入金额，单位：元，两位小数" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+</div>
+<div id="section-rate-box" class="col-span-2 hidden">
+<table class="w-full text-sm border border-slate-200 rounded-lg overflow-hidden">
+<thead class="bg-slate-50 text-slate-500"><tr>
+<th class="px-3 py-2 text-left font-medium">保证金区间（元）<span class="text-rose-500">*</span></th>
+<th class="px-3 py-2 text-left font-medium">费率（%）<span class="text-rose-500">*</span></th>
+<th class="px-3 py-2 text-left font-medium">最低保费（元/年）</th>
+<th class="px-3 py-2 text-left font-medium">操作</th>
+</tr></thead>
+<tbody id="section-tbody"></tbody>
+</table>
+<button onclick="addSectionRow()" class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all"><i class="fa fa-plus mr-1"></i>添加</button>
+</div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>平均时效</label><input type="text" id="add-avg-time" placeholder="请输入平均时效，如：3个工作日" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>产品介绍</label><textarea id="add-intro" rows="3" placeholder="请输入产品介绍（50字以内）" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>对接方式</label><select id="add-api-type" onchange="toggleApiUrl()" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">请选择对接方式</option><option>API接入</option><option>线下对接</option></select></div>
+<div id="api-url-box" class="col-span-2 hidden"><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>接口地址</label><input type="text" id="add-api-url" placeholder="请输入API接口地址" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1">展示排序</label><input type="number" id="add-sort" placeholder="请输入正整数，数字越小越靠前" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></div>
+<div><label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>状态</label><select id="add-status" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"><option value="">请选择状态</option><option>已上架</option><option>已下架</option></select></div>
+</div></div>
+</div>
+<div class="p-4 bg-slate-50 flex justify-end space-x-3"><button onclick="closeAddModal()" class="px-5 py-2 rounded-lg text-sm font-bold text-slate-500 hover:bg-slate-200 transition-all border border-slate-200 bg-white">取消</button><button onclick="submitAdd()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all"><i class="fa fa-check mr-1"></i>保存</button></div>
+</div>
+</div>
+
+<!-- 查看产品弹窗 -->
+<div id="view-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 overflow-hidden transform scale-95 transition-transform duration-300">
+<div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between"><h3 class="text-lg font-bold text-slate-800 flex items-center"><span class="w-1 h-5 bg-blue-500 rounded-full mr-3"></span>产品详情</h3><button onclick="closeViewModal()" class="text-slate-400 hover:text-slate-600 transition-all"><i class="fa fa-times text-lg"></i></button></div>
+<div class="p-6 text-sm max-h-[80vh] overflow-y-auto" id="view-body"></div>
+<div class="p-4 bg-slate-50 flex justify-end"><button onclick="closeViewModal()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-all">关闭</button></div>
+</div>
+</div>
+
+<script>
+const products=[
+{id:'CP20260301001',name:'工程建设投标保函',inst:'中国工商银行福建省分行',scene:'投标保函',prov:'福州市',rate:0.5,sort:1,status:'已上架',remark:'标准投标保函产品'},
+{id:'CP20260301002',name:'政府采购履约保函',inst:'中国建设银行福建省分行',scene:'履约保函',prov:'福州市',rate:'1.05-2.0',sort:2,status:'已上架',remark:'',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:1.05,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:2.0,minPremium:''}]},
+{id:'CP20260302003',name:'土地出让保证金保函',inst:'福建省融资担保有限责任公司',scene:'质量保函',prov:'福州市',rate:'1.5-2.5',sort:3,status:'已上架',remark:'',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:1.5,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:2.5,minPremium:''}]},
+{id:'CP20260302004',name:'贸易履约保函',inst:'中国人保财险福建省分公司',scene:'履约保函',prov:'福州市',rate:'1.05-2.8',sort:4,status:'已下架',remark:'下线调整中',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:1.05,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:2.8,minPremium:''}]},
+{id:'CP20260303005',name:'工程建设预付款保函',inst:'交通银行福建省分行',scene:'投标保函',prov:'福州市',rate:0.45,sort:5,status:'已上架',remark:''},
+{id:'CP20260304006',name:'政府采购投标保函',inst:'中国工商银行福建省分行',scene:'投标保函',prov:'厦门市',rate:0.35,sort:6,status:'已上架',remark:''},
+{id:'CP20260305007',name:'工程建设履约保函',inst:'中国建设银行福建省分行',scene:'履约保函',prov:'泉州市',rate:'1.0-1.8',sort:7,status:'已上架',remark:'',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:1.0,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:1.8,minPremium:''}]},
+{id:'CP20260306008',name:'土地出让履约保函',inst:'福建省融资担保有限责任公司',scene:'履约保函',prov:'福州市',rate:'1.3-2.3',sort:8,status:'已下架',remark:'',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:1.3,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:2.3,minPremium:''}]},
+{id:'CP20260307009',name:'贸易预付款保函',inst:'中国人保财险福建省分公司',scene:'投标保函',prov:'厦门市',rate:0.65,sort:9,status:'已上架',remark:''},
+{id:'CP20260308010',name:'政府采购质量保函',inst:'交通银行福建省分行',scene:'质量保函',prov:'漳州市',rate:'1.05-1.8',sort:10,status:'已上架',remark:'',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:1.05,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:1.8,minPremium:''}]},
+{id:'CP20260309011',name:'工程建设支付保函',inst:'中国工商银行福建省分行',scene:'履约保函',prov:'福州市',rate:'0.8-1.6',sort:11,status:'已上架',remark:'',calcType:'section',sections:[{start:1,startInc:'含',end:200000,endInc:'含',rate:0.8,minPremium:''},{start:200000,startInc:'不含',end:null,endInc:'含',rate:1.6,minPremium:''}]},
+{id:'CP20260310012',name:'土地出让投标保函',inst:'中国建设银行福建省分行',scene:'投标保函',prov:'莆田市',rate:0.75,sort:12,status:'已上架',remark:''}
+];
+let currentPage=1;
+const pageSize=10;
+let editingId=null;
+
+function statusBadge(s){
+if(s==='已上架')return '<span class="status-badge bg-emerald-100 text-emerald-700">已上架</span>';
+if(s==='已下架')return '<span class="status-badge bg-slate-200 text-slate-500">已下架</span>';
+return '<span class="status-badge bg-slate-200 text-slate-500">'+s+'</span>';
+}
+
+function getFiltered(){
+const n=document.getElementById('filterName').value.trim();
+const i=document.getElementById('filterInst').value;
+const sc=document.getElementById('filterScene').value;
+const p=document.getElementById('filterProv').value;
+const st=document.getElementById('filterStatus').value;
+return products.filter(x=>(!n||x.name.includes(n))&&(!i||x.inst===i)&&(!sc||x.scene===sc)&&(!p||x.prov===p)&&(!st||x.status===st));
+}
+
+function ops(item){
+const a='<a href="javascript:void(0)" onclick="openEditModal(\''+item.id+'\')" class="text-blue-600 hover:text-blue-800 mr-2"><i class="fa fa-pencil mr-1"></i>编辑</a>';
+const v='<a href="javascript:void(0)" onclick="openViewModal(\''+item.id+'\')" class="text-slate-600 hover:text-slate-800 mr-2"><i class="fa fa-eye mr-1"></i>查看</a>';
+if(item.status==='已上架'){
+return a+v+'<a href="javascript:void(0)" onclick="setDown(\''+item.id+'\')" class="text-rose-500 hover:text-rose-700"><i class="fa fa-arrow-down mr-1"></i>下架</a>';
+}
+if(item.status==='已下架'){
+return a+v+'<a href="javascript:void(0)" onclick="setUp(\''+item.id+'\')" class="text-emerald-600 hover:text-emerald-800"><i class="fa fa-arrow-up mr-1"></i>上架</a>';
+}
+return a+v;
+}
+
+function renderTable(){
+const data=getFiltered();
+const total=data.length;
+document.getElementById('totalCount').innerText=total;
+document.getElementById('totalCount2').innerText=total;
+const totalPages=Math.max(1,Math.ceil(total/pageSize));
+if(currentPage>totalPages)currentPage=totalPages;
+const start=(currentPage-1)*pageSize;
+const pageData=data.slice(start,start+pageSize);
+const tb=document.getElementById('tableBody');
+document.getElementById('emptyHint').classList.toggle('hidden',total!==0);
+tb.innerHTML=pageData.map(item=>'<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors"><td class="px-5 py-3 text-slate-500">'+item.sort+'</td><td class="px-5 py-3 font-medium text-slate-700">'+item.name+'</td><td class="px-5 py-3 text-slate-500">'+item.inst+'</td><td class="px-5 py-3 text-slate-500">'+item.scene+'</td><td class="px-5 py-3 text-slate-500">'+item.prov+'</td><td class="px-5 py-3 text-slate-500">'+item.rate+'</td><td class="px-5 py-3">'+statusBadge(item.status)+'</td><td class="px-5 py-3">'+ops(item)+'</td></tr>').join('');
+document.getElementById('pageStart').innerText=total===0?0:start+1;
+document.getElementById('pageEnd').innerText=Math.min(start+pageSize,total);
+const pager=document.getElementById('pager');
+let ph='';
+for(let i=1;i<=totalPages;i++){ph+='<button onclick="gotoPage('+i+')" class="w-8 h-8 rounded-lg text-sm font-bold '+(i===currentPage?'bg-blue-600 text-white':'text-slate-500 hover:bg-slate-100')+'">'+i+'</button>';}
+pager.innerHTML=ph;
+}
+
+function gotoPage(p){currentPage=p;renderTable();}
+function applyFilter(){currentPage=1;renderTable();}
+function resetFilter(){document.getElementById('filterName').value='';document.getElementById('filterInst').value='';document.getElementById('filterScene').value='';document.getElementById('filterProv').value='';document.getElementById('filterStatus').value='';applyFilter();}
+
+function openAddModal(){
+editingId=null;
+document.getElementById('add-modal-title').innerHTML='<span class="w-1 h-5 bg-blue-500 rounded-full mr-3"></span>新增产品';
+document.getElementById('add-name').value='';
+document.getElementById('add-inst').value='';
+document.getElementById('add-scene').value='';
+document.getElementById('add-province').value='';
+document.querySelector('input[name="calcType"][value="fixed"]').checked=true;
+document.getElementById('add-rate').value='';
+document.getElementById('add-min-premium').value='';
+document.getElementById('add-avg-time').value='';
+document.getElementById('add-intro').value='';
+document.getElementById('add-api-type').value='';
+document.getElementById('add-api-url').value='';
+document.getElementById('add-sort').value='';
+document.getElementById('add-status').value='已上架';
+sectionRows=[{start:1,startInc:'含',end:100,endInc:'含',rate:'',minPremium:''},{start:'',startInc:'含',end:'',endInc:'不含',rate:'',minPremium:''},{start:'',startInc:'含',end:'',endInc:'不含',rate:'',minPremium:''}];
+renderSections();toggleCalcType();toggleApiUrl();
+showModal('add-modal');
+}
+function openEditModal(id){
+const item=products.find(x=>x.id===id);if(!item)return;editingId=id;
+document.getElementById('add-modal-title').innerHTML='<span class="w-1 h-5 bg-blue-500 rounded-full mr-3"></span>编辑产品';
+document.getElementById('add-name').value=item.name;
+document.getElementById('add-inst').value=item.inst;
+document.getElementById('add-scene').value=item.scene;
+document.getElementById('add-province').value=item.province||item.prov||'';
+const ct=item.calcType||'fixed';
+document.querySelector('input[name="calcType"][value="'+ct+'"]').checked=true;
+document.getElementById('add-rate').value=item.rate||'';
+document.getElementById('add-min-premium').value=item.minPremium||'';
+sectionRows=(item.sections&&item.sections.length)?item.sections.map(s=>({start:s.start,startInc:s.startInc||'含',end:s.end,endInc:s.endInc||'含',rate:s.rate,minPremium:s.minPremium||''})):[{start:1,startInc:'含',end:100,endInc:'含',rate:'',minPremium:''},{start:'',startInc:'含',end:'',endInc:'不含',rate:'',minPremium:''},{start:'',startInc:'含',end:'',endInc:'不含',rate:'',minPremium:''}];
+document.getElementById('add-avg-time').value=item.avgTime||'';
+document.getElementById('add-intro').value=item.intro||'';
+document.getElementById('add-api-type').value=item.apiType||'';
+document.getElementById('add-api-url').value=item.apiUrl||'';
+document.getElementById('add-sort').value=item.sort||'';
+document.getElementById('add-status').value=item.status||'';
+renderSections();toggleCalcType();toggleApiUrl();
+showModal('add-modal');
+}
+function closeAddModal(){hideModal('add-modal');}
+
+function submitAdd(){
+const name=document.getElementById('add-name').value.trim();
+const inst=document.getElementById('add-inst').value;
+const scene=document.getElementById('add-scene').value;
+const province=document.getElementById('add-province').value;
+const calcType=document.querySelector('input[name="calcType"]:checked').value;
+const rate=document.getElementById('add-rate').value.trim();
+const minPremium=document.getElementById('add-min-premium').value.trim();
+const avgTime=document.getElementById('add-avg-time').value.trim();
+const intro=document.getElementById('add-intro').value.trim();
+const apiType=document.getElementById('add-api-type').value;
+const apiUrl=document.getElementById('add-api-url').value.trim();
+const sort=document.getElementById('add-sort').value.trim();
+const status=document.getElementById('add-status').value;
+if(!name){showToast('请输入产品名称','error');return;}
+if(!inst){showToast('请选择金融机构','error');return;}
+if(!scene){showToast('请选择适用场景','error');return;}
+if(!province){showToast('请选择所属省份','error');return;}
+if(calcType==='fixed'&&!rate){showToast('请输入参考费率','error');return;}
+if(!avgTime){showToast('请输入平均时效','error');return;}
+if(!intro){showToast('请输入产品介绍','error');return;}
+if(!apiType){showToast('请选择对接方式','error');return;}
+if(apiType==='API接入'&&!apiUrl){showToast('请输入接口地址','error');return;}
+if(!status){showToast('请选择状态','error');return;}
+const sections=calcType==='section'?collectSections():[];
+if(calcType==='section'&&sections.length===0){showToast('请至少添加一个保证金区间','error');return;}
+let displayRate=calcType==='fixed'?Number(rate):(sections.length?Number(sections[0].rate):0);
+const base={name,inst,scene,province,prov:province,rate:displayRate,minPremium:minPremium?Number(minPremium):'',avgTime,intro,apiType,apiUrl:apiType==='API接入'?apiUrl:'',sort:sort?Number(sort):'',status,calcType,sections};
+if(editingId){
+const item=products.find(x=>x.id===editingId);
+Object.assign(item,base);
+closeAddModal();renderTable();showToast('产品“'+name+'”信息已更新','success');return;
+}
+const now=new Date();const y=now.getFullYear();const m=String(now.getMonth()+1).padStart(2,'0');const d=String(now.getDate()).padStart(2,'0');const seq=String(products.length+1).padStart(3,'0');
+products.unshift(Object.assign({id:'CP'+y+m+d+seq},base));
+closeAddModal();applyFilter();showToast('产品“'+name+'”已成功新增','success');
+}
+
+function toggleCalcType(){
+const ct=document.querySelector('input[name="calcType"]:checked').value;
+document.getElementById('fixed-rate-box').classList.toggle('hidden',ct!=='fixed');
+document.getElementById('section-rate-box').classList.toggle('hidden',ct!=='section');
+}
+function toggleApiUrl(){
+const t=document.getElementById('add-api-type').value;
+document.getElementById('api-url-box').classList.toggle('hidden',t!=='API接入');
+}
+var sectionRows=[{start:1,startInc:'含',end:200000,endInc:'含',rate:'',minPremium:''},{start:200000,startInc:'不含',end:1000000,endInc:'含',rate:'',minPremium:''}];
+function renderSections(){
+const tb=document.getElementById('section-tbody');tb.innerHTML=sectionRows.map((row,i)=>sectionRowHtml(row,i)).join('');
+}
+function sectionRowHtml(row,i){
+const startPlaceholder=i===0?'1':'下限金额';
+const endPlaceholder=i===0?'100':'上限金额';
+return '<tr class="border-b border-slate-100"><td class="px-3 py-3"><div class="flex items-center space-x-1"><input type="number" id="sec-start-'+i+'" value="'+(row.start===undefined||row.start===null?'':row.start)+'" placeholder="'+startPlaceholder+'" class="w-20 px-2 py-1.5 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"><select id="sec-start-inc-'+i+'" class="px-1 py-1.5 border border-slate-200 rounded text-sm bg-white"><option '+(row.startInc==='含'?'selected':'')+'>含</option><option '+(row.startInc==='不含'?'selected':'')+'>不含</option></select><span class="text-slate-400 px-1">—</span><input type="number" id="sec-end-'+i+'" value="'+(row.end===undefined||row.end===null?'':row.end)+'" placeholder="'+endPlaceholder+'" class="w-20 px-2 py-1.5 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"><select id="sec-end-inc-'+i+'" class="px-1 py-1.5 border border-slate-200 rounded text-sm bg-white"><option '+(row.endInc==='含'?'selected':'')+'>含</option><option '+(row.endInc==='不含'?'selected':'')+'>不含</option></select></div></td><td class="px-3 py-3"><input type="number" step="0.01" id="sec-rate-'+i+'" value="'+(row.rate||'')+'" placeholder="费率" class="w-20 px-2 py-1.5 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></td><td class="px-3 py-3"><input type="number" step="0.01" id="sec-min-'+i+'" value="'+(row.minPremium||'')+'" placeholder="最低保费" class="w-24 px-2 py-1.5 border border-slate-200 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></td><td class="px-3 py-3"><a href="javascript:void(0)" onclick="removeSectionRow('+i+')" class="text-rose-400 hover:text-rose-600"><i class="fa fa-trash"></i></a></td></tr>';
+}
+function addSectionRow(){
+const last=sectionRows[sectionRows.length-1];
+let start=last?last.end:'';
+if(start===''||start===null||start===undefined){start='';}
+sectionRows.push({start:start,startInc:'含',end:'',endInc:'不含',rate:'',minPremium:''});
+renderSections();
+}
+function removeSectionRow(i){sectionRows.splice(i,1);renderSections();}
+function collectSections(){
+const arr=[];
+for(let i=0;i<sectionRows.length;i++){
+const start=document.getElementById('sec-start-'+i).value.trim();
+const startInc=document.getElementById('sec-start-inc-'+i).value;
+const end=document.getElementById('sec-end-'+i).value.trim();
+const endInc=document.getElementById('sec-end-inc-'+i).value;
+const rate=document.getElementById('sec-rate-'+i).value.trim();
+if(!rate||start===''||end===''){continue;}
+arr.push({start:Number(start),startInc,end:Number(end),endInc,rate:Number(rate),minPremium:document.getElementById('sec-min-'+i).value.trim()});
+}
+return arr;
+}
+
+function openViewModal(id){
+const item=products.find(x=>x.id===id);if(!item)return;
+const calcType=item.calcType||'fixed';
+let rateBlock;
+if(calcType==='section'&&item.sections&&item.sections.length){
+const rows=item.sections.map(s=>{
+const sVal=(s.start==null||s.start==='')?'':s.start;
+const eVal=(s.end==null||s.end===''||s.end===undefined)?'∞':s.end;
+return '<tr class="border-b border-slate-100 last:border-0"><td class="px-3 py-2">'+sVal+'元'+(s.startInc||'含')+' ~ '+eVal+'元'+(s.endInc||'含')+'</td><td class="px-3 py-2 font-semibold text-blue-600">'+(s.rate==null?'':s.rate)+'%</td><td class="px-3 py-2">'+(s.minPremium?(s.minPremium+'元/年'):'—')+'</td></tr>';
+}).join('');
+rateBlock='<div class="border border-slate-200 rounded-lg overflow-hidden"><table class="w-full text-sm"><thead class="bg-slate-50 text-slate-500"><tr><th class="px-3 py-2 text-left font-medium">保证金区间（元）</th><th class="px-3 py-2 text-left font-medium">费率（%）</th><th class="px-3 py-2 text-left font-medium">最低保费（元/年）</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}else{
+const rText=typeof item.rate==='string'?item.rate:(item.rate+'%');
+rateBlock='<div class="grid grid-cols-2 gap-x-6 gap-y-2"><div><span class="text-xs text-slate-400">参考费率（%）</span><div class="text-slate-800 font-medium">'+rText+'</div></div><div><span class="text-xs text-slate-400">最低保费（元/年）</span><div class="text-slate-800 font-medium">'+(item.minPremium?(item.minPremium):'—')+'</div></div></div>';
+}
+const apiVal=(item.apiType||'—')+(item.apiType==='API接入'&&item.apiUrl?('（'+item.apiUrl+'）'):'');
+let html='<div><h4 class="text-sm font-bold text-slate-800 mb-3">产品基础信息</h4><div class="grid grid-cols-2 gap-x-6 gap-y-4">';
+html+='<div><span class="block text-xs text-slate-400 mb-1">产品编号</span><span class="text-slate-800 font-medium">'+item.id+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">产品名称</span><span class="text-slate-800 font-medium">'+item.name+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">金融机构</span><span class="text-slate-800 font-medium">'+item.inst+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">适用场景</span><span class="text-slate-800 font-medium">'+item.scene+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">接入地市</span><span class="text-slate-800 font-medium">'+item.prov+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">展示排序</span><span class="text-slate-800 font-medium">'+item.sort+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">状态</span><span class="text-slate-800 font-medium">'+item.status+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">平均时效</span><span class="text-slate-800 font-medium">'+item.avgTime+'</span></div>';
+html+='<div class="col-span-2"><span class="block text-xs text-slate-400 mb-1">产品介绍</span><span class="text-slate-800 font-medium">'+item.intro+'</span></div>';
+html+='<div><span class="block text-xs text-slate-400 mb-1">对接方式</span><span class="text-slate-800 font-medium">'+apiVal+'</span></div>';
+html+='<div class="col-span-2"><span class="block text-xs text-slate-400 mb-1">费率计算方式</span><span class="text-slate-800 font-medium">'+(calcType==='section'?'按区间定价':'固定费率')+'</span></div>';
+html+='<div class="col-span-2"><span class="block text-xs text-slate-400 mb-1">'+(calcType==='section'?'费率区间明细':'费率')+'</span>'+rateBlock+'</div>';
+html+='<div class="col-span-2"><span class="block text-xs text-slate-400 mb-1">备注</span><span class="text-slate-800 font-medium">'+(item.remark||'—')+'</span></div>';
+html+='</div></div>';
+document.getElementById('view-body').innerHTML=html;
+showModal('view-modal');
+}
+function closeViewModal(){hideModal('view-modal');}
+
+function changeStatus(id,status){
+const item=products.find(x=>x.id===id);if(!item)return;item.status=status;renderTable();showToast('产品“'+item.name+'”状态已更新为“'+status+'”','success');
+}
+function setUp(id){changeStatus(id,'已上架');}
+function setDown(id){changeStatus(id,'已下架');}
+
+function showModal(id){const m=document.getElementById(id);const c=m.querySelector('div');m.classList.remove('hidden');setTimeout(()=>{m.classList.remove('opacity-0');c.classList.remove('scale-95');},10);}
+function hideModal(id){const m=document.getElementById(id);const c=m.querySelector('div');m.classList.add('opacity-0');c.classList.add('scale-95');setTimeout(()=>{m.classList.add('hidden');},300);}
+
+function showToast(msg,type){let c=document.getElementById('toast-container');if(!c){c=document.createElement('div');c.id='toast-container';c.className='fixed top-5 right-5 z-[70] flex flex-col space-y-3';document.body.appendChild(c);}const bg=type==='error'?'bg-rose-500':'bg-slate-800';const t=document.createElement('div');t.className='px-5 py-3 rounded-lg text-white text-sm font-semibold shadow-xl '+bg+' opacity-0 transition-all duration-300';t.innerText=msg;c.appendChild(t);requestAnimationFrame(()=>{t.classList.remove('opacity-0');});setTimeout(()=>{t.classList.add('opacity-0');setTimeout(()=>t.remove(),300);},3000);}
+
+function toggleSubMenu(menuId){
+const m=document.getElementById(menuId);const arrow=document.getElementById(menuId+'-arrow');
+if(m.classList.contains('hidden')){m.classList.remove('hidden');if(arrow)arrow.style.transform='rotate(180deg';}else{m.classList.add('hidden');if(arrow)arrow.style.transform='rotate(0deg';}
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+document.querySelectorAll('.group').forEach(function(g){});
+renderTable();
+});
+</script>
+<div id="toast-container" class="fixed top-5 right-5 z-[70] flex flex-col space-y-3"></div>
+</body>
+</html>

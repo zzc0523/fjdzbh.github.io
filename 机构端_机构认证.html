@@ -247,6 +247,22 @@
                                         <input type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="establishDate" required>
                                     </div>
 
+                                    <!-- 营业期限 -->
+                                    <div class="lg:col-span-2">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <label class="block text-sm font-semibold text-slate-600">营业期限 <span class="text-red-500">*</span></label>
+                                            <label class="flex items-center text-sm text-slate-600 cursor-pointer select-none">
+                                                <input type="checkbox" id="businessTermLong" class="mr-1.5 w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500">
+                                                长期
+                                            </label>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <input type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessTermStart" required>
+                                            <span class="text-slate-400 text-sm flex-shrink-0">至</span>
+                                            <input type="date" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessTermEnd" required>
+                                        </div>
+                                    </div>
+
                                     <!-- 开户银行 -->
                                     <div>
                                         <label class="block text-sm font-semibold text-slate-600 mb-2">开户银行 <span class="text-red-500">*</span></label>
@@ -335,6 +351,41 @@
     </div>
 
     <script>
+        // 营业期限：初始化默认值 + 长期勾选联动
+        (function () {
+            const startInput = document.getElementById('businessTermStart');
+            const endInput = document.getElementById('businessTermEnd');
+            const longCheck = document.getElementById('businessTermLong');
+            if (document.getElementById('establishDate')) {
+                document.getElementById('establishDate').value = '1998-01-01';
+            }
+            if (startInput) startInput.value = '1998-01-01';
+
+            window.toggleBusinessTermLong = function () {
+                if (!longCheck || !endInput) return;
+                if (longCheck.checked) {
+                    endInput.value = '';
+                    endInput.disabled = true;
+                    endInput.classList.add('bg-slate-100', 'text-slate-400');
+                    endInput.placeholder = '长期';
+                    endInput.removeAttribute('required');
+                } else {
+                    endInput.disabled = false;
+                    endInput.classList.remove('bg-slate-100', 'text-slate-400');
+                    endInput.placeholder = '';
+                    if (!endInput.value) endInput.value = '2048-01-01';
+                    endInput.setAttribute('required', '');
+                }
+            };
+
+            if (longCheck) {
+                longCheck.addEventListener('change', window.toggleBusinessTermLong);
+                // 默认勾选长期
+                longCheck.checked = true;
+                window.toggleBusinessTermLong();
+            }
+        })();
+
         // 查看文件功能
         function viewFile(fileName) {
             document.getElementById('fileName').textContent = fileName;
