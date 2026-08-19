@@ -13,6 +13,7 @@
         // 机构端订单数据
         const institutionOrderData = {
             'BO202603240001': { id: 'BO202603240001', projectName: '福建省文化中心装修工程', projectCode: 'FZ2026002', sectionName: '室内精装修工程', sectionCode: 'FZ2026002-01', bondType: '履约保函', amount: '2,000,000.00', premium: '待计算', beneficiary: '福建省文化中心', insurer: '中国人民财产保险', handler: '张明', applyTime: '2026-03-24 10:20', status: '申请中', statusCode: 'audit' },
+            'BO202603240009': { id: 'BO202603240009', projectName: '福州市智慧城市建设项目', projectCode: 'FZ2026015', sectionName: '信息化建设一期', sectionCode: 'FZ2026015-01', bondType: '投标保函', amount: '500,000.00', premium: '待计算', beneficiary: '福州市智慧城市公司', insurer: '中国人民财产保险', handler: '李华', applyTime: '2026-03-24 15:40', status: '待审核', statusCode: 'toreview' },
             'BO202603240012': { id: 'BO202603240012', projectName: '南平市某大桥加固工程', projectCode: 'NP2026008', sectionName: '桥面铺装工程', sectionCode: 'NP2026008-01', bondType: '投标保函', amount: '1,200,000.00', premium: '6,000.00', beneficiary: '南平市交通运输局', insurer: '中国太平洋保险', handler: '李华', applyTime: '2026-03-24 11:45', status: '待支付', statusCode: 'unpaid' },
             'BO202603230001': { id: 'BO202603230001', projectName: '福州市城市轨道交通5号线工程', projectCode: 'FZ2026001', sectionName: '5号线一期工程', sectionCode: 'FZ2026001-01', bondType: '投标保函', amount: '1,000,000.00', premium: '10,000.00', beneficiary: '福州地铁集团有限公司', insurer: '中国平安保险', handler: '王强', applyTime: '2026-03-23 09:15', status: '已支付', statusCode: 'pending' },
             'BO202603200003': { id: 'BO202603200003', projectName: '泉州市晋江大桥扩建工程', projectCode: 'QZ2026003', sectionName: '主桥扩建工程', sectionCode: 'QZ2026003-01', bondType: '预付款保函', amount: '2,500,000.00', premium: '25,000.00', beneficiary: '泉州市交通运输局', insurer: '中国人寿保险', handler: '赵丽', applyTime: '2026-03-20 10:45', status: '已出函', statusCode: 'completed' },
@@ -120,6 +121,7 @@
         function getStatusStyle(status) {
             switch(status) {
                 case '申请中': return 'bg-blue-100 text-blue-700';
+                case '待审核': return 'bg-amber-100 text-amber-700';
                 case '审批不通过': return 'bg-red-100 text-red-700';
                 case '待支付': return 'bg-rose-100 text-rose-700';
                 case '已支付': return 'bg-emerald-100 text-emerald-700';
@@ -141,7 +143,7 @@
 
         // 生成订单详情弹窗内容（Tab：订单信息 / 保函信息 / 退保信息）
         function showInstitutionOrderDetail(order) {
-            const showGuaranteeTab = !['申请中', '审批不通过', '已取消'].includes(order.status);
+            const showGuaranteeTab = !['申请中', '待审核', '审批不通过', '已取消'].includes(order.status);
             const showRefundTab = ['退保中', '已退保', '拒绝退保'].includes(order.status);
 
             // 计算到期日期（开立日期 + 90天）
@@ -340,7 +342,7 @@
             if (order.statusCode === 'completed') {
                 buttons.push({ text: '<i class="fa fa-download mr-2"></i>下载保函', className: 'px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors', onClick: () => { closeDetail(); downloadBond(order.id); } });
             }
-            if (order.statusCode === 'audit') {
+            if (order.statusCode === 'toreview') {
                 buttons.push({ text: '<i class="fa fa-gavel mr-2"></i>审核', className: 'px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors', onClick: () => { closeDetail(); openInstitutionAudit(order); } });
             }
             if (order.statusCode === 'pending') {
@@ -477,11 +479,18 @@
                                 alert('请填写拒绝原因');
                                 return;
                             }
+                            order.status = '审批不通过';
+                            order.statusCode = 'rejected';
                             alert('已拒绝，拒绝原因：' + reason);
                         } else {
                             const premium = document.getElementById('audit-premium').value.trim();
+                            if (premium) order.premium = premium;
+                            order.status = '待支付';
+                            order.statusCode = 'unpaid';
                             alert('审批通过，保费：' + (premium || order.premium));
                         }
+                        syncInstitutionOrderRow(order);
+                        searchOrders();
                         const m = document.getElementById('modal'); if (m) m.remove();
                     }
                 }
@@ -710,6 +719,12 @@
                             <span>理赔管理</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="机构端_发票管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-receipt mr-3 group-hover:text-blue-400"></i>
+                            <span>发票管理</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-slate-700">
@@ -750,12 +765,13 @@
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center space-x-4 flex-1 min-w-[300px]">
                             <div class="relative flex-1">
-                                <input type="text" id="searchInput" placeholder="搜索订单号、项目名称、保函类型、受益人、承保机构、经办人" class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-full">
+                                <input type="text" id="searchInput" placeholder="搜索订单号、项目名称" class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary w-full">
                                 <i class="fa fa-search absolute left-3 top-3 text-slate-400"></i>
                             </div>
                             <select id="statusSelect" class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
                                 <option>全部状态</option>
                                 <option>申请中</option>
+                                <option>待审核</option>
                                 <option>已取消</option>
                                 <option>审批不通过</option>
                                 <option>待支付</option>
@@ -765,6 +781,12 @@
                                 <option>已退保</option>
                                 <option>拒绝退保</option>
                             </select>
+                            <div class="flex items-center space-x-1 border border-slate-200 rounded-lg px-3 py-1.5 text-sm">
+                                <span class="text-slate-500">申请日期</span>
+                                <input type="date" id="apply-date-start" class="border-0 focus:outline-none focus:ring-0 text-sm" title="申请日期起">
+                                <span class="text-slate-400">至</span>
+                                <input type="date" id="apply-date-end" class="border-0 focus:outline-none focus:ring-0 text-sm" title="申请日期止">
+                            </div>
                             <select id="bondTypeSelect" class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
                                 <option>全部保函类型</option>
                                 <option>投标保函</option>
@@ -806,6 +828,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受益人</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">承保机构</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">经办人</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">经办人手机号</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单状态</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
@@ -842,6 +865,9 @@
                                         <div class="text-sm text-gray-900">张明</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910201</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-100">
                                             申请中
                                         </span>
@@ -851,8 +877,52 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <a href="#" class="text-primary hover:text-primary/80 mr-3 action-btn" onclick="openOrderDetail('BO202603240001', 'audit')">查看</a>
-                                        <a href="#" class="text-blue-600 hover:text-blue-700 action-btn" onclick="openInstitutionAudit(institutionOrderData['BO202603240001'])">审核</a>
                                     </td>
+                                    </tr>
+                                    <!-- 待审核订单 -->
+                                    <tr class="order-row hover:bg-gray-50 transition-colors" data-status="toreview">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <input type="checkbox" class="mr-3 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                                <div class="text-sm font-medium text-gray-900">BO202603240009</div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">福州市智慧城市建设项目</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">投标保函</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">500,000.00</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-400">待计算</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">福州市智慧城市公司</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">中国人民财产保险</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">李华</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910205</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-amber-50 text-amber-600 border border-amber-100">
+                                                待审核
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">2026-03-24 15:40</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="#" class="text-primary hover:text-primary/80 mr-3 action-btn" onclick="openOrderDetail('BO202603240009', 'toreview')">查看</a>
+                                            <a href="#" class="text-blue-600 hover:text-blue-700 action-btn" onclick="openInstitutionAudit(institutionOrderData['BO202603240009'])">审核</a>
+                                        </td>
                                     </tr>
                                     <!-- 待支付订单 -->
                                  <tr class="order-row hover:bg-gray-50 transition-colors" data-status="unpaid">
@@ -882,6 +952,9 @@
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
                                          <div class="text-sm text-gray-900">李华</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910205</div>
                                      </td>
                                      <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-rose-50 text-rose-600 border border-rose-100">
@@ -923,6 +996,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">王强</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910203</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -969,6 +1045,9 @@
                                         <div class="text-sm text-gray-900">赵丽</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910208</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-50 text-green-600 border border-green-100">
                                             已出函
                                         </span>
@@ -1011,6 +1090,9 @@
                                         <div class="text-sm text-gray-900">陈伟</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910210</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-600 border border-red-100">
                                             审批不通过
                                         </span>
@@ -1050,6 +1132,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">张明</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910201</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -1094,6 +1179,9 @@
                                         <div class="text-sm text-gray-900">李华</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910205</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
                                             已取消
                                         </span>
@@ -1133,6 +1221,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">王强</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910203</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-50 text-orange-600 border border-orange-200">
@@ -1176,6 +1267,9 @@
                                         <div class="text-sm text-gray-900">赵丽</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910208</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-600 border border-gray-200">
                                             已退保
                                         </span>
@@ -1215,6 +1309,9 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="text-sm text-gray-900">陈伟</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">13805910210</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-600 border border-red-200">
@@ -1515,6 +1612,8 @@
         function searchOrders() {
             const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
             const selectedStatus = document.getElementById('statusSelect').value;
+            const dateStart = document.getElementById('apply-date-start').value;
+            const dateEnd = document.getElementById('apply-date-end').value;
             const orderRows = document.querySelectorAll('.order-row');
             
             orderRows.forEach(row => {
@@ -1536,6 +1635,7 @@
                 const rowStatus = row.dataset.status;
                 const matchesStatus = selectedStatus === '全部状态' || 
                     (selectedStatus === '申请中' && rowStatus === 'audit') ||
+                (selectedStatus === '待审核' && rowStatus === 'toreview') ||
                     (selectedStatus === '已取消' && rowStatus === 'cancelled') ||
                     (selectedStatus === '审批不通过' && rowStatus === 'rejected') ||
                     (selectedStatus === '待支付' && rowStatus === 'unpaid') ||
@@ -1550,8 +1650,13 @@
                 const bondType = row.querySelector('td:nth-child(6) .text-sm').textContent.trim();
                 const matchesBondType = selectedBondType === '全部保函类型' || bondType === selectedBondType;
                 
+                // 申请日期区间匹配逻辑
+                const applyTimeText = (row.querySelector('td:nth-child(13) .text-sm')?.textContent || '').trim();
+                const applyDate = applyTimeText.substring(0, 10);
+                const matchesDate = (dateStart === '' || applyDate >= dateStart) && (dateEnd === '' || applyDate <= dateEnd);
+                
                 // 显示或隐藏行
-                if (matchesKeyword && matchesStatus && matchesBondType) {
+                if (matchesKeyword && matchesStatus && matchesBondType && matchesDate) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
@@ -1576,6 +1681,29 @@
             
             alert('订单出函成功！保函编号：' + bondNumber + '，系统将自动通知企业并生成电子凭证。');
             document.getElementById('processOrderModal').classList.add('hidden');
+        }
+
+        // 审核后同步订单列表行（状态徽章与操作按钮）
+        function syncInstitutionOrderRow(order) {
+            const rows = document.querySelectorAll('.order-row');
+            rows.forEach(row => {
+                const idCell = row.querySelector('td:nth-child(1) .text-sm.font-medium');
+                if (!idCell || idCell.textContent.trim() !== order.id) return;
+                row.dataset.status = order.statusCode;
+                const badge = row.querySelector('td:nth-child(7) span');
+                if (badge) {
+                    badge.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getStatusStyle(order.status);
+                    badge.textContent = order.status;
+                }
+                const actions = row.querySelector('td:last-child');
+                if (actions) {
+                    let html = '<a href="#" class="text-primary hover:text-primary/80 mr-3 action-btn" onclick="openOrderDetail(\'' + order.id + '\', \'' + order.statusCode + '\')">查看</a>';
+                    if (order.statusCode === 'toreview') {
+                        html += '<a href="#" class="text-blue-600 hover:text-blue-700 action-btn" onclick="openInstitutionAudit(institutionOrderData[\'' + order.id + '\'])">审核</a>';
+                    }
+                    actions.innerHTML = html;
+                }
+            });
         }
 
         // 审核相关功能
@@ -1632,6 +1760,10 @@
             if (searchButton) {
                 searchButton.addEventListener('click', searchOrders);
             }
+            ['apply-date-start', 'apply-date-end'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', searchOrders);
+            });
         });
         
         // 更新订单

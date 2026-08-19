@@ -168,9 +168,14 @@
                                             <div class="text-sm text-gray-600">2024-05-27 14:30:00</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap sticky-col" style="position: sticky; right: 0; background-color: white;">
-                                            <button onclick="viewProjectDetail('XM20240527001')" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                                                <i class="fa fa-eye mr-1"></i>查看
-                                            </button>
+                                            <div class="flex items-center space-x-3">
+                                                <button onclick="viewProjectDetail('XM20240527001')" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                    <i class="fa fa-eye mr-1"></i>查看
+                                                </button>
+                                                <button onclick="editProject('XM20240527001', this.closest('tr'))" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center">
+                                                    <i class="fa fa-pencil mr-1"></i>编辑
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr class="hover:bg-gray-50 transition-colors">
@@ -202,9 +207,14 @@
                                         <div class="text-sm text-gray-600">2024-05-27 14:25:00</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap sticky-col" style="position: sticky; right: 0; background-color: white;">
-                                        <button onclick="viewProjectDetail('XM20240527002')" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                                            <i class="fa fa-eye mr-1"></i>查看
-                                        </button>
+                                        <div class="flex items-center space-x-3">
+                                            <button onclick="viewProjectDetail('XM20240527002')" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                                                <i class="fa fa-eye mr-1"></i>查看
+                                            </button>
+                                            <button onclick="editProject('XM20240527002', this.closest('tr'))" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center">
+                                                <i class="fa fa-pencil mr-1"></i>编辑
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -230,7 +240,7 @@
     <div id="add-project-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] p-4 sm:p-6">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <div class="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-800">新增项目</h3>
+                <h3 id="add-project-title" class="text-lg font-bold text-slate-800">新增项目</h3>
                 <button onclick="closeAddProjectModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i class="fa fa-times text-xl"></i>
                 </button>
@@ -298,7 +308,7 @@
             </div>
             <div class="border-t border-slate-100 px-6 py-4 flex justify-end space-x-3">
                 <button onclick="closeAddProjectModal()" class="px-6 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors">取消</button>
-                <button onclick="submitAddProject()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">保存</button>
+                <button id="add-project-submit" onclick="submitProject()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">保存</button>
             </div>
         </div>
     </div>
@@ -335,6 +345,44 @@
     </div>
 
     <script>
+        // 项目详情数据（供查看与编辑回填使用）
+        const projectData = {
+            'XM20240527001': {
+                projectName: '福州市政道路改造项目',
+                projectCode: 'XM20240527001',
+                sectionName: '第一标段',
+                sectionCode: 'BD-001',
+                tenderer: '福州建设发展有限公司',
+                tendererCode: 'FZJS2024001',
+                tendererAddress: '福州市鼓楼区建设大厦15层',
+                tendererContact: '张三',
+                tendererPhone: '13800138001',
+                bidAmount: '500000',
+                bidDeadline: '2024-06-15 17:00:00',
+                bidOpenTime: '2024-06-18 09:30:00',
+                publishTime: '2024-05-27 10:00:00',
+                syncTime: '2024-05-27 14:30:00',
+                dataSource: '公共资源交易中心'
+            },
+            'XM20240527002': {
+                projectName: '厦门市办公楼装修工程',
+                projectCode: 'XM20240527002',
+                sectionName: '装修施工标段',
+                sectionCode: 'BD-ZX-001',
+                tenderer: '厦门建筑装饰工程公司',
+                tendererCode: 'XMJZ2024002',
+                tendererAddress: '厦门市思明区装饰大厦8层',
+                tendererContact: '李四',
+                tendererPhone: '13800138002',
+                bidAmount: '250000',
+                bidDeadline: '2024-06-20 17:00:00',
+                bidOpenTime: '2024-06-22 10:00:00',
+                publishTime: '2024-05-27 09:30:00',
+                syncTime: '2024-05-27 14:25:00',
+                dataSource: '公共资源交易中心'
+            }
+        };
+
         function syncProjectData(type) {
             const syncType = type === 'incremental' ? '增量同步' : '全量同步';
             showLoadingModal(`正在执行${syncType}...`);
@@ -353,43 +401,6 @@
         }
 
         function viewProjectDetail(projectId, extra) {
-            const projectData = {
-                'XM20240527001': {
-                    projectName: '福州市政道路改造项目',
-                    projectCode: 'XM20240527001',
-                    sectionName: '第一标段',
-                    sectionCode: 'BD-001',
-                    tenderer: '福州建设发展有限公司',
-                    tendererCode: 'FZJS2024001',
-                    tendererAddress: '福州市鼓楼区建设大厦15层',
-                    tendererContact: '张三',
-                    tendererPhone: '13800138001',
-                    bidAmount: '500000',
-                    bidDeadline: '2024-06-15 17:00:00',
-                    bidOpenTime: '2024-06-18 09:30:00',
-                    publishTime: '2024-05-27 10:00:00',
-                    syncTime: '2024-05-27 14:30:00',
-                    dataSource: '公共资源交易中心'
-                },
-                'XM20240527002': {
-                    projectName: '厦门市办公楼装修工程',
-                    projectCode: 'XM20240527002',
-                    sectionName: '装修施工标段',
-                    sectionCode: 'BD-ZX-001',
-                    tenderer: '厦门建筑装饰工程公司',
-                    tendererCode: 'XMJZ2024002',
-                    tendererAddress: '厦门市思明区装饰大厦8层',
-                    tendererContact: '李四',
-                    tendererPhone: '13800138002',
-                    bidAmount: '250000',
-                    bidDeadline: '2024-06-20 17:00:00',
-                    bidOpenTime: '2024-06-22 10:00:00',
-                    publishTime: '2024-05-27 09:30:00',
-                    syncTime: '2024-05-27 14:25:00',
-                    dataSource: '公共资源交易中心'
-                }
-            };
-
             const data = projectData[projectId] || projectData['XM20240527001'];
             if (extra) {
                 try {
@@ -537,8 +548,17 @@
             document.body.appendChild(modal);
         }
 
-        // 新增项目
+        // 新增/编辑项目（共用弹窗）
+        let editingRow = null;
+
+        function setModalTitle(title, submitText) {
+            document.getElementById('add-project-title').textContent = title;
+            document.getElementById('add-project-submit').textContent = submitText;
+        }
+
         function openAddProjectModal() {
+            editingRow = null;
+            setModalTitle('新增项目', '保存');
             const modal = document.getElementById('add-project-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -549,6 +569,37 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.getElementById('add-project-form').reset();
+            editingRow = null;
+        }
+
+        // 编辑项目：回填数据到表单
+        function editProject(projectId, row) {
+            const base = projectData[projectId] || {};
+            let extra = {};
+            if (row && row.dataset.extra) {
+                try { extra = JSON.parse(row.dataset.extra); } catch (e) {}
+            }
+            const data = Object.assign({}, base, extra);
+
+            document.getElementById('np-projectName').value = data.projectName || '';
+            document.getElementById('np-projectCode').value = data.projectCode || '';
+            document.getElementById('np-sectionName').value = data.sectionName || '';
+            document.getElementById('np-sectionCode').value = data.sectionCode || '';
+            document.getElementById('np-bidAmount').value = data.bidAmount || '';
+            document.getElementById('np-bidDeadline').value = (data.bidDeadline || '').replace(' ', 'T').substring(0, 16);
+            document.getElementById('np-bidOpenTime').value = (data.bidOpenTime || '').replace(' ', 'T').substring(0, 16);
+            document.getElementById('np-tenderer').value = data.tenderer || '';
+            document.getElementById('np-tendererCreditCode').value = data.tendererCreditCode || data.tendererCode || '';
+            document.getElementById('np-tendererAddress').value = data.tendererAddress || '';
+            document.getElementById('np-tendererContact').value = data.tendererContact || '';
+            document.getElementById('np-tendererPhone').value = data.tendererPhone || '';
+            document.getElementById('np-dataSource').value = data.dataSource || '手工导入';
+
+            editingRow = row;
+            setModalTitle('编辑项目', '保存修改');
+            const modal = document.getElementById('add-project-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function formatDateTimeLocal(value) {
@@ -556,7 +607,7 @@
             return value.replace('T', ' ') + ':00';
         }
 
-        function submitAddProject() {
+        function submitProject() {
             const form = document.getElementById('add-project-form');
             if (!form.reportValidity()) return;
             const projectName = document.getElementById('np-projectName').value.trim();
@@ -574,36 +625,59 @@
             const bidOpenTime = formatDateTimeLocal(document.getElementById('np-bidOpenTime').value);
             const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-            const tbody = document.querySelector('table tbody');
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-gray-50 transition-colors';
-            tr.dataset.extra = JSON.stringify({
+            const extra = {
                 tendererCreditCode: tendererCreditCode,
                 tendererAddress: tendererAddress,
                 tendererContact: tendererContact,
                 tendererPhone: tendererPhone,
                 dataSource: dataSource
-            });
-            tr.innerHTML = `
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${projectName}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${projectCode}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${sectionName}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${sectionCode}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${tenderer}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${Number(bidAmount).toLocaleString()}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${bidDeadline}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${bidOpenTime}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${now}</div></td>
-                <td class="px-6 py-4 whitespace-nowrap sticky-col" style="position: sticky; right: 0; background-color: white;">
-                    <button onclick="viewProjectDetail('${projectCode}', this.closest('tr').dataset.extra)" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
-                        <i class="fa fa-eye mr-1"></i>查看
-                    </button>
-                </td>
-            `;
-            tbody.insertBefore(tr, tbody.firstChild);
+            };
 
-            closeAddProjectModal();
-            showSuccessModal('新增成功', `项目 ${projectCode} 已添加`);
+            if (editingRow) {
+                // 编辑模式：更新现有行
+                const cells = editingRow.children;
+                cells[0].innerHTML = `<div class="text-sm text-gray-900">${projectName}</div>`;
+                cells[1].innerHTML = `<div class="text-sm font-medium text-gray-900">${projectCode}</div>`;
+                cells[2].innerHTML = `<div class="text-sm text-gray-900">${sectionName}</div>`;
+                cells[3].innerHTML = `<div class="text-sm font-medium text-gray-900">${sectionCode}</div>`;
+                cells[4].innerHTML = `<div class="text-sm text-gray-900">${tenderer}</div>`;
+                cells[5].innerHTML = `<div class="text-sm text-gray-900">${Number(bidAmount).toLocaleString()}</div>`;
+                cells[6].innerHTML = `<div class="text-sm text-gray-600">${bidDeadline}</div>`;
+                cells[7].innerHTML = `<div class="text-sm text-gray-600">${bidOpenTime}</div>`;
+                editingRow.dataset.extra = JSON.stringify(extra);
+                closeAddProjectModal();
+                showSuccessModal('编辑成功', `项目 ${projectCode} 已更新`);
+            } else {
+                // 新增模式
+                const tbody = document.querySelector('table tbody');
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 transition-colors';
+                tr.dataset.extra = JSON.stringify(extra);
+                const operCell = `
+                    <div class="flex items-center space-x-3">
+                        <button onclick="viewProjectDetail('${projectCode}', this.closest('tr').dataset.extra)" class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center">
+                            <i class="fa fa-eye mr-1"></i>查看
+                        </button>
+                        <button onclick="editProject('${projectCode}', this.closest('tr'))" class="text-green-600 hover:text-green-800 text-sm font-medium flex items-center">
+                            <i class="fa fa-pencil mr-1"></i>编辑
+                        </button>
+                    </div>`;
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${projectName}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${projectCode}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${sectionName}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">${sectionCode}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${tenderer}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">${Number(bidAmount).toLocaleString()}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${bidDeadline}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${bidOpenTime}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-600">${now}</div></td>
+                    <td class="px-6 py-4 whitespace-nowrap sticky-col" style="position: sticky; right: 0; background-color: white;">${operCell}</td>
+                `;
+                tbody.insertBefore(tr, tbody.firstChild);
+                closeAddProjectModal();
+                showSuccessModal('新增成功', `项目 ${projectCode} 已添加`);
+            }
         }
 
         // 批量导入

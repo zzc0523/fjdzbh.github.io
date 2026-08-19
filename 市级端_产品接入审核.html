@@ -85,7 +85,7 @@
                             <span><span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white text-xs mr-1">4</span> 首单验证审核</span>
                         </div>
                         <div class="text-xs text-slate-500 hidden md:block"><i class="fa fa-history mr-1"></i>支持查看前置步骤审核记录</div>
-                        <div class="text-xs text-slate-500 hidden md:block"><i class="fa fa-info-circle mr-1 text-primary"></i>由市级端发起的接入，完善产品材料后即直接发起展业审核</div>
+                        <div class="text-xs text-slate-500 hidden md:block"><i class="fa fa-info-circle mr-1 text-primary"></i>由市级端发起的接入，完善产品材料后依次进行技术调试、上线验收、首单验证（可跳过），最后发起展业审核</div>
                     </div>
 
                     <!-- 筛选栏 -->
@@ -743,10 +743,11 @@
                         <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2"><i class="fa fa-plus-circle text-primary"></i>发起接入产品</h3>
                         <button id="closeInitAccessModal" class="w-8 h-8 rounded-full hover:bg-white/70 flex items-center justify-center transition"><i class="fa fa-times text-slate-400"></i></button>
                     </div>
-                    <div class="p-6 overflow-y-auto" style="max-height: calc(90vh - 140px);">
+                    <div id="init-wizard-steps" class="px-6 py-3 bg-slate-50/60 border-b border-slate-100"></div>
+                    <div id="init-wizard-body" class="p-6 overflow-y-auto" style="max-height: calc(90vh - 240px);">
                         <div class="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-100 text-xs text-amber-700 flex items-start gap-2">
                             <i class="fa fa-info-circle mt-0.5"></i>
-                            <span>由市级端发起的产品接入，仅需完善产品材料，提交后即可直接进入展业审核，无需经过产品审核、技术调试审核、上线验收审核、首单验证审核。</span>
+                            <span>由市级端发起的产品接入，完善产品材料后依次进入技术调试、上线验收、首单验证，完成（或跳过）上述环节后再发起展业审核。其中技术调试、上线验收、首单验证均可根据实际情况选择跳过。</span>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -830,10 +831,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 border-t px-6 py-4 bg-slate-50/90">
-                        <button id="cancelInitAccess" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">取消</button>
-                        <button id="submitInitAccess" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-paper-plane"></i>提交并发起展业审核</button>
-                    </div>
+                    <div id="init-wizard-footer" class="flex justify-end gap-3 border-t px-6 py-4 bg-slate-50/90"></div>
                 </div>
             `;
             document.body.appendChild(initModal);
@@ -923,32 +921,234 @@
             document.querySelectorAll('input[name="init-rate-type"]').forEach(r => r.addEventListener('change', renderRateConfig));
             renderRateConfig();
 
-            document.getElementById('submitInitAccess')?.addEventListener('click', () => {
-                const orgName = document.getElementById('init-org-name').value.trim();
-                const orgType = document.getElementById('init-org-type').value;
-                const product = document.getElementById('init-product').value;
-                const productName = document.getElementById('init-product-name').value.trim();
-                const city = document.getElementById('init-city').value.trim() || '福州市';
-                const rateType = document.querySelector('input[name="init-rate-type"]:checked')?.value || '固定费率';
-                const time = document.getElementById('init-time').value.trim();
-                const desc = document.getElementById('init-desc').value.trim();
+            // ===== 发起接入产品：分步向导 =====
+            // 步骤：1 完善产品材料 -> 2 技术调试 -> 3 上线验收 -> 4 首单验证 -> 5 发起展业审核
+            const WIZARD_STEPS = ['完善材料', '技术调试', '上线验收', '首单验证', '展业审核'];
+            const wizard = { step: 1, skipped: { 2: false, 3: false, 4: false }, note: {}, form: { 2: {}, 3: {}, 4: {} } };
 
-                if (!orgName) { showToast('请选择机构名称', 'error'); return; }
-                if (!productName) { showToast('请填写产品名称', 'error'); return; }
-                if (!desc) { showToast('请填写产品介绍', 'error'); return; }
+            const renderWizardSteps = () => {
+                const bar = document.getElementById('init-wizard-steps');
+                if (!bar) return;
+                bar.innerHTML = '<div class="flex items-center justify-center gap-2 text-xs font-medium">' + WIZARD_STEPS.map((s, i) => {
+                    const n = i + 1;
+                    const done = n < wizard.step;
+                    const active = n === wizard.step;
+                    const skipped = wizard.skipped[n];
+                    let cls = 'w-6 h-6 rounded-full flex items-center justify-center text-[11px] ';
+                    cls += active ? 'bg-primary text-white' : (done ? 'bg-green-500 text-white' : 'bg-slate-200 text-slate-500');
+                    const labelCls = active ? 'text-primary' : (done ? 'text-green-600' : 'text-slate-400');
+                    const icon = active ? n : (done ? '<i class="fa fa-check"></i>' : (skipped && !active ? '<i class="fa fa-forward"></i>' : n));
+                    return '<div class="flex items-center gap-1.5"><span class="' + cls + '">' + icon + '</span><span class="' + labelCls + '">' + s + (skipped && n <= 4 && done ? '（已跳过）' : '') + '</span></div>' + (n < 5 ? '<span class="text-slate-300 mx-1">›</span>' : '');
+                }).join('') + '</div>';
+            };
 
-                // 生成一个市级直发接入编号
-                const seq = String(Math.floor(Math.random() * 9000) + 1000);
-                const applyId = 'AP2026' + seq;
-                const today = new Date();
-                const applyDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            const setFooter = (html) => {
+                const f = document.getElementById('init-wizard-footer');
+                if (f) f.innerHTML = html;
+            };
+            const bind = (id, evt, fn) => { const el = document.getElementById(id); if (el) el.addEventListener(evt, fn); };
 
-                insertCityInitRow({
-                    id: applyId, name: orgName, product, productName, orgType, city, rate: rateType, time, desc, date: applyDate
-                });
-                closeModal();
-                showToast('产品材料已完善，已发起展业审核', 'success');
-            });
+            // 各步骤上传文件清单（与机构端-产品管理一致）
+            const STEP_FILES = {
+                2: ['交易中心对接函.pdf', '第三方营业执照.pdf', '对接人员授权书.pdf', '金融机构服务承诺函.pdf', '保密协议.docx', '对接协议.docx', '保险自营平台声明.pdf', '金融机构电子保函业务流程说明.pdf'],
+                3: ['业务系统等级保护证明材料.pdf', '上线验收报告.pdf'],
+                4: ['首单测试报告.pdf']
+            };
+            // 各步骤字段（与机构端-产品管理一致）
+            const STEP_FIELDS = {
+                3: [
+                    { id: 'f-store', label: '数据存储服务器地址', value: 'https://storage.bank-fj.com/v1/data' },
+                    { id: 'f-fee', label: '收费标准', value: '0.003 (千分之三)' },
+                    { id: 'f-tel', label: '售后服务电话、技术支持电话', value: '400-888-8888 / 0591-88888888' },
+                    { id: 'f-url', label: 'apply_url', value: 'https://api.bank-fj.com/apply' },
+                    { id: 'f-key', label: 'app_key', value: 'fj_bank_88889999' },
+                    { id: 'f-secret', label: 'app_secret', value: '************************' },
+                    { id: 'f-decrypt', label: 'decrypt_key', value: '********************************' }
+                ],
+                4: [
+                    { id: 'f-firstdate', label: '首单验证日期', type: 'date', value: '' }
+                ]
+            };
+
+            const fileBoxHtml = (step) => {
+                const files = STEP_FILES[step] || [];
+                if (!files.length) return '';
+                const templateFiles = ['交易中心对接函.pdf', '对接人员授权书.pdf', '金融机构服务承诺函.pdf', '保密协议.docx', '对接协议.docx', '保险自营平台声明.pdf', '金融机构电子保函业务流程说明.pdf'];
+                return '<div class="space-y-4">' + files.map((f, i) => {
+                    const name = f.replace(/\.(pdf|docx|doc)$/, '');
+                    const accept = f.includes('.pdf') ? '.pdf' : (f.includes('.docx') || f.includes('.doc') ? '.pdf,.doc,.docx' : '');
+                    const required = /(对接函|营业执照|授权书|承诺函|保密协议|对接协议|业务流程说明|等级保护|验收报告|测试报告)$/.test(name);
+                    const hasTemplate = templateFiles.includes(f);
+                    const showTip = f.includes('业务流程说明') || f.includes('保险自营平台声明');
+                    return '<div>' +
+                        '<label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">' + name + (required ? ' <span class="text-red-500">*</span>' : '') + '</label>' +
+                        '<div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-primary transition cursor-pointer file-upload-area">' +
+                        '<i class="fa fa-upload text-slate-400 text-4xl mb-2"></i>' +
+                        '<p class="text-sm text-slate-600">点击或拖拽上传文件</p>' +
+                        (showTip ? '<p class="text-xs text-slate-400 mt-1">支持 PDF, DOC, DOCX 格式，最大 10MB</p>' : '') +
+                        '<input type="file" class="hidden" accept="' + accept + '" data-stepfile="' + step + '" data-idx="' + i + '">' +
+                        '</div>' +
+                        (hasTemplate ? '<button class="download-template mt-2 text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition"><i class="fa fa-download"></i>下载模板</button>' : '') +
+                        '</div>';
+                }).join('') + '</div>';
+            };
+
+            const fieldsHtml = (step) => {
+                const fields = STEP_FIELDS[step] || [];
+                if (!fields.length) return '';
+                return '<div class="grid grid-cols-2 gap-3"><div class="col-span-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-0.5">填写信息</div>' +
+                    fields.map(f => '<div class="' + (f.type === 'date' ? '' : 'col-span-2 sm:col-span-1') + '"><label class="block text-[11px] text-slate-500 mb-0.5">' + f.label + '</label>' +
+                        '<input id="' + f.id + '" type="' + (f.type || 'text') + '" value="' + (wizard.form[step] && wizard.form[step][f.id] != null ? wizard.form[step][f.id] : (f.value || '')) + '" ' + (f.id === 'f-secret' || f.id === 'f-decrypt' ? 'readonly' : '') + ' class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">' +
+                        '</div>').join('') + '</div>';
+            };
+
+            const stepHeader = (icon, title, desc) =>
+                '<div class="p-4 rounded-xl bg-blue-50 border border-blue-100"><div class="flex items-center gap-2 font-semibold text-blue-700"><i class="fa ' + icon + '"></i>' + title + '</div>' +
+                '<p class="text-sm text-slate-600 mt-1">' + desc + '</p>' +
+                '<p class="text-xs text-slate-400 mt-1">本环节可根据实际情况选择跳过</p></div>';
+
+            const noteHtml = (key) =>
+                '<div><label class="block text-xs font-bold text-slate-500 mb-1.5">备注（选填）</label>' +
+                '<textarea id="init-step-note" rows="3" placeholder="可填写本次环节的说明或结果" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary text-sm">' + (wizard.note[key] || '') + '</textarea></div>';
+
+            const collectStep = (n) => {
+                const form = {};
+                (STEP_FIELDS[n] || []).forEach(f => { const el = document.getElementById(f.id); if (el) form[f.id] = el.value.trim(); });
+                wizard.form[n] = form;
+                const note = document.getElementById('init-step-note');
+                const keyMap = { 2: 'tech', 3: 'accept', 4: 'first' };
+                if (note) wizard.note[keyMap[n]] = note.value.trim();
+            };
+
+            const goStep = (n) => {
+                wizard.step = n;
+                renderWizardSteps();
+                const body = document.getElementById('init-wizard-body');
+
+                const bindUploadAreas = () => {
+                    body.querySelectorAll('.file-upload-area').forEach(area => {
+                        const fileInput = area.querySelector('input[type="file"]');
+                        if (!fileInput) return;
+                        area.addEventListener('click', (e) => {
+                            if (e.target.closest('.download-template')) return;
+                            fileInput.click();
+                        });
+                        fileInput.addEventListener('change', function() {
+                            const fileName = this.files[0]?.name;
+                            if (fileName) {
+                                area.innerHTML = '<i class="fa fa-check-circle text-green-500 text-3xl mb-2"></i>' +
+                                    '<p class="text-sm text-slate-700 font-medium">' + fileName + '</p>' +
+                                    '<p class="text-xs text-slate-400 mt-1">点击重新上传</p>';
+                                area.appendChild(this);
+                            }
+                        });
+                    });
+                    body.querySelectorAll('.download-template').forEach(btn => {
+                        btn.addEventListener('click', (e) => { e.stopPropagation(); showToast('模板下载已开始', 'success'); });
+                    });
+                };
+
+                if (n === 1) {
+                    // 第1步：保持初始产品材料表单，仅更新底部与进度条
+                    setFooter('<button id="wz-cancel" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">取消</button>' +
+                        '<button id="wz-next" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-arrow-right"></i>下一步</button>');
+                    bind('wz-cancel', 'click', closeModal);
+                    bind('wz-next', 'click', () => {
+                        const orgName = document.getElementById('init-org-name').value.trim();
+                        const productName = document.getElementById('init-product-name').value.trim();
+                        const desc = document.getElementById('init-desc').value.trim();
+                        if (!orgName) { showToast('请选择机构名称', 'error'); return; }
+                        if (!productName) { showToast('请填写产品名称', 'error'); return; }
+                        if (!desc) { showToast('请填写产品介绍', 'error'); return; }
+                        goStep(2);
+                    });
+                    return;
+                }
+
+                if (n === 2) {
+                    body.innerHTML = stepHeader('fa-cogs', '技术调试', '完成接口联调、报文对接、环境验证等技术调试工作。') +
+                        fileBoxHtml(2) + noteHtml('tech');
+                    bindUploadAreas();
+                    setFooter('<button id="wz-prev" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">上一步</button>' +
+                        '<button id="wz-skip" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">跳过</button>' +
+                        '<button id="wz-next" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-arrow-right"></i>下一步</button>');
+                    bind('wz-prev', 'click', () => goStep(1));
+                    bind('wz-skip', 'click', () => { wizard.skipped[2] = true; collectStep(2); goStep(3); });
+                    bind('wz-next', 'click', () => { wizard.skipped[2] = false; collectStep(2); goStep(3); });
+                    return;
+                }
+
+                if (n === 3) {
+                    body.innerHTML = stepHeader('fa-cloud-upload', '上线验收', '完成产品上线前的验收评审，确认功能、安全、性能达标。') +
+                        fieldsHtml(3) + fileBoxHtml(3) + noteHtml('accept');
+                    bindUploadAreas();
+                    setFooter('<button id="wz-prev" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">上一步</button>' +
+                        '<button id="wz-skip" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">跳过</button>' +
+                        '<button id="wz-next" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-arrow-right"></i>下一步</button>');
+                    bind('wz-prev', 'click', () => goStep(2));
+                    bind('wz-skip', 'click', () => { wizard.skipped[3] = true; collectStep(3); goStep(4); });
+                    bind('wz-next', 'click', () => { wizard.skipped[3] = false; collectStep(3); goStep(4); });
+                    return;
+                }
+
+                if (n === 4) {
+                    body.innerHTML = stepHeader('fa-check-circle', '首单验证', '完成首笔真实或模拟保函订单的验证，确认业务闭环。') +
+                        fieldsHtml(4) + fileBoxHtml(4) + noteHtml('first');
+                    bindUploadAreas();
+                    setFooter('<button id="wz-prev" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">上一步</button>' +
+                        '<button id="wz-skip" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">跳过</button>' +
+                        '<button id="wz-next" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-arrow-right"></i>下一步</button>');
+                    bind('wz-prev', 'click', () => goStep(3));
+                    bind('wz-skip', 'click', () => { wizard.skipped[4] = true; collectStep(4); goStep(5); });
+                    bind('wz-next', 'click', () => { wizard.skipped[4] = false; collectStep(4); goStep(5); });
+                    return;
+                }
+
+                if (n === 5) {
+                    const tech = wizard.skipped[2] ? '已跳过' : '已完成';
+                    const accept = wizard.skipped[3] ? '已跳过' : '已完成';
+                    const first = wizard.skipped[4] ? '已跳过' : '已完成';
+                    body.innerHTML = '<div class="space-y-4">' +
+                        '<div class="p-4 rounded-xl bg-green-50 border border-green-100 flex items-center gap-2 font-semibold text-green-700"><i class="fa fa-flag-checkered"></i>展业审核确认</div>' +
+                        '<p class="text-sm text-slate-600">产品材料已完善，技术调试、上线验收、首单验证环节均已处理（或跳过），现在可发起展业审核。</p>' +
+                        '<div class="grid grid-cols-3 gap-3 text-sm">' +
+                        '<div class="rounded-lg border border-slate-200 p-3"><div class="text-slate-400 text-xs">技术调试</div><div class="font-semibold mt-1 ' + (wizard.skipped[2] ? 'text-slate-400' : 'text-green-600') + '">' + tech + '</div></div>' +
+                        '<div class="rounded-lg border border-slate-200 p-3"><div class="text-slate-400 text-xs">上线验收</div><div class="font-semibold mt-1 ' + (wizard.skipped[3] ? 'text-slate-400' : 'text-green-600') + '">' + accept + '</div></div>' +
+                        '<div class="rounded-lg border border-slate-200 p-3"><div class="text-slate-400 text-xs">首单验证</div><div class="font-semibold mt-1 ' + (wizard.skipped[4] ? 'text-slate-400' : 'text-green-600') + '">' + first + '</div></div>' +
+                        '</div></div>';
+                    setFooter('<button id="wz-prev" class="px-5 py-2 border border-slate-300 rounded-xl hover:bg-slate-100 transition text-slate-600 text-sm">上一步</button>' +
+                        '<button id="wz-submit" class="px-5 py-2 bg-primary text-white rounded-xl hover:bg-primary/90 transition text-sm font-semibold shadow-sm flex items-center gap-2"><i class="fa fa-paper-plane"></i>发起展业审核</button>');
+                    bind('wz-prev', 'click', () => goStep(4));
+                    bind('wz-submit', 'click', () => {
+                        const orgName = document.getElementById('init-org-name').value.trim();
+                        const orgType = document.getElementById('init-org-type').value;
+                        const product = document.getElementById('init-product').value;
+                        const productName = document.getElementById('init-product-name').value.trim();
+                        const city = document.getElementById('init-city').value.trim() || '福州市';
+                        const rateType = document.querySelector('input[name="init-rate-type"]:checked')?.value || '固定费率';
+                        const time = document.getElementById('init-time').value.trim();
+                        const desc = document.getElementById('init-desc').value.trim();
+                        const seq = String(Math.floor(Math.random() * 9000) + 1000);
+                        const applyId = 'AP2026' + seq;
+                        const today = new Date();
+                        const applyDate = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+                        insertCityInitRow({
+                            id: applyId, name: orgName, product, productName, orgType, city, rate: rateType, time, desc, date: applyDate,
+                            steps: {
+                                1: '已完善',
+                                2: wizard.skipped[2] ? '已跳过' : '已完成',
+                                3: wizard.skipped[3] ? '已跳过' : '已完成',
+                                4: wizard.skipped[4] ? '已跳过' : '已完成'
+                            }
+                        });
+                        closeModal();
+                        showToast('产品接入已提交，进入展业审核', 'success');
+                    });
+                    return;
+                }
+            };
+
+            goStep(1);
         }
 
         // 在表格顶部插入一条市级端直发记录（仅需完善产品材料，跳过四步审核）
@@ -962,15 +1162,21 @@
             tr.setAttribute('data-product', data.productName || data.product);
             tr.setAttribute('data-date', data.date);
             tr.setAttribute('data-city-init', '1');
+            const s = data.steps || { 1: '已完善', 2: '已跳过', 3: '已跳过', 4: '已跳过' };
+            const stepBadge = (val, doneCls, skipCls) => {
+                if (val === '已完成') return '<span class="badge-step ' + doneCls + '"><i class="fa fa-check-circle-o"></i>已完成</span>';
+                if (val === '已跳过') return '<span class="badge-step ' + skipCls + '"><i class="fa fa-forward"></i>已跳过</span>';
+                return '<span class="badge-step ' + skipCls + '">' + val + '</span>';
+            };
             tr.innerHTML = `
                 <td class="apply-id px-4 py-3 font-mono">${data.id}</td>
                 <td class="inst-name px-4 py-3 font-medium">${data.name}<span class="ml-1 inline-block align-middle text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">市级直发</span></td>
                 <td class="product-name px-4 py-3">${data.productName || data.product}</td>
                 <td class="inst-type px-4 py-3">${data.orgType}</td>
                 <td class="step1-status px-3 py-3 text-center"><span class="badge-step bg-green-100 text-green-700"><i class="fa fa-check-circle-o"></i>已完善</span></td>
-                <td class="step2-status px-3 py-3 text-center"><span class="badge-step bg-slate-100 text-slate-400">免审核</span></td>
-                <td class="step3-status px-3 py-3 text-center"><span class="badge-step bg-slate-100 text-slate-400">免审核</span></td>
-                <td class="step4-status px-3 py-3 text-center"><span class="badge-step bg-slate-100 text-slate-400">免审核</span></td>
+                <td class="step2-status px-3 py-3 text-center">${stepBadge(s[2], 'bg-green-100 text-green-700', 'bg-slate-100 text-slate-400')}</td>
+                <td class="step3-status px-3 py-3 text-center">${stepBadge(s[3], 'bg-green-100 text-green-700', 'bg-slate-100 text-slate-400')}</td>
+                <td class="step4-status px-3 py-3 text-center">${stepBadge(s[4], 'bg-green-100 text-green-700', 'bg-slate-100 text-slate-400')}</td>
                 <td class="overall-status px-3 py-3 text-center"><span class="badge-step bg-indigo-100 text-indigo-700">待展业审核</span></td>
                 <td class="px-4 py-3"><div class="action-group">
                     <button class="btn-view-detail btn-soft-primary text-xs px-3 py-1.5 rounded-full"><i class="fa fa-eye mr-1"></i>查看详情</button>
@@ -983,7 +1189,7 @@
             const detailBtn = tr.querySelector('.btn-view-detail');
             if (detailBtn) detailBtn.addEventListener('click', () => {
                 const stepMap = {
-                    step1: '已完善', step2: '免审核', step3: '免审核', step4: '免审核'
+                    step1: '已完善', step2: s[2] || '已跳过', step3: s[3] || '已跳过', step4: s[4] || '已跳过'
                 };
                 showAccessAuditDialog({ id: data.id, name: data.name, product: data.productName || data.product, city: data.city, applyDate: data.date, cityInit: true }, 1, stepMap, true);
             });

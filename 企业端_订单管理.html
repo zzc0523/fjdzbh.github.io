@@ -48,25 +48,51 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 模拟订单数据
             const orderData = [
-                { id: 'FJ202603110001', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '500,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '1,500.00', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11', expiry: '2026-06-09', operator: '张三', status: '已出函' },
-                { id: 'FJ202603250002', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '100,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '300.00', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25', expiry: '2026-06-23', operator: '李四', status: '待支付' },
-                { id: 'FJ202603090001', projectName: '福建省高速公路网建设', type: '预付款保函', amount: '1,000,000.00', underwritingInstitution: '中国银行福建省分行', premium: '3,000.00', beneficiary: '福建省交通建设集团有限公司', applyTime: '2026-03-09', expiry: '2026-06-07', operator: '王五', status: '已支付' },
-                { id: 'FJ202604010001', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '200,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '600.00', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01', expiry: '2026-06-30', operator: '赵六', status: '申请中' },
-                { id: 'FJ202604020002', projectName: '福州市城市综合体建设', type: '履约保函', amount: '1,500,000.00', underwritingInstitution: '中国农业银行福建省分行', premium: '4,500.00', beneficiary: '福州市城乡建设局', applyTime: '2026-04-02', expiry: '2026-07-01', operator: '孙七', status: '审批不通过' },
-                { id: 'FJ202604030003', projectName: '福建省电力设施改造', type: '预付款保函', amount: '800,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '2,400.00', beneficiary: '福建省电力建设有限公司', applyTime: '2026-04-03', expiry: '2026-07-02', operator: '周八', status: '已取消' },
-                { id: 'FJ202604040004', projectName: '莆田市港口建设工程', type: '投标保函', amount: '150,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '450.00', beneficiary: '莆田市公共资源交易中心', applyTime: '2026-04-04', expiry: '2026-07-03', operator: '吴九', status: '退保中' },
-                { id: 'FJ202604070007', projectName: '三明市水利枢纽工程', type: '投标保函', amount: '250,000.00', underwritingInstitution: '中国银行福建省分行', premium: '750.00', beneficiary: '三明市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '郑十', status: '已退保' },
-                { id: 'FJ202604070008', projectName: '泉州市跨海大桥工程', type: '投标保函', amount: '250,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '750.00', beneficiary: '泉州市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '王十一', status: '拒绝退保' },
+                { id: 'FJ202603110001', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '500,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '1,500.00', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11', expiry: '2026-06-09', operator: '张三', operatorPhone: '13805910001', status: '已出函' },
+                { id: 'FJ202603250002', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '100,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '300.00', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25', expiry: '2026-06-23', operator: '李四', operatorPhone: '13805910002', status: '待支付' },
+                { id: 'FJ202603090001', projectName: '福建省高速公路网建设', type: '预付款保函', amount: '1,000,000.00', underwritingInstitution: '中国银行福建省分行', premium: '3,000.00', beneficiary: '福建省交通建设集团有限公司', applyTime: '2026-03-09', expiry: '2026-06-07', operator: '王五', operatorPhone: '13805910003', status: '已支付' },
+                { id: 'FJ202604010001', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '200,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '600.00', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01', expiry: '2026-06-30', operator: '赵六', operatorPhone: '13805910004', status: '申请中' },
+                { id: 'FJ202604050005', projectName: '宁德市新能源产业园工程', type: '投标保函', amount: '300,000.00', underwritingInstitution: '中国农业银行福建省分行', premium: '900.00', beneficiary: '宁德市公共资源交易中心', applyTime: '2026-04-05', expiry: '2026-07-04', operator: '陈十二', operatorPhone: '13805910005', status: '待审核' },
+                { id: 'FJ202604020002', projectName: '福州市城市综合体建设', type: '履约保函', amount: '1,500,000.00', underwritingInstitution: '中国农业银行福建省分行', premium: '4,500.00', beneficiary: '福州市城乡建设局', applyTime: '2026-04-02', expiry: '2026-07-01', operator: '孙七', operatorPhone: '13805910006', status: '审批不通过' },
+                { id: 'FJ202604030003', projectName: '福建省电力设施改造', type: '预付款保函', amount: '800,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '2,400.00', beneficiary: '福建省电力建设有限公司', applyTime: '2026-04-03', expiry: '2026-07-02', operator: '周八', operatorPhone: '13805910007', status: '已取消' },
+                { id: 'FJ202604040004', projectName: '莆田市港口建设工程', type: '投标保函', amount: '150,000.00', underwritingInstitution: '中国工商银行福建省分行', premium: '450.00', beneficiary: '莆田市公共资源交易中心', applyTime: '2026-04-04', expiry: '2026-07-03', operator: '吴九', operatorPhone: '13805910008', status: '退保中' },
+                { id: 'FJ202604070007', projectName: '三明市水利枢纽工程', type: '投标保函', amount: '250,000.00', underwritingInstitution: '中国银行福建省分行', premium: '750.00', beneficiary: '三明市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '郑十', operatorPhone: '13805910009', status: '已退保' },
+                { id: 'FJ202604070008', projectName: '泉州市跨海大桥工程', type: '投标保函', amount: '250,000.00', underwritingInstitution: '中国建设银行福建省分行', premium: '750.00', beneficiary: '泉州市公共资源交易中心', applyTime: '2026-04-07', expiry: '2026-07-06', operator: '王十一', operatorPhone: '13805910010', status: '拒绝退保' },
             ];
 
             const tableBody = document.querySelector('tbody');
-            let currentStatusFilter = '全部';
+
+            // 根据全部查询条件过滤
+            function applyFilters() {
+                const keyword = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+                const typeFilter = document.getElementById('type-filter')?.value || '';
+                const statusFilter = document.getElementById('status-filter')?.value || '';
+                const dateStart = document.getElementById('apply-date-start')?.value || '';
+                const dateEnd = document.getElementById('apply-date-end')?.value || '';
+
+                const filteredData = orderData.filter(item => {
+                    if (statusFilter && item.status !== statusFilter) return false;
+                    if (typeFilter && item.type !== typeFilter) return false;
+                    if (dateStart && item.applyTime < dateStart) return false;
+                    if (dateEnd && item.applyTime > dateEnd) return false;
+                    if (keyword) {
+                        const haystack = [item.id, item.projectName, item.type, item.beneficiary, item.operator].join(' ').toLowerCase();
+                        if (!haystack.includes(keyword)) return false;
+                    }
+                    return true;
+                });
+
+                renderOrderRows(filteredData);
+            }
 
             // 渲染列表函数
             function renderOrderList(status = '全部') {
-                currentStatusFilter = status;
-                const filteredData = status === '全部' ? orderData : orderData.filter(item => item.status === status);
-                
+                const statusEl = document.getElementById('status-filter');
+                if (statusEl) statusEl.value = status === '全部' ? '' : status;
+                applyFilters();
+            }
+
+            function renderOrderRows(filteredData) {
                 tableBody.innerHTML = filteredData.map(item => `
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -92,6 +118,9 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm text-gray-900">${item.operator}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">${item.operatorPhone || '-'}</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyle(item.status)}">
@@ -122,7 +151,7 @@
                                     <i class="fa fa-file-text-o mr-1"></i>发票
                                 </a>
                                 ` : ''}
-                                ${['申请中', '待支付'].includes(item.status) ? `
+                                ${['申请中', '待支付', '待审核'].includes(item.status) ? `
                                 <a href="#" class="text-orange-500 hover:text-orange-600 font-bold" title="撤销申请" data-id="${item.id}">
                                     <i class="fa fa-times-circle mr-1"></i>撤销
                                 </a>
@@ -147,6 +176,7 @@
             function getStatusStyle(status) {
                 switch(status) {
                     case '申请中': return 'bg-blue-50 text-blue-600 border border-blue-100';
+                    case '待审核': return 'bg-amber-50 text-amber-600 border border-amber-100';
                     case '已取消': return 'bg-gray-50 text-gray-500 border border-gray-200';
                     case '审批不通过': return 'bg-red-50 text-red-600 border border-red-100';
                     case '待支付': return 'bg-rose-50 text-rose-600 border border-rose-100';
@@ -163,14 +193,11 @@
             // 页面初始化加载数据
             renderOrderList('全部');
             
-            // 状态筛选下拉框事件监听
-            const statusFilter = document.getElementById('status-filter');
-            if (statusFilter) {
-                statusFilter.addEventListener('change', function() {
-                    const selectedStatus = this.value;
-                    renderOrderList(selectedStatus || '全部');
-                });
-            }
+            // 筛选条件事件监听（含类型、申请日期、状态）
+            ['type-filter', 'apply-date-start', 'apply-date-end', 'status-filter'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', applyFilters);
+            });
 
             // 统一处理表格内的点击事件 (事件委托)
             tableBody.addEventListener('click', function(e) {
@@ -238,8 +265,8 @@
                                 // 模拟数据更新
                                 const orderIndex = orderData.findIndex(o => o.id === orderId);
                                 if (orderIndex !== -1) {
-                                    orderData[orderIndex].status = '已撤销';
-                                    renderOrderList(currentStatusFilter);
+                                    orderData[orderIndex].status = '已取消';
+                                    applyFilters();
                                 }
                                 if (window.closeCurrentModal) window.closeCurrentModal();
                             }
@@ -746,6 +773,7 @@
             if (searchButton) {
                 searchButton.addEventListener('click', function() {
                     showNotification('正在查询...', 'info');
+                    applyFilters();
                     setTimeout(() => {
                         showNotification(`查询成功：找到相关记录`, 'success');
                     }, 800);
@@ -871,7 +899,7 @@
             // 显示详情弹窗函数
             function showDetailModal(data) {
                 // 根据订单状态控制 Tab 可见性
-                const showGuaranteeTab = !['申请中', '审批不通过', '已取消'].includes(data.status);
+                const showGuaranteeTab = !['申请中', '待审核', '审批不通过', '已取消'].includes(data.status);
                 const showRefundTab = data.status.includes('退保');
 
                 // 根据订单状态生成不同的内容
@@ -1145,6 +1173,12 @@
                         </a>
                     `;
                 } else if (data.status === '申请中') {
+                     statusSpecificButtons = `
+                         <button onclick="handleCancelAction()" class="px-4 py-2 border border-orange-500 text-orange-500 rounded-md hover:bg-orange-50 font-bold text-sm">
+                             <i class="fa fa-times-circle mr-2"></i>撤销申请
+                         </button>
+                     `;
+                } else if (data.status === '待审核') {
                      statusSpecificButtons = `
                          <button onclick="handleCancelAction()" class="px-4 py-2 border border-orange-500 text-orange-500 rounded-md hover:bg-orange-50 font-bold text-sm">
                              <i class="fa fa-times-circle mr-2"></i>撤销申请
@@ -1686,22 +1720,29 @@
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div class="flex-1">
                             <div class="relative">
-                                <input type="text" class="w-full border border-gray-300 rounded-md px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="输入订单号、项目名称、保函类型、受益人或经办人进行查询">
+                                <input type="text" id="search-input" class="w-full border border-gray-300 rounded-md px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-primary" placeholder="输入订单号、项目名称进行查询">
                                 <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                             </div>
                         </div>
-                        <div class="flex space-x-2">
-                            <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <select id="type-filter" class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary">
                                 <option value="">全部类型</option>
-                                <option value="bid">投标保函</option>
-                                <option value="performance">履约保函</option>
-                                <option value="advance">预付款保函</option>
-                                <option value="quality">质量保函</option>
-                                <option value="payment">支付保函</option>
+                                <option value="投标保函">投标保函</option>
+                                <option value="履约保函">履约保函</option>
+                                <option value="预付款保函">预付款保函</option>
+                                <option value="质量保函">质量保函</option>
+                                <option value="支付保函">支付保函</option>
                             </select>
+                            <div class="flex items-center space-x-1 border border-gray-300 rounded-md px-3 py-1.5">
+                                <span class="text-sm text-gray-500">申请日期</span>
+                                <input type="date" id="apply-date-start" class="border-0 focus:outline-none focus:ring-0 text-sm" title="申请日期起">
+                                <span class="text-sm text-gray-400">至</span>
+                                <input type="date" id="apply-date-end" class="border-0 focus:outline-none focus:ring-0 text-sm" title="申请日期止">
+                            </div>
                             <select class="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" id="status-filter">
                                 <option value="">全部订单状态</option>
                                 <option value="申请中">申请中</option>
+                                <option value="待审核">待审核</option>
                                 <option value="已取消">已取消</option>
                                 <option value="审批不通过">审批不通过</option>
                                 <option value="待支付">待支付</option>
@@ -1750,6 +1791,9 @@
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         经办人
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        经办人手机号
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         订单状态

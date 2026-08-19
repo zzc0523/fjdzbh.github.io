@@ -73,6 +73,12 @@
                             <span class="font-medium">理赔管理</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="机构端_发票管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-receipt mr-3 group-hover:text-blue-400"></i>
+                            <span>发票管理</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-slate-700">
@@ -112,31 +118,53 @@
             <main class="flex-1 overflow-y-auto p-8">
                 <!-- 搜索过滤 -->
                 <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-7 gap-4 items-end">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">理赔单号 / 保函编号</label>
-                            <input type="text" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="输入关键字搜索">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">保函编号</label>
+                            <input type="text" id="bg-no-input" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="请输入保函编号">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">申请来源（市级端）</label>
-                            <select class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                <option value="">全部城市</option>
-                                <option value="fuzhou">福州市公共资源交易中心</option>
-                                <option value="xiamen">厦门市公共资源交易中心</option>
-                                <option value="quanzhou">泉州市公共资源交易中心</option>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">保函类型</label>
+                            <select id="type-filter" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">全部类型</option>
+                                <option value="投标保函">投标保函</option>
+                                <option value="履约保函">履约保函</option>
+                                <option value="付款保函">付款保函</option>
+                                <option value="预付款保函">预付款保函</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">当前状态</label>
-                            <select class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                                <option value="pending">待审核</option>
-                                <option value="approved">已赔付</option>
-                                <option value="rejected">已驳回</option>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">申请企业</label>
+                            <input type="text" id="apply-company-input" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="请输入申请企业">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">项目名称</label>
+                            <input type="text" id="project-input" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="请输入项目名称">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">状态</label>
+                            <select id="status-filter" class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="">全部状态</option>
+                                <option value="待审核">待审核</option>
+                                <option value="已拒绝">已拒绝</option>
+                                <option value="待赔付">待赔付</option>
+                                <option value="已赔付">已赔付</option>
                             </select>
                         </div>
-                        <div class="flex items-end">
-                            <button class="w-full bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
-                                <i class="fa fa-search mr-2"></i>查询记录
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-2">申请时间</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="date" id="apply-date-start" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <span class="text-slate-400 text-sm">至</span>
+                                <input type="date" id="apply-date-end" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="search-btn" class="flex-1 bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+                                <i class="fa fa-search mr-2"></i>查询
+                            </button>
+                            <button id="reset-btn" class="flex-1 border border-slate-200 text-slate-600 rounded-lg px-4 py-2 text-sm font-bold hover:bg-slate-50 transition-all">
+                                重置
                             </button>
                         </div>
                     </div>
@@ -144,100 +172,26 @@
 
                 <!-- 列表 -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                    <table class="w-full text-left">
+                    <div class="overflow-x-auto">
+                    <table class="w-full min-w-[1280px] text-left table-fixed">
                         <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-4">理赔单号</th>
-                                <th class="px-6 py-4">保函信息</th>
-                                <th class="px-6 py-4">申请单位（受益人）</th>
-                                <th class="px-6 py-4">理赔金额（元）</th>
-                                <th class="px-6 py-4">申请时间</th>
-                                <th class="px-6 py-4">状态</th>
-                                <th class="px-6 py-4">操作</th>
+                                <th class="px-6 py-4 w-[120px]">理赔单号</th>
+                                <th class="px-6 py-4 w-[150px]">保函编号</th>
+                                <th class="px-6 py-4 w-[100px]">保函类型</th>
+                                <th class="px-6 py-4 w-[160px]">申请企业</th>
+                                <th class="px-6 py-4 w-[200px]">项目名称</th>
+                                <th class="px-6 py-4 w-[130px]">理赔金额（元）</th>
+                                <th class="px-6 py-4 w-[90px]">状态</th>
+                                <th class="px-6 py-4 w-[140px]">申请时间</th>
+                                <th class="px-6 py-4 w-[130px] sticky right-0 bg-slate-50 shadow-[-8px_0_8px_-4px_rgba(0,0,0,0.08)]">操作</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100 text-sm">
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260311001</td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">FJ202601150001</div>
-                                    <div class="text-xs text-slate-500">投标保函</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">福州市公共资源交易中心</div>
-                                    <div class="text-xs text-slate-500">来源：福州市</div>
-                                </td>
-                                <td class="px-6 py-4 font-bold text-slate-900">100,000.00</td>
-                                <td class="px-6 py-4 text-slate-500">2026-03-11 14:30</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">待审核</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <button class="text-orange-600 font-bold hover:underline mr-3" onclick="openAuditModal('CL20260311001')">审核</button>
-                                    <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260311001')">详情</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260310024</td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">FJ202512100892</div>
-                                    <div class="text-xs text-slate-500">履约保函</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">厦门市建设局</div>
-                                    <div class="text-xs text-slate-500">来源：厦门市</div>
-                                </td>
-                                <td class="px-6 py-4 font-bold text-slate-900">250,000.00</td>
-                                <td class="px-6 py-4 text-slate-500">2026-03-10 10:15</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-amber-100 text-amber-700">待审核</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <button class="text-orange-600 font-bold hover:underline mr-3" onclick="openAuditModal('CL20260310024')">审核</button>
-                                    <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260310024')">详情</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260309005</td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">FJ202601200033</div>
-                                    <div class="text-xs text-slate-500">履约保函</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">福州市财政局</div>
-                                    <div class="text-xs text-slate-500">来源：福州市</div>
-                                </td>
-                                <td class="px-6 py-4 font-bold text-slate-900">150,000.00</td>
-                                <td class="px-6 py-4 text-slate-500">2026-03-09 09:00</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-indigo-100 text-indigo-700">待赔付</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <button class="text-indigo-600 font-bold hover:underline mr-3" onclick="openPaymentModal('CL20260309005')">赔付</button>
-                                    <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260309005')">详情</button>
-                                </td>
-                            </tr>
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-mono font-medium text-slate-900">CL20260308115</td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">FJ202602010045</div>
-                                    <div class="text-xs text-slate-500">投标保函</div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">泉州市水利局</div>
-                                    <div class="text-xs text-slate-500">来源：泉州市</div>
-                                </td>
-                                <td class="px-6 py-4 font-bold text-slate-900">50,000.00</td>
-                                <td class="px-6 py-4 text-slate-500">2026-03-08 16:45</td>
-                                <td class="px-6 py-4">
-                                    <span class="px-2 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-100 text-emerald-700">已赔付</span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal('CL20260308115')">详情</button>
-                                </td>
-                            </tr>
+                        <tbody id="claim-tbody" class="divide-y divide-slate-100 text-sm">
+                            <!-- 由 JavaScript 动态渲染 -->
                         </tbody>
                     </table>
+                    </div>
                     <!-- Pagination -->
                     <div class="p-6 border-t border-slate-100 flex items-center justify-between">
                         <p class="text-xs text-slate-500">显示 1 到 10 条，共 12 条记录</p>
@@ -712,6 +666,90 @@
             alert('赔付处理已完成，理赔状态已更新为「已赔付」。');
             closePaymentModal();
         }
+
+        // 理赔列表数据驱动 + 筛选
+        const claimData = [
+            { id: 'CL20260311001', guaranteeNo: 'FJ202601150001', guaranteeType: '投标保函', company: '福建省建设集团有限公司', projectName: '泉州市2025年市政道路改造项目', amount: '100,000.00', applyTime: '2026-03-11 14:30', status: '待审核' },
+            { id: 'CL20260310024', guaranteeNo: 'FJ202512100892', guaranteeType: '履约保函', company: '厦门市政工程有限公司', projectName: '厦门市轨道交通3号线工程', amount: '250,000.00', applyTime: '2026-03-10 10:15', status: '待审核' },
+            { id: 'CL20260309005', guaranteeNo: 'FJ202601200033', guaranteeType: '履约保函', company: '福州城投建设投资有限公司', projectName: '福州市滨江商务区开发项目', amount: '150,000.00', applyTime: '2026-03-09 09:00', status: '待赔付' },
+            { id: 'CL20260308115', guaranteeNo: 'FJ202602010045', guaranteeType: '投标保函', company: '泉州海丝建设集团', projectName: '泉州芯谷南安园区标准厂房', amount: '50,000.00', applyTime: '2026-03-08 16:45', status: '已赔付' },
+            { id: 'CL20260305008', guaranteeNo: 'FJ202511080077', guaranteeType: '付款保函', company: '漳州建筑工程公司', projectName: '漳州台商投资区污水管网工程', amount: '80,000.00', applyTime: '2026-03-05 11:20', status: '已拒绝' },
+            { id: 'CL20260303012', guaranteeNo: 'FJ202510220019', guaranteeType: '履约保函', company: '莆田建工投资有限公司', projectName: '莆田市绶溪公园景观提升工程', amount: '120,000.00', applyTime: '2026-03-03 15:10', status: '已赔付' }
+        ];
+
+        const claimTbody = document.getElementById('claim-tbody');
+
+        function getClaimStatusStyle(status) {
+            if (status === '待审核') return 'bg-amber-100 text-amber-700';
+            if (status === '已拒绝') return 'bg-red-100 text-red-700';
+            if (status === '待赔付') return 'bg-indigo-100 text-indigo-700';
+            if (status === '已赔付') return 'bg-emerald-100 text-emerald-700';
+            return 'bg-slate-100 text-slate-700';
+        }
+
+        function getFilteredClaims() {
+            const bgNo = document.getElementById('bg-no-input').value.trim().toLowerCase();
+            const company = document.getElementById('apply-company-input').value.trim().toLowerCase();
+            const project = document.getElementById('project-input').value.trim().toLowerCase();
+            const status = document.getElementById('status-filter').value;
+            const start = document.getElementById('apply-date-start').value;
+            const end = document.getElementById('apply-date-end').value;
+            return claimData.filter(item => {
+                const matchBg = !bgNo || item.guaranteeNo.toLowerCase().includes(bgNo) || item.id.toLowerCase().includes(bgNo);
+                const matchCompany = !company || item.company.toLowerCase().includes(company);
+                const matchProject = !project || item.projectName.toLowerCase().includes(project);
+                const matchStatus = !status || item.status === status;
+                const dateOnly = item.applyTime.substring(0, 10);
+                const matchDate = (!start || dateOnly >= start) && (!end || dateOnly <= end);
+                return matchBg && matchCompany && matchProject && matchStatus && matchDate;
+            });
+        }
+
+        function renderClaimList() {
+            const data = getFilteredClaims();
+            claimTbody.innerHTML = data.map(item => {
+                let action = '';
+                if (item.status === '待审核') {
+                    action = '<button class="text-orange-600 font-bold hover:underline mr-3" onclick="openAuditModal(\'' + item.id + '\')">审核</button>' +
+                        '<button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal(\'' + item.id + '\')">详情</button>';
+                } else if (item.status === '待赔付') {
+                    action = '<button class="text-indigo-600 font-bold hover:underline mr-3" onclick="openPaymentModal(\'' + item.id + '\')">赔付</button>' +
+                        '<button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal(\'' + item.id + '\')">详情</button>';
+                } else {
+                    action = '<button class="text-blue-600 font-bold hover:underline" onclick="openDetailModal(\'' + item.id + '\')">详情</button>';
+                }
+                return '<tr class="hover:bg-slate-50 transition-colors">' +
+                    '<td class="px-6 py-4 font-mono font-medium text-slate-900 w-[120px]">' + item.id + '</td>' +
+                    '<td class="px-6 py-4 w-[150px]"><div class="font-medium text-slate-900">' + item.guaranteeNo + '</div></td>' +
+                    '<td class="px-6 py-4 w-[100px]"><div class="text-slate-900">' + item.guaranteeType + '</div></td>' +
+                    '<td class="px-6 py-4 w-[160px]"><div class="font-medium text-slate-900">' + item.company + '</div></td>' +
+                    '<td class="px-6 py-4 w-[200px]"><div class="text-slate-900">' + item.projectName + '</div></td>' +
+                    '<td class="px-6 py-4 font-bold text-slate-900 w-[130px]">' + item.amount + '</td>' +
+                    '<td class="px-6 py-4 w-[90px]"><span class="px-2 py-1 rounded-full text-[10px] font-black uppercase ' + getClaimStatusStyle(item.status) + '">' + item.status + '</span></td>' +
+                    '<td class="px-6 py-4 text-slate-500 w-[140px]">' + item.applyTime + '</td>' +
+                    '<td class="px-6 py-4 w-[130px] sticky right-0 bg-white shadow-[-8px_0_8px_-4px_rgba(0,0,0,0.08)]">' + action + '</td>' +
+                    '</tr>';
+            }).join('');
+            if (!data.length) {
+                claimTbody.innerHTML = '<tr><td colspan="9" class="px-6 py-10 text-center text-slate-400 text-sm">暂无符合条件的理赔记录</td></tr>';
+            }
+        }
+
+        document.getElementById('search-btn').addEventListener('click', renderClaimList);
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            document.getElementById('bg-no-input').value = '';
+            document.getElementById('type-filter').value = '';
+            document.getElementById('apply-company-input').value = '';
+            document.getElementById('project-input').value = '';
+            document.getElementById('status-filter').value = '';
+            document.getElementById('apply-date-start').value = '';
+            document.getElementById('apply-date-end').value = '';
+            renderClaimList();
+        });
+        document.getElementById('apply-date-start').addEventListener('change', renderClaimList);
+        document.getElementById('apply-date-end').addEventListener('change', renderClaimList);
+
+        renderClaimList();
     </script>
 </body>
 </html>
