@@ -288,7 +288,10 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1.5">数据来源</label>
-                            <input id="np-dataSource" type="text" placeholder="如 公共资源交易中心" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                            <select id="np-dataSource" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                                <option value="手工导入">手工导入</option>
+                                <option value="接口同步">接口同步</option>
+                            </select>
                         </div>
                     </div>
                 </form>
