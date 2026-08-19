@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>受益人端 - 理赔管理</title>
+    <title>省级管理平台 - 理赔管理</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script>
@@ -28,6 +28,19 @@
             }
         }
 
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 通用模态框函数
         function showModal(title, content, buttons = []) {
             let modal = document.getElementById('modal');
             if (modal) modal.remove();
@@ -94,6 +107,7 @@
             });
         }
 
+        // 通知提示
         function showNotification(message, type = 'success') {
             const container = document.getElementById('notification-container') || (() => {
                 const div = document.createElement('div');
@@ -121,6 +135,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Tab 切换
             const tabButtons = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
             tabButtons.forEach(btn => {
@@ -136,6 +151,7 @@
                 });
             });
 
+            // 搜索/重置
             document.querySelector('button:has(.fa-search)')?.addEventListener('click', () => {
                 showNotification('正在查询...', 'info');
                 setTimeout(() => showNotification('查询成功'), 500);
@@ -145,24 +161,23 @@
                 showNotification('已重置');
             });
 
+            // 表格操作
             document.body.addEventListener('click', (e) => {
                 const link = e.target.closest('a');
                 if (!link) return;
                 const text = link.textContent.trim();
                 const row = link.closest('tr');
                 if (!row) return;
-                    const claimNo = row.cells[0]?.innerText;
-                    const guaranteeNo = row.cells[1]?.innerText;
-                    const projectName = row.cells[2]?.innerText;
-                    const bondType = row.cells[3]?.innerText;
-                    const insurer = row.cells[4]?.innerText;
-                    const enterprise = row.cells[5]?.innerText;
-                    const amount = row.cells[6]?.innerText;
-                    const status = row.cells[7]?.innerText.trim();
+                const claimNo = row.cells[0]?.innerText;
+                const guaranteeNo = row.cells[1]?.innerText;
+                const enterprise = row.cells[2]?.innerText;
+                const amount = row.cells[3]?.innerText;
+                const status = row.cells[4]?.innerText.trim();
 
                 if (text === '详情' || text === '查看') {
                     const detailsContent = `
                         <div class="space-y-6">
+                            <!-- 核心状态栏 -->
                             <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-100">
                                 <div class="flex items-center space-x-4">
                                     <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-100 text-primary">
@@ -175,12 +190,15 @@
                                 </div>
                                 <div class="text-right">
                                     <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">工单状态</p>
-                                    <span class="px-3 py-1 rounded-full text-xs font-bold ${status === '待审核' ? 'bg-orange-100 text-orange-600' : status === '已拒绝' ? 'bg-red-100 text-red-600' : status === '待赔付' ? 'bg-green-100 text-green-600' : 'bg-slate-100 text-slate-500'}">
+                                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-600">
                                         <i class="fa fa-circle mr-1 text-[8px]"></i>${status}
                                     </span>
                                 </div>
                             </div>
+
+                            <!-- 垂直单列排版内容 -->
                             <div class="space-y-8">
+                                <!-- 保函基本信息 -->
                                 <div class="space-y-4">
                                     <h4 class="text-sm font-bold text-slate-800 flex items-center">
                                         <span class="w-1 h-4 bg-blue-500 rounded-full mr-2"></span>保函基本信息
@@ -191,24 +209,34 @@
                                             <p class="font-mono font-medium text-slate-700">${guaranteeNo}</p>
                                         </div>
                                         <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
-                                            <p class="text-xs text-slate-400 uppercase">项目/合同名称</p>
-                                            <p class="font-medium text-slate-700">${projectName}</p>
+                                            <p class="text-xs text-slate-400 uppercase">保函类型</p>
+                                            <p class="font-medium text-slate-700">投标保函</p>
                                         </div>
                                         <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
-                                            <p class="text-xs text-slate-400 uppercase">保证金金额（元）</p>
+                                            <p class="text-xs text-slate-400 uppercase">保额</p>
                                             <p class="font-bold text-slate-700">500,000.00</p>
                                         </div>
                                         <div class="flex justify-between items-center pb-1">
-                                            <p class="text-xs text-slate-400 uppercase">受益人</p>
-                                            <p class="font-medium text-slate-700 text-right">福建省信息化建设办公室</p>
+                                            <p class="text-xs text-slate-400 uppercase">被保证人</p>
+                                            <p class="font-medium text-slate-700 text-right">${enterprise}</p>
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 理赔申请信息 -->
                                 <div class="space-y-4">
                                     <h4 class="text-sm font-bold text-slate-800 flex items-center">
                                         <span class="w-1 h-4 bg-primary rounded-full mr-2"></span>理赔申请信息
                                     </h4>
                                     <div class="bg-slate-50/50 p-5 rounded-xl space-y-4 border border-slate-100/50">
+                                        <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
+                                            <p class="text-xs text-slate-400 uppercase">申请企业</p>
+                                            <p class="text-sm font-bold text-slate-700 text-right">${enterprise}</p>
+                                        </div>
+                                        <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
+                                            <p class="text-xs text-slate-400 uppercase">保函编号</p>
+                                            <p class="text-sm text-blue-600 font-mono underline cursor-pointer">${guaranteeNo}</p>
+                                        </div>
                                         <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
                                             <p class="text-xs text-slate-400 uppercase">理赔金额（元）</p>
                                             <p class="text-sm font-bold text-red-600">${amount}</p>
@@ -218,7 +246,7 @@
                                             <p class="text-sm font-medium text-slate-700">张三</p>
                                         </div>
                                         <div class="flex justify-between items-center border-b border-slate-100/50 pb-3">
-                                            <p class="text-xs text-slate-400 uppercase">理赔联系电话</p>
+                                            <p class="text-xs text-slate-400 uppercase">联系人电话</p>
                                             <p class="text-sm font-medium text-slate-700">13,800,138,000</p>
                                         </div>
                                         <div class="pt-2">
@@ -227,9 +255,11 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 证明材料 -->
                                 <div class="space-y-4">
                                     <h4 class="text-sm font-bold text-slate-800 flex items-center">
-                                        <span class="w-1 h-4 bg-primary rounded-full mr-2"></span>理赔申请书及证明材料
+                                        <span class="w-1 h-4 bg-primary rounded-full mr-2"></span>证明材料
                                     </h4>
                                     <div class="grid grid-cols-2 gap-4">
                                         <div class="flex items-center p-3 border border-slate-100 rounded-xl bg-white shadow-sm hover:border-primary transition-colors cursor-pointer group">
@@ -251,47 +281,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold text-slate-800 flex items-center">
-                                    <span class="w-1 h-4 bg-primary rounded-full mr-2"></span>审核记录
-                                </h4>
-                                <div class="border border-slate-100 rounded-xl overflow-hidden">
-                                    <table class="w-full text-xs text-left">
-                                        <thead class="bg-slate-50 text-slate-500">
-                                            <tr>
-                                                <th class="px-4 py-2 font-medium">环节</th>
-                                                <th class="px-4 py-2 font-medium">审核人</th>
-                                                <th class="px-4 py-2 font-medium">审核意见</th>
-                                                <th class="px-4 py-2 font-medium">审核时间</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-slate-50">
-                                            <tr>
-                                                <td class="px-4 py-3">申请提交</td>
-                                                <td class="px-4 py-3">企业经办人</td>
-                                                <td class="px-4 py-3 text-blue-600">已在线发起理赔申请。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-20 09:30</td>
-                                            </tr>
-                                            ${['待赔付', '已赔付'].includes(status) ? `
-                                            <tr>
-                                                <td class="px-4 py-3">审核环节</td>
-                                                <td class="px-4 py-3">李四 (审核员)</td>
-                                                <td class="px-4 py-3 text-green-600">材料核验通过，准予赔付。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-20 14:30</td>
-                                            </tr>
-                                            ` : ''}
-                                            ${status === '已赔付' ? `
-                                            <tr>
-                                                <td class="px-4 py-3">赔付环节</td>
-                                                <td class="px-4 py-3">王五 (财务员)</td>
-                                                <td class="px-4 py-3 text-green-600">赔付资金已汇出，上传凭证。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-22 11:00</td>
-                                            </tr>
-                                            ` : ''}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+
+                            <!-- 赔付记录 -->
                             ${status === '已赔付' ? `
                             <div class="space-y-4">
                                 <h4 class="text-sm font-bold text-slate-800 flex items-center">
@@ -304,17 +295,19 @@
                                 </div>
                             </div>
                             ` : ''}
+
+                            <!-- 拒绝原因 -->
                             ${status === '已拒绝' ? `
                             <div class="space-y-4">
                                 <h4 class="text-sm font-bold text-slate-800 flex items-center">
                                     <span class="w-1 h-4 bg-red-500 rounded-full mr-2"></span>拒绝原因
                                 </h4>
                                 <div class="bg-red-50 p-4 rounded-xl border border-red-100 space-y-2">
-                                    <p class="text-xs text-slate-600 flex justify-between"><span>拒绝时间：</span><span class="font-mono">2026-03-13 10:20</span></p>
-                                    <p class="text-xs text-slate-600 flex justify-between"><span>审核人：</span><span>赵六 (审核员)</span></p>
+                                    <p class="text-xs text-slate-600 flex justify-between"><span>拒绝时间：</span><span class="font-mono">2026-03-21 10:20</span></p>
+                                    <p class="text-xs text-slate-600 flex justify-between"><span>审核人：</span><span>李四 (审核员)</span></p>
                                     <div class="pt-1">
                                         <p class="text-xs text-slate-400 uppercase mb-1">拒绝原因</p>
-                                        <p class="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-100 leading-relaxed">提供的违约证明材料不足以证明投保人存在实质性违约行为，且理赔金额计算依据不充分，不符合赔付条件，予以拒绝。</p>
+                                        <p class="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-100 leading-relaxed">提供的违约证明材料不足以证明投保人存在实质性违约行为，不符合理赔受理条件，予以拒绝。</p>
                                     </div>
                                 </div>
                             </div>
@@ -330,58 +323,300 @@
     </script>
 </head>
 <body class="bg-gray-50 font-sans">
+    <!-- 侧边栏 -->
     <div class="flex h-screen overflow-hidden">
-        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+        <aside class="sidebar w-64 bg-neutral-dark text-white flex flex-col shrink-0">
             <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
-                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center"><i class="fa fa-user-circle"></i></div>
-                <h1 class="text-sm font-bold tracking-tight">受益人端</h1>
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
             </div>
             <nav class="flex-1 overflow-y-auto py-4 px-3">
                 <ul class="space-y-1">
-                    <li>
-                        <a href="受益人端_企业认证.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all">
-                            <i class="fa fa-building-o mr-3 text-green-400"></i>
-                            <span class="font-bold">企业认证</span>
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3"></i>
+                            <span>工作台</span>
                         </a>
                     </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+
+                        <li>
+                            <button onclick="toggleSubMenu('guarantee-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                                <div class="flex items-center">
+                                    <i class="fa fa-file-invoice-dollar mr-3 group-hover:text-blue-400"></i>
+                                    <span class="font-bold">保函业务管理</span>
+                                </div>
+                                <i class="fa fa-angle-down text-xs transition-transform duration-200" id="guarantee-menu-arrow"></i>
+                            </button>
+                            <ul id="guarantee-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                                
+                                <li>
+                                    <a href="省级端_订单管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white mr-2"></span>
+                                        订单管理
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="省级端_理赔管理.html" class="flex items-center py-2 px-4 text-sm text-white bg-blue-600 rounded-r-md shadow-lg shadow-blue-900/20">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                        理赔管理
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+                    </li>
                     <li>
-                        <button onclick="toggleSubMenu('guarantee-menu')" class="w-full flex items-center p-3 text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-all group">
-                            <i class="fa fa-file-text-o mr-3 text-blue-400"></i>
-                            <span class="font-bold">保函管理</span>
-                            <i class="fa fa-chevron-down ml-auto text-slate-400 transition-transform" id="guarantee-menu-arrow"></i>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
                         </button>
-                        <ul id="guarantee-menu" class="mt-1 space-y-1">
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
                             <li>
-                                <a href="受益人端_保函列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800 rounded-r-md transition-all">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
-                                    保函列表
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
                                 </a>
                             </li>
-
                             <li>
-                                <a href="受益人端_理赔管理.html" class="flex items-center py-2 px-4 text-sm text-white bg-slate-900 hover:bg-slate-800 rounded-r-md transition-all">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 mr-2"></span>
-                                    理赔管理
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
                                 </a>
                             </li>
                         </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_金融机构列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构列表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                                        
+
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    <li>
+                        <a href="省级端_投保材料管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-file-text-o mr-3 group-hover:text-blue-400"></i>
+                            <span>投保材料管理</span>
+                        </a>
+                    </li>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn">
+                            <div class="flex items-center">
+                                <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">企业服务</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow"></i>
+                        </button>
+                        <ul id="service-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_企业列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业列表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业咨询
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
                     </li>
                 </ul>
             </nav>
             <div class="p-4 border-t border-slate-700">
                 <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
-                    <img src="https://ui-avatars.com/api/?name=Beneficiary&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=DC2626&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
                     <div class="ml-3">
-                        <p class="text-xs font-bold">受益人</p>
-                        <p class="text-[10px] text-slate-400">福州市公共资源交易中心</p>
+                        <p class="text-xs font-bold">省级管理员</p>
+                        <p class="text-[10px] text-slate-400">管理员账号</p>
                     </div>
-                    <button class="ml-auto text-slate-500 hover:text-white">
+                    <button class="ml-auto text-slate-500 hover:text-white" onclick="alert('登出功能待实现')">
                         <i class="fa fa-sign-out"></i>
                     </button>
                 </div>
             </div>
-        </div>
+        </aside>
+
+        <!-- 主内容区 -->
         <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
                 <div class="flex items-center space-x-2">
                     <h2 class="text-lg font-bold text-slate-800">理赔管理</h2>
@@ -399,19 +634,18 @@
                     </button>
                 </div>
             </header>
+
+            <!-- 内容区 -->
             <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+                <!-- 搜索和筛选 -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-2">保函编号</label>
                             <input type="text" placeholder="输入单号" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">项目名称</label>
-                            <input type="text" placeholder="输入项目名称" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-2">投保企业</label>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">申请企业</label>
                             <input type="text" placeholder="输入企业名称" class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
                         </div>
                         <div>
@@ -438,135 +672,106 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- 数据列表 -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="overflow-x-auto" style="max-width:100%">
-                        <table class="w-full text-sm text-left whitespace-nowrap">
-                            <colgroup>
-                                <col style="min-width:150px">
-                                <col style="min-width:160px">
-                                <col style="min-width:200px">
-                                <col style="min-width:100px">
-                                <col style="min-width:180px">
-                                <col style="min-width:180px">
-                                <col style="min-width:130px">
-                                <col style="min-width:110px">
-                                <col style="min-width:150px">
-                                <col style="min-width:100px" class="sticky-col">
-                            </colgroup>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
                             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500">
                                 <tr>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">理赔单号</th>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">保函编号</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">项目名称</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">保函类型</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">承保机构</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">投保企业</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">申请企业</th>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">理赔金额（元）</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">理赔状态</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider">当前状态</th>
                                     <th class="px-6 py-4 font-bold uppercase tracking-wider">提交时间</th>
-                                    <th class="px-6 py-4 font-bold uppercase tracking-wider text-right sticky-col" style="position:sticky;right:0;background:#f8fafc;z-index:10;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">操作</th>
+                                    <th class="px-6 py-4 font-bold uppercase tracking-wider text-right">操作</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603200001</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601010001</td>
-                                    <td class="px-6 py-4">福州市地铁4号线二期工程</td>
-                                    <td class="px-6 py-4">投标保函</td>
-                                    <td class="px-6 py-4">中国建设银行福建省分行</td>
                                     <td class="px-6 py-4">福建省建设工程有限公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">50,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-[10px] font-bold">待审核</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-20 09:30</td>
-                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
+                                    <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603200002</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601020002</td>
-                                    <td class="px-6 py-4">厦门市地铁5号线一期工程</td>
-                                    <td class="px-6 py-4">履约保函</td>
-                                    <td class="px-6 py-4">中国银行厦门市分行</td>
                                     <td class="px-6 py-4">厦门市路桥建设集团</td>
                                     <td class="px-6 py-4 font-bold text-red-600">200,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-[10px] font-bold">待审核</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-20 10:15</td>
-                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
+                                    <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603190005</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601050012</td>
-                                    <td class="px-6 py-4">泉州市文化中心建设项目</td>
-                                    <td class="px-6 py-4">预付款保函</td>
-                                    <td class="px-6 py-4">招商银行泉州分行</td>
                                     <td class="px-6 py-4">泉州市市政工程公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">150,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded text-[10px] font-bold">待审核</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-19 16:40</td>
-                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
+                                    <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603180003</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601080055</td>
-                                    <td class="px-6 py-4">福州市水利工程项目</td>
-                                    <td class="px-6 py-4">履约保函</td>
-                                    <td class="px-6 py-4">中国农业银行福州分行</td>
                                     <td class="px-6 py-4">福州市水利建设有限公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">80,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-[10px] font-bold">待赔付</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-18 14:20</td>
-                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
+                                    <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603150001</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601010009</td>
-                                    <td class="px-6 py-4">龙岩市交通枢纽工程</td>
-                                    <td class="px-6 py-4">投标保函</td>
-                                    <td class="px-6 py-4">中国工商银行龙岩分行</td>
                                     <td class="px-6 py-4">龙岩市交通发展集团</td>
                                     <td class="px-6 py-4 font-bold text-red-600">100,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-bold">已赔付</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-15 11:00</td>
-                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
+                                    <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
+
                                 <tr>
                                     <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603120004</td>
                                     <td class="px-6 py-4 text-blue-600 font-mono">FJ202601030021</td>
-                                    <td class="px-6 py-4">漳州市政务服务中心装修工程</td>
-                                    <td class="px-6 py-4">履约保函</td>
-                                    <td class="px-6 py-4">中国银行漳州市分行</td>
-                                    <td class="px-6 py-4">漳州市建筑工程公司</td>
+                                    <td class="px-6 py-4">漳州市建筑安装工程公司</td>
                                     <td class="px-6 py-4 font-bold text-red-600">120,000.00</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-[10px] font-bold">已拒绝</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-12 15:45</td>
-                                    <td class="px-6 py-4 text-right space-x-3 sticky-col" style="position:sticky;right:0;background:white;z-index:1;box-shadow:-4px 0 6px -4px rgba(0,0,0,0.1)">
+                                    <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+                    <!-- 分页 -->
                     <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs">
                         <div class="text-slate-500">
                             共 <span class="font-bold text-slate-700">42</span> 条理赔记录

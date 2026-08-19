@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>省级管理平台 - 订单管理</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        accent: '#60A5FA',
+                        neutral: '#F3F4F6',
+                        'neutral-dark': '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'primary': '0 4px 6px -1px rgba(30, 64, 175, 0.1), 0 2px 4px -1px rgba(30, 64, 175, 0.06)',
+                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // 通用模态框函数
+        function showModal(title, content, buttons = [], size = 'max-w-2xl') {
+            let modal = document.getElementById('modal');
+            if (modal) modal.remove();
+            
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+            
+            if (buttons.length === 0) {
+                buttons = [{ text: '关闭', className: 'bg-gray-200 text-gray-800 hover:bg-gray-300 px-4 py-2 rounded-lg', action: 'close' }];
+            }
+            
+            const buttonsHtml = buttons.map(btn => `
+                <button class="${btn.className || 'bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90'}" data-action="${btn.action || 'custom'}">
+                    ${btn.text}
+                </button>
+            `).join('');
+            
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-card border border-slate-200 ${size} w-full mx-4 overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="modal-container">
+                    <div class="flex justify-between items-center border-b border-slate-200 p-4 bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-900">${title}</h3>
+                        <button id="closeModalIcon" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 max-h-[80vh] overflow-y-auto">
+                        ${content}
+                    </div>
+                    <div class="flex justify-end border-t border-slate-200 p-4 space-x-3 bg-slate-50">
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                const container = document.getElementById('modal-container');
+                container.classList.remove('scale-95', 'opacity-0');
+                container.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            
+            function closeModal() {
+                modal.style.opacity = '0';
+                const container = document.getElementById('modal-container');
+                container.classList.remove('scale-100', 'opacity-100');
+                container.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { if (modal.parentNode) modal.remove(); }, 300);
+            }
+            
+            document.getElementById('closeModalIcon').addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+            
+            modal.querySelectorAll('button').forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    if (buttons[index]?.onClick) {
+                        buttons[index].onClick();
+                    } else if (buttons[index]?.action === 'close') {
+                        closeModal();
+                    }
+                });
+            });
+
+            // Tab切换功能
+            modal.querySelectorAll('[data-tab]').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetTab = tab.getAttribute('data-tab');
+                    
+                    // 移除所有tab的active状态
+                    modal.querySelectorAll('[data-tab]').forEach(t => {
+                        t.classList.remove('border-primary', 'text-primary');
+                        t.classList.add('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+                    });
+                    
+                    // 添加当前tab的active状态
+                    tab.classList.remove('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+                    tab.classList.add('border-primary', 'text-primary');
+                    
+                    // 隐藏所有tab内容
+                    modal.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('active');
+                    });
+                    
+                    // 显示当前tab内容
+                    const activePane = modal.querySelector(`#${targetTab}`);
+                    if (activePane) {
+                        activePane.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // 通知函数
+        function showNotification(message, type = 'info') {
+            let notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg transform transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'error' ? 'bg-red-500 text-white' : 
+                'bg-blue-500 text-white'
+            }`;
+            notification.innerHTML = `<i class="fa fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'} mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => { if (notification.parentNode) notification.remove(); }, 300);
+            }, 3000);
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Tab切换样式 */
+        .tab-content .tab-pane {
+            display: none;
+        }
+        .tab-content .tab-pane.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-gray-100">
+    <!-- 侧边栏 -->
+    <aside class="sidebar w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-shield"></i>
+                </div>
+                <h1 class="text-lg font-bold tracking-tight">省级管理平台</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto py-4 px-3">
+                <ul class="space-y-1">
+                                        <li>
+                        <a href="省级端_工作台.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3"></i>
+                            <span>工作台</span>
+                        </a>
+                    </li>
+<li>
+                        <a href="省级端_数据可视化大屏.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-dashboard mr-3 group-hover:text-blue-400"></i>
+                            <span>数据可视化大屏</span>
+                        </a>
+
+                        <li>
+                            <button onclick="toggleSubMenu('guarantee-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                                <div class="flex items-center">
+                                    <i class="fa fa-file-invoice-dollar mr-3 group-hover:text-blue-400"></i>
+                                    <span class="font-bold">保函业务管理</span>
+                                </div>
+                                <i class="fa fa-angle-down text-xs transition-transform duration-200" id="guarantee-menu-arrow"></i>
+                            </button>
+                            <ul id="guarantee-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                                
+                                <li>
+                                    <a href="省级端_订单管理.html" class="flex items-center py-2 px-4 text-sm text-white bg-blue-600 rounded-r-md shadow-lg shadow-blue-900/20 transition-all group/sub">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-white mr-2"></span>
+                                        订单管理
+                                    </a>
+                                </li>
+                                
+                                <li>
+                                    <a href="省级端_理赔管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                        理赔管理
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </li>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('business-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-bar-chart mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">业务统计分析</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="business-menu-arrow"></i>
+                        </button>
+                        <ul id="business-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_金融机构统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_项目统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    项目统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_退保统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    退保统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_理赔统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    理赔统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    企业统计报表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_受益人统计报表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    受益人统计报表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <button onclick="toggleSubMenu('alert-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-exclamation-triangle mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">预警管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="alert-menu-arrow"></i>
+                        </button>
+                        <ul id="alert-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_预警处理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警处理
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_预警规则设置.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    预警规则设置
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_平台管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                            <span>平台管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('inst-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-building mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">金融机构管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="inst-menu-arrow"></i>
+                        </button>
+                        <ul id="inst-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_机构备案审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构备案审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_机构展业审核.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    机构展业审核
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_金融机构列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    金融机构列表
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                                        
+
+                    <li>
+                        <a href="省级端_场景管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cube mr-3 group-hover:text-blue-400"></i>
+                            <span>场景管理</span>
+                        </a>
+                    <li>
+                        <a href="省级端_投保材料管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-file-text-o mr-3 group-hover:text-blue-400"></i>
+                            <span>投保材料管理</span>
+                        </a>
+                    </li>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-globe mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">门户管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="portal-menu-arrow"></i>
+                        </button>
+                        <ul id="portal-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_平台资讯.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    平台资讯
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_帮助中心.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    帮助中心
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_Banner管理.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    Banner管理
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('service-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group" id="service-menu-btn">
+                            <div class="flex items-center">
+                                <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">企业服务</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="service-menu-arrow"></i>
+                        </button>
+                        <ul id="service-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_企业列表.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业列表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_企业咨询.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2"></span>
+                                    企业咨询
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="pt-4 pb-2 px-3">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">系统配置</span>
+                    </li>
+                    <li>
+                        <a href="省级端_消息管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-envelope mr-3 group-hover:text-blue-400"></i>
+                            <span>消息管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_部门与人员管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-users mr-3 group-hover:text-blue-400"></i>
+                            <span>部门与人员管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="省级端_权限管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-user-circle mr-3 group-hover:text-blue-400"></i>
+                            <span>权限管理</span>
+                        </a>
+                    </li>
+                    <li>
+                        <button onclick="toggleSubMenu('log-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <div class="flex items-center">
+                                <i class="fa fa-list-alt mr-3 group-hover:text-blue-400"></i>
+                                <span class="font-bold">日志管理</span>
+                            </div>
+                            <i class="fa fa-angle-down text-xs transition-transform duration-200" id="log-menu-arrow"></i>
+                        </button>
+                        <ul id="log-menu" class="hidden mt-2 ml-4 border-l border-slate-700 space-y-1">
+                            <li>
+                                <a href="省级端_登录日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    登录日志
+                                </a>
+                            </li>
+                            <li>
+                                <a href="省级端_操作日志.html" class="flex items-center py-2 px-4 text-sm text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all group/sub">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-600 mr-2 group-hover/sub:bg-slate-400 transition-colors"></span>
+                                    操作日志
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="省级端_系统配置.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cog mr-3 group-hover:text-blue-400"></i>
+                            <span>系统配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center p-2 rounded-lg bg-slate-800/50">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=DC2626&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                    <div class="ml-3">
+                        <p class="text-xs font-bold">省级管理员</p>
+                        <p class="text-[10px] text-slate-400">管理员账号</p>
+                    </div>
+                    <button class="ml-auto text-slate-500 hover:text-white" onclick="alert('登出功能待实现')">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+    <!-- 主内容区 -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- 顶部导航 -->
+        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+            <div class="flex items-center space-x-2">
+                <h2 class="text-lg font-bold text-slate-800">订单管理</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative group">
+                    <button class="relative p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors">
+                        <i class="fa fa-bell text-lg"></i>
+                    </button>
+                </div>
+                <div class="h-8 w-px bg-slate-200"></div>
+                <button class="p-2 text-slate-500 hover:text-primary hover:bg-slate-100 rounded-full transition-colors">
+                    <i class="fa fa-question-circle text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 内容区 -->
+        <main class="flex-1 overflow-y-auto p-6 bg-slate-50">
+            <!-- 搜索和筛选 -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">项目名称</label>
+                        <input type="text" placeholder="请输入项目名称" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">企业名称</label>
+                        <input type="text" placeholder="请输入企业名称" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">保函类型</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">全部</option>
+                            <option value="投标保函">投标保函</option>
+                            <option value="履约保函">履约保函</option>
+                            <option value="预付款保函">预付款保函</option>
+                            <option value="工资保函">工资保函</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">订单状态</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" id="status-filter">
+                            <option value="全部">全部</option>
+                            <option value="申请中">申请中</option>
+                            <option value="待审核">待审核</option>
+                            <option value="已取消">已取消</option>
+                            <option value="审批不通过">审批不通过</option>
+                            <option value="待支付">待支付</option>
+                            <option value="已支付">已支付</option>
+                            <option value="已出函">已出函</option>
+                            <option value="退保中">退保中</option>
+                            <option value="已退保">已退保</option>
+                            <option value="拒绝退保">拒绝退保</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex-1">
+                            <label class="block text-gray-700 mb-2">申请日期</label>
+                            <input type="date" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="开始日期" id="start-date">
+                        </div>
+                        <span class="flex items-center text-gray-400 mt-6">至</span>
+                        <div class="flex-1">
+                            <label class="block text-gray-700 mb-2 invisible">结束日期</label>
+                            <input type="date" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary" placeholder="结束日期" id="end-date">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 font-bold">
+                        <i class="fa fa-search mr-2"></i>查询
+                    </button>
+                    <button class="border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+                        <i class="fa fa-refresh mr-2"></i>重置
+                    </button>
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200 font-bold">
+                        <i class="fa fa-file-excel-o mr-2"></i>导出
+                    </button>
+                </div>
+            </div>
+
+            <!-- 订单列表 -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50 border-b">
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单号</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保费（元）</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受益人</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">承保机构</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">企业名称</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">经办人</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">经办人手机号</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">订单状态</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">申请时间</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-slate-100" id="order-table-body">
+                        </tbody>
+                    </table>
+                </div>
+                <!-- 分页 -->
+                <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                    <div class="text-sm text-gray-700" id="pagination-info">
+                        显示 <span class="font-medium">1</span> 到 <span class="font-medium">10</span> 共 <span class="font-medium">1,256</span> 条记录
+                    </div>
+                    <div class="flex space-x-1">
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="px-3 py-1 border border-primary bg-primary text-white rounded-md">1</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">2</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">3</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">...</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">126</button>
+                        <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 模拟订单数据 - 全市订单
+        const orderData = [
+            { id: 'FJ202603110001', enterpriseName: '福建省建设工程有限公司', projectName: '福州市地铁2号线延伸工程', type: '投标保函', amount: '500,000.00', premium: '5,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '福州市公共资源交易中心', applyTime: '2026-03-11 10:30:00', status: '已出函', operator: '张三', operatorPhone: '13805910001' },
+            { id: 'FJ202603250002', enterpriseName: '厦门市建筑工程集团', projectName: '厦门市翔安机场快速路工程', type: '投标保函', amount: '100,000.00', premium: '1,000.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-03-25 14:20:00', status: '待支付', operator: '李四', operatorPhone: '13805910002' },
+            { id: 'FJ202603090003', enterpriseName: '泉州市市政工程公司', projectName: '泉州市跨海大桥工程', type: '预付款保函', amount: '1,000,000.00', premium: '10,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '泉州市交通建设集团', applyTime: '2026-03-09 09:15:00', status: '已支付', operator: '王五', operatorPhone: '13805910003' },
+            { id: 'FJ202604010004', enterpriseName: '漳州市城建集团', projectName: '漳州市城市轨道交通工程', type: '投标保函', amount: '200,000.00', premium: '2,000.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '漳州市公共资源交易中心', applyTime: '2026-04-01 11:45:00', status: '申请中', operator: '赵六', operatorPhone: '13805910004' },
+            { id: 'FJ202604060011', enterpriseName: '厦门市路桥建设集团', projectName: '厦门市跨海通道工程', type: '投标保函', amount: '400,000.00', premium: '4,000.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '厦门市公共资源交易中心', applyTime: '2026-04-06 10:10:00', status: '待审核', operator: '钱十三', operatorPhone: '13805910005' },
+            { id: 'FJ202604020005', enterpriseName: '莆田市建工集团', projectName: '莆田市港口建设工程', type: '履约保函', amount: '1,500,000.00', premium: '15,000.00', underwritingInstitution: '中国农业银行福建省分行', beneficiary: '莆田市城乡建设局', applyTime: '2026-04-02 15:30:00', status: '审批不通过', operator: '孙七', operatorPhone: '13805910006' },
+            { id: 'FJ202604030006', enterpriseName: '宁德市水利工程公司', projectName: '宁德市水利枢纽工程', type: '预付款保函', amount: '800,000.00', premium: '8,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '宁德市水利局', applyTime: '2026-04-03 10:00:00', status: '已取消', operator: '周八', operatorPhone: '13805910007' },
+            { id: 'FJ202604040007', enterpriseName: '龙岩市交通建设公司', projectName: '龙岩市铁路建设工程', type: '投标保函', amount: '150,000.00', premium: '1,500.00', underwritingInstitution: '中国工商银行福建省分行', beneficiary: '龙岩市公共资源交易中心', applyTime: '2026-04-04 14:00:00', status: '退保中', operator: '吴九', operatorPhone: '13805910008' },
+            { id: 'FJ202604070008', enterpriseName: '三明市建筑工程公司', projectName: '三明市文化中心建设', type: '履约保函', amount: '250,000.00', premium: '2,500.00', underwritingInstitution: '中国建设银行福建省分行', beneficiary: '三明市城乡建设局', applyTime: '2026-04-07 09:30:00', status: '已退保', operator: '郑十', operatorPhone: '13805910009' },
+            { id: 'FJ202604080009', enterpriseName: '南平市建工集团', projectName: '南平市体育中心工程', type: '投标保函', amount: '900,000.00', premium: '9,000.00', underwritingInstitution: '中国农业银行福建省分行', beneficiary: '南平市公共资源交易中心', applyTime: '2026-04-08 16:20:00', status: '已出函', operator: '王十一', operatorPhone: '13805910010' },
+            { id: 'FJ202604090010', enterpriseName: '平潭综合实验区建设公司', projectName: '平潭综合实验区港口工程', type: '预付款保函', amount: '600,000.00', premium: '6,000.00', underwritingInstitution: '中国银行福建省分行', beneficiary: '平潭综合实验区管委会', applyTime: '2026-04-09 10:45:00', status: '已出函', operator: '李十二', operatorPhone: '13805910011' }
+        ];
+
+        const tableBody = document.getElementById('order-table-body');
+        let currentStatusFilter = '全部';
+
+        function getStatusStyle(status) {
+            switch(status) {
+                case '申请中': return 'bg-blue-100 text-blue-700';
+                case '待审核': return 'bg-amber-100 text-amber-700';
+                case '已取消': return 'bg-gray-100 text-gray-600';
+                case '审批不通过': return 'bg-red-100 text-red-700';
+                case '待支付': return 'bg-yellow-100 text-yellow-700';
+                case '已支付': return 'bg-green-100 text-green-700';
+                case '已出函': return 'bg-green-100 text-green-700';
+                case '退保中': return 'bg-orange-100 text-orange-700';
+                case '已退保': return 'bg-gray-100 text-gray-600';
+                case '拒绝退保': return 'bg-red-100 text-red-700';
+                default: return 'bg-blue-100 text-blue-700';
+            }
+        }
+
+        function renderOrderList(status = '全部') {
+            currentStatusFilter = status;
+            const filteredData = status === '全部' ? orderData : orderData.filter(item => item.status === status);
+            
+            tableBody.innerHTML = filteredData.map(item => `
+                <tr class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${item.id}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.projectName}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.type}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-bold text-gray-900">${item.amount}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.premium || '-'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.beneficiary}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.underwritingInstitution}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.enterpriseName}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.operator}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${item.operatorPhone || '-'}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyle(item.status)}">
+                            ${item.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${item.applyTime}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <button class="text-primary hover:text-primary/80 hover:underline" onclick="showOrderDetail('${item.id}')">查看</button>
+                            ${item.status === '已出函' ? `<button class="text-blue-500 hover:text-blue-600 hover:underline" onclick="handleVerify('${item.id}')">验真</button>` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            const countInfo = document.getElementById('pagination-info');
+            if (countInfo) {
+                countInfo.innerHTML = `显示 <span class="font-medium">1</span> 到 <span class="font-medium">${filteredData.length}</span> 共 <span class="font-medium">${filteredData.length}</span> 条记录`;
+            }
+        }
+
+        function showOrderDetail(orderId) {
+            const order = orderData.find(item => item.id === orderId);
+            if (!order) return;
+
+            const showGuaranteeTab = !['申请中', '待审核', '审批不通过', '已取消'].includes(order.status);
+            const showRefundTab = ['退保中', '已退保', '拒绝退保'].includes(order.status);
+
+            let guaranteeInfoContent = '';
+            let refundInfoContent = '';
+            let statusBannerContent = '';
+            
+            if (order.status === '待支付') {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函类型：</span>
+                                    <span class="text-sm text-gray-900">${order.type}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函期限：</span>
+                                    <span class="text-sm text-gray-900">90天</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">到期日期：</span>
+                                    <span class="text-sm text-gray-900">${order.expiry || '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保费（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.premium || '0.00'}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付状态：</span>
+                                    <span class="text-sm text-rose-600">待支付</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付截止：</span>
+                                    <span class="text-sm text-gray-900">2026-03-15 23:59:59</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-2">支付须知</h5>
+                        <div class="border border-gray-200 rounded-md p-4">
+                            <ul class="text-sm text-gray-600 space-y-2 list-disc pl-5">
+                                <li>请在支付截止时间前完成保费支付</li>
+                                <li>支付成功后，系统将自动生成保函</li>
+                                <li>如超过支付截止时间未支付，订单将自动取消</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                statusBannerContent = `
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-clock-o text-yellow-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    <strong>待支付：</strong> 请在支付截止时间前完成保费支付，支付成功后系统将自动生成保函。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (order.status === '已支付') {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函类型：</span>
+                                    <span class="text-sm text-gray-900">${order.type}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函期限：</span>
+                                    <span class="text-sm text-gray-900">90天</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">到期日期：</span>
+                                    <span class="text-sm text-gray-900">${order.expiry || '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保费（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.premium || '0.00'}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付状态：</span>
+                                    <span class="text-sm text-green-600">已支付</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付时间：</span>
+                                    <span class="text-sm text-gray-900">2026-03-11 10:30:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                statusBannerContent = `
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-info-circle text-blue-500"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    <strong>已支付：</strong> 保费已支付成功，正在等待承保机构出函。预计 1-2 个工作日内完成。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (order.status === '退保中') {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函类型：</span>
+                                    <span class="text-sm text-gray-900">${order.type}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函期限：</span>
+                                    <span class="text-sm text-gray-900">90天</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">开立日期：</span>
+                                    <span class="text-sm text-gray-900">2026-03-11</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">到期日期：</span>
+                                    <span class="text-sm text-gray-900">2026-06-09</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保费（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.premium || '0.00'}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付状态：</span>
+                                    <span class="text-sm text-green-600">已支付</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付时间：</span>
+                                    <span class="text-sm text-gray-900">2026-03-11 10:30:00</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">发票状态：</span>
+                                    <span class="text-sm text-gray-900">已开具</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">发票编号：</span>
+                                    <span class="text-sm text-gray-900">F202603110007</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                refundInfoContent = `
+                    <div class="border border-gray-200 rounded-md p-4 bg-yellow-50 mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-3">退保状态</h5>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 w-24">当前状态：</span>
+                            <span class="text-sm text-yellow-600">退保审核中</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保申请信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">申请日期：</span>
+                                    <span class="text-sm text-gray-900">2026-04-01</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">退保原因：</span>
+                                    <span class="text-sm text-gray-900">项目取消/流标</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">申请金额：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保处理信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">审核状态：</span>
+                                    <span class="text-sm text-yellow-600">待审核</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (order.status === '已退保') {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函类型：</span>
+                                    <span class="text-sm text-gray-900">${order.type}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函期限：</span>
+                                    <span class="text-sm text-gray-900">90天</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">开立日期：</span>
+                                    <span class="text-sm text-gray-900">2026-01-15</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">到期日期：</span>
+                                    <span class="text-sm text-gray-900">2026-04-15</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保费（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.premium || '0.00'}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付状态：</span>
+                                    <span class="text-sm text-green-600">已支付</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付时间：</span>
+                                    <span class="text-sm text-gray-900">2026-01-15 14:00:00</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">发票状态：</span>
+                                    <span class="text-sm text-gray-900">已开具</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">发票编号：</span>
+                                    <span class="text-sm text-gray-900">F202601150008</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                refundInfoContent = `
+                    <div class="border border-gray-200 rounded-md p-4 bg-gray-50 mb-6">
+                        <h5 class="text-sm font-medium text-gray-700 mb-3">退保状态</h5>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-500 w-24">当前状态：</span>
+                            <span class="text-sm text-green-600">已退保</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保申请信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">申请日期：</span>
+                                    <span class="text-sm text-gray-900">2026-02-10</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">退保原因：</span>
+                                    <span class="text-sm text-gray-900">项目取消/流标</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">申请金额：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">退保处理信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">审核状态：</span>
+                                    <span class="text-sm text-green-600">审核通过</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">退保日期：</span>
+                                    <span class="text-sm text-gray-900">2026-02-12</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">退款金额：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (showGuaranteeTab) {
+                guaranteeInfoContent = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">基本信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函类型：</span>
+                                    <span class="text-sm text-gray-900">${order.type}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保证金金额（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.amount}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保函期限：</span>
+                                    <span class="text-sm text-gray-900">90天</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">开立日期：</span>
+                                    <span class="text-sm text-gray-900">2026-03-11</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">到期日期：</span>
+                                    <span class="text-sm text-gray-900">${order.expiry || '-'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-medium text-gray-700 mb-2">费用信息</h5>
+                            <div class="space-y-3">
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">保费（元）：</span>
+                                    <span class="text-sm text-gray-900">${order.premium || '0.00'}</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付状态：</span>
+                                    <span class="text-sm text-green-600">已支付</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">支付时间：</span>
+                                    <span class="text-sm text-gray-900">2026-03-11 10:30:00</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">发票状态：</span>
+                                    <span class="text-sm text-gray-900">已开具</span>
+                                </div>
+                                <div class="flex">
+                                    <span class="text-sm text-gray-500 w-24">发票编号：</span>
+                                    <span class="text-sm text-gray-900">F202603110001</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const showVerifyBtn = ['已出函', '已生效', '已失效-到期', '已失效-退保', '已注销'].includes(order.status);
+            const showGuaranteeBtn = ['已出函', '已生效', '已失效-到期', '已失效-退保', '已注销'].includes(order.status);
+
+            let buttonsHtml = `
+                ${showVerifyBtn ? `
+                <button onclick="handleVerify('${orderId}')" class="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-50 font-bold text-sm">
+                    <i class="fa fa-shield mr-2"></i>验证真伪
+                </button>
+                ` : ''}
+                ${showGuaranteeBtn ? `
+                <button onclick="handleViewGuarantee('${orderId}')" class="px-4 py-2 border border-primary text-primary rounded-md hover:bg-blue-50 font-bold text-sm">
+                    <i class="fa fa-eye mr-2"></i>在线预览
+                </button>
+                ` : ''}
+                ${showGuaranteeBtn ? `
+                <button onclick="handleDownloadGuarantee('${orderId}')" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 font-bold text-sm">
+                    <i class="fa fa-download mr-2"></i>下载保函
+                </button>
+                ` : ''}
+            `;
+
+            const content = `
+                <div class="border border-gray-200 rounded-md p-4">
+                    <!-- 头部 -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h4 class="text-xl font-semibold text-gray-900">${order.projectName}</h4>
+                            <div class="text-sm text-gray-500 mt-1">订单号：<span>${order.id}</span></div>
+                        </div>
+                        <span class="px-3 py-1 ${getStatusStyle(order.status)} rounded-full text-sm font-medium">
+                            ${order.status}
+                        </span>
+                    </div>
+
+                    <!-- Tab导航 -->
+                    <div class="border-b border-gray-200 mb-6">
+                        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="detail-tabs" role="tablist">
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-primary text-primary rounded-t-lg active" id="project-tab" data-tab="project" type="button" role="tab" aria-controls="project" aria-selected="true">
+                                    <i class="fa fa-building mr-2"></i>订单信息
+                                </button>
+                            </li>
+                            ${showGuaranteeTab ? `
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" id="guarantee-tab" data-tab="guarantee" type="button" role="tab" aria-controls="guarantee" aria-selected="false">
+                                    <i class="fa fa-file-text mr-2"></i>保函信息
+                                </button>
+                            </li>
+                            ` : ''}
+                            ${showRefundTab ? `
+                            <li class="mr-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" id="refund-tab" data-tab="refund" type="button" role="tab" aria-controls="refund" aria-selected="false">
+                                    <i class="fa fa-undo mr-2"></i>退保信息
+                                </button>
+                            </li>
+                            ` : ''}
+                        </ul>
+                    </div>
+
+                    <!-- Tab内容 -->
+                    <div class="tab-content">
+                        <!-- 订单信息Tab -->
+                        <div class="tab-pane active" id="project">
+                            ${order.status === '审批不通过' ? `
+                            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fa fa-times-circle text-red-500"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-red-700">
+                                            <strong>审核未通过：</strong> 企业资质证明文件不清晰，请重新上传清晰的营业执照扫描件。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${order.status === '申请中' ? `
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fa fa-info-circle text-blue-500"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-blue-700">
+                                            <strong>当前进度：</strong> 订单已提交，正在等待承保产品接入审核。预计 1-2 个工作日内完成。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${order.status === '待审核' ? `
+                            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fa fa-clock-o text-amber-500"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <p class="text-sm text-amber-700">
+                                            <strong>当前进度：</strong> 订单已提交，正在等待平台运营方审核。审核通过后即可进行保费支付。
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            ` : ''}
+                            ${statusBannerContent}
+                            <div class="space-y-6 mb-6">
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-3">项目信息</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">项目名称：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.projectName}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保函类型：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.type}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">受益人：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.beneficiary}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">承保机构：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.underwritingInstitution}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">招标企业：</span>
+                                            <span class="ml-3 text-sm text-gray-900">福州市城市建设投资集团有限公司</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金金额（元）：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.amount}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">保证金截止时间：</span>
+                                            <span class="ml-3 text-sm text-gray-900">2026-03-18 17:00</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">开标时间：</span>
+                                            <span class="ml-3 text-sm text-gray-900">2026-03-20 10:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-3">投保企业信息</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">投保企业名称：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.enterpriseName}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">统一社会信用代码：</span>
+                                            <span class="ml-3 text-sm text-gray-900">91350100MA8RQ1X2Y3</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">法定代表人姓名：</span>
+                                            <span class="ml-3 text-sm text-gray-900">张三</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">法定代表人身份证号：</span>
+                                            <span class="ml-3 text-sm text-gray-900">350102198211302418</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="text-sm font-medium text-gray-700 mb-3">经办人信息</h5>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-3">
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人姓名：</span>
+                                            <span class="ml-3 text-sm text-gray-900">${order.operator}</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人身份证：</span>
+                                            <span class="ml-3 text-sm text-gray-900">350102198505202419</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人手机号：</span>
+                                            <span class="ml-3 text-sm text-gray-900">13800138000</span>
+                                        </div>
+                                        <div class="flex items-baseline">
+                                            <span class="w-44 shrink-0 text-left text-sm text-gray-500 whitespace-nowrap">经办人邮箱：</span>
+                                            <span class="ml-3 text-sm text-gray-900">lisi@example.com</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 保函信息Tab -->
+                        ${showGuaranteeTab ? `
+                        <div class="tab-pane" id="guarantee">
+                            ${guaranteeInfoContent}
+                        </div>
+                        ` : ''}
+                        ${showRefundTab ? `
+                        <div class="tab-pane" id="refund">
+                            ${refundInfoContent}
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="flex flex-wrap gap-3 justify-end mt-8 pt-6 border-t border-gray-100">
+                        ${buttonsHtml}
+                    </div>
+                </div>
+            `;
+
+            showModal('订单详情', content, [], 'max-w-4xl');
+        }
+
+        function handleOrderCancel(orderId) {
+            showModal('确认取消', `您确定要取消订单 ${orderId} 吗？取消后将无法恢复。`, [
+                { text: '取消操作', className: 'px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50' },
+                { text: '确认取消', className: 'px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600', onClick: () => {
+                    showNotification(`订单 ${orderId} 已取消`, 'success');
+                    const modal = document.getElementById('modal');
+                    if(modal) modal.remove();
+                    renderOrderList(currentStatusFilter);
+                }}
+            ]);
+        }
+
+        function handleVerify(orderId) {
+            const verifyResultContent = `
+                <div class="p-6">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa fa-check text-green-600 text-3xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-semibold">保函验证通过</h3>
+                            <p class="text-gray-500">该保函为真实有效的电子保函</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">保函编号</div>
+                            <div class="font-medium">FJETG202603110001</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">保函类型</div>
+                            <div class="font-medium">投标保函</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">保证金金额（元）</div>
+                            <div class="font-medium">100,000.00</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">有效期起止日期</div>
+                            <div class="font-medium">2026-03-11 至 2026-06-11</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">开立机构</div>
+                            <div class="font-medium">中国建设银行福建省分行</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">开立日期</div>
+                            <div class="font-medium">2026-03-11</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">被保证人</div>
+                            <div class="font-medium">福建某某建筑工程有限公司</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-500 mb-1">受益人</div>
+                            <div class="font-medium">福建省公共资源交易中心</div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-6">
+                        <div class="text-lg font-semibold mb-4 flex items-center">
+                            <i class="fa fa-link text-primary mr-2"></i>区块链验证结果
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-white rounded-lg shadow-sm flex items-center justify-center mr-4 flex-shrink-0">
+                                    <i class="fa fa-cubes text-primary text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="font-bold text-slate-800">福建省政务区块链存证校验</div>
+                                        <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full flex items-center">
+                                            <i class="fa fa-check-circle mr-1"></i> 数据校验一致
+                                        </span>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                                        <div class="text-sm">
+                                            <span class="text-gray-500">存证高度：</span>
+                                            <span class="font-mono text-slate-700">#12,854,921</span>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="text-gray-500">存证时间：</span>
+                                            <span class="text-slate-700">2026-03-11 10:30:05</span>
+                                        </div>
+                                        <div class="text-sm md:col-span-2">
+                                            <span class="text-gray-500">存证哈希 (Hash)：</span>
+                                            <span class="font-mono text-xs text-slate-600 break-all">0x7f8e9d2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e</span>
+                                        </div>
+                                        <div class="text-sm md:col-span-2 flex items-center mt-1">
+                                            <span class="text-gray-500 mr-2">验证状态：</span>
+                                            <span class="text-green-600 font-medium flex items-center">
+                                                <i class="fa fa-shield mr-1"></i> 原始保函数据未被篡改，区块链共识校验通过
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            showModal('验真结果', verifyResultContent, [
+                { text: '关闭', className: 'px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90', onClick: () => {
+                    const modal = document.getElementById('modal');
+                    if(modal) modal.remove();
+                }}
+            ], 'max-w-4xl');
+        }
+
+        function handleViewGuarantee(orderId) {
+            showNotification('正在加载保函预览...', 'info');
+            setTimeout(() => {
+                showModal('保函预览', `
+                    <div class="bg-slate-100 p-4 rounded-lg">
+                        <div class="bg-white border border-slate-200 p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="text-lg font-bold text-slate-800">电子保函凭证</h4>
+                                <span class="text-xs text-slate-400 font-mono">订单号：${orderId}</span>
+                            </div>
+                            <div class="border-t border-slate-200 pt-4 space-y-3 text-sm">
+                                <p><span class="text-slate-500">保函类型：</span>投标保函</p>
+                                <p><span class="text-slate-500">保证金金额（元）：</span>500,000.00</p>
+                                <p><span class="text-slate-500">受益人：</span>福州市公共资源交易中心</p>
+                                <p><span class="text-slate-500">有效期至：</span>2026-06-11</p>
+                                <p><span class="text-slate-500">承保机构：</span>中国建设银行福建省分行</p>
+                            </div>
+                            <div class="mt-4 flex justify-end">
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 text-sm" onclick="window.print()">
+                                    <i class="fa fa-print mr-2"></i>打印
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `, [
+                    { text: '关闭', className: 'px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50' },
+                    { text: '下载PDF', className: 'px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700' }
+                ], 'max-w-lg');
+            }, 500);
+        }
+
+        function handleDownloadGuarantee(orderId) {
+            showNotification('正在生成并下载保函...', 'info');
+            setTimeout(() => {
+                showNotification(`保函 ${orderId}.pdf 已下载`, 'success');
+            }, 1000);
+        }
+
+        // 页面初始化
+        renderOrderList('全部');
+
+        // 状态筛选
+        const statusFilter = document.getElementById('status-filter');
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function() {
+                renderOrderList(this.value || '全部');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -283,49 +283,6 @@
                                 </div>
                             </div>
 
-                            <!-- 审核记录 -->
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold text-slate-800 flex items-center">
-                                    <span class="w-1 h-4 bg-primary rounded-full mr-2"></span>审核记录
-                                </h4>
-                                <div class="border border-slate-100 rounded-xl overflow-hidden">
-                                    <table class="w-full text-xs text-left">
-                                        <thead class="bg-slate-50 text-slate-500">
-                                            <tr>
-                                                <th class="px-4 py-2 font-medium">环节</th>
-                                                <th class="px-4 py-2 font-medium">审核人</th>
-                                                <th class="px-4 py-2 font-medium">审核意见</th>
-                                                <th class="px-4 py-2 font-medium">审核时间</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-slate-50">
-                                            <tr>
-                                                <td class="px-4 py-3">申请提交</td>
-                                                <td class="px-4 py-3">企业经办人</td>
-                                                <td class="px-4 py-3 text-blue-600">已在线发起理赔申请。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-20 09:30</td>
-                                            </tr>
-                                            ${['待赔付', '已赔付'].includes(status) ? `
-                                            <tr>
-                                                <td class="px-4 py-3">审核环节</td>
-                                                <td class="px-4 py-3">李四 (审核员)</td>
-                                                <td class="px-4 py-3 text-green-600">材料核验通过，准予赔付。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-20 14:30</td>
-                                            </tr>
-                                            ` : ''}
-                                            ${status === '已赔付' ? `
-                                            <tr>
-                                                <td class="px-4 py-3">赔付环节</td>
-                                                <td class="px-4 py-3">王五 (财务员)</td>
-                                                <td class="px-4 py-3 text-green-600">赔付资金已汇出，上传凭证。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-22 11:00</td>
-                                            </tr>
-                                            ` : ''}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
                             <!-- 赔付记录 -->
                             ${status === '已赔付' ? `
                             <div class="space-y-4">
@@ -336,6 +293,23 @@
                                     <p class="text-xs text-slate-600 flex justify-between"><span>赔付金额：</span><span class="font-bold text-green-700">${amount}</span></p>
                                     <p class="text-xs text-slate-600 flex justify-between"><span>赔付时间：</span><span class="font-mono">2026-03-22 11:00</span></p>
                                     <p class="text-xs text-slate-600 flex justify-between"><span>赔付凭证：</span><a href="#" class="text-blue-600 underline">查看电子回单</a></p>
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            <!-- 拒绝原因 -->
+                            ${status === '已拒绝' ? `
+                            <div class="space-y-4">
+                                <h4 class="text-sm font-bold text-slate-800 flex items-center">
+                                    <span class="w-1 h-4 bg-red-500 rounded-full mr-2"></span>拒绝原因
+                                </h4>
+                                <div class="bg-red-50 p-4 rounded-xl border border-red-100 space-y-2">
+                                    <p class="text-xs text-slate-600 flex justify-between"><span>拒绝时间：</span><span class="font-mono">2026-03-21 10:20</span></p>
+                                    <p class="text-xs text-slate-600 flex justify-between"><span>审核人：</span><span>李四 (审核员)</span></p>
+                                    <div class="pt-1">
+                                        <p class="text-xs text-slate-400 uppercase mb-1">拒绝原因</p>
+                                        <p class="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-100 leading-relaxed">提供的违约证明材料不足以证明投保人存在实质性违约行为，不符合理赔受理条件，予以拒绝。</p>
+                                    </div>
                                 </div>
                             </div>
                             ` : ''}
@@ -411,6 +385,7 @@
                             <select class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm">
                                 <option value="">全部状态</option>
                                 <option value="待审核">待审核</option>
+                                <option value="已拒绝">已拒绝</option>
                                 <option value="待赔付">待赔付</option>
                                 <option value="已赔付">已赔付</option>
                             </select>
@@ -507,6 +482,20 @@
                                         <span class="px-2 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-bold">已赔付</span>
                                     </td>
                                     <td class="px-6 py-4 text-slate-400 font-mono">2026-03-15 11:00</td>
+                                    <td class="px-6 py-4 text-right space-x-3">
+                                        <a href="#" class="text-primary hover:underline">详情</a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="px-6 py-4 font-mono font-bold text-slate-700">CL202603120004</td>
+                                    <td class="px-6 py-4 text-blue-600 font-mono">FJ202601030021</td>
+                                    <td class="px-6 py-4">漳州市建筑安装工程公司</td>
+                                    <td class="px-6 py-4 font-bold text-red-600">120,000.00</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-[10px] font-bold">已拒绝</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-400 font-mono">2026-03-12 15:45</td>
                                     <td class="px-6 py-4 text-right space-x-3">
                                         <a href="#" class="text-primary hover:underline">详情</a>
                                     </td>
