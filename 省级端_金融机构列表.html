@@ -218,6 +218,12 @@
                             <span>投保材料管理</span>
                         </a>
                     </li>
+                    <li>
+                        <a href="省级端_产品管理.html" class="flex items-center p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
+                            <i class="fa fa-cubes mr-3 group-hover:text-blue-400"></i>
+                            <span>产品管理</span>
+                        </a>
+                    </li>
                     </li>
                     <li>
                         <button onclick="toggleSubMenu('portal-menu')" class="w-full flex items-center justify-between p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all group">
@@ -389,7 +395,7 @@
                                 <tr class="bg-slate-50 text-slate-500 text-left">
                                     <th class="px-5 py-3 font-semibold">机构名称</th>
                                     <th class="px-5 py-3 font-semibold">机构类型</th>
-                                    <th class="px-5 py-3 font-semibold">联系人</th>
+                                    <th class="px-5 py-3 font-semibold">经办人姓名</th>
                                     <th class="px-5 py-3 font-semibold">登录账号</th>
                                     <th class="px-5 py-3 font-semibold">统一社会信用代码</th>
                                     <th class="px-5 py-3 font-semibold">创建日期</th>
@@ -426,22 +432,6 @@
                 <!-- 基础信息 -->
                 <div class="grid grid-cols-2 gap-x-6 gap-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>统一社会信用代码</label>
-                        <input type="text" id="add-code" placeholder="请输入统一社会信用代码" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div id="field-account" class="hidden">
-                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>登录账号</label>
-                        <input type="text" id="add-account" placeholder="请输入登录账号" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div id="field-password" class="hidden">
-                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>初始密码</label>
-                        <input type="text" id="add-password" placeholder="请输入初始密码" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>机构名称</label>
-                        <input type="text" id="add-name" placeholder="请输入机构名称" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    </div>
-                    <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>机构类型</label>
                         <select id="add-type" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="">请选择机构类型</option>
@@ -451,12 +441,28 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>联系人</label>
-                        <input type="text" id="add-contact" placeholder="请输入联系人" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>机构名称</label>
+                        <input type="text" id="add-name" placeholder="请输入机构名称" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>联系电话</label>
-                        <input type="text" id="add-phone" placeholder="请输入联系电话" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>统一社会信用代码</label>
+                        <input type="text" id="add-code" placeholder="请输入统一社会信用代码" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>经办人姓名</label>
+                        <input type="text" id="add-contact" placeholder="请输入经办人姓名" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>经办人联系方式</label>
+                        <input type="text" id="add-phone" placeholder="请输入经办人联系方式" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div id="field-account" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>登录账号</label>
+                        <input type="text" id="add-account" placeholder="请输入登录账号" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div id="field-password" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>初始密码</label>
+                        <input type="text" id="add-password" placeholder="请输入初始密码" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-500 mb-1"><span class="text-rose-500 mr-1">*</span>客服电话</label>

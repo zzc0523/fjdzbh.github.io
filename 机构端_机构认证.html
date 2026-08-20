@@ -269,21 +269,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- 开户银行 -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">开户银行 <span class="text-red-500">*</span></label>
-                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="openingBank" value="中国建设银行" required>
-                                    </div>
-
-                                    <!-- 开户账号 -->
-                                    <div>
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">开户账号（基本账户） <span class="text-red-500">*</span></label>
-                                        <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="bankAccount" value="1234567890123456789" required>
-                                    </div>
-
                                     <!-- 联系电话 -->
                                     <div>
-                                        <label class="block text-sm font-semibold text-slate-600 mb-2">联系电话</label>
+                                        <label class="block text-sm font-semibold text-slate-600 mb-2">客服电话</label>
                                         <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="contactPhone" value="0591-87838888">
                                     </div>
 
@@ -298,6 +286,34 @@
                                         <label class="block text-sm font-semibold text-slate-600 mb-2">经营范围 <span class="text-red-500">*</span></label>
                                         <textarea class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="businessScope" rows="3" required>电子保函业务、贷款业务、存款业务、结算业务等</textarea>
                                     </div>
+                        </div>
+                    </div>
+
+                    <!-- 收款账户信息 -->
+                    <div class="mt-5 bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+                        <div class="p-4 bg-slate-50/50 border-b border-slate-100">
+                            <h3 class="font-semibold text-slate-800">收款账户信息</h3>
+                        </div>
+                        <div class="p-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- 账户名称 -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">账户名称 <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="accountName" required>
+                                </div>
+
+                                <!-- 开户银行 -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">开户银行 <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="openingBank" value="中国建设银行" required>
+                                </div>
+
+                                <!-- 开户账号 -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-600 mb-2">账号 <span class="text-red-500">*</span></label>
+                                    <input type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" id="bankAccount" value="1234567890123456789" required>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -366,6 +382,13 @@
                 document.getElementById('establishDate').value = '1998-01-01';
             }
             if (startInput) startInput.value = '1998-01-01';
+
+            // 账户名称默认取机构名称，可修改
+            const accountNameInput = document.getElementById('accountName');
+            const institutionNameInput = document.getElementById('institutionName');
+            if (accountNameInput) {
+                accountNameInput.value = institutionNameInput ? institutionNameInput.value : '';
+            }
 
             window.toggleBusinessTermLong = function () {
                 if (!longCheck || !endInput) return;
