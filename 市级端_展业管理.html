@@ -74,6 +74,141 @@
             modal.addEventListener('click', function(e) { if (e.target === modal) { closeModal(); } });
         }
 
+        // 编辑展业申请弹窗
+        function openEditModal(tr) {
+            const id = tr.querySelector('td:nth-of-type(1)').textContent.trim();
+            const orgName = tr.querySelector('td:nth-of-type(2)').textContent.trim();
+            const productName = tr.querySelector('td:nth-of-type(3)').textContent.trim();
+
+            let modal = document.getElementById('modal');
+            if (modal) { modal.remove(); }
+            modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300';
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.95)';
+            modal.innerHTML = `
+                <div class="bg-white rounded-xl shadow-xl border border-slate-200 max-w-xl w-full mx-4 max-h-[90vh] overflow-y-auto transition-all duration-300">
+                    <div class="flex justify-between items-center border-b border-slate-200 p-5 bg-slate-50">
+                        <h3 class="text-xl font-bold text-slate-900">编辑展业申请</h3>
+                        <button id="closeModal" class="w-9 h-9 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors">
+                            <i class="fa fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 space-y-5">
+                        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
+                            <div>
+                                <label class="text-xs text-slate-500 block mb-1">申请编号</label>
+                                <div class="text-sm font-semibold text-slate-800">${id}</div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 block mb-1">机构名称</label>
+                                <div class="text-sm font-semibold text-slate-800">${orgName}</div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 block mb-1">产品名称</label>
+                                <div class="text-sm font-semibold text-slate-800">${productName}</div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 block mb-1">申请类型</label>
+                                <div class="text-sm font-semibold text-primary">展业申请</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">申请说明 <span class="text-red-500">*</span></label>
+                            <textarea id="edit-desc" rows="4" placeholder="请填写展业申请说明，如展业范围、展业计划等" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">附件上传</label>
+                            <div id="edit-upload-area" class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center cursor-pointer hover:border-primary hover:bg-slate-50 transition-all">
+                                <i class="fa fa-cloud-upload text-slate-400 text-3xl mb-2"></i>
+                                <p class="text-sm text-slate-500">点击上传相关材料（如展业方案、授权文件等）</p>
+                                <input type="file" id="edit-file" class="hidden" multiple>
+                                <p id="edit-file-name" class="mt-2 text-xs text-slate-400"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end border-t border-slate-200 p-5 bg-slate-50 space-x-4">
+                        <button id="cancelModal" class="border border-slate-300 text-slate-700 px-6 py-2.5 rounded-lg hover:bg-slate-100 transition-colors font-medium">取消</button>
+                        <button id="confirmModal" class="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-primary/90 transition-all font-medium shadow-sm hover:shadow-md">确认保存</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => { modal.style.opacity = '1'; modal.style.transform = 'scale(1)'; }, 10);
+
+            function closeModal() {
+                modal.style.opacity = '0';
+                modal.style.transform = 'scale(0.95)';
+                setTimeout(() => { if (modal.parentNode) { modal.parentNode.removeChild(modal); } }, 300);
+            }
+
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('cancelModal').addEventListener('click', closeModal);
+            modal.addEventListener('click', function(e) { if (e.target === modal) { closeModal(); } });
+
+            const uploadArea = document.getElementById('edit-upload-area');
+            const fileInput = document.getElementById('edit-file');
+            const fileName = document.getElementById('edit-file-name');
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', () => {
+                const names = Array.from(fileInput.files).map(f => f.name).join(', ');
+                fileName.textContent = names ? '已选择：' + names : '';
+            });
+
+            document.getElementById('confirmModal').addEventListener('click', () => {
+                const desc = document.getElementById('edit-desc').value.trim();
+                if (!desc) {
+                    alert('请填写申请说明');
+                    return;
+                }
+                alert(`申请 ${id} 编辑保存成功！`);
+                closeModal();
+            });
+        }
+
+        const applyData = {
+            'BZ202603110001': {
+                desc: '该机构拟在福州市开展投标保函展业业务，已具备相应资质与风控能力，申请市级展业资格审核。',
+                materials: [
+                    { name: '展业申请书.pdf', size: '1.2 MB' },
+                    { name: '产品资质证明.pdf', size: '3.5 MB' }
+                ]
+            },
+            'BZ202603100002': {
+                desc: '该机构拟在厦门市开展履约保函展业业务，承诺严格按照监管要求开展保函业务，申请市级展业资格审核。',
+                materials: [
+                    { name: '展业申请书.pdf', size: '1.1 MB' },
+                    { name: '机构营业执照.pdf', size: '2.3 MB' }
+                ]
+            },
+            'BZ202603090003': {
+                desc: '该机构拟在泉州市开展投标保函展业业务，已具备相应资质与风控能力，申请市级展业资格审核。',
+                materials: [
+                    { name: '展业申请书.pdf', size: '1.2 MB' },
+                    { name: '产品资质证明.pdf', size: '3.5 MB' }
+                ],
+                audit: { result: '通过', time: '2026-03-09 14:30', opinion: '材料齐全，符合展业条件，同意展业申请。' }
+            },
+            'BZ202603080004': {
+                desc: '该机构拟在漳州市开展质量保函展业业务，已提交相关资质材料，申请市级展业资格审核。',
+                materials: [
+                    { name: '展业申请书.pdf', size: '1.0 MB' },
+                    { name: '产品资质证明.pdf', size: '2.8 MB' }
+                ],
+                audit: { result: '驳回', time: '2026-03-06 10:15', opinion: '产品资质证明材料不完整，缺少关键的风险评估报告，请补充后重新提交。' }
+            },
+            'BZ202603070005': {
+                desc: '该机构拟在莆田市开展预付款保函展业业务，已具备相应资质与风控能力，申请市级展业资格审核。',
+                materials: [
+                    { name: '展业申请书.pdf', size: '1.3 MB' },
+                    { name: '授权文件.pdf', size: '1.8 MB' }
+                ]
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
             // 查看按钮
             document.querySelectorAll('a.text-primary').forEach(btn => {
@@ -81,14 +216,76 @@
                     e.preventDefault();
                     const tr = this.closest('tr');
                     const id = tr.querySelector('td:nth-of-type(1)').textContent.trim();
-                    createModal(`展业管理详情 - ${id}`, `
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
-                                <div><label class="font-bold text-slate-500 block">申请编号</label>${id}</div>
-                                <div><label class="font-bold text-slate-500 block">机构名称</label>${tr.querySelector('td:nth-of-type(2)').textContent.trim()}</div>
-                                <div><label class="font-bold text-slate-500 block">产品名称</label>${tr.querySelector('td:nth-of-type(3)').textContent.trim()}</div>
-                                <div><label class="font-bold text-slate-500 block">状态</label>${tr.querySelector('td:nth-of-type(5)').textContent.trim()}</div>
+                    const status = tr.querySelector('td:nth-of-type(5)').textContent.trim();
+                    const data = applyData[id] || { desc: '暂无申请说明', materials: [], audit: null };
+                    const auditHtml = data.audit ? (data.audit.result === '通过' ? `
+                        <div class="bg-green-50 border border-green-100 rounded-xl p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center mr-3">
+                                    <i class="fa fa-check"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-green-700">审核通过</div>
+                                    <div class="text-xs text-green-600">${data.audit.time}</div>
+                                </div>
                             </div>
+                            <div>
+                                <label class="text-xs text-green-700 font-semibold block mb-1">审核意见</label>
+                                <div class="text-sm text-slate-700 bg-white/60 rounded-lg p-3">${data.audit.opinion}</div>
+                            </div>
+                        </div>` : `
+                        <div class="bg-red-50 border border-red-100 rounded-xl p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center mr-3">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-red-700">审核驳回</div>
+                                    <div class="text-xs text-red-600">${data.audit.time}</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-red-700 font-semibold block mb-1">驳回原因</label>
+                                <div class="text-sm text-slate-700 bg-white/60 rounded-lg p-3">${data.audit.opinion}</div>
+                            </div>
+                        </div>`) : '';
+                    const materialsHtml = data.materials.length ? data.materials.map(m => `
+                        <div class="flex items-center justify-between border border-slate-200 rounded-lg p-3 bg-white">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-lg bg-red-50 text-red-500 flex items-center justify-center mr-3">
+                                    <i class="fa fa-file-pdf-o text-lg"></i>
+                                </div>
+                                <div>
+                                    <div class="text-sm font-semibold text-slate-800">${m.name}</div>
+                                    <div class="text-xs text-slate-500">${m.size}</div>
+                                </div>
+                            </div>
+                            <button class="text-blue-600 hover:text-blue-700 text-sm font-medium" onclick="alert('预览文件：${m.name}')">
+                                <i class="fa fa-eye mr-1"></i>查看
+                            </button>
+                        </div>
+                    `).join('') : '<p class="text-sm text-slate-400">暂无申请材料</p>';
+
+                    createModal(`展业管理详情 - ${id}`, `
+                        <div class="space-y-5">
+                            <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-lg">
+                                <div><label class="font-bold text-slate-500 block text-xs mb-1">申请编号</label><div class="text-sm font-semibold text-slate-800">${id}</div></div>
+                                <div><label class="font-bold text-slate-500 block text-xs mb-1">机构名称</label><div class="text-sm font-semibold text-slate-800">${tr.querySelector('td:nth-of-type(2)').textContent.trim()}</div></div>
+                                <div><label class="font-bold text-slate-500 block text-xs mb-1">产品名称</label><div class="text-sm font-semibold text-slate-800">${tr.querySelector('td:nth-of-type(3)').textContent.trim()}</div></div>
+                                <div><label class="font-bold text-slate-500 block text-xs mb-1">状态</label><div class="text-sm font-semibold text-slate-800">${status}</div></div>
+                            </div>
+
+                            <div>
+                                <label class="font-bold text-slate-500 block text-xs mb-2">申请说明</label>
+                                <div class="text-sm text-slate-700 bg-slate-50 rounded-lg p-4 leading-relaxed">${data.desc}</div>
+                            </div>
+
+                            <div>
+                                <label class="font-bold text-slate-500 block text-xs mb-2">申请材料</label>
+                                <div class="space-y-2">${materialsHtml}</div>
+                            </div>
+
+                            ${auditHtml ? `<div><label class="font-bold text-slate-500 block text-xs mb-2"><i class="fa fa-file-text-o mr-1"></i>审核结果</label>${auditHtml}</div>` : ''}
                         </div>
                     `);
                 });
@@ -107,6 +304,11 @@
                             badge.className = 'px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800';
                             this.remove();
                         }
+                    });
+                } else if (btn.textContent.trim() === '编辑') {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openEditModal(this.closest('tr'));
                     });
                 }
             });
