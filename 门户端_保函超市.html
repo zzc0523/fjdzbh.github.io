@@ -136,7 +136,8 @@
             <!-- 机构列表 -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- 中国工商银行 -->
-                <div class="institution-card bg-white rounded-xl shadow-sm border border-gray-100 p-6" data-filter="bank" data-products="bid,performance,advance,wage,quality" data-cities="fuzhou,xiamen,quanzhou,zhangzhou">
+                <div class="institution-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative overflow-hidden" data-filter="bank" data-products="bid,performance,advance,wage,quality" data-cities="fuzhou,xiamen,quanzhou,zhangzhou">
+                    <span class="absolute" style="top:12px;left:12px;z-index:40;background:#f59e0b;color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:9999px;box-shadow:0 1px 3px rgba(0,0,0,.15);">测试中</span>
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center">
                             <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
@@ -144,7 +145,6 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-gray-800">中国工商银行</h3>
-                                
                             </div>
                         </div>
                         <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-xs font-medium">银行</span>
@@ -163,6 +163,9 @@
                     <a href="门户端_登录.html" class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-primary/90 transition-colors font-medium text-center block">
                         立即申请
                     </a>
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:30;overflow:hidden;">
+                        <span style="font-size:2.25rem;font-weight:900;color:rgba(245,158,11,0.18);transform:rotate(-12deg);letter-spacing:.25em;border:3px solid rgba(245,158,11,0.18);padding:4px 24px;border-radius:12px;user-select:none;white-space:nowrap;">测试中</span>
+                    </div>
                 </div>
                 
                 <!-- 中国建设银行 -->
