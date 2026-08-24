@@ -154,6 +154,25 @@
 
     <!-- 主内容区 -->
     <main class="flex-1 overflow-y-auto p-6 bg-gray-50 min-h-[calc(100vh-4rem)]">
+                <!-- 账户信息 -->
+                <div id="profile-section" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">账户信息</h3>
+                    <div class="flex items-center space-x-6">
+                        <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-upload').click()">
+                            <img id="profile-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23E5E7EB'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='%239CA3AF' font-size='36'%3E%3C/text%3E%3C/svg%3E" alt="头像" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200">
+                            <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fa fa-camera text-white"></i>
+                            </div>
+                            <input type="file" id="avatar-upload" accept="image/*" class="hidden">
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">138****8888</p>
+                            <p class="text-xs text-gray-500 mt-1">福建省建设工程有限公司</p>
+                            <p class="text-xs text-primary mt-2 cursor-pointer hover:underline" onclick="document.getElementById('avatar-upload').click()">更换头像</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 安全设置 -->
                 <div id="security-section" class="bg-white rounded-lg shadow-md p-6 mb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">安全设置</h3>
@@ -392,9 +411,50 @@
             });
         }
 
+        // 头像相关功能
+        function initAvatarUpload() {
+            const avatarInput = document.getElementById('avatar-upload');
+            const profileAvatar = document.getElementById('profile-avatar');
+            if (!avatarInput) return;
+
+            // 加载已保存头像
+            const savedAvatar = localStorage.getItem('enterprise_avatar');
+            if (savedAvatar) {
+                if (profileAvatar) profileAvatar.src = savedAvatar;
+                document.querySelectorAll('.user-avatar-img').forEach(img => img.src = savedAvatar);
+                const headerAvatar = document.getElementById('header-avatar');
+                if (headerAvatar) headerAvatar.src = savedAvatar;
+            }
+
+            avatarInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!/^image\/(jpeg|png|jpg|gif|webp)$/.test(file.type)) {
+                    showNotification('请上传图片文件（jpg/png/gif/webp）', 'error');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    showNotification('图片大小不能超过 2MB', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const dataUrl = event.target.result;
+                    localStorage.setItem('enterprise_avatar', dataUrl);
+                    if (profileAvatar) profileAvatar.src = dataUrl;
+                    document.querySelectorAll('.user-avatar-img').forEach(img => img.src = dataUrl);
+                    const headerAvatar = document.getElementById('header-avatar');
+                    if (headerAvatar) headerAvatar.src = dataUrl;
+                    showNotification('头像上传成功', 'success');
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         // 确保DOM完全加载后执行
         window.addEventListener('DOMContentLoaded', function() {
             setupTabSwitching();
+            initAvatarUpload();
             console.log('DOM loaded, tab switching setup');
         });
 
