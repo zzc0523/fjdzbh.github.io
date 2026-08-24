@@ -113,7 +113,13 @@
             
             <!-- 机构类型筛选 -->
             <div class="bg-white rounded-xl border border-gray-100 p-5 mb-6">
-                <h3 class="text-gray-500 font-medium mb-4">机构类型</h3>
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <h3 class="text-gray-500 font-medium">机构类型</h3>
+                    <div class="relative">
+                        <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input id="institution-search" type="text" placeholder="按机构名称搜索" class="pl-9 pr-3 py-2 w-56 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    </div>
+                </div>
                 <div class="flex flex-wrap gap-2">
                     <button class="filter-btn flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium transition-all duration-300 shadow-sm" data-filter="all">
                         <span>全部机构</span>
@@ -318,6 +324,8 @@
                     </a>
                 </div>
             </div>
+            <!-- 分页 -->
+            <div id="institutions-pagination" class="mt-8 flex justify-center"></div>
         </div>
     </section>
     
@@ -661,6 +669,9 @@
             let currentProduct = 'bid';
             let currentFilter = 'all';
             let currentCity = 'all';
+            let currentSearch = '';
+            let currentInstitutionPage = 1;
+            const INSTITUTIONS_PER_PAGE = 3;
             
             productTabButtons.forEach(button => {
                 button.addEventListener('click', function() {
@@ -680,25 +691,71 @@
                     }
                     
                     // 筛选机构
+                    currentInstitutionPage = 1;
                     filterInstitutions();
                 });
             });
             
             function filterInstitutions() {
+                // 先按筛选条件确定命中卡片，隐藏未命中的
+                const matched = [];
                 institutionCards.forEach(card => {
                     const products = card.getAttribute('data-products').split(',');
                     const cities = card.getAttribute('data-cities').split(',');
                     const filterMatch = currentFilter === 'all' || card.getAttribute('data-filter') === currentFilter;
                     const productMatch = products.includes(currentProduct);
                     const cityMatch = currentCity === 'all' || cities.includes(currentCity);
-                    
-                    if (filterMatch && productMatch && cityMatch) {
-                        card.style.display = 'block';
+                    const name = card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : '';
+                    const searchMatch = currentSearch === '' || name.toLowerCase().includes(currentSearch);
+
+                    if (filterMatch && productMatch && cityMatch && searchMatch) {
+                        matched.push(card);
                     } else {
                         card.style.display = 'none';
                     }
                 });
+
+                // 重置到第一页（筛选变化时）
+                const totalPages = Math.max(1, Math.ceil(matched.length / INSTITUTIONS_PER_PAGE));
+                if (currentInstitutionPage > totalPages) currentInstitutionPage = totalPages;
+
+                // 仅显示当前页卡片
+                const start = (currentInstitutionPage - 1) * INSTITUTIONS_PER_PAGE;
+                const end = start + INSTITUTIONS_PER_PAGE;
+                matched.forEach((card, idx) => {
+                    card.style.display = (idx >= start && idx < end) ? 'block' : 'none';
+                });
+
+                renderInstitutionPagination(totalPages);
             }
+
+            function renderInstitutionPagination(totalPages) {
+                const pagination = document.getElementById('institutions-pagination');
+                if (!pagination) return;
+                if (totalPages <= 1) {
+                    pagination.innerHTML = `
+                        <div class="flex items-center justify-center space-x-2">
+                            <button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-400 cursor-not-allowed" disabled><i class="fa fa-chevron-left"></i></button>
+                            <button class="px-3.5 py-1.5 rounded-lg text-sm border bg-primary text-white border-primary">1</button>
+                            <button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-400 cursor-not-allowed" disabled><i class="fa fa-chevron-right"></i></button>
+                        </div>`;
+                    return;
+                }
+                let html = '<div class="flex items-center justify-center space-x-2">';
+                html += `<button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed" ${currentInstitutionPage === 1 ? 'disabled' : ''} onclick="goInstitutionPage(${currentInstitutionPage - 1})"><i class="fa fa-chevron-left"></i></button>`;
+                for (let p = 1; p <= totalPages; p++) {
+                    html += `<button class="px-3.5 py-1.5 rounded-lg text-sm border ${p === currentInstitutionPage ? 'bg-primary text-white border-primary' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}" onclick="goInstitutionPage(${p})">${p}</button>`;
+                }
+                html += `<button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed" ${currentInstitutionPage === totalPages ? 'disabled' : ''} onclick="goInstitutionPage(${currentInstitutionPage + 1})"><i class="fa fa-chevron-right"></i></button>`;
+                html += '</div>';
+                pagination.innerHTML = html;
+            }
+
+            window.goInstitutionPage = function(page) {
+                currentInstitutionPage = page;
+                filterInstitutions();
+                window.scrollTo({ top: document.getElementById('institutions-pagination').offsetTop - 120, behavior: 'smooth' });
+            };
             
             // 地市筛选
             const cityButtons = document.querySelectorAll('.city-btn');
@@ -712,6 +769,7 @@
                     this.classList.add('bg-blue-700', 'text-white', 'shadow-sm');
                     
                     currentCity = this.getAttribute('data-city');
+                    currentInstitutionPage = 1;
                     filterInstitutions();
                 });
             });
@@ -729,9 +787,23 @@
                     this.classList.add('bg-blue-700', 'text-white', 'shadow-sm');
                     
                     currentFilter = this.getAttribute('data-filter');
+                    currentInstitutionPage = 1;
                     filterInstitutions();
                 });
             });
+            
+            // 按机构名称搜索
+            const institutionSearch = document.getElementById('institution-search');
+            if (institutionSearch) {
+                institutionSearch.addEventListener('input', function() {
+                    currentSearch = this.value.trim().toLowerCase();
+                    currentInstitutionPage = 1;
+                    filterInstitutions();
+                });
+            }
+            
+            // 初始化分页渲染
+            filterInstitutions();
             
             // 搜索弹窗
             const searchBtn = document.getElementById('searchBtn');

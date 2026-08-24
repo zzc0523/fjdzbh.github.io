@@ -863,9 +863,18 @@
 
             function renderInstitutionList(filterType = 'all') {
                 const grid = document.getElementById('institution-grid');
-                const filteredData = filterType === 'all' 
+                const keyword = (document.getElementById('institution-search')?.value || '').trim().toLowerCase();
+                let filteredData = filterType === 'all' 
                     ? institutionData 
                     : institutionData.filter(inst => inst.type === filterType);
+                if (keyword) {
+                    filteredData = filteredData.filter(inst => inst.name.toLowerCase().includes(keyword));
+                }
+
+                if (!filteredData.length) {
+                    grid.innerHTML = '<div class="col-span-full text-center text-gray-400 text-sm py-12">未找到匹配的机构</div>';
+                    return;
+                }
                 
                 grid.innerHTML = filteredData.map(inst => {
                     const typeLabels = {
@@ -928,6 +937,8 @@
 
             function showInstitutionSelection() {
                 // 渲染金融机构列表（默认显示全部）
+                const searchInput = document.getElementById('institution-search');
+                if (searchInput) searchInput.value = '';
                 renderInstitutionList('all');
 
                 // 切换视图
@@ -952,6 +963,10 @@
                     activeTag.classList.remove('bg-gray-100', 'text-gray-600');
                     activeTag.classList.add('bg-primary', 'text-white');
                 }
+            }
+
+            window.searchInstitutions = function() {
+                renderInstitutionList(currentFilterType);
             }
 
             window.goToForm = function(type, instId = '') {
@@ -2265,6 +2280,7 @@
         let currentType = 'bid';
         let currentRegion = '全省';
         let currentInstitutionType = '全部机构';
+        let currentSearchKeyword = '';
 
         function initGuaranteeSwitch() {
             // 保函类型标签切换
@@ -2289,6 +2305,10 @@
                     // 重置地区和机构类型为默认值
                     currentRegion = '全省';
                     currentInstitutionType = '全部机构';
+                    currentSearchKeyword = '';
+                    currentInstitutionPage = 1;
+                    const searchEl = document.getElementById('institution-search');
+                    if (searchEl) searchEl.value = '';
                     
                     // 更新地区和机构类型按钮状态
                     updateRegionBtnState();
@@ -2311,6 +2331,10 @@
                     
                     // 更新当前地区
                     currentRegion = this.textContent.trim();
+                    currentSearchKeyword = '';
+                    currentInstitutionPage = 1;
+                    const searchEl2 = document.getElementById('institution-search');
+                    if (searchEl2) searchEl2.value = '';
                     
                     // 重新渲染机构列表
                     renderInstitutions();
@@ -2329,12 +2353,19 @@
                     
                     // 更新当前机构类型
                     currentInstitutionType = this.textContent.trim();
+                    currentSearchKeyword = '';
+                    currentInstitutionPage = 1;
+                    const searchEl3 = document.getElementById('institution-search');
+                    if (searchEl3) searchEl3.value = '';
                     
                     // 重新渲染机构列表
                     renderInstitutions();
                 });
             });
         }
+
+        // 首次渲染保函超市机构列表（含分页）
+        renderInstitutions();
 
         function updateGuaranteeDetail() {
             const detail = guaranteeTypeDetails[currentType];
@@ -2396,16 +2427,25 @@
             });
         }
 
+        let currentInstitutionPage = 1;
+        const INSTITUTIONS_PER_PAGE = 3;
+
         function renderInstitutions() {
             const container = document.getElementById('institutions-container');
+            const pagination = document.getElementById('institutions-pagination');
             if (!container) return;
-            
+
             // 获取当前筛选条件下的机构数据
             const typeData = institutionsData[currentType];
             const regionData = typeData ? typeData[currentRegion] : null;
             const institutions = regionData ? regionData[currentInstitutionType] : [];
-            
-            if (!institutions || institutions.length === 0) {
+
+            const keyword = currentSearchKeyword.trim().toLowerCase();
+            const filteredInstitutions = keyword
+                ? institutions.filter(inst => inst.name.toLowerCase().includes(keyword))
+                : institutions;
+
+            if (!filteredInstitutions || filteredInstitutions.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full text-center py-12">
                         <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -2415,11 +2455,19 @@
                         <p class="text-sm text-gray-400 mt-1">请尝试调整筛选条件</p>
                     </div>
                 `;
+                if (pagination) pagination.innerHTML = '';
                 return;
             }
-            
+
+            // 分页处理
+            const totalPages = Math.ceil(filteredInstitutions.length / INSTITUTIONS_PER_PAGE);
+            if (currentInstitutionPage > totalPages) currentInstitutionPage = totalPages;
+            if (currentInstitutionPage < 1) currentInstitutionPage = 1;
+            const startIdx = (currentInstitutionPage - 1) * INSTITUTIONS_PER_PAGE;
+            const pageItems = filteredInstitutions.slice(startIdx, startIdx + INSTITUTIONS_PER_PAGE);
+
             // 渲染机构列表
-            container.innerHTML = institutions.map(inst => `
+            container.innerHTML = pageItems.map(inst => `
                 <div class="bg-white rounded-xl border border-gray-100 p-6 relative overflow-hidden">
                     ${inst.id === 1 ? `
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="z-index:30;overflow:hidden;">
@@ -2451,6 +2499,32 @@
                     <button class="w-full py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm" onclick="selectInstitution(${inst.id}, '${inst.name}', '${inst.type}', '${currentType}')">立即申请</button>
                 </div>
             `).join('');
+
+            // 渲染分页
+            if (pagination) {
+                if (totalPages <= 1) {
+                    pagination.innerHTML = `
+                        <div class="flex items-center justify-center space-x-2">
+                            <button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-400 cursor-not-allowed" disabled><i class="fa fa-chevron-left"></i></button>
+                            <button class="px-3.5 py-1.5 rounded-lg text-sm border bg-primary text-white border-primary">1</button>
+                            <button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-400 cursor-not-allowed" disabled><i class="fa fa-chevron-right"></i></button>
+                        </div>`;
+                } else {
+                    let html = '<div class="flex items-center justify-center space-x-2">';
+                    html += `<button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed" ${currentInstitutionPage === 1 ? 'disabled' : ''} onclick="goInstitutionPage(${currentInstitutionPage - 1})"><i class="fa fa-chevron-left"></i></button>`;
+                    for (let p = 1; p <= totalPages; p++) {
+                        html += `<button class="px-3.5 py-1.5 rounded-lg text-sm border ${p === currentInstitutionPage ? 'bg-primary text-white border-primary' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}" onclick="goInstitutionPage(${p})">${p}</button>`;
+                    }
+                    html += `<button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed" ${currentInstitutionPage === totalPages ? 'disabled' : ''} onclick="goInstitutionPage(${currentInstitutionPage + 1})"><i class="fa fa-chevron-right"></i></button>`;
+                    html += '</div>';
+                    pagination.innerHTML = html;
+                }
+            }
+        }
+
+        function goInstitutionPage(page) {
+            currentInstitutionPage = page;
+            renderInstitutions();
         }
     </script>
 </head>
@@ -2686,7 +2760,13 @@
 
                     <!-- 机构类型 -->
                     <div class="bg-white rounded-xl border border-gray-100 p-6">
-                        <h4 class="text-sm font-medium text-gray-700 mb-4">机构类型</h4>
+                        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                            <h4 class="text-sm font-medium text-gray-700">机构类型</h4>
+                            <div class="relative">
+                                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input id="institution-search" type="text" placeholder="按机构名称搜索" class="pl-9 pr-3 py-2 w-56 text-sm border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" oninput="searchInstitutions()">
+                            </div>
+                        </div>
                         <div class="flex flex-wrap gap-3">
                             <button class="institution-btn active px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90">全部机构</button>
                             <button class="institution-btn px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 flex items-center">
@@ -2698,6 +2778,16 @@
                             <button class="institution-btn px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200">担保公司</button>
                         </div>
                     </div>
+
+<script>
+// searchInstitutions 回调（与上方主脚本共享 currentSearchKeyword / renderInstitutions）
+function searchInstitutions() {
+    const input = document.getElementById('institution-search');
+    currentSearchKeyword = input ? input.value : '';
+    currentInstitutionPage = 1;
+    if (typeof renderInstitutions === 'function') renderInstitutions();
+}
+</script>
 
                     <!-- 机构列表 -->
                     <div id="institutions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -2786,6 +2876,8 @@
                             <button class="w-full py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm" onclick="selectInstitution(3, '中国农业银行', '银行', currentType)">立即申请</button>
                         </div>
                     </div>
+                    <!-- 分页 -->
+                    <div id="institutions-pagination" class="mt-8 flex justify-center"></div>
                 </div>
 
                 <!-- 2. 产品详情视图 (初始隐藏) -->
@@ -2945,19 +3037,21 @@
                         </button>
                     </div>
                     <!-- 筛选标签 -->
-                    <div class="flex flex-wrap gap-3">
-                        <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-primary text-white cursor-pointer transition-all" data-type="all" onclick="filterInstitutions('all')">
-                            <i class="fa fa-filter mr-1"></i>全部
-                        </button>
-                        <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-700 cursor-pointer transition-all" data-type="bank" onclick="filterInstitutions('bank')">
-                            <i class="fa fa-bank mr-1"></i>银行
-                        </button>
-                        <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700 cursor-pointer transition-all" data-type="insurance" onclick="filterInstitutions('insurance')">
-                            <i class="fa fa-shield mr-1"></i>保险公司
-                        </button>
-                        <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-purple-100 hover:text-purple-700 cursor-pointer transition-all" data-type="guarantee" onclick="filterInstitutions('guarantee')">
-                            <i class="fa fa-building mr-1"></i>担保公司
-                        </button>
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex flex-wrap gap-3">
+                            <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-primary text-white cursor-pointer transition-all" data-type="all" onclick="filterInstitutions('all')">
+                                <i class="fa fa-filter mr-1"></i>全部
+                            </button>
+                            <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-700 cursor-pointer transition-all" data-type="bank" onclick="filterInstitutions('bank')">
+                                <i class="fa fa-bank mr-1"></i>银行
+                            </button>
+                            <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700 cursor-pointer transition-all" data-type="insurance" onclick="filterInstitutions('insurance')">
+                                <i class="fa fa-shield mr-1"></i>保险公司
+                            </button>
+                            <button class="filter-tag px-4 py-2 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-purple-100 hover:text-purple-700 cursor-pointer transition-all" data-type="guarantee" onclick="filterInstitutions('guarantee')">
+                                <i class="fa fa-building mr-1"></i>担保公司
+                            </button>
+                        </div>
                     </div>
                     <div id="institution-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <!-- 动态填充内容 -->
