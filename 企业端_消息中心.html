@@ -62,8 +62,7 @@
             const messageSections = {
                 'system': document.getElementById('system-notifications-section'),
                 'business': document.getElementById('business-messages-section'),
-                'archive': document.getElementById('archive-section'),
-                'settings': document.getElementById('settings-section')
+                'archive': document.getElementById('archive-section')
             };
 
             messageTabs.forEach(tab => {
@@ -168,13 +167,7 @@
                 }
             });
 
-            // 消息设置保存按钮
-            const saveSettingsBtn = document.querySelector('#settings-section button');
-            if (saveSettingsBtn) {
-                saveSettingsBtn.addEventListener('click', function() {
-                    showNotification('设置已保存并同步至云端', 'success');
-                });
-            }
+
 
             // 个人中心下拉菜单
             const userDropdownBtn = document.getElementById('user-dropdown-btn');
@@ -509,9 +502,6 @@
                         <button data-tab="archive" class="message-tab-btn px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 whitespace-nowrap transition-all duration-200">
                             <i class="fa fa-archive mr-2"></i>消息归档
                         </button>
-                        <button data-tab="settings" class="message-tab-btn px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 whitespace-nowrap transition-all duration-200 ml-auto">
-                            <i class="fa fa-cog mr-2"></i>消息设置
-                        </button>
                     </div>
                 </div>
 
@@ -643,72 +633,7 @@
                     </div>
                 </div>
 
-                <!-- 消息设置 -->
-                <div id="settings-section" class="bg-white rounded-lg shadow-md p-6 hidden">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">消息设置</h3>
-                    <form>
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">系统通知</h4>
-                                    <p class="text-sm text-gray-500">接收平台系统相关的通知消息</p>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" value="" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                                </label>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">业务消息</h4>
-                                    <p class="text-sm text-gray-500">接收保函申请、审批等业务相关消息</p>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" value="" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                                </label>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">短信通知</h4>
-                                    <p class="text-sm text-gray-500">重要消息通过短信通知</p>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" value="" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                                </label>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">邮件通知</h4>
-                                    <p class="text-sm text-gray-500">消息通过邮件通知</p>
-                                </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" value="" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                                </label>
-                            </div>
-                            <div class="pt-4 border-t border-gray-200">
-                                <h4 class="font-medium text-gray-900 mb-3">通知接收方式</h4>
-                                <div class="space-y-3">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">手机号码</label>
-                                        <input type="text" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" value="138****8888">
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">邮箱地址</label>
-                                        <input type="email" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary" value="contact@example.com">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-end">
-                                <button type="button" class="px-6 py-2 bg-primary text-white rounded-md hover:bg-primary/90">
-                                    保存设置
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+
             </main>
         </div>
     </div>
