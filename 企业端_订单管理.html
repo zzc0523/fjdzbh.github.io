@@ -608,6 +608,19 @@
                             <label class="block text-xs font-bold text-gray-400 mb-1 uppercase">补充说明</label>
                             <textarea class="w-full border border-gray-200 rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none h-20" placeholder="请详细描述退保原因..."></textarea>
                         </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="block text-xs font-bold text-gray-400 uppercase">相关材料上传</label>
+                                <span class="text-[10px] text-gray-400">支持 PDF / JPG / PNG / ZIP，单文件 ≤ 20MB</span>
+                            </div>
+                            <div class="border-2 border-dashed border-gray-200 rounded-md p-4 text-center hover:border-primary transition-colors cursor-pointer refund-upload-area">
+                                <i class="fa fa-cloud-upload text-2xl text-gray-300 mb-1"></i>
+                                <p class="text-xs text-gray-400">点击或拖拽文件到此处上传</p>
+                                <p class="text-[10px] text-gray-300 mt-0.5">如：项目取消/流标证明、撤回申请函、相关说明材料等</p>
+                                <input type="file" class="hidden refund-file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.zip" />
+                            </div>
+                            <ul class="mt-2 space-y-1.5 refund-file-list"></ul>
+                        </div>
                     </div>
                 `;
                 showModal('发起退保申请', content, [
@@ -625,6 +638,61 @@
                         }
                     }
                 ]);
+
+                // 绑定退保材料上传交互
+                setTimeout(function() {
+                    const modalEl = document.getElementById('modal-container');
+                    if (!modalEl) return;
+                    const uploadArea = modalEl.querySelector('.refund-upload-area');
+                    const fileInput = modalEl.querySelector('.refund-file-input');
+                    const fileList = modalEl.querySelector('.refund-file-list');
+                    if (!uploadArea || !fileInput || !fileList) return;
+
+                    const selectFiles = () => fileInput.click();
+                    uploadArea.addEventListener('click', selectFiles);
+                    uploadArea.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        uploadArea.classList.add('border-primary', 'bg-primary/5');
+                    });
+                    uploadArea.addEventListener('dragleave', () => {
+                        uploadArea.classList.remove('border-primary', 'bg-primary/5');
+                    });
+                    uploadArea.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        uploadArea.classList.remove('border-primary', 'bg-primary/5');
+                        handleRefundFiles(e.dataTransfer.files);
+                    });
+                    fileInput.addEventListener('change', () => {
+                        handleRefundFiles(fileInput.files);
+                        fileInput.value = '';
+                    });
+
+                    function handleRefundFiles(files) {
+                        Array.from(files).forEach(file => {
+                            const MAX_SIZE = 20 * 1024 * 1024;
+                            if (file.size > MAX_SIZE) {
+                                showNotification(`「${file.name}」超过 20MB，无法上传`, 'error');
+                                return;
+                            }
+                            const sizeKB = (file.size / 1024).toFixed(0);
+                            const sizeText = file.size > 1024 * 1024
+                                ? (file.size / 1024 / 1024).toFixed(1) + ' MB'
+                                : sizeKB + ' KB';
+                            const li = document.createElement('li');
+                            li.className = 'flex items-center justify-between p-2 border border-gray-100 rounded-md bg-gray-50 text-xs';
+                            li.innerHTML = `
+                                <div class="flex items-center min-w-0">
+                                    <i class="fa ${file.type.includes('image') ? 'fa-file-image-o text-blue-500' : (file.name.toLowerCase().endsWith('.zip') ? 'fa-file-archive-o text-amber-500' : 'fa-file-pdf-o text-red-500')} mr-2 shrink-0"></i>
+                                    <span class="truncate text-gray-700">${file.name}</span>
+                                    <span class="text-gray-400 ml-2 shrink-0">${sizeText}</span>
+                                </div>
+                                <i class="fa fa-times-circle text-gray-300 hover:text-red-500 cursor-pointer ml-2 shrink-0 refund-file-remove"></i>
+                            `;
+                            li.querySelector('.refund-file-remove').addEventListener('click', () => li.remove());
+                            fileList.appendChild(li);
+                        });
+                    }
+                }, 0);
             }
             
             // 取消申请

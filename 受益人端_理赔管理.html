@@ -251,47 +251,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="space-y-4">
-                                <h4 class="text-sm font-bold text-slate-800 flex items-center">
-                                    <span class="w-1 h-4 bg-primary rounded-full mr-2"></span>审核记录
-                                </h4>
-                                <div class="border border-slate-100 rounded-xl overflow-hidden">
-                                    <table class="w-full text-xs text-left">
-                                        <thead class="bg-slate-50 text-slate-500">
-                                            <tr>
-                                                <th class="px-4 py-2 font-medium">环节</th>
-                                                <th class="px-4 py-2 font-medium">审核人</th>
-                                                <th class="px-4 py-2 font-medium">审核意见</th>
-                                                <th class="px-4 py-2 font-medium">审核时间</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-slate-50">
-                                            <tr>
-                                                <td class="px-4 py-3">申请提交</td>
-                                                <td class="px-4 py-3">企业经办人</td>
-                                                <td class="px-4 py-3 text-blue-600">已在线发起理赔申请。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-20 09:30</td>
-                                            </tr>
-                                            ${['待赔付', '已赔付'].includes(status) ? `
-                                            <tr>
-                                                <td class="px-4 py-3">审核环节</td>
-                                                <td class="px-4 py-3">李四 (审核员)</td>
-                                                <td class="px-4 py-3 text-green-600">材料核验通过，准予赔付。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-20 14:30</td>
-                                            </tr>
-                                            ` : ''}
-                                            ${status === '已赔付' ? `
-                                            <tr>
-                                                <td class="px-4 py-3">赔付环节</td>
-                                                <td class="px-4 py-3">王五 (财务员)</td>
-                                                <td class="px-4 py-3 text-green-600">赔付资金已汇出，上传凭证。</td>
-                                                <td class="px-4 py-3 text-slate-400 font-mono">2026-03-22 11:00</td>
-                                            </tr>
-                                            ` : ''}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
                             ${status === '已赔付' ? `
                             <div class="space-y-4">
                                 <h4 class="text-sm font-bold text-slate-800 flex items-center">
