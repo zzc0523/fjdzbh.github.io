@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标后项目管理 - 市级运营端</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="load-sidebar.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'neutral-dark': '#1F2937'
+                    }
+                }
+            }
+        }
+
+        function toggleSubMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const arrow = document.getElementById(menuId + '-arrow');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏 -->
+        <div class="w-64 bg-neutral-dark text-white flex flex-col shrink-0">
+            <div class="p-6 border-b border-slate-700 flex items-center space-x-3">
+                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                    <i class="fa fa-building"></i>
+                </div>
+                <h1 class="text-sm font-bold tracking-tight">市级运营平台</h1>
+            </div>
+            <div id="sidebar-container"></div>
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center justify-between p-2 rounded-lg bg-slate-800/50">
+                    <div class="flex items-center">
+                        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="w-8 h-8 rounded-full" alt="Avatar">
+                        <div class="ml-3">
+                            <p class="text-xs font-bold">管理员</p>
+                            <p class="text-[10px] text-slate-400">市级管理员</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-700 rounded-lg transition-all" title="退出登录">
+                        <i class="fa fa-sign-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航 -->
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center px-8 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <h2 class="text-lg font-bold text-slate-800">标后项目管理</h2>
+                </div>
+            </header>
+
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100">
+                        <div>
+                            <h3 class="font-bold text-slate-800 mb-1">标后项目列表</h3>
+                            <p class="text-sm text-slate-500">管理中标后的项目信息，支持新增、修改与批量导入</p>
+                        </div>
+                    </div>
+
+                    <!-- 查询条件 -->
+                    <div class="p-4 bg-slate-50 border-b border-slate-100">
+                        <div class="flex flex-wrap items-center gap-4">
+                            <div>
+                                <label class="text-sm text-slate-600">项目类型：</label>
+                                <select id="filterType" onchange="searchData()" class="ml-2 px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">全部</option>
+                                    <option value="工程类">工程类</option>
+                                    <option value="采购类">采购类</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-sm text-slate-600">项目名称：</label>
+                                <input type="text" id="filterName" placeholder="请输入项目名称" class="ml-2 px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-40">
+                            </div>
+                            <button onclick="searchData()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all flex items-center">
+                                <i class="fa fa-search mr-1"></i>查询
+                            </button>
+                            <button onclick="resetSearch()" class="px-4 py-2 bg-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-300 transition-all">
+                                重置
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮区 -->
+                    <div class="px-6 pt-4 pb-2 flex items-center space-x-3">
+                        <button onclick="openAddModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all flex items-center">
+                            <i class="fa fa-plus mr-1"></i>新增
+                        </button>
+                        <button onclick="openImportModal()" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-all flex items-center">
+                            <i class="fa fa-upload mr-1"></i>批量导入
+                        </button>
+                    </div>
+
+                    <!-- 数据表格 -->
+                    <div class="p-6">
+                        <div class="relative overflow-x-auto">
+                            <table class="w-full min-w-[1500px]">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky-col" style="position: sticky; left: 0; background-color: #f8fafc; z-index: 2;">项目名称</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目编号</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目类型</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目所在地</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">计划工期（天）</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">中标企业</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">中标企业统一社会信用代码</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">中标合同价（元）</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受益人名称</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">受益人统一社会信用代码</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky-col" style="position: sticky; right: 0; background-color: #f8fafc;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projectTableBody" class="bg-white divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                        <!-- 分页 -->
+                        <div id="project-pagination" class="mt-6 flex justify-center"></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 新增/修改弹窗 -->
+    <div id="projectModal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-800">新增标后项目</h3>
+                <button onclick="closeProjectModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+            <div class="p-6 grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">项目名称 <span class="text-red-500">*</span></label>
+                    <input id="f_name" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="请输入项目名称">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">项目编号 <span class="text-red-500">*</span></label>
+                    <input id="f_code" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="如：XM20240527001">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">项目类型 <span class="text-red-500">*</span></label>
+                    <select id="f_type" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="工程类">工程类</option>
+                        <option value="采购类">采购类</option>
+                        </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">项目所在地 <span class="text-red-500">*</span></label>
+                    <input id="f_location" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="如：福建省福州市鼓楼区">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">计划工期（天） <span class="text-red-500">*</span></label>
+                    <input id="f_duration" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="如：180">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">中标合同价（元） <span class="text-red-500">*</span></label>
+                    <input id="f_price" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="如：1,280,000">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">保证金金额（元） <span class="text-red-500">*</span></label>
+                    <input id="f_deposit" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="如：128,000">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">中标企业 <span class="text-red-500">*</span></label>
+                    <input id="f_bidder" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="请输入中标企业名称">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">中标企业统一社会信用代码 <span class="text-red-500">*</span></label>
+                    <input id="f_bidderCode" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="18位信用代码">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">受益人名称 <span class="text-red-500">*</span></label>
+                    <input id="f_beneficiary" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="请输入受益人名称">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">受益人统一社会信用代码 <span class="text-red-500">*</span></label>
+                    <input id="f_beneficiaryCode" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="18位信用代码">
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 px-6 py-4 border-t border-slate-100">
+                <button onclick="closeProjectModal()" class="px-5 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all">取消</button>
+                <button onclick="saveProject()" class="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量导入弹窗 -->
+    <div id="importModal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <h3 class="text-lg font-bold text-slate-800">批量导入标后项目</h3>
+                <button onclick="closeImportModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm text-slate-500">请下载模板后按格式填写，再上传 Excel/CSV 文件</span>
+                </div>
+                <button onclick="downloadTemplate()" class="w-full mb-4 px-4 py-2 border border-dashed border-blue-300 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition-all flex items-center justify-center">
+                    <i class="fa fa-download mr-1"></i>下载导入模板
+                </button>
+                <div class="border-2 border-dashed border-slate-200 rounded-lg p-6 text-center hover:border-blue-400 transition-colors cursor-pointer" id="importDropArea">
+                    <i class="fa fa-cloud-upload text-3xl text-slate-300 mb-2"></i>
+                    <p class="text-sm text-slate-400">点击或拖拽文件到此处上传</p>
+                    <p class="text-[10px] text-slate-300 mt-1">支持 .xlsx / .csv，单文件 ≤ 10MB</p>
+                    <input type="file" id="importFileInput" class="hidden" accept=".xlsx,.xls,.csv">
+                </div>
+                <ul id="importFileList" class="mt-3 space-y-1.5"></ul>
+                <div id="importResult" class="mt-3 text-sm hidden"></div>
+            </div>
+            <div class="flex justify-end space-x-3 px-6 py-4 border-t border-slate-100">
+                <button onclick="closeImportModal()" class="px-5 py-2 border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-all">取消</button>
+                <button onclick="confirmImport()" class="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-all">开始导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 数据 ---
+        let projects = [
+            { id: 1, name: '福州市政道路改造项目', code: 'XM20240527001', type: '工程类', location: '福建省福州市鼓楼区', duration: '180', bidder: '福州建设发展有限公司', bidderCode: '91350100MA2X7Y1A3B', price: '12,800,000', deposit: '1,280,000', beneficiary: '福州市住房和城乡建设局', beneficiaryCode: '11350100003593231X' },
+            { id: 2, name: '宁德市污水处理厂扩容工程', code: 'XM20240528002', type: '工程类', location: '福建省宁德市蕉城区', duration: '365', bidder: '福建水务集团', bidderCode: '91350900MA31H8K72C', price: '45,600,000', deposit: '4,560,000', beneficiary: '宁德市生态环境局', beneficiaryCode: '11350900003612109Y' },
+            { id: 3, name: '厦门市政务云采购项目', code: 'XM20240601003', type: '采购类', location: '福建省厦门市思明区', duration: '90', bidder: '厦门智云科技', bidderCode: '91350200MA8RK2P99D', price: '3,250,000', deposit: '325,000', beneficiary: '厦门市大数据管理局', beneficiaryCode: '11350200003590127P' },
+            { id: 4, name: '泉州市公立医院物业服务', code: 'XM20240603004', type: '工程类', location: '福建省泉州市丰泽区', duration: '540', bidder: '泉州佳洁物业', bidderCode: '91350500MA2YT6Q45E', price: '8,900,000', deposit: '890,000', beneficiary: '泉州市卫生健康委员会', beneficiaryCode: '11350500003598814K' },
+            { id: 5, name: '漳州市桥梁检测服务项目', code: 'XM20240605005', type: '采购类', location: '福建省漳州市芗城区', duration: '120', bidder: '漳州工程检测院', bidderCode: '91350600MA31B9M76F', price: '1,560,000', deposit: '156,000', beneficiary: '漳州市交通运输局', beneficiaryCode: '11350600003607720M' },
+            { id: 6, name: '莆田市学校新建工程', code: 'XM20240608006', type: '工程类', location: '福建省莆田市城厢区', duration: '300', bidder: '莆田建工集团', bidderCode: '91350300MA2XU8N13G', price: '33,400,000', deposit: '3,340,000', beneficiary: '莆田市教育局', beneficiaryCode: '11350300003594458N' },
+            { id: 7, name: '龙岩市林业监测设备采购', code: 'XM20240610007', type: '采购类', location: '福建省龙岩市新罗区', duration: '60', bidder: '龙岩恒达电子', bidderCode: '91350800MA31C4R28H', price: '2,180,000', deposit: '218,000', beneficiary: '龙岩市林业局', beneficiaryCode: '11350800003603333Q' },
+            { id: 8, name: '三明市供水管网改造', code: 'XM20240612008', type: '工程类', location: '福建省三明市梅列区', duration: '270', bidder: '三明市政工程', bidderCode: '91350400MA2XW9S35J', price: '27,700,000', deposit: '2,770,000', beneficiary: '三明市住房和城乡建设局', beneficiaryCode: '11350400003595546R' }
+        ];
+        let nextId = 9;
+        let currentEditId = null;
+        let currentPage = 1;
+        const PAGE_SIZE = 6;
+        let searchKeyword = '';
+        let filterType = '';
+        let filterName = '';
+        let pendingImportRows = [];
+
+        function getFiltered() {
+            return projects.filter(p => {
+                const kw = searchKeyword.toLowerCase();
+                const matchKw = !kw ||
+                    p.name.toLowerCase().includes(kw) ||
+                    p.code.toLowerCase().includes(kw) ||
+                    p.bidder.toLowerCase().includes(kw) ||
+                    p.beneficiary.toLowerCase().includes(kw);
+                const matchType = !filterType || p.type === filterType;
+                const matchName = !filterName || p.name.toLowerCase().includes(filterName.toLowerCase());
+                return matchKw && matchType && matchName;
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('projectTableBody');
+            const filtered = getFiltered();
+            const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * PAGE_SIZE;
+            const pageRows = filtered.slice(start, start + PAGE_SIZE);
+
+            if (pageRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="px-6 py-10 text-center text-sm text-slate-400">暂无数据</td></tr>`;
+            } else {
+                tbody.innerHTML = pageRows.map(p => `
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 sticky-col" style="position: sticky; left: 0; background-color: #fff;">${p.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-mono">${p.code}</td>
+                        <td class="px-6 py-4 whitespace-nowrap"><span class="px-2 py-0.5 rounded-full text-[11px] bg-blue-50 text-blue-600 border border-blue-100">${p.type}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${p.location}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${p.duration}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${p.bidder}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-mono">${p.bidderCode}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${p.price}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${p.deposit || '-'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${p.beneficiary}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-mono">${p.beneficiaryCode}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-right sticky-col" style="position: sticky; right: 0; background-color: #fff;">
+                            <div class="flex justify-end space-x-3">
+                                <button onclick="openEditModal(${p.id})" class="text-blue-600 hover:text-blue-800 font-bold text-xs">修改</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const el = document.getElementById('project-pagination');
+            let html = '<div class="flex items-center justify-center space-x-2">';
+            html += `<button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed" ${currentPage === 1 ? 'disabled' : ''} onclick="goPage(${currentPage - 1})"><i class="fa fa-chevron-left"></i></button>`;
+            for (let p = 1; p <= totalPages; p++) {
+                html += `<button class="px-3.5 py-1.5 rounded-lg text-sm border ${p === currentPage ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}" onclick="goPage(${p})">${p}</button>`;
+            }
+            html += `<button class="px-3 py-1.5 rounded-lg text-sm border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed" ${currentPage === totalPages ? 'disabled' : ''} onclick="goPage(${currentPage + 1})"><i class="fa fa-chevron-right"></i></button>`;
+            html += '</div>';
+            el.innerHTML = html;
+        }
+
+        window.goPage = function(page) {
+            currentPage = page;
+            renderTable();
+        };
+
+        function searchData() {
+            filterType = document.getElementById('filterType').value;
+            filterName = document.getElementById('filterName').value.trim();
+            currentPage = 1;
+            renderTable();
+        }
+
+        function resetSearch() {
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterName').value = '';
+            filterType = '';
+            filterName = '';
+            currentPage = 1;
+            renderTable();
+        }
+
+        // --- 新增 / 修改 ---
+        function openAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = '新增标后项目';
+            ['f_name','f_code','f_type','f_location','f_duration','f_price','f_deposit','f_bidder','f_bidderCode','f_beneficiary','f_beneficiaryCode']
+                .forEach(id => document.getElementById(id).value = '');
+            document.getElementById('projectModal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const p = projects.find(x => x.id === id);
+            if (!p) return;
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = '修改标后项目';
+            document.getElementById('f_name').value = p.name;
+            document.getElementById('f_code').value = p.code;
+            document.getElementById('f_type').value = p.type;
+            document.getElementById('f_location').value = p.location;
+            document.getElementById('f_duration').value = p.duration;
+            document.getElementById('f_price').value = p.price;
+            document.getElementById('f_deposit').value = p.deposit || '';
+            document.getElementById('f_bidder').value = p.bidder;
+            document.getElementById('f_bidderCode').value = p.bidderCode;
+            document.getElementById('f_beneficiary').value = p.beneficiary;
+            document.getElementById('f_beneficiaryCode').value = p.beneficiaryCode;
+            document.getElementById('projectModal').classList.remove('hidden');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('projectModal').classList.add('hidden');
+        }
+
+        function saveProject() {
+            const required = [
+                ['f_name','项目名称'], ['f_code','项目编号'], ['f_type','项目类型'],
+                ['f_location','项目所在地'], ['f_duration','计划工期'], ['f_price','中标合同价'],
+                ['f_deposit','保证金金额'], ['f_bidder','中标企业'], ['f_bidderCode','中标企业统一社会信用代码'],
+                ['f_beneficiary','受益人名称'], ['f_beneficiaryCode','受益人统一社会信用代码']
+            ];
+            for (const [id, label] of required) {
+                if (!document.getElementById(id).value.trim()) {
+                    showToast(`请填写${label}`, 'error');
+                    return;
+                }
+            }
+            const data = {
+                name: document.getElementById('f_name').value.trim(),
+                code: document.getElementById('f_code').value.trim(),
+                type: document.getElementById('f_type').value,
+                location: document.getElementById('f_location').value.trim(),
+                duration: document.getElementById('f_duration').value.trim(),
+                price: document.getElementById('f_price').value.trim(),
+                deposit: document.getElementById('f_deposit').value.trim(),
+                bidder: document.getElementById('f_bidder').value.trim(),
+                bidderCode: document.getElementById('f_bidderCode').value.trim(),
+                beneficiary: document.getElementById('f_beneficiary').value.trim(),
+                beneficiaryCode: document.getElementById('f_beneficiaryCode').value.trim()
+            };
+            if (currentEditId) {
+                const p = projects.find(x => x.id === currentEditId);
+                Object.assign(p, data);
+                showToast('修改成功', 'success');
+            } else {
+                data.id = nextId++;
+                projects.unshift(data);
+                showToast('新增成功', 'success');
+            }
+            closeProjectModal();
+            currentPage = 1;
+            renderTable();
+        }
+
+        // --- 批量导入 ---
+        function openImportModal() {
+            pendingImportRows = [];
+            document.getElementById('importFileList').innerHTML = '';
+            document.getElementById('importResult').classList.add('hidden');
+            document.getElementById('importFileInput').value = '';
+            document.getElementById('importModal').classList.remove('hidden');
+        }
+
+        function closeImportModal() {
+            document.getElementById('importModal').classList.add('hidden');
+        }
+
+        function downloadTemplate() {
+            const headers = ['项目名称','项目编号','项目类型','项目所在地','计划工期','中标企业','中标企业统一社会信用代码','中标合同价','保证金金额','受益人名称','受益人统一社会信用代码'];
+            const sample = ['示例：福州市政道路改造项目','XM20240527001','工程类','福建省福州市鼓楼区','180','福州建设发展有限公司','91350100MA2X7Y1A3B','12,800,000','1,280,000','福州市住房和城乡建设局','11350100003593231X'];
+            const csv = '﻿' + headers.join(',') + '\n' + sample.join(',');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '标后项目导入模板.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('模板已下载', 'success');
+        }
+
+        function parseCSV(text) {
+            const lines = text.split(/\r?\n/).filter(l => l.trim());
+            if (lines.length < 2) return [];
+            const rows = lines.slice(1).map(line => {
+                const cols = line.split(',');
+                return {
+                    name: (cols[0] || '').trim(),
+                    code: (cols[1] || '').trim(),
+                    type: (cols[2] || '').trim(),
+                    location: (cols[3] || '').trim(),
+                    duration: (cols[4] || '').trim(),
+                    bidder: (cols[5] || '').trim(),
+                    bidderCode: (cols[6] || '').trim(),
+                    price: (cols[7] || '').trim(),
+                    deposit: (cols[8] || '').trim(),
+                    beneficiary: (cols[9] || '').trim(),
+                    beneficiaryCode: (cols[10] || '').trim()
+                };
+            }).filter(r => r.name && r.code);
+            return rows;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            const drop = document.getElementById('importDropArea');
+            const input = document.getElementById('importFileInput');
+            drop.addEventListener('click', () => input.click());
+            drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('border-blue-400','bg-blue-50'); });
+            drop.addEventListener('dragleave', () => drop.classList.remove('border-blue-400','bg-blue-50'));
+            drop.addEventListener('drop', e => {
+                e.preventDefault();
+                drop.classList.remove('border-blue-400','bg-blue-50');
+                handleImportFiles(e.dataTransfer.files);
+            });
+            input.addEventListener('change', () => { handleImportFiles(input.files); input.value = ''; });
+        });
+
+        function handleImportFiles(files) {
+            const list = document.getElementById('importFileList');
+            const result = document.getElementById('importResult');
+            result.classList.add('hidden');
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const rows = parseCSV(e.target.result);
+                    pendingImportRows = pendingImportRows.concat(rows);
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center justify-between p-2 border border-gray-100 rounded-md bg-gray-50 text-xs';
+                    li.innerHTML = `<span class="truncate text-gray-700"><i class="fa fa-file-excel-o text-green-600 mr-1"></i>${file.name}</span><span class="text-gray-400 ml-2">解析 ${rows.length} 条</span>`;
+                    list.appendChild(li);
+                };
+                reader.readAsText(file, 'UTF-8');
+            });
+        }
+
+        function confirmImport() {
+            if (pendingImportRows.length === 0) {
+                showToast('请先上传文件', 'error');
+                return;
+            }
+            const skip = pendingImportRows.filter(r => !r.name || !r.code || !r.location || !r.bidder || !r.beneficiary);
+            pendingImportRows.forEach(r => {
+                r.id = nextId++;
+                projects.unshift(r);
+            });
+            const total = pendingImportRows.length;
+            const ok = total - skip.length;
+            document.getElementById('importResult').innerHTML =
+                `<div class="p-3 rounded-lg ${skip.length ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'} border ${skip.length ? 'border-amber-100' : 'border-emerald-100'}">` +
+                `成功导入 <b>${ok}</b> 条${skip.length ? `，跳过 <b>${skip.length}</b> 条（必填项缺失）` : ''}。</div>`;
+            document.getElementById('importResult').classList.remove('hidden');
+            currentPage = 1;
+            renderTable();
+            pendingImportRows = [];
+            setTimeout(closeImportModal, 1500);
+            showToast(`导入完成，成功 ${ok} 条`, 'success');
+        }
+
+        // --- 轻量提示 ---
+        function showToast(msg, type) {
+            let container = document.getElementById('toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toast-container';
+                container.className = 'fixed top-4 right-4 z-[9999] space-y-2';
+                document.body.appendChild(container);
+            }
+            const colors = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-700';
+            const t = document.createElement('div');
+            t.className = `px-4 py-2 rounded-lg text-white text-sm shadow-lg ${colors} transition-all`;
+            t.textContent = msg;
+            container.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; }, 2000);
+            setTimeout(() => t.remove(), 2400);
+        }
+
+        function logout() {
+            alert('退出登录功能开发中...');
+        }
+    </script>
+</body>
+</html>

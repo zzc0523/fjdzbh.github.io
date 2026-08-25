@@ -555,7 +555,7 @@
         let currentEditRuleId = null;
         let warningRules = [
             { id: 1, name: '账户与交易异常', description: '用户短期内频繁操作保函申请或撤销', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
-            { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3企业', notify: ['系统', '邮件'], status: 'enabled' },
+            { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3企业', notify: ['系统'], status: 'enabled' },
             { id: 11, name: 'IP异常', description: '不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '> 3企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
         ];
 
@@ -585,7 +585,7 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex space-x-1">
-                            ${rule.notify.map(n => `<span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">${n}</span>`).join('')}
+                            ${rule.notify.filter(n => n !== '邮件').map(n => `<span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">${n}</span>`).join('')}
                         </div>
                     </td>
                     <td class="px-6 py-4 text-center">
@@ -596,7 +596,6 @@
                     <td class="px-6 py-4 text-right">
                         <div class="flex justify-end space-x-3">
                             <button onclick="editRule(${rule.id})" class="text-blue-600 hover:text-blue-800 font-bold text-xs">编辑</button>
-                            <button onclick="deleteRule(${rule.id})" class="text-rose-500 hover:text-rose-700 font-bold text-xs">删除</button>
                         </div>
                     </td>
                 </tr>
@@ -613,12 +612,6 @@
             }
         }
 
-        function deleteRule(id) {
-            if (confirm('确定要删除这条预警规则吗？')) {
-                warningRules = warningRules.filter(r => r.id !== id);
-                renderRuleTable();
-            }
-        }
 
         function filterRuleList(filter) {
             // Update UI
@@ -775,10 +768,10 @@
                         </div>
                     </div>
 
-                    <!-- 通知策略区域 -->
+                    <!-- 通知方式区域 -->
                     <div class="space-y-3">
                         <div class="flex items-center justify-between">
-                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">通知策略</label>
+                            <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">通知方式</label>
                             <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
                                 <i class="fa fa-pencil mr-0.5"></i>可编辑
                             </span>
@@ -791,10 +784,6 @@
                             <label class="flex items-center justify-center p-3 bg-white border-2 border-slate-100 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all group">
                                 <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-slate-300">
                                 <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors font-medium">短信通知</span>
-                            </label>
-                            <label class="flex items-center justify-center p-3 bg-white border-2 border-slate-100 rounded-xl hover:border-blue-300 hover:bg-blue-50/50 cursor-pointer transition-all group">
-                                <input type="checkbox" class="w-4 h-4 text-blue-600 rounded border-slate-300">
-                                <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors font-medium">邮件抄送</span>
                             </label>
                         </div>
                     </div>
@@ -1081,9 +1070,9 @@
             const cycleSelect = document.getElementById('config-rule-cycle');
             if (cycleSelect && rule.cycle) cycleSelect.value = rule.cycle;
             
-            // 回填通知策略
+            // 回填通知方式
             if (Array.isArray(rule.notify)) {
-                const notifyMap = { '系统消息': '系统', '短信通知': '短信', '邮件抄送': '邮件' };
+                const notifyMap = { '系统消息': '系统', '短信通知': '短信' };
                 document.querySelectorAll('#alert-modal input[type="checkbox"]').forEach(cb => {
                     const labelText = cb.parentElement.innerText.trim();
                     const mapped = notifyMap[labelText] || labelText;
@@ -1166,8 +1155,8 @@
                         rule.level = level;
                         rule.description = description;
                         rule.cycle = document.getElementById('config-rule-cycle').value;
-                        // 保存通知策略
-                        const notifyMap = { '系统消息': '系统', '短信通知': '短信', '邮件抄送': '邮件' };
+                        // 保存通知方式
+                        const notifyMap = { '系统消息': '系统', '短信通知': '短信' };
                         const notify = [];
                         document.querySelectorAll('#alert-modal input[type="checkbox"]').forEach(cb => {
                             if (cb.checked) {
