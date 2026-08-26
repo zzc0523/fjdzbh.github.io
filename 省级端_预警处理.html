@@ -702,32 +702,29 @@
             let actionHtml = '';
             if (alert.type === '金融风险') {
                 actionHtml = `
-                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 flex items-center justify-between">
+                    <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 flex items-center">
                         <div class="flex items-center">
                             <i class="fa fa-bolt text-amber-600 mr-2"></i>
                             <span class="text-xs text-amber-800 font-bold">涉及金融风险，建议核实机构授信额度及保函申请频率</span>
                         </div>
-                        <button class="px-3 py-1 bg-amber-600 text-white rounded text-[10px] font-bold">立即核查</button>
                     </div>
                 `;
             } else if (alert.type === '合规红线') {
                 actionHtml = `
-                    <div class="bg-rose-50 border border-rose-200 rounded-lg p-3 mb-4 flex items-center justify-between">
+                    <div class="bg-rose-50 border border-rose-200 rounded-lg p-3 mb-4 flex items-center">
                         <div class="flex items-center">
                             <i class="fa fa-shield text-rose-600 mr-2"></i>
                             <span class="text-xs text-rose-800 font-bold">涉及合规红线，建议冻结该主体申请权限</span>
                         </div>
-                        <button class="px-3 py-1 bg-rose-600 text-white rounded text-[10px] font-bold">立即冻结</button>
                     </div>
                 `;
             } else if (alert.type === '业务异常') {
                 actionHtml = `
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 flex items-center justify-between">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 flex items-center">
                         <div class="flex items-center">
                             <i class="fa fa-exclamation-circle text-blue-600 mr-2"></i>
                             <span class="text-xs text-blue-800 font-bold">涉及账户与交易异常，建议排查频繁操作是否为外部攻击或误操作</span>
                         </div>
-                        <button class="px-3 py-1 bg-blue-600 text-white rounded text-[10px] font-bold">排查确认</button>
                     </div>
                 `;
             }
