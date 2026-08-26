@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <i class="fa fa-angle-down text-xs transition-transform duration-200" id="gov-menu-arrow"></i>
             </button>
-            <ul id="gov-menu" class="` + (currentPage.startsWith('市级端_项目') || currentPage.startsWith('市级端_开函') || currentPage.startsWith('市级端_标后') || currentPage.startsWith('市级端_质保') ? '' : 'hidden') + ` mt-2 ml-4 border-l border-slate-700 space-y-1">
+            <ul id="gov-menu" class="` + (currentPage.startsWith('市级端_项目') || currentPage.startsWith('市级端_开函') || currentPage.startsWith('市级端_质保') ? '' : 'hidden') + ` mt-2 ml-4 border-l border-slate-700 space-y-1">
                 <li>
                     <a href="市级端_项目数据同步.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_项目数据同步.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
                         <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_项目数据同步.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
@@ -113,12 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <a href="市级端_开函数据同步.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_开函数据同步.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
                         <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_开函数据同步.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
                         开函数据同步
-                    </a>
-                </li>
-                <li>
-                    <a href="市级端_标后项目管理.html" class="flex items-center py-2 px-4 text-sm ` + (currentPage === '市级端_标后项目管理.html' ? 'bg-blue-600 text-white rounded-r-md shadow-lg shadow-blue-900/20' : 'text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-r-md transition-all') + `">
-                        <span class="w-1.5 h-1.5 rounded-full ` + (currentPage === '市级端_标后项目管理.html' ? 'bg-white' : 'bg-slate-600') + ` mr-2"></span>
-                        标后项目管理
                     </a>
                 </li>
                 <li>

@@ -125,7 +125,7 @@
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标段名称</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">标段编号</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">招标企业</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金金额（元）</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">投标保证金（元）</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保证金截止时间</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">开标时间</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">同步时间</th>
@@ -242,6 +242,9 @@
             <div class="p-6 overflow-y-auto flex-1">
                 <form id="add-project-form" class="space-y-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2 pt-1">
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3">招标信息</h4>
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1.5">项目名称 <span class="text-red-500">*</span></label>
                             <input id="np-projectName" required type="text" placeholder="请输入项目名称" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
@@ -249,6 +252,28 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1.5">项目编号 <span class="text-red-500">*</span></label>
                             <input id="np-projectCode" required type="text" placeholder="如 XM20260818001" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">项目类型 <span class="text-red-500">*</span></label>
+                            <select id="np-projectType" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                                <option value="">请选择</option>
+                                <option value="工程类">工程类</option>
+                                <option value="采购类">采购类</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">项目所在地 <span class="text-red-500">*</span></label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <select id="np-province" onchange="onProvinceChange()" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                                    <option value="">省</option>
+                                </select>
+                                <select id="np-city" onchange="onCityChange()" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                                    <option value="">市</option>
+                                </select>
+                                <select id="np-district" class="px-3 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                                    <option value="">区</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-1.5">标段名称 <span class="text-red-500">*</span></label>
@@ -259,7 +284,7 @@
                             <input id="np-sectionCode" required type="text" placeholder="如 BD-001" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-1.5">保证金金额（元） <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">投标保证金（元） <span class="text-red-500">*</span></label>
                             <input id="np-bidAmount" required type="number" min="0" placeholder="如 500000" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
                         </div>
                         <div>
@@ -290,12 +315,28 @@
                             <label class="block text-sm font-medium text-slate-600 mb-1.5">联系电话</label>
                             <input id="np-tendererPhone" type="text" placeholder="请输入联系电话" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
                         </div>
+                        <div class="md:col-span-2 pt-4 mt-2 border-t border-slate-100">
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3">中标信息</h4>
+                        </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-1.5">数据来源</label>
-                            <select id="np-dataSource" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
-                                <option value="手工导入">手工导入</option>
-                                <option value="接口同步">接口同步</option>
-                            </select>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">中标企业</label>
+                            <input id="np-winningBidder" type="text" placeholder="请输入中标企业名称" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">中标企业统一社会信用代码</label>
+                            <input id="np-winningBidderCode" type="text" maxlength="18" placeholder="请输入18位统一社会信用代码" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">中标合同价（元）</label>
+                            <input id="np-bidContractPrice" type="number" min="0" placeholder="如 3600000" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">计划工期（天）</label>
+                            <input id="np-planDuration" type="number" min="0" placeholder="如 180" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1.5">保证金金额（元）</label>
+                            <input id="np-bidBond" type="number" min="0" placeholder="如 360000" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
                         </div>
                     </div>
                 </form>
@@ -306,39 +347,111 @@
             </div>
         </div>
     </div>
-    <!-- 批量导入弹窗 -->
-    <div id="import-project-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] p-4 sm:p-6">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
-            <div class="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-800">批量导入项目</h3>
-                <button onclick="closeImportModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fa fa-times text-xl"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto flex-1 space-y-5">
-                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-700 flex items-start space-x-2">
-                    <i class="fa fa-info-circle mt-0.5"></i>
-                    <span>请下载导入模板，按模板填写项目数据后上传 Excel 文件（支持 .xlsx / .xls），单次最多导入 500 条。</span>
-                </div>
-                <div>
-                    <button onclick="downloadTemplate()" class="inline-flex items-center px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors">
-                        <i class="fa fa-download mr-2"></i>下载导入模板
-                    </button>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-slate-600 mb-1.5">选择文件 <span class="text-red-500">*</span></label>
-                    <input id="import-file" type="file" accept=".xlsx,.xls" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                </div>
-                <div id="import-result" class="hidden bg-green-50 border border-green-100 rounded-lg p-4 text-sm text-green-700"></div>
-            </div>
-            <div class="border-t border-slate-100 px-6 py-4 flex justify-end space-x-3">
-                <button onclick="closeImportModal()" class="px-6 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors">取消</button>
-                <button onclick="submitImport()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">开始导入</button>
-            </div>
-        </div>
-    </div>
 
     <script>
+        // 省市区数据（用于项目所在地级联选择）
+        const regionData = {
+            '福建省': {
+                '福州市': ['鼓楼区', '台江区', '仓山区', '晋安区', '马尾区', '长乐区'],
+                '厦门市': ['思明区', '湖里区', '集美区', '海沧区', '同安区', '翔安区'],
+                '泉州市': ['鲤城区', '丰泽区', '洛江区', '泉港区', '石狮市', '晋江市'],
+                '漳州市': ['芗城区', '龙文区', '龙海市', '漳浦县'],
+                '莆田市': ['城厢区', '涵江区', '荔城区', '秀屿区'],
+                '三明市': ['梅列区', '三元区', '永安市'],
+                '南平市': ['延平区', '建阳区', '邵武市'],
+                '龙岩市': ['新罗区', '永定区', '漳平市'],
+                '宁德市': ['蕉城区', '福安市', '福鼎市']
+            },
+            '广东省': {
+                '广州市': ['越秀区', '海珠区', '天河区', '白云区', '黄埔区', '番禺区'],
+                '深圳市': ['福田区', '罗湖区', '南山区', '宝安区', '龙岗区', '龙华区'],
+                '珠海市': ['香洲区', '斗门区', '金湾区'],
+                '东莞市': ['莞城街道', '南城街道', '东城街道', '万江街道']
+            },
+            '浙江省': {
+                '杭州市': ['上城区', '下城区', '西湖区', '拱墅区', '滨江区', '萧山区'],
+                '宁波市': ['海曙区', '江北区', '镇海区', '北仑区', '鄞州区'],
+                '温州市': ['鹿城区', '龙湾区', '瓯海区', '瑞安市'],
+                '嘉兴市': ['南湖区', '秀洲区', '海宁市', '桐乡市']
+            },
+            '江苏省': {
+                '南京市': ['玄武区', '秦淮区', '建邺区', '鼓楼区', '栖霞区', '江宁区'],
+                '苏州市': ['姑苏区', '虎丘区', '吴中区', '相城区', '吴江区'],
+                '无锡市': ['梁溪区', '锡山区', '惠山区', '滨湖区'],
+                '常州市': ['天宁区', '钟楼区', '新北区', '武进区']
+            },
+            '北京市': {
+                '北京市': ['东城区', '西城区', '朝阳区', '海淀区', '丰台区', '通州区']
+            },
+            '上海市': {
+                '上海市': ['黄浦区', '徐汇区', '长宁区', '静安区', '浦东新区', '闵行区']
+            }
+        };
+
+        function initRegion() {
+            const p = document.getElementById('np-province');
+            const c = document.getElementById('np-city');
+            const d = document.getElementById('np-district');
+            p.innerHTML = '<option value="">省</option>';
+            c.innerHTML = '<option value="">市</option>';
+            d.innerHTML = '<option value="">区</option>';
+            Object.keys(regionData).forEach(prov => {
+                const opt = document.createElement('option');
+                opt.value = prov; opt.textContent = prov;
+                p.appendChild(opt);
+            });
+        }
+
+        function onProvinceChange() {
+            const p = document.getElementById('np-province').value;
+            const c = document.getElementById('np-city');
+            const d = document.getElementById('np-district');
+            c.innerHTML = '<option value="">市</option>';
+            d.innerHTML = '<option value="">区</option>';
+            if (regionData[p]) {
+                Object.keys(regionData[p]).forEach(city => {
+                    const opt = document.createElement('option');
+                    opt.value = city; opt.textContent = city;
+                    c.appendChild(opt);
+                });
+            }
+        }
+
+        function onCityChange() {
+            const p = document.getElementById('np-province').value;
+            const c = document.getElementById('np-city').value;
+            const d = document.getElementById('np-district');
+            d.innerHTML = '<option value="">区</option>';
+            if (regionData[p] && regionData[p][c]) {
+                regionData[p][c].forEach(dist => {
+                    const opt = document.createElement('option');
+                    opt.value = dist; opt.textContent = dist;
+                    d.appendChild(opt);
+                });
+            }
+        }
+
+        function getLocation() {
+            const p = document.getElementById('np-province').value;
+            const c = document.getElementById('np-city').value;
+            const d = document.getElementById('np-district').value;
+            return [p, c, d].filter(Boolean).join(' ');
+        }
+
+        function setLocation(str) {
+            if (!str) return;
+            const parts = String(str).split(/[\s/]/).filter(Boolean);
+            const p = parts[0] || '';
+            const c = parts[1] || '';
+            const d = parts[2] || '';
+            if (!regionData[p]) return;
+            document.getElementById('np-province').value = p;
+            onProvinceChange();
+            document.getElementById('np-city').value = c;
+            onCityChange();
+            document.getElementById('np-district').value = d;
+        }
+
         // 项目详情数据（供查看与编辑回填使用）
         const projectData = {
             'XM20240527001': {
@@ -351,12 +464,13 @@
                 tendererAddress: '福州市鼓楼区建设大厦15层',
                 tendererContact: '张三',
                 tendererPhone: '13800138001',
+                projectType: '工程类',
+                location: '福建省 福州市 鼓楼区',
                 bidAmount: '500000',
                 bidDeadline: '2024-06-15 17:00:00',
                 bidOpenTime: '2024-06-18 09:30:00',
                 publishTime: '2024-05-27 10:00:00',
-                syncTime: '2024-05-27 14:30:00',
-                dataSource: '公共资源交易中心'
+                syncTime: '2024-05-27 14:30:00'
             },
             'XM20240527002': {
                 projectName: '厦门市办公楼装修工程',
@@ -368,12 +482,13 @@
                 tendererAddress: '厦门市思明区装饰大厦8层',
                 tendererContact: '李四',
                 tendererPhone: '13800138002',
+                projectType: '采购类',
+                location: '福建省 福州市 台江区',
                 bidAmount: '250000',
                 bidDeadline: '2024-06-20 17:00:00',
                 bidOpenTime: '2024-06-22 10:00:00',
                 publishTime: '2024-05-27 09:30:00',
-                syncTime: '2024-05-27 14:25:00',
-                dataSource: '公共资源交易中心'
+                syncTime: '2024-05-27 14:25:00'
             }
         };
 
@@ -425,6 +540,14 @@
                                     <div class="text-slate-800">${data.projectCode}</div>
                                 </div>
                                 <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">项目类型</label>
+                                    <div class="text-slate-800">${data.projectType || '—'}</div>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">项目所在地</label>
+                                    <div class="text-slate-800">${data.location || '—'}</div>
+                                </div>
+                                <div>
                                     <label class="block text-sm font-medium text-slate-600 mb-1">标段名称</label>
                                     <div class="text-slate-800">${data.sectionName}</div>
                                 </div>
@@ -453,7 +576,7 @@
                                     <div class="text-slate-800">${data.tendererPhone}</div>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">保证金金额（元）</label>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">投标保证金（元）</label>
                                     <div class="text-slate-800">${data.bidAmount}</div>
                                 </div>
                                 <div>
@@ -472,9 +595,30 @@
                                     <label class="block text-sm font-medium text-slate-600 mb-1">同步时间</label>
                                     <div class="text-slate-800">${data.syncTime}</div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="px-6 py-4">
+                            <h4 class="text-sm font-semibold text-slate-700 mb-3">中标信息</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-medium text-slate-600 mb-1">数据来源</label>
-                                    <div class="text-slate-800">${data.dataSource}</div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">中标企业</label>
+                                    <div class="text-slate-800">${data.winningBidder || '—'}</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">中标企业统一社会信用代码</label>
+                                    <div class="text-slate-800">${data.winningBidderCode || '—'}</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">中标合同价（元）</label>
+                                    <div class="text-slate-800">${data.bidContractPrice || '—'}</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">计划工期（天）</label>
+                                    <div class="text-slate-800">${data.planDuration || '—'}</div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">保证金金额（元）</label>
+                                    <div class="text-slate-800">${data.bidBond || '—'}</div>
                                 </div>
                             </div>
                         </div>
@@ -554,6 +698,7 @@
             editingRow = null;
             setModalTitle('新增项目', '保存');
             const modal = document.getElementById('add-project-modal');
+            initRegion();
             modal.classList.remove('hidden');
             modal.classList.add('flex');
         }
@@ -575,7 +720,10 @@
             }
             const data = Object.assign({}, base, extra);
 
+            initRegion();
             document.getElementById('np-projectName').value = data.projectName || '';
+            document.getElementById('np-projectType').value = data.projectType || '';
+            setLocation(data.location || '');
             document.getElementById('np-projectCode').value = data.projectCode || '';
             document.getElementById('np-sectionName').value = data.sectionName || '';
             document.getElementById('np-sectionCode').value = data.sectionCode || '';
@@ -587,7 +735,11 @@
             document.getElementById('np-tendererAddress').value = data.tendererAddress || '';
             document.getElementById('np-tendererContact').value = data.tendererContact || '';
             document.getElementById('np-tendererPhone').value = data.tendererPhone || '';
-            document.getElementById('np-dataSource').value = data.dataSource || '手工导入';
+            document.getElementById('np-bidContractPrice').value = data.bidContractPrice || '';
+            document.getElementById('np-planDuration').value = data.planDuration || '';
+            document.getElementById('np-bidBond').value = data.bidBond || '';
+            document.getElementById('np-winningBidder').value = data.winningBidder || '';
+            document.getElementById('np-winningBidderCode').value = data.winningBidderCode || '';
 
             editingRow = row;
             setModalTitle('编辑项目', '保存修改');
@@ -606,6 +758,8 @@
             if (!form.reportValidity()) return;
             const projectName = document.getElementById('np-projectName').value.trim();
             const projectCode = document.getElementById('np-projectCode').value.trim();
+            const projectType = document.getElementById('np-projectType').value.trim();
+            const location = getLocation();
             const sectionName = document.getElementById('np-sectionName').value.trim();
             const sectionCode = document.getElementById('np-sectionCode').value.trim();
             const tenderer = document.getElementById('np-tenderer').value.trim();
@@ -613,18 +767,33 @@
             const tendererAddress = document.getElementById('np-tendererAddress').value.trim();
             const tendererContact = document.getElementById('np-tendererContact').value.trim();
             const tendererPhone = document.getElementById('np-tendererPhone').value.trim();
-            const dataSource = document.getElementById('np-dataSource').value.trim();
             const bidAmount = document.getElementById('np-bidAmount').value.trim();
             const bidDeadline = formatDateTimeLocal(document.getElementById('np-bidDeadline').value);
             const bidOpenTime = formatDateTimeLocal(document.getElementById('np-bidOpenTime').value);
+            const bidContractPrice = document.getElementById('np-bidContractPrice').value.trim();
+            const planDuration = document.getElementById('np-planDuration').value.trim();
+            const bidBond = document.getElementById('np-bidBond').value.trim();
+            const winningBidder = document.getElementById('np-winningBidder').value.trim();
+            const winningBidderCode = document.getElementById('np-winningBidderCode').value.trim();
             const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+            if (!location) {
+                alert('请完整选择项目所在地（省 / 市 / 区）');
+                return;
+            }
 
             const extra = {
                 tendererCreditCode: tendererCreditCode,
                 tendererAddress: tendererAddress,
                 tendererContact: tendererContact,
                 tendererPhone: tendererPhone,
-                dataSource: dataSource
+                projectType: projectType,
+                location: location,
+                bidContractPrice: bidContractPrice,
+                planDuration: planDuration,
+                bidBond: bidBond,
+                winningBidder: winningBidder,
+                winningBidderCode: winningBidderCode
             };
 
             if (editingRow) {
@@ -674,55 +843,13 @@
             }
         }
 
-        // 批量导入
-        function openImportModal() {
-            const modal = document.getElementById('import-project-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.getElementById('import-result').classList.add('hidden');
-            document.getElementById('import-file').value = '';
-        }
-
-        function closeImportModal() {
-            const modal = document.getElementById('import-project-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function downloadTemplate() {
-            showSuccessModal('模板下载', '已生成项目导入模板（ProjectTemplate.xlsx）');
-        }
-
-        function submitImport() {
-            const fileInput = document.getElementById('import-file');
-            if (!fileInput.files || fileInput.files.length === 0) {
-                alert('请选择要导入的 Excel 文件');
-                return;
-            }
-            const fileName = fileInput.files[0].name;
-            showLoadingModal('正在解析并导入项目数据...');
-            setTimeout(() => {
-                hideLoadingModal();
-                const successCount = 12;
-                const failCount = 1;
-                const resultBox = document.getElementById('import-result');
-                resultBox.classList.remove('hidden');
-                resultBox.innerHTML = `<div class="flex items-start space-x-2"><i class="fa fa-check-circle mt-0.5"></i><div>文件「${fileName}」导入完成：成功 ${successCount} 条，失败 ${failCount} 条。（示例数据，实际请对接解析服务）</div></div>`;
-                closeImportModal();
-                showSuccessModal('导入完成', `成功导入 ${successCount} 条项目数据`);
-            }, 1800);
-        }
-
-        // 将新增项目、批量导入按钮渲染到查询条件下方、列表上方的左侧
+        // 将新增项目按钮渲染到查询条件下方、列表上方的左侧
         (function () {
             const bar = document.getElementById('action-bar');
             if (bar) {
                 bar.innerHTML = `
                     <button onclick="openAddProjectModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-green-200 hover:bg-green-700 transition-all">
                         <i class="fa fa-plus mr-2"></i>新增项目
-                    </button>
-                    <button onclick="openImportModal()" class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-purple-200 hover:bg-purple-700 transition-all">
-                        <i class="fa fa-upload mr-2"></i>批量导入
                     </button>
                 `;
             }

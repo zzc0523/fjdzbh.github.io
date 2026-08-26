@@ -66,15 +66,9 @@
         <!-- 主内容区 -->
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- 顶部导航 -->
-            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center px-8 shrink-0">
                 <div class="flex items-center space-x-2">
                     <h2 class="text-lg font-bold text-slate-800">开函数据同步</h2>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <input type="text" id="searchInput" placeholder="搜索保函信息..." class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64">
-                    <button onclick="searchData()" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
-                        <i class="fa fa-search mr-2"></i>搜索
-                    </button>
                 </div>
             </header>
 
@@ -134,14 +128,9 @@
                         <div class="flex items-center space-x-4 flex-wrap gap-3">
                             <div class="flex items-center">
                                 <label class="text-sm font-medium text-slate-600 mr-2 flex items-center">
-                                    <i class="fa fa-search mr-1"></i>选择项目：
+                                    <i class="fa fa-search mr-1"></i>项目名称：
                                 </label>
-                                <select id="projectSelect" class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-50 hover:bg-white transition-colors">
-                                    <option value="">全部项目</option>
-                                    <option value="XM20240527001">XM20240527001 - 福州市政道路改造项目</option>
-                                    <option value="XM20240527002">XM20240527002 - 厦门市办公楼装修工程</option>
-                                    <option value="XM20240527003">XM20240527003 - 泉州市公园建设项目</option>
-                                </select>
+                                <input id="projectNameInput" type="text" placeholder="请输入项目名称关键字" class="px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-50 hover:bg-white transition-colors w-64">
                             </div>
                             <div class="flex items-center">
                                 <label class="text-sm font-medium text-slate-600 mr-2 flex items-center">
@@ -176,7 +165,7 @@
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider sticky-col" style="position: sticky; right: 0; background: linear-gradient(to right, #eff6ff, #f8fafc);">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white">
+                                <tbody class="bg-white" id="bond-tbody">
                                     <tr class="hover:bg-blue-50/50 transition-all duration-200 border-b border-slate-50">
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-semibold text-slate-800 flex items-center">
@@ -309,7 +298,7 @@
                         </table>
 
                         <div class="flex justify-between items-center mt-4">
-                            <span class="text-sm text-gray-500">共 183 条记录，当前显示 1-3 条</span>
+                            <span class="text-sm text-gray-500" id="bond-count">共 183 条记录，当前显示 1-3 条</span>
                             <div class="flex space-x-2">
                                 <button class="px-3 py-1 text-slate-600 bg-slate-100 text-xs font-medium rounded hover:bg-slate-200 transition-colors">上一页</button>
                                 <button class="px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded">1</button>
@@ -506,14 +495,23 @@
         }
 
         function filterBondData() {
-            const projectId = document.getElementById('projectSelect').value;
+            const keyword = document.getElementById('projectNameInput').value.trim().toLowerCase();
             const status = document.getElementById('syncStatusSelect').value;
-            alert(`筛选条件 - 项目: ${projectId || '全部'}, 状态: ${status || '全部'}`);
-        }
-
-        function searchData() {
-            const keyword = document.getElementById('searchInput').value;
-            alert(`搜索: ${keyword}`);
+            const statusMap = { 'pending': '待同步', 'synced': '已同步', 'failed': '同步失败' };
+            const targetStatus = statusMap[status] || '';
+            const rows = document.querySelectorAll('#bond-tbody tr');
+            let visible = 0;
+            rows.forEach(row => {
+                const nameCell = row.children[2] ? row.children[2].textContent.trim().toLowerCase() : '';
+                const statusCell = row.children[6] ? row.children[6].textContent.trim() : '';
+                const matchName = !keyword || nameCell.includes(keyword);
+                const matchStatus = !targetStatus || statusCell === targetStatus;
+                const show = matchName && matchStatus;
+                row.style.display = show ? '' : 'none';
+                if (show) visible++;
+            });
+            const countSpan = document.getElementById('bond-count');
+            if (countSpan) countSpan.textContent = `共 ${visible} 条记录`;
         }
 
         function showLoadingModal(message) {
