@@ -437,7 +437,6 @@
                         <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
                             <h3 class="font-bold text-slate-800">预警事件清单</h3>
                             <div class="flex items-center space-x-3">
-                                <input type="text" id="alert-search" onkeyup="searchTable()" placeholder="搜索编号/企业..." class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-40">
                                 <select id="alert-type-filter" onchange="filterTable()" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm outline-none">
                                     <option value="全部">全部类型</option>
                                     <option value="业务异常">业务异常</option>
@@ -446,7 +445,7 @@
                                 </select>
                                 <select id="alert-rule-filter" onchange="filterTable()" class="border border-slate-200 rounded-lg px-3 py-1.5 text-sm outline-none">
                                     <option value="全部">全部规则</option>
-                                    <option value="账户与交易异常">账户与交易异常</option>
+                                    <option value="账户交易异常（高频申请）">账户交易异常（高频申请）</option>
                                     <option value="关联关系异常">关联关系异常</option>
                                     <option value="IP异常">IP异常</option>
                                 </select>
@@ -459,7 +458,7 @@
                             </div>
                         </div>
                         <div class="overflow-x-auto">
-                        <table class="w-full text-left table-fixed align-middle" id="alert-table" style="min-width: 1180px;">
+                        <table class="w-full text-left table-fixed align-middle" id="alert-table" style="min-width: 1240px;">
                             <colgroup>
                                 <col style="width: 120px;">
                                 <col style="width: 140px;">
@@ -575,13 +574,16 @@
             }
         }
 
+        // --- Current Logged-in User ---
+        const CURRENT_USER = '省监管员-陈明';
+
         // --- Alert Event Data ---
         let alertEvents = [
-            { id: 'YW20240520001', type: '业务异常', level: '高风险', rule: '账户与交易异常', company: '福建XX建筑工程有限公司', desc: '1小时内频繁操作保函申请及撤销共计6次，超过阈值(5次)', time: '2024-05-20 10:30', status: '待处理', deadline: '01:25:40' },
+            { id: 'YW20240520001', type: '业务异常', level: '高风险', rule: '账户交易异常（高频申请）', company: '福建XX建筑工程有限公司', desc: '1小时内频繁操作保函申请共计6次', time: '2024-05-20 10:30', status: '待处理', deadline: '01:25:40' },
             { id: 'YW20240520004', type: '合规红线', level: '中风险', rule: '关联关系异常', company: '福建XX建设集团等5家', desc: '1小时内5家企业针对同一项目购入同一担保方保函', time: '2024-05-20 14:20', status: '待处理', deadline: '02:45:00' },
-            { id: 'YW20240520005', type: '合规红线', level: '高风险', rule: 'IP异常', company: '福州XX科技有限公司等4家', desc: '4家企业使用相同IP提交保函申请', time: '2024-05-20 15:30', status: '待处理', deadline: '00:30:00' },
-            { id: 'YW20240518001', type: '业务异常', level: '中风险', rule: '账户与交易异常', company: '厦门XX网络科技有限公司', desc: '30分钟内申请及撤销操作共计8次，疑似误操作或试探性提交', time: '2024-05-18 09:40', status: '处理中', deadline: '-', handler: '王敏（省级监管-风险处）', handleTime: '2024-05-18 10:05', handleContent: '已联系企业经办人核实操作背景，确认为新入职人员误操作，正在指导其规范提交，并暂停该账户当日高频操作权限以待复核。' },
-            { id: 'YW20240517001', type: '合规红线', level: '高风险', rule: 'IP异常', company: '泉州XX信息科技有限公司等3家', desc: '3家企业于同日使用同一办公IP提交保函申请', time: '2024-05-17 16:10', status: '已关闭', deadline: '-', handler: '李强（省级监管-合规处）', handleTime: '2024-05-17 18:20', handleContent: '经核查，3家企业为同一集团下属关联公司，共用办公网络，不存在恶意串通。已人工核查并解除预警，保留相关说明作为备案。' },
+            { id: 'YW20240520005', type: '合规红线', level: '高风险', rule: 'IP异常', company: '福州XX科技有限公司等4家', desc: '同一个项目4家企业使用相同IP提交保函申请', time: '2024-05-20 15:30', status: '待处理', deadline: '00:30:00' },
+            { id: 'YW20240518001', type: '业务异常', level: '中风险', rule: '账户交易异常（高频申请）', company: '厦门XX网络科技有限公司', desc: '1小时内频繁操作保函申请共计6次', time: '2024-05-18 09:40', status: '处理中', deadline: '-', handler: '王敏（省级监管-风险处）', handleTime: '2024-05-18 10:05', handleContent: '已联系企业经办人核实操作背景，确认为新入职人员误操作，正在指导其规范提交，并暂停该账户当日高频操作权限以待复核。' },
+            { id: 'YW20240517001', type: '合规红线', level: '高风险', rule: 'IP异常', company: '泉州XX信息科技有限公司等3家', desc: '同一个项目4家企业使用相同IP提交保函申请', time: '2024-05-17 16:10', status: '已关闭', deadline: '-', handler: '李强（省级监管-合规处）', handleTime: '2024-05-17 18:20', handleContent: '经核查，3家企业为同一集团下属关联公司，共用办公网络，不存在恶意串通。已人工核查并解除预警，保留相关说明作为备案。' },
             { id: 'YW20240516001', type: '合规红线', level: '中风险', rule: '关联关系异常', company: '漳州XX建设有限公司', desc: '2家企业针对同一项目购入同一担保方保函', time: '2024-05-16 11:25', status: '已关闭', deadline: '-', handler: '陈静（省级监管-风险处）', handleTime: '2024-05-16 14:00', handleContent: '经比对工商股权信息，确认两家企业存在间接持股关系，属正常商业合作，不存在规避行为。复核通过，预警关闭。' }
         ];
 
@@ -596,17 +598,17 @@
             tbody.innerHTML = alertEvents.map(alert => `
                 <tr class="hover:bg-slate-50 transition-colors group">
                     <td class="px-6 py-4 font-mono text-xs text-slate-500 whitespace-nowrap">${alert.id}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="inline-flex items-center text-xs font-medium text-slate-700">
-                            <span class="w-1.5 h-1.5 rounded-full mr-1.5 ${
+                    <td class="px-6 py-4 whitespace-nowrap overflow-hidden">
+                        <span class="inline-flex items-center text-xs font-medium text-slate-700 max-w-full truncate" title="${alert.rule}">
+                            <span class="w-1.5 h-1.5 rounded-full mr-1.5 shrink-0 ${
                                 alert.type === '金融风险' ? 'bg-amber-500' :
                                 alert.type === '合规红线' ? 'bg-rose-500' : 'bg-blue-500'
                             }"></span>${alert.rule}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-xs text-slate-600 leading-relaxed break-words align-top" title="${alert.desc}">${alert.desc}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="text-xs font-medium text-slate-700 truncate" title="${alert.company}">${alert.company}</span>
+                    <td class="px-6 py-4 whitespace-nowrap overflow-hidden">
+                        <span class="block text-xs font-medium text-slate-700 truncate" title="${alert.company}">${alert.company}</span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold ${
@@ -666,33 +668,6 @@
             });
         }
 
-        function searchTable() {
-            const input = document.getElementById("alert-search");
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById("alert-table");
-            const tr = table.getElementsByTagName("tr");
-
-            for (let i = 1; i < tr.length; i++) {
-                let idTd = tr[i].getElementsByTagName("td")[0]; 
-                let typeTd = tr[i].getElementsByTagName("td")[1];
-                let descTd = tr[i].getElementsByTagName("td")[3];
-                
-                if (idTd || typeTd || descTd) {
-                    let txtId = idTd ? (idTd.textContent || idTd.innerText) : "";
-                    let txtType = typeTd ? (typeTd.textContent || typeTd.innerText) : "";
-                    let txtDesc = descTd ? (descTd.textContent || descTd.innerText) : "";
-                    
-                    if (txtId.toUpperCase().indexOf(filter) > -1 || 
-                        txtType.toUpperCase().indexOf(filter) > -1 || 
-                        txtDesc.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-
         function processAlert(id) {
             const alert = alertEvents.find(a => a.id === id);
             if (!alert) return;
@@ -723,7 +698,7 @@
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 flex items-center">
                         <div class="flex items-center">
                             <i class="fa fa-exclamation-circle text-blue-600 mr-2"></i>
-                            <span class="text-xs text-blue-800 font-bold">涉及账户与交易异常，建议排查频繁操作是否为外部攻击或误操作</span>
+                            <span class="text-xs text-blue-800 font-bold">涉及账户交易异常（高频申请），建议排查频繁操作是否为外部攻击或误操作</span>
                         </div>
                     </div>
                 `;
@@ -802,7 +777,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">处理人</label>
-                            <input id="followup-handler" type="text" class="w-full border border-slate-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" value="${alert.handler || '当前监管员'}" placeholder="请输入处理人">
+                            <input id="followup-handler" type="text" readonly disabled class="w-full border border-slate-200 rounded-lg p-2 text-sm bg-slate-100 text-slate-500 cursor-not-allowed" value="${CURRENT_USER}">
                         </div>
                     </div>
                 </div>
@@ -816,7 +791,7 @@
 
             const content = document.getElementById('followup-content').value.trim();
             const action = document.getElementById('followup-action').value;
-            const handler = document.getElementById('followup-handler').value.trim() || '当前监管员';
+            const handler = CURRENT_USER;
 
             // 合并已有处理说明与本次跟进记录
             const baseContent = alert.handleContent ? (alert.handleContent + '\n') : '';
@@ -1011,8 +986,9 @@
                                         <tr class="bg-slate-100">
                                             <th class="px-4 py-2 text-left font-bold text-slate-500">关联企业</th>
                                             <th class="px-4 py-2 text-left font-bold text-slate-500">关联项目</th>
+                                            <th class="px-4 py-2 text-left font-bold text-slate-500 w-40">订单号</th>
                                             <th class="px-4 py-2 text-left font-bold text-slate-500">IP地址</th>
-                                            <th class="px-4 py-2 text-left font-bold text-slate-500">保单号</th>
+                                            <th class="px-4 py-2 text-left font-bold text-slate-500 w-40">保函编号</th>
                                             <th class="px-4 py-2 text-left font-bold text-slate-500">承保机构</th>
                                             <th class="px-4 py-2 text-left font-bold text-slate-500">保函申请时间</th>
                                             <th class="px-4 py-2 text-left font-bold text-slate-500">出函时间</th>
@@ -1022,8 +998,9 @@
                                         <tr class="border-b border-slate-100">
                                             <td class="px-4 py-3">${alert.company}</td>
                                             <td class="px-4 py-3">晋江市某项目</td>
+                                            <td class="px-4 py-3 w-40 break-all">DD2024052000938271</td>
                                             <td class="px-4 py-3">10.2.5.23</td>
-                                            <td class="px-4 py-3">190184534230...</td>
+                                            <td class="px-4 py-3 w-40 break-all">1901845342308741</td>
                                             <td class="px-4 py-3">泉州市中小担保</td>
                                             <td class="px-4 py-3">${alert.time}</td>
                                             <td class="px-4 py-3">${alert.time}</td>

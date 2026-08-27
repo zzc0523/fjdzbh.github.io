@@ -470,11 +470,11 @@
                                 <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider">
                                     <tr>
                                         <th class="px-6 py-4">规则名称</th>
+                                        <th class="px-6 py-4">规则说明</th>
                                         <th class="px-6 py-4">预警类型</th>
                                         <th class="px-6 py-4">预警等级</th>
-                                        <th class="px-6 py-4">核心参数</th>
-                                        <th class="px-6 py-4">规则说明</th>
-                                        <th class="px-6 py-4">通知方式</th>
+                                        <th class="px-6 py-4">统计时间</th>
+                                        <th class="px-6 py-4">阈值</th>
                                         <th class="px-6 py-4 text-center">状态</th>
                                         <th class="px-6 py-4 text-right">操作</th>
                                     </tr>
@@ -554,10 +554,31 @@
         // --- Warning Rules Data ---
         let currentEditRuleId = null;
         let warningRules = [
-            { id: 1, name: '账户与交易异常', description: '用户短期内频繁操作保函申请或撤销', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
-            { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3企业', notify: ['系统'], status: 'enabled' },
-            { id: 11, name: 'IP异常', description: '不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '> 3企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
+            { id: 1, name: '账户交易异常（高频申请）', description: '用户短期内频繁操作保函申请', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
+            { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3家企业', notify: ['系统'], status: 'enabled' },
+            { id: 11, name: 'IP异常', description: '同一个项目，不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '> 3家企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
         ];
+
+        // 从 params 字符串中解析统计时间与阈值，用于列表分列展示
+        function parseRuleParams(params) {
+            const p = (params || '').trim();
+            let time = '—';
+            let threshold = '—';
+            // 统计时间：提取开头的「N小时/自然日累计/按天」类描述
+            const timeMatch = p.match(/^(\d+\s*小时(?:内)?|自然日累计|按天)/);
+            if (timeMatch) {
+                time = timeMatch[1].replace(/\s/g, '');
+            } else if (p.includes('小时')) {
+                const m = p.match(/(\d+\s*小时)/);
+                if (m) time = m[1].replace(/\s/g, '');
+            }
+            // 阈值：提取「> N次/家/企业」中的数值与单位
+            const thMatch = p.match(/>\s*(\d+)\s*(次|家|企业|元|%)?/);
+            if (thMatch) {
+                threshold = thMatch[1] + (thMatch[2] || '');
+            }
+            return { time, threshold };
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             renderRuleTable();
@@ -572,6 +593,9 @@
                     <td class="px-6 py-4">
                         <span class="font-bold text-slate-700">${rule.name}</span>
                     </td>
+                    <td class="px-6 py-4 text-slate-500 max-w-xs">
+                        <span class="line-clamp-2">${rule.description || '—'}</span>
+                    </td>
                     <td class="px-6 py-4 text-slate-500">${rule.type}</td>
                     <td class="px-6 py-4">
                         <span class="status-badge ${
@@ -579,15 +603,8 @@
                             rule.level === '中风险' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'
                         }">${rule.level}</span>
                     </td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-500">${rule.params}</td>
-                    <td class="px-6 py-4 text-slate-500 max-w-xs">
-                        <span class="line-clamp-2">${rule.description || '—'}</span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex space-x-1">
-                            ${rule.notify.filter(n => n !== '邮件').map(n => `<span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">${n}</span>`).join('')}
-                        </div>
-                    </td>
+                    <td class="px-6 py-4 text-slate-500">${parseRuleParams(rule.params).time}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-700 font-bold">${parseRuleParams(rule.params).threshold}</td>
                     <td class="px-6 py-4 text-center">
                         <button onclick="toggleRuleStatus(${rule.id})" class="relative inline-flex h-5 w-10 shrink-0 cursor-pointer items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${rule.status === 'enabled' ? 'bg-blue-600' : 'bg-slate-200'}">
                             <span class="pointer-events-none block h-4 w-4 rounded-full bg-white shadow-lg ring-0 transition-transform ${rule.status === 'enabled' ? 'translate-x-5' : 'translate-x-1'}"></span>
@@ -652,46 +669,42 @@
             currentEditRuleId = isEdit ? currentEditRuleId : null;
             document.getElementById('modal-title').innerText = isEdit ? '编辑预警规则' : '配置新预警规则';
             document.getElementById('modal-content-body').innerHTML = `
+                ${isEdit ? `
                 <div class="space-y-5">
-                    <!-- 只读信息区域 (规则基础定义) - 编辑模式显示 -->
-                    <div id="readonly-info-section" class="${isEdit ? 'block' : 'hidden'} bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
-                        <div class="px-4 py-3 bg-slate-100 border-b border-slate-200 flex items-center">
-                            <div class="w-6 h-6 rounded-full bg-slate-300 flex items-center justify-center mr-2">
-                                <i class="fa fa-lock text-white text-[10px]"></i>
+                    <!-- 只读信息卡片 -->
+                    <div class="bg-slate-50 rounded-xl border border-slate-200 p-4 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则名称</label>
+                                <div class="text-sm font-medium text-slate-800" id="display-rule-name">-</div>
                             </div>
-                            <span class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">基础定义</span>
-                            <span class="ml-auto text-[10px] text-slate-400 flex items-center">
-                                <i class="fa fa-info-circle mr-1"></i>不可编辑
-                            </span>
+                            <div>
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">预警类型</label>
+                                <div class="text-sm font-medium text-slate-800" id="display-rule-type">-</div>
+                            </div>
                         </div>
-                        <div class="p-4 space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-1.5">
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则名称</label>
-                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-2.5">
-                                        <i class="fa fa-tag text-slate-300 mr-2 text-xs"></i>
-                                        <span id="display-rule-name" class="text-sm font-medium text-slate-700">-</span>
-                                    </div>
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">预警类型</label>
-                                    <div class="flex items-center bg-white border border-slate-200 rounded-lg px-3 py-2.5">
-                                        <i class="fa fa-filter text-slate-300 mr-2 text-xs"></i>
-                                        <span id="display-rule-type" class="text-sm font-medium text-slate-700">-</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="space-y-1.5" id="display-rule-desc-wrap">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则说明</label>
-                                <div class="bg-white border border-slate-200 rounded-lg px-3 py-3">
-                                    <p id="display-rule-desc" class="text-xs text-slate-600 leading-relaxed">-</p>
-                                </div>
-                            </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">规则说明</label>
+                            <div class="text-xs text-slate-600 leading-relaxed" id="display-rule-desc">-</div>
                         </div>
                     </div>
 
+                    <!-- 可编辑参数卡片 -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 space-y-4">
+                        <div class="flex items-center space-x-2 border-b border-slate-100 pb-3">
+                            <i class="fa fa-sliders text-blue-600 text-sm"></i>
+                            <span class="text-sm font-bold text-slate-700">可编辑参数</span>
+                            <span id="display-edit-type" class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] rounded">业务异常</span>
+                        </div>
+                        <div id="dynamic-params-container" class="space-y-4">
+                            <!-- 由 updateConfigForm 动态生成 -->
+                        </div>
+                    </div>
+                </div>
+                ` : `
+                <div class="space-y-5">
                     <!-- 新增模式下的基础选择 -->
-                    <div id="editable-base-section" class="${isEdit ? 'hidden' : 'grid'} grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-4">
                         <div class="space-y-1.5">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">规则名称 *</label>
                             <input type="text" id="config-rule-name" placeholder="输入规则名称" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
@@ -707,14 +720,14 @@
                     </div>
 
                     <!-- 规则说明预览 -->
-                    <div id="rule-desc-preview" class="${isEdit ? 'hidden' : 'block'} p-3 bg-blue-50/50 rounded-lg border border-blue-100">
+                    <div class="p-3 bg-blue-50/50 rounded-lg border border-blue-100">
                         <div class="flex items-start">
                             <i class="fa fa-info-circle text-blue-500 mr-2 mt-0.5"></i>
                             <p id="rule-desc-display" class="text-xs text-blue-700 leading-relaxed">选择预警类型后显示规则说明</p>
                         </div>
                     </div>
 
-                    <!-- 规则说明（自定义，编辑模式下作为唯一说明入口） -->
+                    <!-- 规则说明（自定义） -->
                     <div class="space-y-1.5">
                         <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">规则说明<span class="text-rose-500 ml-0.5">*</span></label>
                         <textarea id="config-rule-desc" rows="3" placeholder="请输入该规则的具体说明（将展示在规则列表中）" class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all resize-none">${ruleData?.description || ''}</textarea>
@@ -736,40 +749,25 @@
                         <div id="dynamic-params-container" class="p-4 bg-white rounded-xl border border-blue-100 shadow-sm space-y-4">
                             <!-- 由 updateConfigForm 动态生成 -->
                         </div>
-                    </div>
-
-                    <!-- 运行策略配置区域 -->
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">预警等级</label>
-                                <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
-                                    <i class="fa fa-pencil mr-0.5"></i>可编辑
-                                </span>
+                        <div class="grid grid-cols-2 gap-4 pt-1">
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">预警等级</label>
+                                    <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                        <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                    </span>
+                                </div>
+                                <select id="config-rule-level" class="w-full border-2 border-blue-200 cursor-pointer font-bold text-slate-700 bg-white rounded-lg px-3 py-2.5 text-sm outline-none transition-all">
+                                    <option value="高风险">高风险</option>
+                                    <option value="中风险">中风险</option>
+                                    <option value="低风险">低风险</option>
+                                </select>
                             </div>
-                            <select id="config-rule-level" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-bold text-slate-700 bg-white">
-                                <option value="高风险">高风险 (一级)</option>
-                                <option value="中风险">中风险 (二级)</option>
-                                <option value="低风险">低风险 (三级)</option>
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between">
-                                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">监控周期</label>
-                                <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
-                                    <i class="fa fa-pencil mr-0.5"></i>可编辑
-                                </span>
-                            </div>
-                            <select id="config-rule-cycle" class="w-full border-2 border-blue-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer font-bold text-slate-700 bg-white">
-                                <option>实时监控</option>
-                                <option>按小时统计</option>
-                                <option>按天累计</option>
-                            </select>
                         </div>
                     </div>
 
                     <!-- 通知方式区域 -->
-                    <div class="space-y-3">
+                    <div id="rule-notify-section" class="space-y-3">
                         <div class="flex items-center justify-between">
                             <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">通知方式</label>
                             <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
@@ -788,144 +786,296 @@
                         </div>
                     </div>
                 </div>
+                `}
             `;
             updateConfigForm(isEdit);
             // 编辑模式下隐藏只读「规则说明」，避免与下方可编辑框重复
             const descWrap = document.getElementById('display-rule-desc-wrap');
             if (descWrap) descWrap.classList.toggle('hidden', !!isEdit);
+            // 编辑模式下隐藏「通知方式」
+            const notifySection = document.getElementById('rule-notify-section');
+            if (notifySection) notifySection.classList.toggle('hidden', !!isEdit);
             document.getElementById('alert-modal').classList.add('active');
         }
 
         function updateConfigForm(isEdit = false, currentPolicy = null) {
-            const type = document.getElementById('config-rule-type').value;
+            const typeEl = document.getElementById('config-rule-type');
+            const displayTypeEl = document.getElementById('display-rule-type');
+            const type = typeEl ? typeEl.value : (displayTypeEl ? displayTypeEl.innerText : '业务异常');
             const container = document.getElementById('dynamic-params-container');
             const descDisplay = document.getElementById('rule-desc-display');
             const descDisplayEdit = document.getElementById('display-rule-desc');
-            
+
             const descriptions = {
                 '业务异常': '监控账户与交易中的异常行为，包括用户短期内频繁操作保函申请或撤销等情况，帮助及时发现业务异常和潜在风险。',
                 '金融风险': '监控金融相关的风险指标，如大额保函审批、额度使用率等，保障资金安全和合规运营。',
                 '合规红线': '监控合规相关的风险，包括关联关系异常、黑名单匹配、IP异常等，确保业务操作符合合规要求。'
             };
-            
+
+            // 编辑模式下规则说明使用当前规则实际内容（与列表一致），新增模式使用通用说明
+            const currentRule = isEdit ? warningRules.find(r => r.id === currentEditRuleId) : null;
+            const actualDesc = isEdit && currentRule ? (currentRule.description || '-') : (descriptions[type] || '选择预警类型后显示规则说明');
+
             if (descDisplay) {
-                descDisplay.innerText = descriptions[type] || '选择预警类型后显示规则说明';
+                descDisplay.innerText = actualDesc;
             }
             if (descDisplayEdit) {
-                descDisplayEdit.innerText = descriptions[type] || '-';
+                descDisplayEdit.innerText = isEdit ? actualDesc : (descriptions[type] || '-');
             }
             
             let html = '';
             const readonlyClass = isEdit ? 'bg-slate-100 cursor-not-allowed' : 'bg-white cursor-pointer';
             
             if (type === '业务异常') {
-                html = `
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
-                            <div class="flex items-center">
-                                <p class="text-[11px] font-bold text-blue-600 uppercase flex items-center">
-                                    <i class="fa fa-cogs mr-2"></i>业务异常参数配置
-                                </p>
-                                ${isEdit ? '<span class="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-2">统计维度不可编辑</span>' : ''}
-                            </div>
-                            <span class="text-[10px] text-slate-400 bg-blue-50 px-2 py-0.5 rounded">建议阈值: 5-10次</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
-                                    统计维度
-                                    ${isEdit ? '<span class="text-[9px] text-slate-400 ml-1">(不可编辑)</span>' : ''}
-                                </label>
-                                <div class="relative group">
-                                    <select id="config-biz-dimension" ${isEdit ? 'disabled' : 'onchange="updateBizDimension()"'} class="w-full ${readonlyClass} border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none ${!isEdit ? 'focus:ring-2 focus:ring-blue-500 transition-all' : ''} appearance-none">
-                                        <option value="申请操作次数">申请操作次数</option>
-                                        <option value="撤销操作次数">撤销操作次数</option>
-                                        <option value="操作频率">操作频率</option>
-                                    </select>
-                                    <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                if (isEdit) {
+                    html = `
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block">统计维度（只读）</label>
+                                    <div class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 flex items-center h-[38px]">申请操作次数</div>
                                 </div>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
-                                    触发阈值
-                                    <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
-                                </label>
-                                <div class="flex items-center group">
-                                    <div class="relative flex-1">
-                                        <input type="number" id="config-biz-threshold" value="5" class="w-full bg-white border border-blue-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                        触发阈值 <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                    </label>
+                                    <div class="flex items-center group">
+                                        <div class="relative flex-1">
+                                            <input type="number" id="config-biz-threshold" value="5" class="w-full bg-white border border-blue-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                        </div>
+                                        <span class="bg-blue-50 border border-l-0 border-blue-200 px-3 py-2 text-xs text-blue-600 rounded-r-lg font-bold min-w-[40px] text-center">次</span>
                                     </div>
-                                    <span id="config-biz-unit" class="bg-blue-50 border border-l-0 border-blue-200 px-3 py-2 text-xs text-blue-600 rounded-r-lg font-bold min-w-[40px] text-center">次</span>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                    <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
+                                </label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-6 pt-1">
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-[11px] font-medium text-slate-500 block">预警等级</label>
+                                        <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                            <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                        </span>
+                                    </div>
+                                    <select id="config-rule-level" class="w-full border-2 border-blue-200 cursor-pointer font-bold text-slate-700 bg-white rounded-lg px-3 py-2.5 text-sm outline-none transition-all">
+                                        <option value="高风险">高风险</option>
+                                        <option value="中风险">中风险</option>
+                                        <option value="低风险">低风险</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
-                                <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
-                            </label>
-                            <div class="flex items-center space-x-4">
-                                <label class="flex items-center cursor-pointer group">
-                                    <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
-                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                    `;
+                } else {
+                    html = `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                                <div class="flex items-center">
+                                    <p class="text-[11px] font-bold text-blue-600 uppercase flex items-center">
+                                        <i class="fa fa-cogs mr-2"></i>业务异常参数配置
+                                    </p>
+                                </div>
+                                <span class="text-[10px] text-slate-400 bg-blue-50 px-2 py-0.5 rounded">建议阈值: 5-10次</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">统计维度</label>
+                                    <div class="relative group">
+                                        <select id="config-biz-dimension" onchange="updateBizDimension()" class="w-full bg-white cursor-pointer border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none">
+                                            <option value="申请操作次数">申请操作次数</option>
+                                            <option value="撤销操作次数">撤销操作次数</option>
+                                            <option value="操作频率">操作频率</option>
+                                        </select>
+                                        <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                        触发阈值
+                                        <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                    </label>
+                                    <div class="flex items-center group">
+                                        <div class="relative flex-1">
+                                            <input type="number" id="config-biz-threshold" value="5" class="w-full bg-white border border-blue-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                        </div>
+                                        <span id="config-biz-unit" class="bg-blue-50 border border-l-0 border-blue-200 px-3 py-2 text-xs text-blue-600 rounded-r-lg font-bold min-w-[40px] text-center">次</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                    <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
                                 </label>
-                                <label class="flex items-center cursor-pointer group">
-                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
-                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer group">
-                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
-                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
-                                </label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-6 pt-1">
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-[11px] font-medium text-slate-500 block">预警等级</label>
+                                        <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                            <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                        </span>
+                                    </div>
+                                    <select id="config-rule-level" class="w-full border-2 border-blue-200 cursor-pointer font-bold text-slate-700 bg-white rounded-lg px-3 py-2.5 text-sm outline-none transition-all">
+                                        <option value="高风险">高风险</option>
+                                        <option value="中风险">中风险</option>
+                                        <option value="低风险">低风险</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             } else if (type === '金融风险') {
-                html = `
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
-                            <div class="flex items-center">
-                                <p class="text-[11px] font-bold text-amber-600 uppercase flex items-center">
-                                    <i class="fa fa-line-chart mr-2"></i>金融风险参数配置
-                                </p>
-                                ${isEdit ? '<span class="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-2">监控指标不可编辑</span>' : ''}
-                            </div>
-                            <span class="text-[10px] text-slate-400 bg-amber-50 px-2 py-0.5 rounded">重点管控大额标的</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
-                                    监控指标
-                                    ${isEdit ? '<span class="text-[9px] text-slate-400 ml-1">(不可编辑)</span>' : ''}
-                                </label>
-                                <div class="relative group">
-                                    <select ${isEdit ? 'disabled' : ''} class="w-full ${readonlyClass} border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none ${!isEdit ? 'focus:ring-2 focus:ring-amber-500 transition-all' : ''} appearance-none">
-                                        <option>单笔最高保函金额</option>
-                                        <option>授信额度使用率</option>
-                                        <option>机构信用评分波动</option>
-                                    </select>
-                                    <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                if (isEdit) {
+                    html = `
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block">监控指标（只读）</label>
+                                    <div class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 flex items-center h-[38px]">单笔最高保函金额</div>
                                 </div>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">
-                                    预警阈值
-                                    <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
-                                </label>
-                                <div class="flex items-center group">
-                                    <div class="relative flex-1">
-                                        <input type="number" value="500" class="w-full bg-white border border-amber-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                        预警阈值 <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                    </label>
+                                    <div class="flex items-center group">
+                                        <div class="relative flex-1">
+                                            <input type="number" id="config-finance-threshold" value="500" class="w-full bg-white border border-amber-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                                        </div>
+                                        <span class="bg-amber-50 border border-l-0 border-amber-200 px-3 py-2 text-xs text-amber-600 rounded-r-lg font-bold min-w-[40px] text-center">万元</span>
                                     </div>
-                                    <span class="bg-amber-50 border border-l-0 border-amber-200 px-3 py-2 text-xs text-amber-600 rounded-r-lg font-bold min-w-[40px] text-center">万元</span>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                    <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
+                                </label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-6 pt-1">
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-[11px] font-medium text-slate-500 block">预警等级</label>
+                                        <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                            <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                        </span>
+                                    </div>
+                                    <select id="config-rule-level" class="w-full border-2 border-blue-200 cursor-pointer font-bold text-slate-700 bg-white rounded-lg px-3 py-2.5 text-sm outline-none transition-all">
+                                        <option value="高风险">高风险</option>
+                                        <option value="中风险">中风险</option>
+                                        <option value="低风险">低风险</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-3 bg-amber-50/30 rounded-lg border border-amber-100/50">
-                            <p class="text-[10px] text-amber-700 leading-relaxed">
-                                <i class="fa fa-lightbulb-o mr-1"></i> 提示：大额保函审批规则开启后，超过阈值的申请将自动挂起并发送审批申请给指定角色。
-                            </p>
+                    `;
+                } else {
+                    html = `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                                <div class="flex items-center">
+                                    <p class="text-[11px] font-bold text-amber-600 uppercase flex items-center">
+                                        <i class="fa fa-line-chart mr-2"></i>金融风险参数配置
+                                    </p>
+                                </div>
+                                <span class="text-[10px] text-slate-400 bg-amber-50 px-2 py-0.5 rounded">重点管控大额标的</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">监控指标</label>
+                                    <div class="relative group">
+                                        <select class="w-full bg-white cursor-pointer border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 transition-all appearance-none">
+                                            <option>单笔最高保函金额</option>
+                                            <option>授信额度使用率</option>
+                                            <option>机构信用评分波动</option>
+                                        </select>
+                                        <i class="fa fa-angle-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"></i>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                        预警阈值
+                                        <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                    </label>
+                                    <div class="flex items-center group">
+                                        <div class="relative flex-1">
+                                            <input type="number" id="config-finance-threshold" value="500" class="w-full bg-white border border-amber-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-amber-500 transition-all">
+                                        </div>
+                                        <span class="bg-amber-50 border border-l-0 border-amber-200 px-3 py-2 text-xs text-amber-600 rounded-r-lg font-bold min-w-[40px] text-center">万元</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-amber-50/30 rounded-lg border border-amber-100/50">
+                                <p class="text-[10px] text-amber-700 leading-relaxed">
+                                    <i class="fa fa-lightbulb-o mr-1"></i> 提示：大额保函审批规则开启后，超过阈值的申请将自动挂起并发送审批申请给指定角色。
+                                </p>
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                    <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
+                                </label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             } else if (type === '合规红线') {
                 const policies = [
                     { id: '关联', name: '关联关系异常检测', desc: '检测同一项目下的投标关联方', icon: 'users' },
@@ -999,36 +1149,115 @@
                     `;
                 }
                 
-                html = `
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
-                            <div class="flex items-center">
-                                <p class="text-[11px] font-bold text-rose-600 uppercase flex items-center">
-                                    <i class="fa fa-shield mr-2"></i>合规红线参数配置
-                                </p>
-                                ${isEdit ? '<span class="text-[9px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded ml-2">预警项不可编辑</span>' : ''}
-                            </div>
-                            <span class="text-[10px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded">核心合规控制项</span>
-                        </div>
-                        <div class="space-y-3">
-                            <label class="text-[11px] font-medium text-slate-500 block flex items-center">
-                                预警项与自动策略
-                                ${isEdit ? '<span class="text-[9px] text-slate-400 ml-1">(不可编辑)</span>' : ''}
+                if (isEdit) {
+                    const activePolicy = policies.find(p => currentPolicy && currentPolicy.includes(p.id));
+                    const policyName = activePolicy ? activePolicy.name : (currentPolicy || '关联关系异常检测');
+                    const isIPPolicy = activePolicy && activePolicy.id === 'IP';
+                    const timeWindowHtml = isIPPolicy ? '' : `
+                        <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
                             </label>
-                            ${policyHtml}
-                        </div>
-                        <div class="pt-2">
-                            <label class="text-[11px] font-medium text-slate-500 block mb-2 flex items-center">
-                                触发阈值（关联实体数量）
-                                <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
-                            </label>
-                            <div class="flex items-center group">
-                                <input type="number" value="3" class="flex-1 bg-white border border-rose-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all">
-                                <span class="bg-rose-50 border border-l-0 border-rose-200 px-3 py-2 text-xs text-rose-600 rounded-r-lg font-bold min-w-[40px] text-center">个</span>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                </label>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                    html = `
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block">预警项（只读）</label>
+                                    <div class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 flex items-center h-[38px]">${policyName}</div>
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-medium text-slate-500 block flex items-center">
+                                        触发阈值 <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                    </label>
+                                    <div class="flex items-center group">
+                                        <div class="relative flex-1">
+                                            <input type="number" id="config-compliance-threshold" value="3" class="w-full bg-white border border-rose-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all">
+                                        </div>
+                                        <span class="bg-rose-50 border border-l-0 border-rose-200 px-3 py-2 text-xs text-rose-600 rounded-r-lg font-bold min-w-[40px] text-center">家</span>
+                                    </div>
+                                </div>
+                            </div>
+                            ${timeWindowHtml}
+                            <div class="grid grid-cols-2 gap-6 pt-1">
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-[11px] font-medium text-slate-500 block">预警等级</label>
+                                        <span class="text-[9px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center">
+                                            <i class="fa fa-pencil mr-0.5"></i>可编辑
+                                        </span>
+                                    </div>
+                                    <select id="config-rule-level" class="w-full border-2 border-blue-200 cursor-pointer font-bold text-slate-700 bg-white rounded-lg px-3 py-2.5 text-sm outline-none transition-all">
+                                        <option value="高风险">高风险</option>
+                                        <option value="中风险">中风险</option>
+                                        <option value="低风险">低风险</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    html = `
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                                <div class="flex items-center">
+                                    <p class="text-[11px] font-bold text-rose-600 uppercase flex items-center">
+                                        <i class="fa fa-shield mr-2"></i>合规红线参数配置
+                                    </p>
+                                </div>
+                                <span class="text-[10px] text-rose-600 bg-rose-50 px-2 py-0.5 rounded">核心合规控制项</span>
+                            </div>
+                            <div class="space-y-3">
+                                <label class="text-[11px] font-medium text-slate-500 block flex items-center">预警项与自动策略</label>
+                                ${policyHtml}
+                            </div>
+                            <div class="pt-2">
+                                <label class="text-[11px] font-medium text-slate-500 block mb-2 flex items-center">
+                                    触发阈值（关联实体数量）
+                                    <span class="text-[9px] text-blue-600 ml-1">(可编辑)</span>
+                                </label>
+                                <div class="flex items-center group">
+                                    <input type="number" id="config-compliance-threshold" value="3" class="flex-1 bg-white border border-rose-200 rounded-l-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-rose-500 transition-all">
+                                    <span class="bg-rose-50 border border-l-0 border-rose-200 px-3 py-2 text-xs text-rose-600 rounded-r-lg font-bold min-w-[40px] text-center">个</span>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                    <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
+                                </label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
             }
             container.innerHTML = html;
         }
@@ -1059,49 +1288,27 @@
             
             document.getElementById('display-rule-name').innerText = rule.name;
             document.getElementById('display-rule-type').innerText = rule.type;
-            
-            const levelSelect = document.getElementById('config-rule-level');
+            document.getElementById('display-rule-desc').innerText = rule.description || '-';
+            const levelEl = document.getElementById('config-rule-level');
+            if (levelEl) levelEl.value = rule.level || '高风险';
+            const editTypeBadge = document.getElementById('display-edit-type');
+            if (editTypeBadge) editTypeBadge.innerText = rule.type;
+
+            // 新增模式下回填（编辑模式下对应元素不存在）
             const typeSelect = document.getElementById('config-rule-type');
-            
-            levelSelect.value = rule.level;
-            typeSelect.value = rule.type;
-            
-            // 回填监控周期（如有存储）
-            const cycleSelect = document.getElementById('config-rule-cycle');
-            if (cycleSelect && rule.cycle) cycleSelect.value = rule.cycle;
-            
-            // 回填通知方式
-            if (Array.isArray(rule.notify)) {
-                const notifyMap = { '系统消息': '系统', '短信通知': '短信' };
-                document.querySelectorAll('#alert-modal input[type="checkbox"]').forEach(cb => {
-                    const labelText = cb.parentElement.innerText.trim();
-                    const mapped = notifyMap[labelText] || labelText;
-                    cb.checked = rule.notify.includes(mapped);
-                });
-            }
-            
+            if (typeSelect) typeSelect.value = rule.type;
+
             updateConfigForm(true, rule.name);
             
             setTimeout(() => {
-                if (rule.type === '业务异常') {
-                    const thresholdInput = document.getElementById('config-biz-threshold');
-                    if (thresholdInput) {
-                        const match = rule.params.match(/\d+/);
-                        if (match) thresholdInput.value = match[0];
-                    }
-                } else if (rule.type === '金融风险') {
-                    const thresholdInput = document.querySelector('#dynamic-params-container input[type="number"]');
-                    if (thresholdInput) {
-                        const match = rule.params.match(/\d+/);
-                        if (match) thresholdInput.value = match[0];
-                    }
-                } else if (rule.type === '合规红线') {
-                    const radios = document.querySelectorAll('input[name="compliance"]');
-                    radios.forEach(radio => {
-                        if (rule.name.includes('IP') && radio.parentElement.innerText.includes('IP')) radio.checked = true;
-                        if (rule.name.includes('关联') && radio.parentElement.innerText.includes('关联')) radio.checked = true;
-                    });
-                    const thresholdInput = document.querySelector('#dynamic-params-container input[type="number"]');
+                const thresholdMap = {
+                    '业务异常': 'config-biz-threshold',
+                    '金融风险': 'config-finance-threshold',
+                    '合规红线': 'config-compliance-threshold'
+                };
+                const thresholdId = thresholdMap[rule.type];
+                if (thresholdId) {
+                    const thresholdInput = document.getElementById(thresholdId);
                     if (thresholdInput) {
                         const match = rule.params.match(/\d+/);
                         if (match) thresholdInput.value = match[0];
@@ -1135,44 +1342,39 @@
 
         function submitAction() {
             const title = document.getElementById('modal-title').innerText;
-            
+            const isEditMode = title.includes('编辑');
+
             // If it's a rule config modal
             if (title.includes('预警规则')) {
-                const name = document.getElementById('config-rule-name').value;
-                const type = document.getElementById('config-rule-type').value;
-                const level = document.getElementById('config-rule-level').value;
+                const nameEl = document.getElementById('config-rule-name');
+                const typeEl = document.getElementById('config-rule-type');
+                const levelEl = document.getElementById('config-rule-level');
                 const descEl = document.getElementById('config-rule-desc');
+
+                const name = nameEl ? nameEl.value.trim() : '';
+                const type = typeEl ? typeEl.value : '';
+                const level = levelEl ? levelEl.value : '';
                 const description = descEl ? descEl.value.trim() : '';
-                
-                if (!name && !title.includes('编辑')) {
+
+                if (!isEditMode && !name) {
                     alert('请输入规则名称');
                     return;
                 }
 
-                if (title.includes('编辑')) {
+                if (isEditMode) {
                     const rule = warningRules.find(r => r.id === currentEditRuleId);
                     if (rule) {
-                        rule.level = level;
-                        rule.description = description;
-                        rule.cycle = document.getElementById('config-rule-cycle').value;
-                        // 保存通知方式
-                        const notifyMap = { '系统消息': '系统', '短信通知': '短信' };
-                        const notify = [];
-                        document.querySelectorAll('#alert-modal input[type="checkbox"]').forEach(cb => {
-                            if (cb.checked) {
-                                const labelText = cb.parentElement.innerText.trim();
-                                notify.push(notifyMap[labelText] || labelText);
-                            }
-                        });
-                        if (notify.length) rule.notify = notify;
-                        // 保存核心参数阈值
-                        const numberInput = document.querySelector('#dynamic-params-container input[type="number"]');
-                        if (numberInput && numberInput.value) {
+                        // 保存阈值
+                        const thresholdMap = {
+                            '业务异常': 'config-biz-threshold',
+                            '金融风险': 'config-finance-threshold',
+                            '合规红线': 'config-compliance-threshold'
+                        };
+                        const thresholdInput = document.getElementById(thresholdMap[rule.type]);
+                        if (thresholdInput && thresholdInput.value) {
                             const unitMatch = rule.params.match(/(万|%|次|企业|小时|天)/);
-                            const unit = unitMatch ? unitMatch[0] : '';
-                            const keyMatch = rule.params.match(/([\u4e00-\u9fa5]+)\s*[><=]/);
-                            const key = keyMatch ? keyMatch[1] : '';
-                            rule.params = (key ? key + ' ' : '') + '> ' + numberInput.value + unit;
+                            const unit = unitMatch ? unitMatch[0] : (rule.type === '合规红线' ? '企业' : (rule.type === '金融风险' ? '万元' : '次'));
+                            rule.params = '> ' + thresholdInput.value + unit;
                         }
                     }
                     currentEditRuleId = null;
