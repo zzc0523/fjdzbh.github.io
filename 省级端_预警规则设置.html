@@ -556,7 +556,7 @@
         let warningRules = [
             { id: 1, name: '账户交易异常（高频申请）', description: '用户短期内频繁操作保函申请', type: '业务异常', level: '高风险', params: '1小时内失败 > 5次', notify: ['系统', '短信'], status: 'enabled' },
             { id: 9, name: '关联关系异常', description: '短时间内多企业针对同一项目购入同一担保方的保函', type: '合规红线', level: '中风险', params: '1小时内 > 3家企业', notify: ['系统'], status: 'enabled' },
-            { id: 11, name: 'IP异常', description: '同一个项目，不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '> 3家企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
+            { id: 11, name: 'IP异常', description: '同一个项目，不同企业购买保函时IP相同', type: '合规红线', level: '高风险', params: '全时段 > 3家企业共用IP', notify: ['系统', '短信'], status: 'enabled' }
         ];
 
         // 从 params 字符串中解析统计时间与阈值，用于列表分列展示
@@ -564,8 +564,8 @@
             const p = (params || '').trim();
             let time = '—';
             let threshold = '—';
-            // 统计时间：提取开头的「N小时/自然日累计/按天」类描述
-            const timeMatch = p.match(/^(\d+\s*小时(?:内)?|自然日累计|按天)/);
+            // 统计时间：提取开头的「N小时/自然日累计/按天/全时段」类描述
+            const timeMatch = p.match(/^(全时段|\d+\s*小时(?:内)?|自然日累计|按天)/);
             if (timeMatch) {
                 time = timeMatch[1].replace(/\s/g, '');
             } else if (p.includes('小时')) {
@@ -864,6 +864,10 @@
                                         <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
                                         <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
                                     </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
+                                    </label>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-6 pt-1">
@@ -936,6 +940,10 @@
                                         <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
                                         <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
                                     </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
+                                    </label>
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-6 pt-1">
@@ -993,6 +1001,10 @@
                                     <label class="flex items-center cursor-pointer group">
                                         <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
                                         <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
                                     </label>
                                 </div>
                             </div>
@@ -1070,6 +1082,10 @@
                                     <label class="flex items-center cursor-pointer group">
                                         <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
                                         <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
                                     </label>
                                 </div>
                             </div>
@@ -1153,7 +1169,31 @@
                     const activePolicy = policies.find(p => currentPolicy && currentPolicy.includes(p.id));
                     const policyName = activePolicy ? activePolicy.name : (currentPolicy || '关联关系异常检测');
                     const isIPPolicy = activePolicy && activePolicy.id === 'IP';
-                    const timeWindowHtml = isIPPolicy ? '' : `
+                    const timeWindowHtml = isIPPolicy ? `
+                        <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
+                                <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近1小时</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">最近24小时</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" checked class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
+                                </label>
+                            </div>
+                        </div>
+                    ` : `
                         <div class="p-3 bg-white rounded-lg border border-slate-100 space-y-2">
                             <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center">
                                 <i class="fa fa-clock-o mr-1.5"></i>统计时间窗口
@@ -1171,6 +1211,10 @@
                                     <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
                                     <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
                                 </label>
+                                <label class="flex items-center cursor-pointer group">
+                                    <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                    <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
+                                </label>
                             </div>
                         </div>
                     `;
@@ -1178,7 +1222,7 @@
                         <div class="space-y-4">
                             <div class="grid grid-cols-2 gap-6">
                                 <div class="space-y-2">
-                                    <label class="text-[11px] font-medium text-slate-500 block">预警项（只读）</label>
+                                    <label class="text-[11px] font-medium text-slate-500 block">统计维度（只读）</label>
                                     <div class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-600 flex items-center h-[38px]">${policyName}</div>
                                 </div>
                                 <div class="space-y-2">
@@ -1252,6 +1296,10 @@
                                     <label class="flex items-center cursor-pointer group">
                                         <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
                                         <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">自然日累计</span>
+                                    </label>
+                                    <label class="flex items-center cursor-pointer group">
+                                        <input type="radio" name="window" class="w-3.5 h-3.5 text-blue-600 focus:ring-blue-500 border-slate-300">
+                                        <span class="ml-2 text-xs text-slate-600 group-hover:text-blue-600 transition-colors">全时段</span>
                                     </label>
                                 </div>
                             </div>
