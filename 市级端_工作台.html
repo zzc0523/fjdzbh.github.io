@@ -275,79 +275,69 @@
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <div class="flex items-center justify-between mb-6">
                             <h4 class="text-lg font-bold text-slate-800">待办事项</h4>
-                            <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded-full">3条紧急</span>
+                            <a href="javascript:void(0)" onclick="openTodoListModal()" class="text-sm text-primary hover:text-primary-dark font-medium flex items-center transition-colors">
+                                查看全部 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
                         </div>
-                        <div class="space-y-4">
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="location.href='办理监控.html'">
-                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 shrink-0"></div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-bold text-slate-800">5笔业务处理超时</p>
-                                    <p class="text-xs text-slate-500 mt-1">需立即联系处理机构进行督办</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">10分钟前</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='机构备案.html'">
-                                <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 shrink-0"></div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-bold text-slate-800">2家机构提交准入申请</p>
-                                    <p class="text-xs text-slate-500 mt-1">请尽快完成准入资格初审</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">2小时前</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onclick="location.href='数据统计.html'">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 shrink-0"></div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-bold text-slate-800">本月运营报表已生成</p>
-                                    <p class="text-xs text-slate-500 mt-1">请核对数据并提交至省级平台</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">5小时前</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="w-full mt-6 py-2 text-sm text-slate-500 hover:text-primary font-medium border border-slate-100 rounded-lg hover:bg-slate-50 transition-all" onclick="showDetail('待办事项', '<p>更多待办事项正在加载中...目前所有紧急事项已在工作台列出。</p>')">查看全部待办</button>
+                        <div class="space-y-3" id="latest-todo-list"></div>
                     </div>
 
                     <!-- 通知公告 -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <div class="flex items-center justify-between mb-6">
                             <h4 class="text-lg font-bold text-slate-800">通知公告</h4>
-                            <span class="text-xs text-slate-400">最新政策与平台公告</span>
+                            <a href="javascript:void(0)" onclick="openAnnouncementListModal()" class="text-sm text-primary hover:text-primary-dark font-medium flex items-center transition-colors">
+                                查看全部 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
                         </div>
-                        <div class="space-y-1">
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="showDetail('关于优化投标保函办理流程的通知', '<div class=\'space-y-3\'><p>各参保企业、承保机构：</p><p>为进一步优化营商环境，自2024年7月1日起平台对投标保函办理流程进行优化，企业提交申请后系统将自动进行信用核验，平均出函时间由2个工作日缩短至4小时。</p><p>请各相关机构及时关注系统升级提示，做好业务衔接。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福州市公共资源交易中心</p></div>')">
-                                <span class="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold rounded shrink-0 mt-0.5">置顶</span>
-                                <div class="ml-3 flex-1">
-                                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">关于优化投标保函办理流程的通知</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">2024-06-25 · 福州市公共资源交易中心</p>
-                                </div>
-                                <i class="fa fa-angle-right text-slate-300 mt-1"></i>
-                            </div>
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="showDetail('关于开展2024年度承保机构考核评价工作的通知', '<div class=\'space-y-3\'><p>各承保机构：</p><p>为规范电子保函业务开展，平台将于2024年7月组织开展年度承保机构考核评价工作，重点考核业务合规、服务质量与风险控制情况。</p><p>请各机构于7月15日前完成自评材料提交。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p></div>')">
-                                <span class="px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-bold rounded shrink-0 mt-0.5">重要</span>
-                                <div class="ml-3 flex-1">
-                                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">关于开展2024年度承保机构考核评价工作的通知</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">2024-06-18 · 福建省电子保函服务平台</p>
-                                </div>
-                                <i class="fa fa-angle-right text-slate-300 mt-1"></i>
-                            </div>
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="showDetail('福建省电子保函服务平台系统升级维护公告', '<div class=\'space-y-3\'><p>尊敬的各用户：</p><p>平台计划于2024年6月15日22:00至次日02:00进行系统升级维护，期间部分功能将暂停服务，请提前安排业务办理。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p></div>')">
-                                <div class="ml-3 flex-1">
-                                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">福建省电子保函服务平台系统升级维护公告</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">2024-06-10 · 系统运维组</p>
-                                </div>
-                                <i class="fa fa-angle-right text-slate-300 mt-1"></i>
-                            </div>
-                            <div class="flex items-start p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group" onclick="showDetail('关于规范工程保函担保费率的通知', '<div class=\'space-y-3\'><p>各承保机构、参保企业：</p><p>为贯彻落实相关政策要求，规范工程保函担保费率，平台将对担保费率上限进行统一调整，请各机构严格执行。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省发展和改革委员会</p></div>')">
-                                <div class="ml-3 flex-1">
-                                    <p class="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors">关于规范工程保函担保费率的通知</p>
-                                    <p class="text-[10px] text-slate-400 mt-2">2024-05-30 · 福建省发展和改革委员会</p>
-                                </div>
-                                <i class="fa fa-angle-right text-slate-300 mt-1"></i>
-                            </div>
-                        </div>
-                        <button class="w-full mt-4 py-2 text-sm text-slate-500 hover:text-primary font-medium border border-slate-100 rounded-lg hover:bg-slate-50 transition-all" onclick="showDetail('通知公告', '<p>更多历史公告请在门户端「服务指南」中查看。</p>')">查看全部公告</button>
+                        <div class="space-y-0" id="latest-announcement-list"></div>
                     </div>
                 </div>
             </main>
+        </div>
+    </div>
+
+    <!-- 全部公告弹窗 -->
+    <div id="announcementListModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9200] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-semibold text-slate-800">全部公告</h3>
+                <button onclick="closeAnnouncementListModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1">
+                <div class="space-y-0" id="announcement-list"></div>
+            </div>
+            <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50/50" id="announcement-pagination">
+                <span class="text-xs text-slate-500" id="announcement-page-info"></span>
+                <div class="flex items-center space-x-1" id="announcement-page-btns"></div>
+            </div>
+            <div class="p-5 border-t border-slate-100 flex justify-end bg-slate-50/50">
+                <button onclick="closeAnnouncementListModal()" class="px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-all">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 待办事项列表弹窗 -->
+    <div id="todoListModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-semibold text-slate-800">待办事项列表</h3>
+                <button onclick="closeTodoListModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1">
+                <div class="space-y-3" id="todo-list"></div>
+            </div>
+            <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50/50" id="todo-pagination">
+                <span class="text-xs text-slate-500" id="todo-page-info"></span>
+                <div class="flex items-center space-x-1" id="todo-page-btns"></div>
+            </div>
+            <div class="p-5 border-t border-slate-100 flex justify-end bg-slate-50/50">
+                <button onclick="closeTodoListModal()" class="px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-all">关闭</button>
+            </div>
         </div>
     </div>
 
@@ -366,6 +356,196 @@
         });
 
         notificationDropdown.addEventListener('click', (e) => e.stopPropagation());
+    </script>
+
+    <script>
+        const announcementData = [
+            { icon: 'fa-bullhorn', color: 'red', tag: '置顶', tagColor: 'red', title: '关于优化投标保函办理流程的通知', desc: '为进一步优化营商环境，自2024年7月1日起平台对投标保函办理流程进行优化，平均出函时间由2个工作日缩短至4小时。', time: '2024-06-25', dept: '福州市公共资源交易中心', content: '<p>各参保企业、承保机构：</p><p>为进一步优化营商环境，自2024年7月1日起平台对投标保函办理流程进行优化，企业提交申请后系统将自动进行信用核验，平均出函时间由2个工作日缩短至4小时。</p><p>请各相关机构及时关注系统升级提示，做好业务衔接。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福州市公共资源交易中心</p>' },
+            { icon: 'fa-star', color: 'orange', tag: '重要', tagColor: 'orange', title: '关于开展2024年度承保机构考核评价工作的通知', desc: '平台将于2024年7月组织开展年度承保机构考核评价工作，重点考核业务合规、服务质量与风险控制情况。', time: '2024-06-18', dept: '福建省电子保函服务平台', content: '<p>各承保机构：</p><p>为规范电子保函业务开展，平台将于2024年7月组织开展年度承保机构考核评价工作，重点考核业务合规、服务质量与风险控制情况。</p><p>请各机构于7月15日前完成自评材料提交。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-wrench', color: 'blue', tag: '维护', tagColor: 'blue', title: '福建省电子保函服务平台系统升级维护公告', desc: '平台计划于2024年6月15日22:00至次日02:00进行系统升级维护，期间部分功能将暂停服务。', time: '2024-06-10', dept: '系统运维组', content: '<p>尊敬的各用户：</p><p>平台计划于2024年6月15日22:00至次日02:00进行系统升级维护，期间部分功能将暂停服务，请提前安排业务办理。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-percent', color: 'green', tag: '', tagColor: 'green', title: '关于规范工程保函担保费率的通知', desc: '为贯彻落实相关政策要求，规范工程保函担保费率，平台将对担保费率上限进行统一调整。', time: '2024-05-30', dept: '福建省发展和改革委员会', content: '<p>各承保机构、参保企业：</p><p>为贯彻落实相关政策要求，规范工程保函担保费率，平台将对担保费率上限进行统一调整，请各机构严格执行。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省发展和改革委员会</p>' },
+            { icon: 'fa-file-text', color: 'purple', tag: '', tagColor: 'purple', title: '关于进一步加强承保机构准入管理的通知', desc: '为规范市场准入，平台将进一步加强对承保机构的资质审核与动态管理。', time: '2024-05-12', dept: '福建省电子保函服务平台', content: '<p>各相关机构：</p><p>为规范市场准入，平台将进一步加强对承保机构的资质审核与动态管理，建立退出机制，确保服务质量与风险可控。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-bullhorn', color: 'red', tag: '公告', tagColor: 'red', title: '关于2024年端午节期间业务办理安排的通知', desc: '端午节期间平台业务受理及审核时间将作相应调整，请提前安排保函申请。', time: '2024-05-08', dept: '福州市公共资源交易中心', content: '<p>各参保企业、承保机构：</p><p>2024年端午节期间平台业务受理及审核时间将作相应调整，请各用户提前安排保函申请及用函计划，以免影响投标及履约。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福州市公共资源交易中心</p>' },
+            { icon: 'fa-shield', color: 'teal', tag: '', tagColor: 'teal', title: '平台数据安全专项治理工作通知', desc: '平台将开展数据安全专项治理，建议用户及时更新密码并开启二次验证。', time: '2024-04-22', dept: '系统运维组', content: '<p>尊敬的各用户：</p><p>平台将开展数据安全专项治理，建议用户及时更新密码并开启二次验证，以保障账户及业务数据安全。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：系统运维组</p>' },
+            { icon: 'fa-graduation-cap', color: 'indigo', tag: '', tagColor: 'indigo', title: '关于开展电子保函业务培训的通知', desc: '平台将组织对承保机构业务人员的线上培训，内容涵盖新流程与风控要点。', time: '2024-04-10', dept: '福建省电子保函服务平台', content: '<p>各承保机构：</p><p>平台将组织对承保机构业务人员的线上培训，内容涵盖新流程与风控要点，请安排相关人员按时参加。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-info-circle', color: 'blue', tag: '提示', tagColor: 'blue', title: '关于防范虚假保函的风险提示', desc: '近期出现伪造电子保函情况，请通过官方渠道核验保函真实性，谨防受骗。', time: '2024-03-28', dept: '福建省电子保函服务平台', content: '<p>各参保企业：</p><p>近期出现伪造电子保函情况，请通过官方渠道核验保函真实性，谨防受骗。发现可疑情况请及时向平台反馈。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-calendar-check', color: 'cyan', tag: '', tagColor: 'cyan', title: '季度运营数据通报（2024年第一季度）', desc: '平台发布2024年第一季度运营数据，保函数量与出函效率同比稳步提升。', time: '2024-03-15', dept: '福建省电子保函服务平台', content: '<p>各相关方：</p><p>平台发布2024年第一季度运营数据，保函数量与出函效率同比稳步提升，感谢各方支持与配合。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-handshake', color: 'rose', tag: '', tagColor: 'rose', title: '新增合作担保机构接入公告', desc: 'XX担保公司已完成接入，可为平台用户提供履约保函等担保服务。', time: '2024-02-20', dept: '福建省电子保函服务平台', content: '<p>各参保企业：</p><p>XX担保公司已完成接入，可为平台用户提供履约保函等担保服务。用户可在申请时选择该担保机构。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：福建省电子保函服务平台</p>' },
+            { icon: 'fa-cog', color: 'slate', tag: '维护', tagColor: 'slate', title: '月度系统维护计划通知', desc: '平台将按计划进行月度系统维护，维护期间部分查询服务可能短暂受影响。', time: '2024-02-08', dept: '系统运维组', content: '<p>尊敬的各用户：</p><p>平台将按计划进行月度系统维护，维护期间部分查询服务可能短暂受影响。请提前下载所需文件，给您带来不便敬请谅解。</p><p class=\'text-slate-400 text-xs mt-2\'>发布部门：系统运维组</p>' }
+        ];
+        const ANNOUNCEMENT_PER_PAGE = 10;
+        let announcementCurrentPage = 1;
+
+        function announcementItemHtml(item, idx) {
+            return `
+                <div class="flex items-start p-3 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition-colors cursor-pointer" onclick="openAnnouncementDetail(${idx})">
+                    <div class="w-10 h-10 rounded-full bg-${item.color}-50 text-${item.color}-500 flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fa ${item.icon}"></i>
+                    </div>
+                    <div class="ml-3 flex-1 min-w-0">
+                        <p class="text-sm font-bold text-slate-800 mb-1">${item.title}</p>
+                        <p class="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-1">${item.desc}</p>
+                        <p class="text-[10px] text-slate-400">${item.time}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLatestAnnouncements() {
+            const el = document.getElementById('latest-announcement-list');
+            if (!el) return;
+            el.innerHTML = announcementData.slice(0, 5).map((item, idx) => announcementItemHtml(item, idx)).join('');
+        }
+
+        function renderAnnouncementListPage(page) {
+            const listEl = document.getElementById('announcement-list');
+            const total = announcementData.length;
+            const totalPages = Math.max(1, Math.ceil(total / ANNOUNCEMENT_PER_PAGE));
+            announcementCurrentPage = Math.min(Math.max(1, page), totalPages);
+            const start = (announcementCurrentPage - 1) * ANNOUNCEMENT_PER_PAGE;
+            const items = announcementData.slice(start, start + ANNOUNCEMENT_PER_PAGE);
+
+            listEl.innerHTML = items.map((item, i) => announcementItemHtml(item, start + i)).join('');
+
+            document.getElementById('announcement-page-info').textContent = `共 ${total} 条，第 ${announcementCurrentPage} / ${totalPages} 页`;
+
+            const btnsEl = document.getElementById('announcement-page-btns');
+            let html = `<button onclick="renderAnnouncementListPage(${announcementCurrentPage - 1})" ${announcementCurrentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${announcementCurrentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">上一页</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button onclick="renderAnnouncementListPage(${i})" class="w-8 h-8 rounded-md text-xs font-medium ${i === announcementCurrentPage ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-200'} transition-all">${i}</button>`;
+            }
+            html += `<button onclick="renderAnnouncementListPage(${announcementCurrentPage + 1})" ${announcementCurrentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${announcementCurrentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">下一页</button>`;
+            btnsEl.innerHTML = html;
+        }
+
+        function openAnnouncementDetail(idx) {
+            const item = announcementData[idx];
+            if (item && window.showDetail) {
+                window.showDetail(item.title, `<div class='space-y-3'>${item.content}</div>`);
+            }
+        }
+
+        function openAnnouncementListModal() {
+            const modal = document.getElementById('announcementListModal');
+            if (!modal) return;
+            renderAnnouncementListPage(1);
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            });
+        }
+
+        function closeAnnouncementListModal() {
+            const modal = document.getElementById('announcementListModal');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            modal.querySelector('div').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('announcementListModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAnnouncementListModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderLatestAnnouncements();
+        });
+    </script>
+
+    <script>
+        const todoData = [
+            { icon: 'fa-plug', color: 'indigo', title: '产品接入审核', desc: '【福建海峡银行】提交了产品接入申请（申请编号：FJ202603110001），当前步骤【产品材料审核】待审核。', time: '2026-03-11 09:00', tag: '待审核', tagColor: 'indigo', buttons: [{ label: '去审核', class: 'bg-blue-600 hover:bg-blue-700', action: "window.location.href='产品管理.html'" }] },
+            { icon: 'fa-plug', color: 'indigo', title: '产品接入审核', desc: '【厦门国际银行】提交了产品接入申请（申请编号：FJ202603110002），当前步骤【技术调试申请】待审核。', time: '2026-03-11 10:30', tag: '待审核', tagColor: 'indigo', buttons: [{ label: '去审核', class: 'bg-blue-600 hover:bg-blue-700', action: "window.location.href='产品管理.html'" }] },
+            { icon: 'fa-plug', color: 'indigo', title: '产品接入审核', desc: '【泉州银行】提交了产品接入申请（申请编号：FJ202603110003），当前步骤【上线验收审核】待审核。', time: '2026-03-11 14:30', tag: '待审核', tagColor: 'indigo', buttons: [{ label: '去审核', class: 'bg-blue-600 hover:bg-blue-700', action: "window.location.href='产品管理.html'" }] },
+            { icon: 'fa-plug', color: 'indigo', title: '产品接入审核', desc: '【兴业银行福州分行】提交了产品接入申请（申请编号：FJ202603110004），当前步骤【首单验证审核】待审核。', time: '2026-03-11 16:00', tag: '待审核', tagColor: 'indigo', buttons: [{ label: '去审核', class: 'bg-blue-600 hover:bg-blue-700', action: "window.location.href='产品管理.html'" }] }
+        ];
+        const TODO_PER_PAGE = 10;
+        let todoCurrentPage = 1;
+
+        function todoItemHtml(item) {
+            const buttonsHtml = item.buttons.map(b => `<button class="px-3 py-1 ${b.class} text-white rounded-md transition-all text-xs font-medium" onclick="event.stopPropagation(); ${b.action}">${b.label}</button>`).join('');
+            return `
+                <div class="flex items-start p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-${item.color}-50 text-${item.color}-500 flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fa ${item.icon} text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <h4 class="font-bold text-slate-800 text-sm">${item.title}</h4>
+                            <span class="px-2 py-0.5 bg-${item.tagColor}-50 text-${item.tagColor}-600 rounded text-[10px] font-bold border border-${item.tagColor}-100 ml-2 shrink-0">${item.tag}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-2 line-clamp-2">${item.desc}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-slate-400">${item.time}</span>
+                            <div class="flex items-center space-x-2">${buttonsHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLatestTodos() {
+            const el = document.getElementById('latest-todo-list');
+            if (!el) return;
+            el.innerHTML = todoData.slice(0, 5).map(item => todoItemHtml(item)).join('');
+        }
+
+        function renderTodoListPage(page) {
+            const listEl = document.getElementById('todo-list');
+            const total = todoData.length;
+            const totalPages = Math.max(1, Math.ceil(total / TODO_PER_PAGE));
+            todoCurrentPage = Math.min(Math.max(1, page), totalPages);
+            const start = (todoCurrentPage - 1) * TODO_PER_PAGE;
+            const items = todoData.slice(start, start + TODO_PER_PAGE);
+
+            listEl.innerHTML = items.map(item => todoItemHtml(item)).join('');
+
+            document.getElementById('todo-page-info').textContent = `共 ${total} 条，第 ${todoCurrentPage} / ${totalPages} 页`;
+
+            const btnsEl = document.getElementById('todo-page-btns');
+            let html = `<button onclick="renderTodoListPage(${todoCurrentPage - 1})" ${todoCurrentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${todoCurrentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">上一页</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button onclick="renderTodoListPage(${i})" class="w-8 h-8 rounded-md text-xs font-medium ${i === todoCurrentPage ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-200'} transition-all">${i}</button>`;
+            }
+            html += `<button onclick="renderTodoListPage(${todoCurrentPage + 1})" ${todoCurrentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${todoCurrentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">下一页</button>`;
+            btnsEl.innerHTML = html;
+        }
+
+        function openTodoListModal() {
+            const modal = document.getElementById('todoListModal');
+            if (!modal) return;
+            renderTodoListPage(1);
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            });
+        }
+
+        function closeTodoListModal() {
+            const modal = document.getElementById('todoListModal');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            modal.querySelector('div').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('todoListModal').addEventListener('click', function(e) {
+            if (e.target === this) closeTodoListModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderLatestTodos();
+        });
     </script>
 </body>
 </html>

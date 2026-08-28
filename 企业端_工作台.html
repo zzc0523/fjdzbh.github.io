@@ -985,17 +985,6 @@
                 showModal('常用模板下载', templateHtml, [], 'max-w-lg');
             };
 
-            // 最新通知点击事件
-            const notifications = document.querySelectorAll('#overview-content .flex.items-start.p-3.border.border-gray-200.rounded-md');
-            notifications.forEach(notification => {
-                notification.classList.add('cursor-pointer', 'hover:bg-gray-50', 'transition-colors', 'duration-200');
-                notification.addEventListener('click', function() {
-                    const notificationTitle = this.querySelector('h4').textContent;
-                    const notificationContent = this.querySelector('p').textContent;
-                    showModal(notificationTitle, `<div class="p-2"><p class="text-gray-700 leading-relaxed">${notificationContent}</p></div>`);
-                });
-            });
-
             // 我的任务立即处理按钮点击事件
             const taskButtons = document.querySelectorAll('#tasks-content button');
             taskButtons.forEach(button => {
@@ -1285,78 +1274,95 @@
                     </div>
 
 
-                    <!-- 待办任务与最新公告 -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                            <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg font-bold text-gray-800">待办任务</h3>
-                                <span class="px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold border border-red-100">3 条待处理</span>
+                    <!-- 待办事项与最新公告 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <div class="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                                <h3 class="font-semibold text-gray-800 text-lg">待办事项</h3>
+                                <a href="#" class="text-primary hover:text-primary/80 text-sm font-medium flex items-center" onclick="openTodoModal(); return false;">
+                                    查看全部
+                                    <i class="fa fa-chevron-right ml-1 text-xs"></i>
+                                </a>
                             </div>
-                            <div class="space-y-4">
-                                <div class="group bg-white border border-gray-100 rounded-2xl p-6 hover:border-primary hover:shadow-md transition-all duration-300">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-4">
-                                                <i class="fa fa-credit-card text-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors">待支付保费</h4>
-                                                <p class="text-xs text-gray-400 mt-0.5">关联编号: FJ202603250002</p>
-                                            </div>
-                                        </div>
-                                        <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-rose-100">待支付</span>
+                            <div class="p-5 space-y-3" id="todo-preview-list">
+                                <div class="flex items-start p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='保函申请.html?step=6'">
+                                    <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-credit-card text-sm"></i>
                                     </div>
-                                    <p class="text-sm text-gray-600 leading-relaxed mb-6">您的投标保函申请已通过终审，请及时缴纳保费 300.00 以完成保函开立并下载。</p>
-                                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                                        <div class="flex items-center text-xs text-gray-400">
-                                            <i class="fa fa-clock-o mr-1.5"></i>
-                                            截止时间：2026-04-28 17:00
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-start justify-between mb-1">
+                                            <h4 class="font-bold text-gray-800 text-sm">待支付保费</h4>
+                                            <span class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[10px] font-bold border border-rose-100 ml-2 shrink-0">待支付</span>
                                         </div>
-                                        <button onclick="window.location.href='保函申请.html?step=6'" class="px-6 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 shadow-lg shadow-rose-100 transition-all active:scale-95">立即支付</button>
+                                        <p class="text-xs text-gray-500 leading-relaxed mb-2">您的【投标保函】（订单编号：FJ202603250002）已审核通过，请及时支付保费。</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[10px] text-gray-400">2026-04-28 17:00</span>
+                                            <button class="px-3 py-1 bg-rose-500 text-white rounded-md hover:bg-rose-600 transition-all text-xs font-medium" onclick="event.stopPropagation(); window.location.href='保函申请.html?step=6'">立即支付</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="group bg-white border border-gray-100 rounded-2xl p-6 hover:border-primary hover:shadow-md transition-all duration-300">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-4">
-                                                <i class="fa fa-credit-card text-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors">待支付保费</h4>
-                                                <p class="text-xs text-gray-400 mt-0.5">关联编号: FJ202604010003</p>
-                                            </div>
-                                        </div>
-                                        <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-rose-100">待支付</span>
+                                <div class="flex items-start p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='保函申请.html?step=6'">
+                                    <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-credit-card text-sm"></i>
                                     </div>
-                                    <p class="text-sm text-gray-600 leading-relaxed mb-6">您的履约保函申请已通过终审，请及时缴纳保费 1,500.00 以完成保函开立并下载。</p>
-                                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                                        <div class="flex items-center text-xs text-gray-400">
-                                            <i class="fa fa-clock-o mr-1.5"></i>
-                                            截止时间：2026-05-05 17:00
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-start justify-between mb-1">
+                                            <h4 class="font-bold text-gray-800 text-sm">待支付保费</h4>
+                                            <span class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[10px] font-bold border border-rose-100 ml-2 shrink-0">待支付</span>
                                         </div>
-                                        <button onclick="window.location.href='保函申请.html?step=6'" class="px-6 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 shadow-lg shadow-rose-100 transition-all active:scale-95">立即支付</button>
+                                        <p class="text-xs text-gray-500 leading-relaxed mb-2">您的【履约保函】（订单编号：FJ202604010003）已审核通过，请及时支付保费。</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[10px] text-gray-400">2026-05-05 17:00</span>
+                                            <button class="px-3 py-1 bg-rose-500 text-white rounded-md hover:bg-rose-600 transition-all text-xs font-medium" onclick="event.stopPropagation(); window.location.href='保函申请.html?step=6'">立即支付</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="group bg-white border border-gray-100 rounded-2xl p-6 hover:border-primary hover:shadow-md transition-all duration-300">
-                                    <div class="flex justify-between items-start mb-4">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center mr-4">
-                                                <i class="fa fa-credit-card text-lg"></i>
-                                            </div>
-                                            <div>
-                                                <h4 class="font-bold text-gray-800 group-hover:text-primary transition-colors">待支付保费</h4>
-                                                <p class="text-xs text-gray-400 mt-0.5">关联编号: FJ202604020001</p>
-                                            </div>
-                                        </div>
-                                        <span class="px-2.5 py-1 bg-rose-50 text-rose-600 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-rose-100">待支付</span>
+                                <div class="flex items-start p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='保函申请.html?step=6'">
+                                    <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-credit-card text-sm"></i>
                                     </div>
-                                    <p class="text-sm text-gray-600 leading-relaxed mb-6">您的预付款保函申请已通过终审，请及时缴纳保费 800.00 以完成保函开立并下载。</p>
-                                    <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                                        <div class="flex items-center text-xs text-gray-400">
-                                            <i class="fa fa-clock-o mr-1.5"></i>
-                                            截止时间：2026-05-10 17:00
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-start justify-between mb-1">
+                                            <h4 class="font-bold text-gray-800 text-sm">待支付保费</h4>
+                                            <span class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[10px] font-bold border border-rose-100 ml-2 shrink-0">待支付</span>
                                         </div>
-                                        <button onclick="window.location.href='保函申请.html?step=6'" class="px-6 py-2 bg-rose-500 text-white rounded-xl text-sm font-bold hover:bg-rose-600 shadow-lg shadow-rose-100 transition-all active:scale-95">立即支付</button>
+                                        <p class="text-xs text-gray-500 leading-relaxed mb-2">您的【预付款保函】（订单编号：FJ202604020001）已审核通过，请及时支付保费。</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[10px] text-gray-400">2026-05-10 17:00</span>
+                                            <button class="px-3 py-1 bg-rose-500 text-white rounded-md hover:bg-rose-600 transition-all text-xs font-medium" onclick="event.stopPropagation(); window.location.href='保函申请.html?step=6'">立即支付</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='保函申请.html?step=6'">
+                                    <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-credit-card text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-start justify-between mb-1">
+                                            <h4 class="font-bold text-gray-800 text-sm">待支付保费</h4>
+                                            <span class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[10px] font-bold border border-rose-100 ml-2 shrink-0">待支付</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 leading-relaxed mb-2">您的【付款保函】（订单编号：FJ202604050002）已审核通过，请及时支付保费。</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[10px] text-gray-400">2026-05-12 10:30</span>
+                                            <button class="px-3 py-1 bg-rose-500 text-white rounded-md hover:bg-rose-600 transition-all text-xs font-medium" onclick="event.stopPropagation(); window.location.href='保函申请.html?step=6'">立即支付</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="window.location.href='保函申请.html?step=6'">
+                                    <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                        <i class="fa fa-credit-card text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-start justify-between mb-1">
+                                            <h4 class="font-bold text-gray-800 text-sm">待支付保费</h4>
+                                            <span class="px-2 py-0.5 bg-rose-50 text-rose-600 rounded text-[10px] font-bold border border-rose-100 ml-2 shrink-0">待支付</span>
+                                        </div>
+                                        <p class="text-xs text-gray-500 leading-relaxed mb-2">您的【质量保函】（订单编号：FJ202604060003）已审核通过，请及时支付保费。</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-[10px] text-gray-400">2026-05-14 15:00</span>
+                                            <button class="px-3 py-1 bg-rose-500 text-white rounded-md hover:bg-rose-600 transition-all text-xs font-medium" onclick="event.stopPropagation(); window.location.href='保函申请.html?step=6'">立即支付</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1365,47 +1371,12 @@
                         <!-- 平台公告（最新公告） -->
                         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                             <div class="flex items-center justify-between mb-6">
-                                <h3 class="text-lg font-bold text-gray-800 flex items-center">
-                                    <span class="w-1 h-5 bg-orange-400 rounded-full mr-2"></span>
-                                    最新公告
-                                </h3>
-                                <button onclick="window.location.href='消息中心.html'" class="text-[10px] text-gray-400 hover:text-primary flex items-center transition-colors">
-                                    历史公告 <i class="fa fa-angle-right ml-1"></i>
-                                </button>
+                                <h3 class="text-lg font-bold text-gray-800">最新公告</h3>
+                                <a href="javascript:void(0)" onclick="openAnnouncementListModal()" class="text-sm text-primary hover:text-primary-dark font-medium flex items-center transition-colors">
+                                    查看全部 <i class="fa fa-angle-right ml-1"></i>
+                                </a>
                             </div>
-                            <div class="space-y-5" id="announcement-list">
-                                <div onclick="window.showAnnouncement('holiday')" class="group cursor-pointer">
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-500 text-[9px] font-bold">通知</span>
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">关于2026年清明节放假期间业务处理的通知</p>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">2026-03-20</span>
-                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
-                                    </div>
-                                </div>
-                                <div onclick="window.showAnnouncement('maintenance')" class="group cursor-pointer">
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span class="px-1.5 py-0.5 rounded bg-orange-50 text-orange-500 text-[9px] font-bold">维护</span>
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">平台系统升级维护公告 (3月15日)</p>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">2026-03-10</span>
-                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
-                                    </div>
-                                </div>
-                                <div onclick="window.showAnnouncement('feature')" class="group cursor-pointer">
-                                    <div class="flex items-center space-x-2 mb-1.5">
-                                        <span class="px-1.5 py-0.5 rounded bg-green-50 text-green-500 text-[9px] font-bold">上线</span>
-                                        <p class="text-sm font-bold text-gray-800 group-hover:text-primary transition-colors line-clamp-1">新版保函验证功能上线通知</p>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[10px] text-gray-400">2026-03-05</span>
-                                        <span class="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-all pointer-events-none">阅读详情 <i class="fa fa-angle-right"></i></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="window.location.href='消息中心.html'" class="w-full mt-6 py-2.5 bg-gray-50 text-gray-500 text-xs font-bold rounded-xl hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200">查看更多公告</button>
+                            <div class="space-y-0" id="latest-announcement-list"></div>
                         </div>
                     </div>
 
@@ -1809,5 +1780,233 @@
             </main>
         </div>
     </div>
+
+    <!-- 待办事项列表弹窗 -->
+    <div id="todoListModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-lg font-semibold text-gray-800">待办事项列表</h3>
+                <button onclick="closeTodoModal()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1" id="todo-modal-body">
+                <div class="space-y-3" id="todo-list"></div>
+            </div>
+            <div class="px-5 py-3 border-t border-gray-100 flex items-center justify-between bg-gray-50/50" id="todo-pagination">
+                <span class="text-xs text-gray-500" id="todo-page-info"></span>
+                <div class="flex items-center space-x-1" id="todo-page-btns"></div>
+            </div>
+            <div class="p-5 border-t border-gray-100 flex justify-end bg-gray-50/50">
+                <button onclick="closeTodoModal()" class="px-6 py-2 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-200 transition-all">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 全部公告弹窗 -->
+    <div id="announcementListModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9200] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <h3 class="text-lg font-semibold text-gray-800">全部公告</h3>
+                <button onclick="closeAnnouncementListModal()" class="w-8 h-8 rounded-full hover:bg-gray-200 flex items-center justify-center text-gray-400 transition-colors">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1">
+                <div class="space-y-0" id="announcement-list"></div>
+            </div>
+            <div class="px-5 py-3 border-t border-gray-100 flex items-center justify-between bg-gray-50/50" id="announcement-pagination">
+                <span class="text-xs text-gray-500" id="announcement-page-info"></span>
+                <div class="flex items-center space-x-1" id="announcement-page-btns"></div>
+            </div>
+            <div class="p-5 border-t border-gray-100 flex justify-end bg-gray-50/50">
+                <button onclick="closeAnnouncementListModal()" class="px-6 py-2 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-200 transition-all">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const todoData = [
+            { icon:'fa-credit-card', color:'rose', title:'待支付保费', tag:'待支付', tagColor:'rose', desc:'您的【投标保函】（订单编号：FJ202603250002）已审核通过，请及时支付保费。', time:'2026-04-28 17:00', btn:'立即支付', btnColor:'rose-500', btnHover:'rose-600', link:"保函申请.html?step=6" },
+            { icon:'fa-credit-card', color:'rose', title:'待支付保费', tag:'待支付', tagColor:'rose', desc:'您的【履约保函】（订单编号：FJ202604010003）已审核通过，请及时支付保费。', time:'2026-05-05 17:00', btn:'立即支付', btnColor:'rose-500', btnHover:'rose-600', link:"保函申请.html?step=6" },
+            { icon:'fa-credit-card', color:'rose', title:'待支付保费', tag:'待支付', tagColor:'rose', desc:'您的【预付款保函】（订单编号：FJ202604020001）已审核通过，请及时支付保费。', time:'2026-05-10 17:00', btn:'立即支付', btnColor:'rose-500', btnHover:'rose-600', link:"保函申请.html?step=6" },
+            { icon:'fa-credit-card', color:'rose', title:'待支付保费', tag:'待支付', tagColor:'rose', desc:'您的【付款保函】（订单编号：FJ202604050002）已审核通过，请及时支付保费。', time:'2026-05-12 10:30', btn:'立即支付', btnColor:'rose-500', btnHover:'rose-600', link:"保函申请.html?step=6" },
+            { icon:'fa-credit-card', color:'rose', title:'待支付保费', tag:'待支付', tagColor:'rose', desc:'您的【质量保函】（订单编号：FJ202604060003）已审核通过，请及时支付保费。', time:'2026-05-14 15:00', btn:'立即支付', btnColor:'rose-500', btnHover:'rose-600', link:"保函申请.html?step=6" }
+        ];
+        const TODO_PER_PAGE = 10;
+        let todoCurrentPage = 1;
+
+        function renderTodoPage(page) {
+            const listEl = document.getElementById('todo-list');
+            const total = todoData.length;
+            const totalPages = Math.max(1, Math.ceil(total / TODO_PER_PAGE));
+            todoCurrentPage = Math.min(Math.max(1, page), totalPages);
+            const start = (todoCurrentPage - 1) * TODO_PER_PAGE;
+            const items = todoData.slice(start, start + TODO_PER_PAGE);
+
+            listEl.innerHTML = items.map(t => `
+                <div class="flex items-start p-4 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div class="w-10 h-10 bg-${t.color}-50 text-${t.color}-500 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fa ${t.icon} text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <h4 class="font-bold text-gray-800 text-sm">${t.title}</h4>
+                            <span class="px-2 py-0.5 bg-${t.tagColor}-50 text-${t.tagColor}-600 rounded text-[10px] font-bold border border-${t.tagColor}-100 ml-2 shrink-0">${t.tag}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 leading-relaxed mb-2">${t.desc}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-gray-400">${t.time}</span>
+                            <button class="px-3 py-1 bg-${t.btnColor} text-white rounded-md hover:bg-${t.btnHover} transition-all text-xs font-medium" onclick="window.location.href='${t.link}'">${t.btn}</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('todo-page-info').textContent = `共 ${total} 条，第 ${todoCurrentPage} / ${totalPages} 页`;
+
+            const btnsEl = document.getElementById('todo-page-btns');
+            let html = `<button onclick="renderTodoPage(${todoCurrentPage - 1})" ${todoCurrentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${todoCurrentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-200'} transition-all">上一页</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button onclick="renderTodoPage(${i})" class="w-8 h-8 rounded-md text-xs font-medium ${i === todoCurrentPage ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-200'} transition-all">${i}</button>`;
+            }
+            html += `<button onclick="renderTodoPage(${todoCurrentPage + 1})" ${todoCurrentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${todoCurrentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-200'} transition-all">下一页</button>`;
+            btnsEl.innerHTML = html;
+        }
+
+        function openTodoModal() {
+            const modal = document.getElementById('todoListModal');
+            if (modal) {
+                renderTodoPage(1);
+                modal.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    modal.classList.remove('opacity-0');
+                    modal.querySelector('div').classList.remove('scale-95');
+                    modal.querySelector('div').classList.add('scale-100');
+                });
+            }
+        }
+
+        function closeTodoModal() {
+            const modal = document.getElementById('todoListModal');
+            if (modal) {
+                modal.classList.add('opacity-0');
+                modal.querySelector('div').classList.add('scale-95');
+                modal.querySelector('div').classList.remove('scale-100');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        document.getElementById('todoListModal').addEventListener('click', function(e) {
+            if (e.target === this) closeTodoModal();
+        });
+    </script>
+
+    <script>
+        const announcementData = [
+            { icon: 'fa-bullhorn', color: 'blue', title: '平台系统升级通知', desc: '系统将于2026年3月15日凌晨2:00-4:00进行升级维护，期间部分功能可能暂时无法使用。', time: '2026-03-10 10:00', content: '系统将于2026年3月15日凌晨2:00-4:00进行升级维护，期间部分功能可能暂时无法使用。请您提前安排好相关工作，避免影响业务办理。如有疑问请联系平台客服。' },
+            { icon: 'fa-check', color: 'green', title: '产品审核通过', desc: '工资保函产品审核已通过，可正常对外提供服务。', time: '2026-03-11 16:00', content: '工资保函产品审核已通过，可正常对外提供服务。您可在产品中心查看详情并发起申请。' },
+            { icon: 'fa-check', color: 'green', title: '技术调试申请审核通过', desc: '技术调试申请已审核通过，请按计划进行系统调试。', time: '2026-03-11 15:30', content: '您的技术调试申请已审核通过，请按计划进行系统调试。调试期间如有问题，请联系技术支持。' },
+            { icon: 'fa-check', color: 'green', title: '上线验收审核通过', desc: '上线验收审核已通过，系统可正式上线运行。', time: '2026-03-11 14:00', content: '上线验收审核已通过，系统可正式上线运行。感谢您一直以来的支持与配合。' },
+            { icon: 'fa-check', color: 'green', title: '合作机构接入完成', desc: 'XX担保公司已完成接入，可为企业用户提供履约保函服务。', time: '2026-03-12 09:00', content: 'XX担保公司已完成接入，可为企业用户提供履约保函服务。企业用户可在申请时选择该担保机构。' },
+            { icon: 'fa-bullhorn', color: 'blue', title: '关于2026年清明节放假期间业务处理的通知', desc: '2026年清明节放假期间，平台业务受理及审核时间将作相应调整。', time: '2026-03-20 09:00', content: '2026年清明节放假期间，平台业务受理及审核时间将作相应调整。请各企业用户提前安排保函申请及用函计划，以免影响投标及履约。' },
+            { icon: 'fa-star', color: 'orange', title: '新版保函验证功能上线通知', desc: '新版“保函在线验证”功能正式上线，支持二维码扫码核验与区块链防伪确权。', time: '2026-03-05 10:00', content: '为增强保函的安全性和权威性，新版“保函在线验证”功能今日起正式上线。用户只需输入订单号和企业统一社会信用代码，即可实时查询保函的真实性及当前状态，有效杜绝虚假保函风险。' },
+            { icon: 'fa-file-text', color: 'purple', title: '企业认证材料要求更新公告', desc: '为进一步规范企业入驻审核，即日起企业认证材料要求将进行更新。', time: '2026-03-08 14:00', content: '为进一步规范企业入驻审核，即日起企业认证材料要求将进行更新。请已完成认证及待认证企业登录“企业中心-认证信息”查看最新要求并补充相关资料。' },
+            { icon: 'fa-gift', color: 'rose', title: '春季费率优惠活动开启', desc: '活动期间申请投标保函可享受费率优惠，详情请查看活动规则。', time: '2026-03-15 10:00', content: '春季费率优惠活动正式开启，活动期间申请投标保函可享受专属费率优惠。优惠名额有限，先到先得，详情请查看活动规则。' },
+            { icon: 'fa-shield', color: 'teal', title: '平台安全策略升级公告', desc: '平台已完成安全策略升级，建议用户及时更新密码并开启二次验证。', time: '2026-03-18 11:00', content: '平台已完成安全策略升级，建议用户及时更新密码并开启二次验证，以保障账户及业务数据安全。' },
+            { icon: 'fa-info-circle', color: 'indigo', title: '保函申请流程优化说明', desc: '保函申请流程已优化，部分材料支持自动复用，提升申请效率。', time: '2026-03-22 16:00', content: '保函申请流程已优化，部分材料支持自动复用，减少重复上传，提升申请效率。具体优化项可在申请页面查看引导。' },
+            { icon: 'fa-calendar-check', color: 'cyan', title: '月度系统维护计划通知', desc: '平台将按计划进行月度系统维护，维护期间部分查询服务可能短暂受影响。', time: '2026-03-25 08:00', content: '平台将按计划进行月度系统维护，维护期间部分查询服务可能短暂受影响。请提前下载所需文件，给您带来不便敬请谅解。' }
+        ];
+        const ANNOUNCEMENT_PER_PAGE = 10;
+        let announcementCurrentPage = 1;
+
+        function announcementItemHtml(item, idx, compact) {
+            return `
+                <div class="flex items-start p-3 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors cursor-pointer" onclick="openAnnouncementDetail(${idx})">
+                    <div class="w-10 h-10 rounded-full bg-${item.color}-50 text-${item.color}-500 flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fa ${item.icon}"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-gray-800 text-sm mb-1">${item.title}</h4>
+                        <p class="text-xs text-gray-500 leading-relaxed ${compact ? 'line-clamp-2' : ''} mb-1">${item.desc}</p>
+                        <span class="text-[10px] text-gray-400">${item.time}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLatestAnnouncements() {
+            const el = document.getElementById('latest-announcement-list');
+            if (!el) return;
+            el.innerHTML = announcementData.slice(0, 5).map((item, idx) => announcementItemHtml(item, idx, true)).join('');
+        }
+
+        function renderAnnouncementListPage(page) {
+            const listEl = document.getElementById('announcement-list');
+            const total = announcementData.length;
+            const totalPages = Math.max(1, Math.ceil(total / ANNOUNCEMENT_PER_PAGE));
+            announcementCurrentPage = Math.min(Math.max(1, page), totalPages);
+            const start = (announcementCurrentPage - 1) * ANNOUNCEMENT_PER_PAGE;
+            const items = announcementData.slice(start, start + ANNOUNCEMENT_PER_PAGE);
+
+            listEl.innerHTML = items.map((item, i) => announcementItemHtml(item, start + i, false)).join('');
+
+            document.getElementById('announcement-page-info').textContent = `共 ${total} 条，第 ${announcementCurrentPage} / ${totalPages} 页`;
+
+            const btnsEl = document.getElementById('announcement-page-btns');
+            let html = `<button onclick="renderAnnouncementListPage(${announcementCurrentPage - 1})" ${announcementCurrentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${announcementCurrentPage === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-200'} transition-all">上一页</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button onclick="renderAnnouncementListPage(${i})" class="w-8 h-8 rounded-md text-xs font-medium ${i === announcementCurrentPage ? 'bg-primary text-white' : 'text-gray-600 hover:bg-gray-200'} transition-all">${i}</button>`;
+            }
+            html += `<button onclick="renderAnnouncementListPage(${announcementCurrentPage + 1})" ${announcementCurrentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${announcementCurrentPage === totalPages ? 'text-gray-300 cursor-not-allowed' : 'text-gray-600 hover:bg-gray-200'} transition-all">下一页</button>`;
+            btnsEl.innerHTML = html;
+        }
+
+        function openAnnouncementDetail(idx) {
+            const item = announcementData[idx];
+            if (!item || !window.showModal) return;
+            window.showModal(item.title, `
+                <div class="p-2 space-y-3">
+                    <div class="text-[10px] text-gray-400 flex items-center">
+                        <i class="fa fa-clock-o mr-1.5"></i>发布时间：${item.time}
+                    </div>
+                    <p class="text-sm text-gray-700 leading-relaxed">${item.content}</p>
+                </div>
+            `);
+        }
+
+        function openAnnouncementListModal() {
+            const modal = document.getElementById('announcementListModal');
+            if (!modal) return;
+            renderAnnouncementListPage(1);
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            });
+        }
+
+        function closeAnnouncementListModal() {
+            const modal = document.getElementById('announcementListModal');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            modal.querySelector('div').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('announcementListModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAnnouncementListModal();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderLatestAnnouncements();
+        });
+    </script>
 </body>
 </html>

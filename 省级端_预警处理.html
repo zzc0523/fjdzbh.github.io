@@ -579,12 +579,34 @@
 
         // --- Alert Event Data ---
         let alertEvents = [
-            { id: 'YW20240520001', type: '业务异常', level: '高风险', rule: '账户交易异常（高频申请）', company: '福建XX建筑工程有限公司', desc: '1小时内频繁操作保函申请共计6次', time: '2024-05-20 10:30', status: '待处理', deadline: '01:25:40' },
-            { id: 'YW20240520004', type: '合规红线', level: '中风险', rule: '关联关系异常', company: '福建XX建设集团等5家', desc: '1小时内5家企业针对同一项目购入同一担保方保函', time: '2024-05-20 14:20', status: '待处理', deadline: '02:45:00' },
-            { id: 'YW20240520005', type: '合规红线', level: '高风险', rule: 'IP异常', company: '福州XX科技有限公司等4家', desc: '同一个项目4家企业使用相同IP提交保函申请', time: '2024-05-20 15:30', status: '待处理', deadline: '00:30:00' },
-            { id: 'YW20240518001', type: '业务异常', level: '中风险', rule: '账户交易异常（高频申请）', company: '厦门XX网络科技有限公司', desc: '1小时内频繁操作保函申请共计6次', time: '2024-05-18 09:40', status: '处理中', deadline: '-', handler: '王敏（省级监管-风险处）', handleTime: '2024-05-18 10:05', handleContent: '已联系企业经办人核实操作背景，确认为新入职人员误操作，正在指导其规范提交，并暂停该账户当日高频操作权限以待复核。' },
-            { id: 'YW20240517001', type: '合规红线', level: '高风险', rule: 'IP异常', company: '泉州XX信息科技有限公司等3家', desc: '同一个项目4家企业使用相同IP提交保函申请', time: '2024-05-17 16:10', status: '已关闭', deadline: '-', handler: '李强（省级监管-合规处）', handleTime: '2024-05-17 18:20', handleContent: '经核查，3家企业为同一集团下属关联公司，共用办公网络，不存在恶意串通。已人工核查并解除预警，保留相关说明作为备案。' },
-            { id: 'YW20240516001', type: '合规红线', level: '中风险', rule: '关联关系异常', company: '漳州XX建设有限公司', desc: '2家企业针对同一项目购入同一担保方保函', time: '2024-05-16 11:25', status: '已关闭', deadline: '-', handler: '陈静（省级监管-风险处）', handleTime: '2024-05-16 14:00', handleContent: '经比对工商股权信息，确认两家企业存在间接持股关系，属正常商业合作，不存在规避行为。复核通过，预警关闭。' }
+            { id: 'YW20240520001', type: '业务异常', level: '高风险', rule: '账户交易异常（高频申请）', company: '福建XX建筑工程有限公司', desc: '1小时内频繁操作保函申请共计6次', time: '2024-05-20 10:30', status: '待处理', deadline: '01:25:40', abnormalDetails: [
+                { company: '福建XX建筑工程有限公司', project: '福州市某项目', orderNo: 'DD2024052000938271', ip: '10.2.5.23', guaranteeNo: '1901845342308741', insurer: '福州市中小担保', applyTime: '2024-05-20 10:15', issueTime: '2024-05-20 10:30' }
+            ]},
+            { id: 'YW20240520004', type: '合规红线', level: '中风险', rule: '关联关系异常', company: '福建XX建设集团等5家', desc: '1小时内5家企业针对同一项目购入同一担保方保函', time: '2024-05-20 14:20', status: '待处理', deadline: '02:45:00', abnormalDetails: [
+                { company: '福建XX建设集团有限公司', project: '泉州市某项目', orderNo: 'DD2024052000938272', ip: '10.2.5.24', guaranteeNo: '1901845342308742', insurer: '泉州市中小担保', applyTime: '2024-05-20 14:05', issueTime: '2024-05-20 14:20' },
+                { company: '福建XX建筑劳务有限公司', project: '泉州市某项目', orderNo: 'DD2024052000938273', ip: '10.2.5.25', guaranteeNo: '1901845342308743', insurer: '泉州市中小担保', applyTime: '2024-05-20 14:08', issueTime: '2024-05-20 14:20' },
+                { company: '福建XX市政工程有限公司', project: '泉州市某项目', orderNo: 'DD2024052000938274', ip: '10.2.5.26', guaranteeNo: '1901845342308744', insurer: '泉州市中小担保', applyTime: '2024-05-20 14:10', issueTime: '2024-05-20 14:20' },
+                { company: '福建XX装饰工程有限公司', project: '泉州市某项目', orderNo: 'DD2024052000938275', ip: '10.2.5.27', guaranteeNo: '1901845342308745', insurer: '泉州市中小担保', applyTime: '2024-05-20 14:12', issueTime: '2024-05-20 14:20' },
+                { company: '福建XX基础工程有限公司', project: '泉州市某项目', orderNo: 'DD2024052000938276', ip: '10.2.5.28', guaranteeNo: '1901845342308746', insurer: '泉州市中小担保', applyTime: '2024-05-20 14:15', issueTime: '2024-05-20 14:20' }
+            ]},
+            { id: 'YW20240520005', type: '合规红线', level: '高风险', rule: 'IP异常', company: '福州XX科技有限公司等4家', desc: '同一个项目4家企业使用相同IP提交保函申请', time: '2024-05-20 15:30', status: '待处理', deadline: '00:30:00', abnormalDetails: [
+                { company: '福州XX科技有限公司', project: '晋江市某项目', orderNo: 'DD2024052000938271', ip: '10.2.5.23', guaranteeNo: '1901845342308741', insurer: '泉州市中小担保', applyTime: '2024-05-20 15:25', issueTime: '2024-05-20 15:30' },
+                { company: '福州XX信息技术有限公司', project: '晋江市某项目', orderNo: 'DD2024052000938277', ip: '10.2.5.23', guaranteeNo: '1901845342308747', insurer: '泉州市中小担保', applyTime: '2024-05-20 15:26', issueTime: '2024-05-20 15:30' },
+                { company: '福州XX软件科技有限公司', project: '晋江市某项目', orderNo: 'DD2024052000938278', ip: '10.2.5.23', guaranteeNo: '1901845342308748', insurer: '泉州市中小担保', applyTime: '2024-05-20 15:27', issueTime: '2024-05-20 15:30' },
+                { company: '福州XX网络工程有限公司', project: '晋江市某项目', orderNo: 'DD2024052000938279', ip: '10.2.5.23', guaranteeNo: '1901845342308749', insurer: '泉州市中小担保', applyTime: '2024-05-20 15:28', issueTime: '2024-05-20 15:30' }
+            ]},
+            { id: 'YW20240518001', type: '业务异常', level: '中风险', rule: '账户交易异常（高频申请）', company: '厦门XX网络科技有限公司', desc: '1小时内频繁操作保函申请共计6次', time: '2024-05-18 09:40', status: '处理中', deadline: '-', handler: '王敏（省级监管-风险处）', handleTime: '2024-05-18 10:05', handleContent: '已联系企业经办人核实操作背景，确认为新入职人员误操作，正在指导其规范提交，并暂停该账户当日高频操作权限以待复核。', abnormalDetails: [
+                { company: '厦门XX网络科技有限公司', project: '厦门市某项目', orderNo: 'DD2024051800938201', ip: '10.2.5.40', guaranteeNo: '1901845342308701', insurer: '厦门市中小担保', applyTime: '2024-05-18 09:25', issueTime: '2024-05-18 09:40' }
+            ]},
+            { id: 'YW20240517001', type: '合规红线', level: '高风险', rule: 'IP异常', company: '泉州XX信息科技有限公司等3家', desc: '同一个项目4家企业使用相同IP提交保函申请', time: '2024-05-17 16:10', status: '已关闭', deadline: '-', handler: '李强（省级监管-合规处）', handleTime: '2024-05-17 18:20', handleContent: '经核查，3家企业为同一集团下属关联公司，共用办公网络，不存在恶意串通。已人工核查并解除预警，保留相关说明作为备案。', abnormalDetails: [
+                { company: '泉州XX信息科技有限公司', project: '泉州市某项目', orderNo: 'DD2024051700938171', ip: '192.168.1.105', guaranteeNo: '1901845342308601', insurer: '泉州市中小担保', applyTime: '2024-05-17 15:55', issueTime: '2024-05-17 16:10' },
+                { company: '泉州XX数据科技有限公司', project: '泉州市某项目', orderNo: 'DD2024051700938172', ip: '192.168.1.105', guaranteeNo: '1901845342308602', insurer: '泉州市中小担保', applyTime: '2024-05-17 15:58', issueTime: '2024-05-17 16:10' },
+                { company: '泉州XX智能科技有限公司', project: '泉州市某项目', orderNo: 'DD2024051700938173', ip: '192.168.1.105', guaranteeNo: '1901845342308603', insurer: '泉州市中小担保', applyTime: '2024-05-17 16:00', issueTime: '2024-05-17 16:10' }
+            ]},
+            { id: 'YW20240516001', type: '合规红线', level: '中风险', rule: '关联关系异常', company: '漳州XX建设有限公司', desc: '2家企业针对同一项目购入同一担保方保函', time: '2024-05-16 11:25', status: '已关闭', deadline: '-', handler: '陈静（省级监管-风险处）', handleTime: '2024-05-16 14:00', handleContent: '经比对工商股权信息，确认两家企业存在间接持股关系，属正常商业合作，不存在规避行为。复核通过，预警关闭。', abnormalDetails: [
+                { company: '漳州XX建设有限公司', project: '漳州市某项目', orderNo: 'DD2024051600938161', ip: '10.2.5.50', guaranteeNo: '1901845342308501', insurer: '漳州市中小担保', applyTime: '2024-05-16 11:10', issueTime: '2024-05-16 11:25' },
+                { company: '漳州XX建设工程有限公司', project: '漳州市某项目', orderNo: 'DD2024051600938162', ip: '10.2.5.51', guaranteeNo: '1901845342308502', insurer: '漳州市中小担保', applyTime: '2024-05-16 11:15', issueTime: '2024-05-16 11:25' }
+            ]}
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -995,21 +1017,23 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        ${(alert.abnormalDetails || []).map(d => `
                                         <tr class="border-b border-slate-100">
-                                            <td class="px-4 py-3">${alert.company}</td>
-                                            <td class="px-4 py-3">晋江市某项目</td>
-                                            <td class="px-4 py-3 w-40 break-all">DD2024052000938271</td>
-                                            <td class="px-4 py-3">10.2.5.23</td>
-                                            <td class="px-4 py-3 w-40 break-all">1901845342308741</td>
-                                            <td class="px-4 py-3">泉州市中小担保</td>
-                                            <td class="px-4 py-3">${alert.time}</td>
-                                            <td class="px-4 py-3">${alert.time}</td>
+                                            <td class="px-4 py-3">${d.company}</td>
+                                            <td class="px-4 py-3">${d.project}</td>
+                                            <td class="px-4 py-3 w-40 break-all">${d.orderNo}</td>
+                                            <td class="px-4 py-3">${d.ip}</td>
+                                            <td class="px-4 py-3 w-40 break-all">${d.guaranteeNo}</td>
+                                            <td class="px-4 py-3">${d.insurer}</td>
+                                            <td class="px-4 py-3">${d.applyTime}</td>
+                                            <td class="px-4 py-3">${d.issueTime}</td>
                                         </tr>
+                                        `).join('')}
                                     </tbody>
                                 </table>
                             </div>
                             <div class="flex justify-between items-center mt-3">
-                                <span class="text-[10px] text-slate-400">共 1 条</span>
+                                <span class="text-[10px] text-slate-400">共 ${(alert.abnormalDetails || []).length} 条</span>
                                 <div class="flex items-center space-x-1">
                                     <button class="w-6 h-6 rounded border border-slate-200 flex items-center justify-center hover:bg-white disabled:opacity-50" disabled><i class="fa fa-angle-left text-xs"></i></button>
                                     <button class="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center text-[10px]">1</button>

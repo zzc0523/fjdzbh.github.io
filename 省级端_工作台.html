@@ -463,92 +463,22 @@
                     <div class="lg:col-span-2 bg-white rounded-xl border border-slate-100 shadow-sm p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-semibold text-slate-800">待办事项</h3>
-                            <button onclick="openTodoModal()" class="text-sm text-blue-600 hover:text-blue-700 font-medium">查看全部</button>
+                            <a href="javascript:void(0)" onclick="openTodoModal()" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center transition-colors">
+                                查看全部 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
                         </div>
-                        <div class="space-y-4">
-                            <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-medium text-slate-800">机构备案审核 - 中国建设银行福建省分行</span>
-                                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">待处理</span>
-                                    </div>
-                                    <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-15 10:30</p>
-                                </div>
-                                <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                            </div>
-                            <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-medium text-slate-800">机构备案审核 - 招商银行厦门分行</span>
-                                        <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">待处理</span>
-                                    </div>
-                                    <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-15 09:15</p>
-                                </div>
-                                <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                            </div>
-                            <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                                <div class="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-medium text-slate-800">机构展业审核 - 平安保险福建分公司</span>
-                                        <span class="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full">待处理</span>
-                                    </div>
-                                    <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-14 16:45</p>
-                                </div>
-                                <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                            </div>
-                            <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                                <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                                <div class="flex-1">
-                                    <div class="flex items-center justify-between">
-                                        <span class="font-medium text-slate-800">预警处理 - 异常交易检测</span>
-                                        <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">紧急</span>
-                                    </div>
-                                    <p class="text-sm text-slate-500 mt-1">触发时间：2024-01-15 11:20</p>
-                                </div>
-                                <button class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">处理</button>
-                            </div>
-                        </div>
+                        <div class="space-y-3" id="latest-todo-list"></div>
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-slate-800">最新通知</h3>
-                                <button onclick="openNotificationModal()" class="text-sm text-blue-600 hover:text-blue-700 font-medium">全部</button>
-                            </div>
-                            <div class="space-y-3">
-                                <div class="flex items-start space-x-3">
-                                    <i class="fa fa-bell text-blue-500 mt-0.5"></i>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">机构备案审核通过</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">2024-01-15 10:30</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <i class="fa fa-bell text-blue-500 mt-0.5"></i>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">系统维护通知</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">2024-01-15 09:00</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <i class="fa fa-bell text-red-500 mt-0.5"></i>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">预警事件触发</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">2024-01-15 11:20</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3">
-                                    <i class="fa fa-bell text-blue-500 mt-0.5"></i>
-                                    <div>
-                                        <p class="text-sm font-medium text-slate-800">机构展业审核完成</p>
-                                        <p class="text-xs text-slate-500 mt-0.5">2024-01-14 17:30</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-slate-800">最新通知</h3>
+                            <a href="javascript:void(0)" onclick="openNotificationModal()" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center transition-colors">
+                                查看全部 <i class="fa fa-angle-right ml-1"></i>
+                            </a>
                         </div>
+                        <div class="space-y-0" id="latest-notification-list"></div>
+                    </div>
                     </div>
                 </div>
 
@@ -557,147 +487,45 @@
     </div>
 
     <!-- 待办事项弹窗 -->
-    <div id="todoModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">待办事项</h3>
-                <button onclick="closeTodoModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+    <div id="todoModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9100] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-semibold text-slate-800">待办事项列表</h3>
+                <button onclick="closeTodoModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-            <div class="p-4 overflow-y-auto max-h-[calc(80vh-80px)]">
-                <div class="space-y-4">
-                    <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                        <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-slate-800">机构备案审核 - 中国建设银行福建省分行</span>
-                                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">待处理</span>
-                            </div>
-                            <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-15 10:30</p>
-                        </div>
-                        <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                    </div>
-                    <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                        <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-slate-800">机构备案审核 - 招商银行厦门分行</span>
-                                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">待处理</span>
-                            </div>
-                            <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-15 09:15</p>
-                        </div>
-                        <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                    </div>
-                    <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                        <div class="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-slate-800">机构展业审核 - 平安保险福建分公司</span>
-                                <span class="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full">待处理</span>
-                            </div>
-                            <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-14 16:45</p>
-                        </div>
-                        <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                    </div>
-                    <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                        <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-slate-800">预警处理 - 异常交易检测</span>
-                                <span class="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">紧急</span>
-                            </div>
-                            <p class="text-sm text-slate-500 mt-1">触发时间：2024-01-15 11:20</p>
-                        </div>
-                        <button class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">处理</button>
-                    </div>
-                    <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                        <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-slate-800">系统配置更新 - 预警规则</span>
-                                <span class="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">待确认</span>
-                            </div>
-                            <p class="text-sm text-slate-500 mt-1">更新时间：2024-01-15 08:00</p>
-                        </div>
-                        <button class="px-3 py-1.5 bg-yellow-600 text-white text-sm rounded-lg hover:bg-yellow-700 transition-colors">确认</button>
-                    </div>
-                    <div class="flex items-start space-x-4 p-4 bg-slate-50 rounded-lg">
-                        <div class="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                        <div class="flex-1">
-                            <div class="flex items-center justify-between">
-                                <span class="font-medium text-slate-800">机构备案审核 - 兴业银行福州分行</span>
-                                <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">待处理</span>
-                            </div>
-                            <p class="text-sm text-slate-500 mt-1">提交时间：2024-01-15 14:20</p>
-                        </div>
-                        <button class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">审核</button>
-                    </div>
-                </div>
+            <div class="p-5 overflow-y-auto flex-1">
+                <div class="space-y-3" id="todo-list"></div>
+            </div>
+            <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50/50" id="todo-pagination">
+                <span class="text-xs text-slate-500" id="todo-page-info"></span>
+                <div class="flex items-center space-x-1" id="todo-page-btns"></div>
+            </div>
+            <div class="p-5 border-t border-slate-100 flex justify-end bg-slate-50/50">
+                <button onclick="closeTodoModal()" class="px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-all">关闭</button>
             </div>
         </div>
     </div>
 
     <!-- 通知弹窗 -->
-    <div id="notificationModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
-            <div class="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 class="text-lg font-semibold text-slate-800">通知中心</h3>
-                <button onclick="closeNotificationModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+    <div id="notificationModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9200] flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-semibold text-slate-800">全部通知</h3>
+                <button onclick="closeNotificationModal()" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-colors">
                     <i class="fa fa-times"></i>
                 </button>
             </div>
-            <div class="p-4 overflow-y-auto max-h-[calc(80vh-80px)]">
-                <div class="space-y-3">
-                    <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                        <i class="fa fa-check-circle text-blue-500 mt-0.5"></i>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-800">机构备案审核通过</p>
-                            <p class="text-xs text-slate-500 mt-0.5">中国建设银行福建省分行的备案申请已审核通过</p>
-                            <p class="text-xs text-slate-400 mt-1">2024-01-15 10:30</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg">
-                        <i class="fa fa-info-circle text-slate-500 mt-0.5"></i>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-800">系统维护通知</p>
-                            <p class="text-xs text-slate-500 mt-0.5">系统将于今晚22:00-00:00进行例行维护，届时平台将暂停服务</p>
-                            <p class="text-xs text-slate-400 mt-1">2024-01-15 09:00</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-red-50 rounded-lg">
-                        <i class="fa fa-exclamation-circle text-red-500 mt-0.5"></i>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-800">预警事件触发</p>
-                            <p class="text-xs text-slate-500 mt-0.5">检测到异常交易行为，已触发预警规则</p>
-                            <p class="text-xs text-slate-400 mt-1">2024-01-15 11:20</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                        <i class="fa fa-check-circle text-blue-500 mt-0.5"></i>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-800">机构展业审核完成</p>
-                            <p class="text-xs text-slate-500 mt-0.5">平安保险福建分公司展业申请已审核完成</p>
-                            <p class="text-xs text-slate-400 mt-1">2024-01-14 17:30</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                        <i class="fa fa-check-circle text-green-500 mt-0.5"></i>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-800">数据同步完成</p>
-                            <p class="text-xs text-slate-500 mt-0.5">今日保函数据已完成同步，共处理2,847条记录</p>
-                            <p class="text-xs text-slate-400 mt-1">2024-01-15 06:00</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 p-3 bg-slate-50 rounded-lg">
-                        <i class="fa fa-info-circle text-slate-500 mt-0.5"></i>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-slate-800">新用户注册通知</p>
-                            <p class="text-xs text-slate-500 mt-0.5">新企业用户「福建建工集团」已完成注册</p>
-                            <p class="text-xs text-slate-400 mt-1">2024-01-15 13:45</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="p-5 overflow-y-auto flex-1">
+                <div class="space-y-0" id="notification-list"></div>
+            </div>
+            <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between bg-slate-50/50" id="notification-pagination">
+                <span class="text-xs text-slate-500" id="notification-page-info"></span>
+                <div class="flex items-center space-x-1" id="notification-page-btns"></div>
+            </div>
+            <div class="p-5 border-t border-slate-100 flex justify-end bg-slate-50/50">
+                <button onclick="closeNotificationModal()" class="px-6 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-all">关闭</button>
             </div>
         </div>
     </div>
@@ -721,34 +549,188 @@
             document.getElementById('currentDate').textContent = date.toLocaleDateString('zh-CN', options);
         });
 
+        const todoData = [
+            { icon: 'fa-building', color: 'blue', title: '备案审核', desc: '【中国建设银行福建省分行】提交了入驻备案申请（申请编号：FJ202603110001），请及时审核。', time: '2026-03-11 09:00', tag: '待处理', tagColor: 'blue', buttons: [{ label: '审核', class: 'bg-blue-600 hover:bg-blue-700', action: "window.location.href='机构备案.html'" }] },
+            { icon: 'fa-briefcase', color: 'green', title: '展业审核', desc: '【招商银行厦门分行】提交了展业申请（申请编号：FJ202603110002），请及时审核。', time: '2026-03-11 10:30', tag: '待处理', tagColor: 'green', buttons: [{ label: '审核', class: 'bg-green-600 hover:bg-green-700', action: "window.location.href='展业审核.html'" }] },
+            { icon: 'fa-exclamation-triangle', color: 'red', title: '预警提醒', desc: '预警编号【YJ202603110003】已触发，当前等级【高风险】，请及时处理。', time: '2026-03-11 11:00', tag: '紧急', tagColor: 'red', buttons: [{ label: '去处理', class: 'bg-red-500 hover:bg-red-600', action: "window.location.href='风险预警.html'" }] }
+        ];
+        const TODO_PER_PAGE = 10;
+        let todoCurrentPage = 1;
+
+        function todoItemHtml(item) {
+            const buttonsHtml = item.buttons.map(b => `<button class="px-3 py-1 ${b.class} text-white rounded-md transition-all text-xs font-medium" onclick="event.stopPropagation(); ${b.action}">${b.label}</button>`).join('');
+            return `
+                <div class="flex items-start p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
+                    <div class="w-10 h-10 rounded-full bg-${item.color}-50 text-${item.color}-500 flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fa ${item.icon} text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <h4 class="font-bold text-slate-800 text-sm">${item.title}</h4>
+                            <span class="px-2 py-0.5 bg-${item.tagColor}-50 text-${item.tagColor}-600 rounded text-[10px] font-bold border border-${item.tagColor}-100 ml-2 shrink-0">${item.tag}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-2 line-clamp-2">${item.desc}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] text-slate-400">${item.time}</span>
+                            <div class="flex items-center space-x-2">${buttonsHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLatestTodos() {
+            const el = document.getElementById('latest-todo-list');
+            if (!el) return;
+            el.innerHTML = todoData.slice(0, 5).map(item => todoItemHtml(item)).join('');
+        }
+
+        function renderTodoListPage(page) {
+            const listEl = document.getElementById('todo-list');
+            const total = todoData.length;
+            const totalPages = Math.max(1, Math.ceil(total / TODO_PER_PAGE));
+            todoCurrentPage = Math.min(Math.max(1, page), totalPages);
+            const start = (todoCurrentPage - 1) * TODO_PER_PAGE;
+            const items = todoData.slice(start, start + TODO_PER_PAGE);
+
+            listEl.innerHTML = items.map(item => todoItemHtml(item)).join('');
+
+            document.getElementById('todo-page-info').textContent = `共 ${total} 条，第 ${todoCurrentPage} / ${totalPages} 页`;
+
+            const btnsEl = document.getElementById('todo-page-btns');
+            let html = `<button onclick="renderTodoListPage(${todoCurrentPage - 1})" ${todoCurrentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${todoCurrentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">上一页</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button onclick="renderTodoListPage(${i})" class="w-8 h-8 rounded-md text-xs font-medium ${i === todoCurrentPage ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-200'} transition-all">${i}</button>`;
+            }
+            html += `<button onclick="renderTodoListPage(${todoCurrentPage + 1})" ${todoCurrentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${todoCurrentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">下一页</button>`;
+            btnsEl.innerHTML = html;
+        }
+
         function openTodoModal() {
-            document.getElementById('todoModal').classList.remove('hidden');
+            const modal = document.getElementById('todoModal');
+            if (!modal) return;
+            renderTodoListPage(1);
+            modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            });
         }
 
         function closeTodoModal() {
-            document.getElementById('todoModal').classList.add('hidden');
-            document.body.style.overflow = '';
+            const modal = document.getElementById('todoModal');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            modal.querySelector('div').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        const notificationData = [
+            { icon: 'fa-bullhorn', color: 'blue', title: '平台系统升级通知', desc: '系统将于2026年3月15日凌晨2:00-4:00进行升级维护，期间部分功能可能暂时无法使用。', time: '2026-03-10 10:00', content: '系统将于2026年3月15日凌晨2:00-4:00进行升级维护，期间部分功能可能暂时无法使用。请您提前安排好相关工作，避免影响业务办理。如有疑问请联系平台客服。' },
+            { icon: 'fa-check', color: 'green', title: '产品审核通过', desc: '工资保函产品审核已通过，可正常对外提供服务。', time: '2026-03-11 16:00', content: '工资保函产品审核已通过，可正常对外提供服务。您可在产品中心查看详情并发起申请。' },
+            { icon: 'fa-check', color: 'green', title: '技术调试申请审核通过', desc: '技术调试申请已审核通过，请按计划进行系统调试。', time: '2026-03-11 15:30', content: '您的技术调试申请已审核通过，请按计划进行系统调试。调试期间如有问题，请联系技术支持。' },
+            { icon: 'fa-check', color: 'green', title: '上线验收审核通过', desc: '上线验收审核已通过，系统可正式上线运行。', time: '2026-03-11 14:00', content: '上线验收审核已通过，系统可正式上线运行。感谢您一直以来的支持与配合。' },
+            { icon: 'fa-check', color: 'green', title: '合作机构接入完成', desc: 'XX担保公司已完成接入，可为企业用户提供履约保函服务。', time: '2026-03-12 09:00', content: 'XX担保公司已完成接入，可为企业用户提供履约保函服务。企业用户可在申请时选择该担保机构。' },
+            { icon: 'fa-bullhorn', color: 'blue', title: '关于2026年清明节放假期间业务处理的通知', desc: '2026年清明节放假期间，平台业务受理及审核时间将作相应调整。', time: '2026-03-20 09:00', content: '2026年清明节放假期间，平台业务受理及审核时间将作相应调整。请各企业用户提前安排保函申请及用函计划，以免影响投标及履约。' },
+            { icon: 'fa-star', color: 'orange', title: '新版保函验证功能上线通知', desc: '新版“保函在线验证”功能正式上线，支持二维码扫码核验与区块链防伪确权。', time: '2026-03-05 10:00', content: '为增强保函的安全性和权威性，新版“保函在线验证”功能今日起正式上线。用户只需输入订单号和企业统一社会信用代码，即可实时查询保函的真实性及当前状态，有效杜绝虚假保函风险。' },
+            { icon: 'fa-file-text', color: 'purple', title: '企业认证材料要求更新公告', desc: '为进一步规范企业入驻审核，即日起企业认证材料要求将进行更新。', time: '2026-03-08 14:00', content: '为进一步规范企业入驻审核，即日起企业认证材料要求将进行更新。请已完成认证及待认证企业登录“企业中心-认证信息”查看最新要求并补充相关资料。' },
+            { icon: 'fa-gift', color: 'rose', title: '春季费率优惠活动开启', desc: '活动期间申请投标保函可享受费率优惠，详情请查看活动规则。', time: '2026-03-15 10:00', content: '春季费率优惠活动正式开启，活动期间申请投标保函可享受专属费率优惠。优惠名额有限，先到先得，详情请查看活动规则。' },
+            { icon: 'fa-shield', color: 'teal', title: '平台安全策略升级公告', desc: '平台已完成安全策略升级，建议用户及时更新密码并开启二次验证。', time: '2026-03-18 11:00', content: '平台已完成安全策略升级，建议用户及时更新密码并开启二次验证，以保障账户及业务数据安全。' },
+            { icon: 'fa-info-circle', color: 'indigo', title: '保函申请流程优化说明', desc: '保函申请流程已优化，部分材料支持自动复用，提升申请效率。', time: '2026-03-22 16:00', content: '保函申请流程已优化，部分材料支持自动复用，减少重复上传，提升申请效率。具体优化项可在申请页面查看引导。' },
+            { icon: 'fa-calendar-check', color: 'cyan', title: '月度系统维护计划通知', desc: '平台将按计划进行月度系统维护，维护期间部分查询服务可能短暂受影响。', time: '2026-03-25 08:00', content: '平台将按计划进行月度系统维护，维护期间部分查询服务可能短暂受影响。请提前下载所需文件，给您带来不便敬请谅解。' }
+        ];
+        const NOTIFICATION_PER_PAGE = 10;
+        let notificationCurrentPage = 1;
+
+        function notificationItemHtml(item, idx, compact) {
+            return `
+                <div class="flex items-start p-3 border-b border-slate-100 last:border-b-0 hover:bg-slate-50 transition-colors cursor-pointer" onclick="openNotificationDetail(${idx})">
+                    <div class="w-10 h-10 rounded-full bg-${item.color}-50 text-${item.color}-500 flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fa ${item.icon}"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-slate-800 text-sm mb-1">${item.title}</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed ${compact ? 'line-clamp-2' : ''} mb-1">${item.desc}</p>
+                        <span class="text-[10px] text-slate-400">${item.time}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLatestNotifications() {
+            const el = document.getElementById('latest-notification-list');
+            if (!el) return;
+            el.innerHTML = notificationData.slice(0, 5).map((item, idx) => notificationItemHtml(item, idx, true)).join('');
+        }
+
+        function renderNotificationListPage(page) {
+            const listEl = document.getElementById('notification-list');
+            const total = notificationData.length;
+            const totalPages = Math.max(1, Math.ceil(total / NOTIFICATION_PER_PAGE));
+            notificationCurrentPage = Math.min(Math.max(1, page), totalPages);
+            const start = (notificationCurrentPage - 1) * NOTIFICATION_PER_PAGE;
+            const items = notificationData.slice(start, start + NOTIFICATION_PER_PAGE);
+
+            listEl.innerHTML = items.map((item, i) => notificationItemHtml(item, start + i, false)).join('');
+
+            document.getElementById('notification-page-info').textContent = `共 ${total} 条，第 ${notificationCurrentPage} / ${totalPages} 页`;
+
+            const btnsEl = document.getElementById('notification-page-btns');
+            let html = `<button onclick="renderNotificationListPage(${notificationCurrentPage - 1})" ${notificationCurrentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${notificationCurrentPage === 1 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">上一页</button>`;
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button onclick="renderNotificationListPage(${i})" class="w-8 h-8 rounded-md text-xs font-medium ${i === notificationCurrentPage ? 'bg-blue-600 text-white' : 'text-slate-600 hover:bg-slate-200'} transition-all">${i}</button>`;
+            }
+            html += `<button onclick="renderNotificationListPage(${notificationCurrentPage + 1})" ${notificationCurrentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-md text-xs font-medium ${notificationCurrentPage === totalPages ? 'text-slate-300 cursor-not-allowed' : 'text-slate-600 hover:bg-slate-200'} transition-all">下一页</button>`;
+            btnsEl.innerHTML = html;
+        }
+
+        function openNotificationDetail(idx) {
+            const item = notificationData[idx];
+            if (item && window.showDetail) {
+                window.showDetail(item.title, `<div class="p-2 space-y-3"><div class="text-[10px] text-slate-400 flex items-center"><i class="fa fa-clock-o mr-1.5"></i>发布时间：${item.time}</div><p class="text-sm text-slate-700 leading-relaxed">${item.content}</p></div>`);
+            }
         }
 
         function openNotificationModal() {
-            document.getElementById('notificationModal').classList.remove('hidden');
+            const modal = document.getElementById('notificationModal');
+            if (!modal) return;
+            renderNotificationListPage(1);
+            modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            });
         }
 
         function closeNotificationModal() {
-            document.getElementById('notificationModal').classList.add('hidden');
-            document.body.style.overflow = '';
+            const modal = document.getElementById('notificationModal');
+            if (!modal) return;
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            modal.querySelector('div').classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }, 300);
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('#todoModal, #notificationModal').forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        modal.classList.add('hidden');
-                        document.body.style.overflow = '';
-                    }
-                });
+            renderLatestTodos();
+            renderLatestNotifications();
+
+            document.getElementById('todoModal').addEventListener('click', function(e) {
+                if (e.target === this) closeTodoModal();
+            });
+            document.getElementById('notificationModal').addEventListener('click', function(e) {
+                if (e.target === this) closeNotificationModal();
             });
         });
     </script>
