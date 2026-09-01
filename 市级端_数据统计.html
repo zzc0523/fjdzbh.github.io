@@ -154,12 +154,16 @@
             </header>
 
             <!-- 内容区 -->
-            <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+            <main class="flex-1 overflow-y-auto p-6 bg-gray-50 relative">
+                <span class="absolute top-6 right-6 text-xs text-gray-400 z-10">数据更新时间：2026-09-01 09:30:00</span>
+
                 <!-- 标签页 -->
-                <div class="flex space-x-1 p-1 bg-slate-200/50 rounded-lg w-fit mb-6">
-                    <button data-tab="business" class="px-6 py-2 rounded-md text-sm transition-all bg-white shadow-sm text-blue-700 font-bold tab-link">业务统计</button>
-                    <button data-tab="institution" class="px-6 py-2 rounded-md text-sm transition-all text-slate-600 hover:bg-white/50 tab-link">机构统计</button>
-                    <button data-tab="enterprise" class="px-6 py-2 rounded-md text-sm transition-all text-slate-600 hover:bg-white/50 tab-link">企业统计</button>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="flex space-x-1 p-1 bg-slate-200/50 rounded-lg w-fit">
+                        <button data-tab="business" class="px-6 py-2 rounded-md text-sm transition-all bg-white shadow-sm text-blue-700 font-bold tab-link">业务统计</button>
+                        <button data-tab="institution" class="px-6 py-2 rounded-md text-sm transition-all text-slate-600 hover:bg-white/50 tab-link">机构统计</button>
+                        <button data-tab="enterprise" class="px-6 py-2 rounded-md text-sm transition-all text-slate-600 hover:bg-white/50 tab-link">企业统计</button>
+                    </div>
                 </div>
 
                 <!-- 业务统计 -->
@@ -167,20 +171,20 @@
                     <div class="p-6 border-b border-slate-100 flex flex-wrap items-center justify-between gap-4">
                         <h3 class="font-bold text-slate-800">业务统计</h3>
                         <div class="flex items-center space-x-2">
-                            <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
-                                <option>2026年3月</option>
-                                <option>2026年2月</option>
-                                <option>2026年1月</option>
-                                <option>2025年12月</option>
-                            </select>
-                            <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
-                                <i class="fa fa-search mr-2"></i>查询
-                            </button>
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all">
-                                <i class="fa fa-download mr-2"></i>导出
-                            </button>
+                                <select class="border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                                    <option>2026年3月</option>
+                                    <option>2026年2月</option>
+                                    <option>2026年1月</option>
+                                    <option>2025年12月</option>
+                                </select>
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                                    <i class="fa fa-search mr-2"></i>查询
+                                </button>
+                                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all">
+                                    <i class="fa fa-download mr-2"></i>导出
+                                </button>
+                            </div>
                         </div>
-                    </div>
                     <div class="p-6">
 
                     <!-- 业务概览 -->
@@ -555,6 +559,20 @@
                     if (targetContent) {
                         targetContent.classList.remove('hidden');
                     }
+                    
+                    // 重新计算图表尺寸，修复隐藏标签内图表初始渲染为0的问题
+                    setTimeout(function() {
+                        let chartIds = [];
+                        if (tabId === 'business') {
+                            chartIds = ['businessTrendChart', 'guaranteeTypeChart'];
+                        } else if (tabId === 'institution') {
+                            chartIds = ['institutionBusinessChart'];
+                        }
+                        chartIds.forEach(function(id) {
+                            const ch = Chart.getChart(id);
+                            if (ch) ch.resize();
+                        });
+                    }, 50);
                     
                     // 延迟设置标签切换标志为false，确保切换过程完成
                     setTimeout(function() {
