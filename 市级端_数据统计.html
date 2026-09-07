@@ -180,9 +180,6 @@
                                 <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
                                     <i class="fa fa-search mr-2"></i>查询
                                 </button>
-                                <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all">
-                                    <i class="fa fa-download mr-2"></i>导出
-                                </button>
                             </div>
                         </div>
                     <div class="p-6">
@@ -291,9 +288,6 @@
                             <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="alert('查询功能已触发')">
                                 <i class="fa fa-search mr-2"></i>查询
                             </button>
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all" onclick="alert('导出功能已触发')">
-                                <i class="fa fa-download mr-2"></i>导出
-                            </button>
                         </div>
                     </div>
                     <div class="p-6">
@@ -386,9 +380,6 @@
                             </select>
                             <button class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all" onclick="alert('查询功能已触发')">
                                 <i class="fa fa-search mr-2"></i>查询
-                            </button>
-                            <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-300 transition-all" onclick="alert('导出功能已触发')">
-                                <i class="fa fa-download mr-2"></i>导出
                             </button>
                         </div>
                     </div>
@@ -594,17 +585,7 @@
                 });
             }
 
-            const businessExportBtn = document.querySelector('#business .bg-gray-200.text-gray-700.px-4.py-2.rounded-lg');
-            if (businessExportBtn) {
-                businessExportBtn.addEventListener('click', function() {
-                    // 检查是否正在切换标签
-                    if (isTabSwitching) {
-                        return; // 如果正在切换标签，不执行任何操作
-                    }
-                    
-                    alert('导出功能已触发');
-                });
-            }
+
 
             // 为机构统计页面的按钮添加功能
             const institutionQueryBtn = document.querySelector('#institution .bg-blue-600.text-white.px-4.py-2.rounded-lg');
@@ -619,17 +600,7 @@
                 });
             }
 
-            const institutionExportBtn = document.querySelector('#institution .bg-gray-200.text-gray-700.px-4.py-2.rounded-lg');
-            if (institutionExportBtn) {
-                institutionExportBtn.addEventListener('click', function() {
-                    // 检查是否正在切换标签
-                    if (isTabSwitching) {
-                        return; // 如果正在切换标签，不执行任何操作
-                    }
-                    
-                    alert('导出功能已触发');
-                });
-            }
+
 
             // 为企业统计页面的按钮添加功能
             const enterpriseQueryBtn = document.querySelector('#enterprise .bg-blue-600.text-white.px-4.py-2.rounded-lg');
@@ -644,17 +615,7 @@
                 });
             }
 
-            const enterpriseExportBtn = document.querySelector('#enterprise .bg-gray-200.text-gray-700.px-4.py-2.rounded-lg');
-            if (enterpriseExportBtn) {
-                enterpriseExportBtn.addEventListener('click', function() {
-                    // 检查是否正在切换标签
-                    if (isTabSwitching) {
-                        return; // 如果正在切换标签，不执行任何操作
-                    }
-                    
-                    alert('导出功能已触发');
-                });
-            }
+
 
             // 通知按钮功能
             const notificationButton = document.querySelector('.fa-bell').parentElement;
@@ -891,15 +852,7 @@
                                             <p class="text-gray-700">在数据统计页面，选择"业务统计"标签页，系统会显示业务总量、担保总额、涉及企业数和平均办理时长等概览数据，以及业务趋势图表和保函类型分布。</p>
                                         </div>
                                     </div>
-                                    <div class="border border-gray-200 rounded-lg overflow-hidden">
-                                        <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
-                                            <span class="font-medium">如何导出统计数据？</span>
-                                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
-                                        </button>
-                                        <div class="p-4 border-t border-gray-200 hidden help-answer">
-                                            <p class="text-gray-700">在数据统计页面，选择相应的标签页，点击"导出"按钮，系统会将当前页面的统计数据导出为Excel文件。</p>
-                                        </div>
-                                    </div>
+
                                     <div class="border border-gray-200 rounded-lg overflow-hidden">
                                         <button class="w-full text-left p-4 bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center help-question">
                                             <span class="font-medium">如何切换统计周期？</span>
