@@ -4441,223 +4441,130 @@ function searchInstitutions() {
                 </div>
 
                 <!-- 5. 支付保费视图 -->
-                <div id="payment-view" class="hidden space-y-6 animate-in fade-in duration-500">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <div class="p-8 border-b border-slate-100 bg-slate-50/50">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h3 class="text-xl font-bold text-slate-900">支付保费</h3>
-                                    <p class="text-sm text-slate-500 mt-1">请选择支付方式并完成保费缴纳</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">应缴金额</p>
-                                    <p class="text-3xl font-black text-primary mt-1"><span id="payment-amount">1,500.00</span></p>
-                                </div>
-                            </div>
+                <div id="payment-view" class="hidden space-y-5 animate-in fade-in duration-500">
+                    <!-- 支付保费标题 -->
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl shadow-lg shadow-blue-200 p-6 flex items-center">
+                        <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-white mr-4 shrink-0">
+                            <i class="fa fa-university text-xl"></i>
                         </div>
-                        
-                        <div class="p-8">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                <!-- 银行转账 (预选) -->
-                                <div class="payment-method-card border-2 border-primary bg-blue-50/30 rounded-xl p-6 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-all group relative overflow-hidden" onclick="window.selectPaymentMethod('bank', event)">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600">
-                                            <i class="fa fa-university text-2xl"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-slate-900">对公转账</p>
-                                            <p class="text-[10px] text-slate-500">Bank Transfer</p>
-                                        </div>
-                                    </div>
-                                    <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-primary bg-primary flex items-center justify-center transition-all">
-                                        <i class="fa fa-check text-white text-[10px] opacity-100"></i>
-                                    </div>
-                                </div>
+                        <div>
+                            <h3 class="text-lg font-black text-white">支付保费</h3>
+                            <p class="text-xs text-blue-100 mt-0.5">请完成以下支付信息</p>
+                        </div>
+                    </div>
 
-                                <!-- 微信支付 -->
-                                <div class="payment-method-card border-2 border-slate-100 rounded-xl p-6 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-all group relative overflow-hidden" onclick="window.selectPaymentMethod('wechat', event)">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
-                                            <i class="fa fa-wechat text-2xl"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-slate-900">微信支付</p>
-                                            <p class="text-[10px] text-slate-500">WeChat Pay</p>
-                                        </div>
+                    <!-- 1. 订单信息 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-6">
+                            <h4 class="text-base font-bold text-slate-800 flex items-center mb-5">
+                                <i class="fa fa-list-alt text-primary mr-2.5"></i> 订单信息
+                            </h4>
+                            <div class="border border-slate-200 rounded-lg overflow-hidden text-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-2">
+                                    <div class="flex border-b border-slate-200 md:border-r">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">订单号</div>
+                                        <div class="px-4 py-3.5 text-slate-800 font-mono">BH202603250001</div>
                                     </div>
-                                    <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
-                                        <i class="fa fa-check text-white text-[10px] opacity-0 group-hover:opacity-100"></i>
+                                    <div class="flex border-b border-slate-200">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">项目名称</div>
+                                        <div class="px-4 py-3.5 text-slate-800">福州市地铁5号线延长线工程</div>
                                     </div>
-                                </div>
-
-                                <!-- 支付宝 -->
-                                <div class="payment-method-card border-2 border-slate-100 rounded-xl p-6 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-all group relative overflow-hidden" onclick="window.selectPaymentMethod('alipay', event)">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="w-12 h-12 bg-sky-50 rounded-lg flex items-center justify-center text-sky-600">
-                                            <i class="fa fa-paypal text-2xl"></i>
-                                        </div>
-                                        <div>
-                                            <p class="font-bold text-slate-900">支付宝</p>
-                                            <p class="text-[10px] text-slate-500">Alipay</p>
-                                        </div>
+                                    <div class="flex md:border-r border-slate-200">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">保函类型</div>
+                                        <div class="px-4 py-3.5 text-slate-800">履约保函</div>
                                     </div>
-                                    <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
-                                        <i class="fa fa-check text-white text-[10px] opacity-0 group-hover:opacity-100"></i>
+                                    <div class="flex">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">担保期限</div>
+                                        <div class="px-4 py-3.5 text-slate-800">2026.03.25 - 2028.03.25</div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- 支付内容详情区 -->
-                            <div id="payment-detail-content" class="min-h-[300px] border border-slate-100 rounded-2xl p-8 bg-slate-50/30">
-                                <!-- 扫码支付占位 -->
-                                <div id="qr-payment-detail" class="hidden flex flex-col items-center justify-center space-y-6">
-                                    <div class="p-4 bg-white rounded-2xl shadow-sm border border-slate-100">
-                                        <img id="payment-qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=payment_demo" alt="QR Code" class="w-48 h-48">
-                                    </div>
-                                    <p class="text-slate-500 text-sm flex items-center">
-                                        <i class="fa fa-mobile text-2xl mr-3 text-slate-400"></i>
-                                        请使用手机客户端扫码完成支付
-                                    </p>
-                                </div>
-
-                                <!-- 对公转账详情 (参考图片样式) -->
-                                <div id="bank-transfer-detail" class="space-y-6 animate-in fade-in duration-500">
-                                    <!-- 1. 订单信息 -->
-                                    <div class="space-y-3">
-                                        <h4 class="text-base font-bold text-slate-800 flex items-center">
-                                            <span class="w-1 h-5 bg-primary mr-3 rounded-full"></span> 订单信息
-                                        </h4>
-                                        <div class="grid grid-cols-4 border border-slate-200 rounded overflow-hidden shadow-sm">
-                                            <div class="bg-slate-50 px-4 py-4 text-sm text-slate-600 border-r border-slate-200 text-center font-medium">订单号</div>
-                                            <div class="bg-white px-6 py-4 text-sm text-slate-800 border-r border-slate-200 text-center font-mono">BH202603250001</div>
-                                            <div class="bg-slate-50 px-4 py-4 text-sm text-slate-600 border-r border-slate-200 text-center font-medium">保费 (元)</div>
-                                            <div class="bg-white px-6 py-4 text-sm text-slate-800 text-center font-bold">1,500.00</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 2. 基本账户与警告 -->
-                                    <div class="space-y-4">
-                                        <div class="flex items-center justify-between">
-                                            <h4 class="text-base font-bold text-slate-800 flex items-center">
-                                                <span class="w-1 h-5 bg-primary mr-3 rounded-full"></span> 基本账户
-                                            </h4>
-                                            <div class="bg-amber-50 border border-amber-100 px-4 py-2.5 rounded text-xs text-amber-700 flex items-center shadow-sm">
-                                                <div class="w-5 h-5 bg-amber-500 text-white rounded-full flex items-center justify-center mr-2 text-[10px] shrink-0 font-bold">!</div>
-                                                请投保人不要在转账中附言(或备注)投标项目名称、项目编号等能锁定项目的信息
-                                            </div>
-                                        </div>
-
-                                        <!-- 支付编号高亮栏 (参考图中的浅蓝背景) -->
-                                        <div class="bg-gradient-to-r from-blue-50 to-white border border-blue-100 p-5 rounded-lg flex items-center justify-center space-x-4 shadow-sm">
-                                            <span class="text-slate-700 font-bold">投保人请在附言、备注或摘要中填写支付编号：<span class="text-slate-900 text-xl font-mono mx-2 tracking-tight">91,421</span></span>
-                                            <button onclick="copyText('91421')" class="text-slate-400 hover:text-primary flex items-center text-xs transition-colors">
-                                                <i class="fa fa-clone mr-1"></i> 复制
-                                            </button>
-                                        </div>
-
-                                        <!-- 账户对比栏 -->
-                                        <div class="grid grid-cols-2 gap-0 border border-slate-200 rounded overflow-hidden bg-white">
-                                            <!-- 付款方 -->
-                                            <div class="p-8 border-r border-slate-200">
-                                                <p class="text-center text-sm font-bold text-slate-800 mb-8">请使用该账户进行付款</p>
-                                                <div class="space-y-6 text-sm">
-                                                    <div class="flex items-start">
-                                                        <span class="text-slate-500 w-24 shrink-0">账户名称：</span>
-                                                        <span class="text-slate-800">福建省建设工程有限公司</span>
-                                                    </div>
-                                                    <div class="flex items-start">
-                                                        <span class="text-slate-500 w-24 shrink-0">开户银行：</span>
-                                                        <span class="text-slate-800">中国银行福州晋安支行</span>
-                                                    </div>
-                                                    <div class="flex items-start">
-                                                        <span class="text-slate-500 w-24 shrink-0">账户账号：</span>
-                                                        <span class="text-slate-800 font-mono tracking-widest">4021 **** **** 8892</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- 收款方 -->
-                                            <div class="p-8 bg-slate-50/20">
-                                                <p class="text-center text-sm font-bold text-slate-800 mb-8">收款账户 (中国建设银行)</p>
-                                                <div class="space-y-6 text-sm">
-                                                    <div class="flex items-start">
-                                                        <span class="text-slate-500 w-24 shrink-0">账户名称：</span>
-                                                        <span class="text-slate-800">中国建设银行福建分行保函专户</span>
-                                                    </div>
-                                                    <div class="flex items-start">
-                                                        <span class="text-slate-500 w-24 shrink-0">开户银行：</span>
-                                                        <span class="text-slate-800">中国建设银行福州广达支行</span>
-                                                    </div>
-                                                    <div class="flex items-start group">
-                                                        <span class="text-slate-500 w-24 shrink-0">账户账号：</span>
-                                                        <div class="flex-1 flex items-center justify-between">
-                                                            <span class="text-slate-800 font-mono tracking-widest">3505 0161 0000 1234 5678</span>
-                                                            <button onclick="copyText('35050161000012345678')" class="text-slate-400 hover:text-primary flex items-center text-xs ml-4">
-                                                                <i class="fa fa-clone mr-1"></i> 复制
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 2.5 上传支付凭证 -->
-                                    <div class="space-y-3">
-                                        <h4 class="text-base font-bold text-slate-800 flex items-center">
-                                            <span class="w-1 h-5 bg-primary mr-3 rounded-full"></span> 上传支付凭证
-                                        </h4>
-                                        <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
-                                            <div class="flex items-center space-x-6">
-                                                <div id="voucher-upload-btn" onclick="simulateVoucherUpload()" class="w-32 h-32 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-blue-50/50 transition-all group">
-                                                    <i class="fa fa-cloud-upload text-3xl text-slate-300 group-hover:text-primary transition-colors"></i>
-                                                    <span class="text-[11px] text-slate-400 mt-2 group-hover:text-primary">点击上传回单</span>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm font-bold text-slate-700">请上传银行转账回执单</p>
-                                                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">支持 JPG、PNG、PDF 格式，文件大小不超过 10MB。上传凭证可加速财务审核进度。</p>
-                                                    <div id="voucher-file-info" class="hidden mt-4 p-3 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-between">
-                                                        <div class="flex items-center">
-                                                            <i class="fa fa-file-image-o text-emerald-500 mr-2"></i>
-                                                            <span class="text-xs text-emerald-700 font-medium" id="voucher-filename">bank_receipt_20260325.jpg</span>
-                                                        </div>
-                                                        <button onclick="removeVoucher()" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">删除</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- 3. 注意事项 -->
-                                    <div class="bg-blue-50/30 border border-blue-100 rounded-lg p-8">
-                                        <h5 class="text-sm font-bold text-blue-600 flex items-center mb-6">
-                                            <i class="fa fa-bell mr-3 text-lg"></i> 注意：
-                                        </h5>
-                                        <ul class="space-y-4 text-[13px] text-slate-600 leading-relaxed">
-                                            <li class="flex items-start">
-                                                <span class="mr-2 shrink-0 font-medium">1.</span>
-                                                <span>保函系统确认到账后，系统将在30分钟内自动出单并以短信的方式通知投保经办人，收到短信后，请及时在"福建省公共资源电子化交易平台-投标保证金缴纳"页面查看保证金缴纳状态是否变更为"已缴纳"，若未变更，请及时联系客服。</span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="mr-2 shrink-0 font-medium">2.</span>
-                                                <span>由于银行转账可能存在延迟到账的情况，建议提前一个工作日以上支付。实际到账时间超过投标保证金截止时间的，将视为无效缴纳。</span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="mr-2 shrink-0 font-medium">3.</span>
-                                                <span>电子保函单单购买成功后，可在"福建省公共资源电子化交易平台-投标保证金缴纳"页面下载保证金缴纳回执；开标后可下载明文保函。</span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mt-12 flex flex-col items-center space-y-4">
-                                <p class="text-sm text-slate-500">支付完成后，系统将自动跳转至下载页面</p>
-                                <div class="flex justify-center">
-                                    <button onclick="window.simulatePaymentSuccess()" class="px-12 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 shadow-lg shadow-blue-200 transition-all active:scale-95">我已完成支付</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- 2. 收款账户信息 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-5">
+                                <h4 class="text-base font-bold text-slate-800 flex items-center">
+                                    <i class="fa fa-bank text-primary mr-2.5"></i> 收款账户信息
+                                </h4>
+                                <button onclick="copyText('收款户名：中国建设银行福建分行保函专户；收款开户行：中国建设银行福州广达支行；收款账号：3505016100012345678；保费金额（元）：1500.00')" class="flex items-center px-3.5 py-1.5 bg-blue-500 text-white text-xs font-bold rounded-lg hover:bg-blue-600 shadow-sm shadow-blue-200 transition-all">
+                                    <i class="fa fa-clone mr-1.5"></i> 一键复制
+                                </button>
+                            </div>
+                            <div class="border border-slate-200 rounded-lg overflow-hidden text-sm">
+                                <div class="grid grid-cols-1 md:grid-cols-2">
+                                    <div class="flex border-b border-slate-200 md:border-r">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">收款户名</div>
+                                        <div class="px-4 py-3.5 text-slate-800">中国建设银行福建分行保函专户</div>
+                                    </div>
+                                    <div class="flex border-b border-slate-200">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">收款开户行</div>
+                                        <div class="px-4 py-3.5 text-slate-800">中国建设银行福州广达支行</div>
+                                    </div>
+                                    <div class="flex md:border-r border-slate-200">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">收款账号</div>
+                                        <div class="px-4 py-3.5 text-slate-800 font-mono tracking-wide">3505016100012345678</div>
+                                    </div>
+                                    <div class="flex">
+                                        <div class="w-32 bg-slate-50 px-4 py-3.5 text-slate-500 shrink-0">保费金额（元）</div>
+                                        <div class="px-4 py-3.5 text-rose-600 font-bold">1,500.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. 付款凭证上传 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="p-6">
+                            <h4 class="text-base font-bold text-slate-800 flex items-center">
+                                <i class="fa fa-cloud-upload text-emerald-500 mr-2.5"></i> 付款凭证上传
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-1.5 mb-4">（上传付款回单截图，非必填）</p>
+                            <div id="voucher-upload-btn" onclick="simulateVoucherUpload()" class="border border-slate-200 rounded-xl bg-slate-50/60 py-10 flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-blue-50/40 transition-all group">
+                                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white mb-3 group-hover:bg-blue-600 transition-all">
+                                    <i class="fa fa-plus"></i>
+                                </div>
+                                <p class="text-sm font-bold text-slate-700 group-hover:text-primary transition-colors">点击上传付款凭证</p>
+                                <p class="text-xs text-slate-400 mt-1.5">支持 JPG、PNG、PDF 格式</p>
+                            </div>
+                            <div id="voucher-file-info" class="hidden mt-4 p-3 bg-emerald-50 border border-emerald-100 rounded-lg flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa fa-file-image-o text-emerald-500 mr-2"></i>
+                                    <span class="text-xs text-emerald-700 font-medium" id="voucher-filename">bank_receipt_20260325.jpg</span>
+                                </div>
+                                <button onclick="removeVoucher()" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold">删除</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. 温馨提示 -->
+                    <div class="bg-amber-50/70 border border-amber-100 rounded-2xl p-6">
+                        <h4 class="text-sm font-bold text-slate-800 flex items-center mb-4">
+                            <i class="fa fa-bell text-amber-500 mr-2.5"></i> 温馨提示
+                        </h4>
+                        <ul class="space-y-3 text-[13px] text-slate-600 leading-relaxed">
+                            <li class="flex items-start">
+                                <span class="w-4 h-4 mt-0.5 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-[10px] font-bold mr-2.5 shrink-0">1</span>
+                                <span>请您尽快完成支付；若您已支付完成，请耐心等待机构审核，出函结果将会通过短信告知。请留意接收手机号码为<b class="text-slate-800">xxxx0000xx</b>的短信。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-4 h-4 mt-0.5 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-[10px] font-bold mr-2.5 shrink-0">2</span>
+                                <span>上传付款凭证能加快出函审核速度，请及时上传付款凭证。</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-4 h-4 mt-0.5 bg-slate-200 text-slate-600 rounded-full flex items-center justify-center text-[10px] font-bold mr-2.5 shrink-0">3</span>
+                                <span>若长时间未出函，请联系客服: <b class="text-rose-500">400-xxx-xxxx</b></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- 完成支付 -->
+                    <button onclick="window.simulatePaymentSuccess()" class="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all active:scale-[0.99] flex items-center justify-center">
+                        <i class="fa fa-check-circle mr-2"></i> 完成支付
+                    </button>
                 </div>
 
                 <!-- 6. 下载保函视图 -->
