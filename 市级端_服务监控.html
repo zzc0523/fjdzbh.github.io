@@ -110,7 +110,7 @@
                                     </select>
                                 </div>
                                 <div class="flex items-center">
-                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">日期范围：</label>
+                                    <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">开立日期：</label>
                                     <div class="flex items-center space-x-2">
                                         <input id="searchDateStart" type="date" class="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-36" value="2026-05-01">
                                         <span class="text-slate-400">至</span>
@@ -383,7 +383,7 @@
                     isVisible = false;
                 }
 
-                // 日期范围筛选
+                // 开立日期筛选
                 if (dateStart && dateEnd && rowDate) {
                     if (rowDate < dateStart || rowDate > dateEnd) {
                         isVisible = false;
