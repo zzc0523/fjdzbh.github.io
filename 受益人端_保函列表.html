@@ -131,27 +131,20 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const selectAll = document.getElementById('select-all');
-            
-            selectAll?.addEventListener('change', function() {
-                checkboxes.forEach(cb => cb.checked = this.checked);
-            });
-
             document.querySelectorAll('.action-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     const text = this.textContent.trim();
                     const row = this.closest('tr');
-                    const projectName = row.querySelector('td:nth-child(2)').textContent.trim();
-                    const no = row.querySelector('td:nth-child(3)').textContent.trim();
-                    const bondType = row.querySelector('td:nth-child(4)').textContent.trim();
-                    const amount = row.querySelector('td:nth-child(5)').textContent.trim();
-                    const validPeriod = row.querySelector('td:nth-child(6)').textContent.trim();
-                    const issueTime = row.querySelector('td:nth-child(7)').textContent.trim();
-                    const companyName = row.querySelector('td:nth-child(8)').textContent.trim();
-                    const insurer = row.querySelector('td:nth-child(9)').textContent.trim();
-                    const statusText = row.querySelector('td:nth-child(10)').textContent.trim();
+                    const projectName = row.querySelector('td:nth-child(1)').textContent.trim();
+                    const no = row.querySelector('td:nth-child(2)').textContent.trim();
+                    const bondType = row.querySelector('td:nth-child(3)').textContent.trim();
+                    const amount = row.querySelector('td:nth-child(4)').textContent.trim();
+                    const validPeriod = row.querySelector('td:nth-child(5)').textContent.trim();
+                    const issueTime = row.querySelector('td:nth-child(6)').textContent.trim();
+                    const companyName = row.querySelector('td:nth-child(7)').textContent.trim();
+                    const insurer = row.querySelector('td:nth-child(8)').textContent.trim();
+                    const statusText = row.querySelector('td:nth-child(9)').textContent.trim();
                     const guaranteeNo = no;
 
                     // 状态徽章颜色
@@ -358,31 +351,7 @@
             });
 
             document.querySelector('.fa-question-circle')?.parentElement.addEventListener('click', () => {
-                showModal('帮助中心', `<div class="space-y-4"><div class="p-3 bg-slate-50 rounded"><b>如何查询？</b><p class="text-sm mt-1">在顶部搜索框输入关键字后点击查询按钮。</p></div><div class="p-3 bg-slate-50 rounded"><b>批量下载？</b><p class="text-sm mt-1">勾选列表项后点击"批量下载"按钮即可一键下载多份保函文件。</p></div></div>`);
-            });
-
-            // 批量下载
-            document.getElementById('batch-download-btn')?.addEventListener('click', function() {
-                const checkedBoxes = document.querySelectorAll('tbody input[type="checkbox"]:checked');
-                if (checkedBoxes.length === 0) {
-                    showNotification('请先勾选要下载的保函', 'error');
-                    return;
-                }
-                
-                const nos = [];
-                checkedBoxes.forEach(cb => {
-                    const row = cb.closest('tr');
-                    const no = row.querySelector('td:nth-child(3)').textContent.trim();
-                    nos.push(no);
-                });
-                
-                showNotification(`正在批量下载 ${nos.length} 笔保函文件...`, 'success');
-                // 模拟逐个下载
-                nos.forEach((no, index) => {
-                    setTimeout(() => {
-                        showNotification(`保函 ${no} 下载完成`, 'success');
-                    }, (index + 1) * 1000);
-                });
+                showModal('帮助中心', `<div class="space-y-4"><div class="p-3 bg-slate-50 rounded"><b>如何查询？</b><p class="text-sm mt-1">在顶部搜索框输入关键字后点击查询按钮。</p></div><div class="p-3 bg-slate-50 rounded"><b>如何下载保函？</b><p class="text-sm mt-1">在列表操作列点击"下载"按钮即可下载单份保函文件。</p></div></div>`);
             });
 
             document.querySelector('.fa-bell')?.parentElement.addEventListener('click', (e) => {
@@ -515,16 +484,7 @@
                             </button>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center space-x-4">
-                            <label class="flex items-center cursor-pointer">
-                                <input type="checkbox" id="select-all" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                <span class="ml-2 text-sm text-slate-600">全选</span>
-                            </label>
-                            <button id="batch-download-btn" class="text-sm text-emerald-600 hover:text-emerald-700 flex items-center">
-                                <i class="fa fa-download mr-1"></i>批量下载
-                            </button>
-                        </div>
+                    <div class="flex items-center justify-end mb-4">
                         <div class="text-sm text-slate-500">
                             共 <span class="font-bold text-slate-700">28</span> 条记录
                         </div>
@@ -533,9 +493,6 @@
                         <table class="w-full">
                             <thead>
                                 <tr class="bg-gray-50 border-b">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8">
-                                        <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
-                                    </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">项目名称</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函编号</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">保函类型</th>
@@ -550,7 +507,6 @@
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">福州市地铁4号线二期工程</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110001</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">投标保函</div></td>
@@ -568,7 +524,6 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">厦门市地铁5号线一期工程</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110002</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">履约保函</div></td>
@@ -585,7 +540,6 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">泉州市文化中心建设项目</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110003</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">预付款保函</div></td>
@@ -602,7 +556,6 @@
                                         </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">漳州市滨江路改造工程</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110004</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">履约保函</div></td>
@@ -619,7 +572,6 @@
                                         </td>
                                 </tr>
                                 <tr>
-                                    <td class="px-6 py-4 whitespace-nowrap"><input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary"></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">莆田市污水处理厂提标改造项目</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm font-medium text-gray-900">FJ202603110005</div></td>
                                     <td class="px-6 py-4 whitespace-nowrap"><div class="text-sm text-gray-900">投标保函</div></td>
