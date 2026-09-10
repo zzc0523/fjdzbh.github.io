@@ -102,9 +102,11 @@
                                     <label class="text-sm text-slate-600 mr-2 whitespace-nowrap">状态：</label>
                                     <select id="filterStatus" class="px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" onchange="updateStats()">
                                         <option>全部</option>
+                                        <option>已支付</option>
                                         <option>已出函</option>
-                                        <option>处理中</option>
-                                        <option>已取消</option>
+                                        <option>退保中</option>
+                                        <option>已退保</option>
+                                        <option>拒绝退保</option>
                                     </select>
                                 </div>
                                 <div class="flex items-center">
@@ -131,38 +133,6 @@
                     </div>
                 </div>
 
-                <!-- 统计卡片区域 -->
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white shadow-lg shadow-blue-500/25">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="text-sm opacity-80 mb-2">平均开函时长</div>
-                                <div id="avgDuration" class="text-3xl font-bold">2小时35分</div>
-                                <div class="text-xs opacity-60 mt-2 flex items-center">
-                                    <i class="fa fa-trending-down mr-1 text-red-300"></i>较昨日 -12%
-                                </div>
-                            </div>
-                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                                <i class="fa fa-clock-o text-2xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg shadow-green-500/25">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <div class="text-sm opacity-80 mb-2">今日开函数量</div>
-                                <div id="totalCount" class="text-3xl font-bold">5笔</div>
-                                <div class="text-xs opacity-60 mt-2 flex items-center">
-                                    <i class="fa fa-trending-up mr-1 text-yellow-300"></i>较昨日 +8%
-                                </div>
-                            </div>
-                            <div class="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center">
-                                <i class="fa fa-file-text-o text-2xl"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-slate-100">
                         <h3 class="font-bold text-slate-800 flex items-center"><i class="fa fa-clock-o mr-2 text-blue-600"></i>开函时效监控</h3>
@@ -178,8 +148,8 @@
                                     <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">企业名称</th>
                                     <th class="px-5 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">保函类型</th>
                                     <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">状态</th>
-                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">支付时间</th>
-                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">出函时间</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 w-28">支付时间</th>
+                                    <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200 w-28">出函时间</th>
                                     <th class="px-5 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider border-b-2 border-blue-200">开函时效</th>
                                 </tr>
                             </thead>
@@ -209,23 +179,40 @@
     <script>
         // 模拟数据
         const mockData = [
-            { orderId: 'BD20260522001', projectName: '中央活力区公共服务中心', org: '泉州银行', company: '福建建工建设有限公司', type: '投标保函', status: '已出函', payTime: '09:15:30', issueTime: '11:30:45', duration: '2小时15分' },
-            { orderId: 'BD20260522002', projectName: '泉州市城市更新项目', org: '招商银行', company: '厦门市建筑工程公司', type: '履约保函', status: '已出函', payTime: '08:30:00', issueTime: '10:25:18', duration: '1小时55分' },
-            { orderId: 'BD20260522003', projectName: '泉州湾大桥工程', org: '浦发银行', company: '泉州市建设发展集团', type: '预付款保函', status: '处理中', payTime: '07:00:00', issueTime: '12:15:30', duration: '5小时15分' },
-            { orderId: 'BD20260522004', projectName: '福州地铁5号线', org: '平安保险', company: '福州城建集团有限公司', type: '质量保函', status: '已取消', payTime: '06:45:00', issueTime: '11:00:00', duration: '4小时15分' },
-            { orderId: 'BD20260522005', projectName: '漳州开发区建设项目', org: '新网银行', company: '漳州建工集团有限公司', type: '投标保函', status: '已出函', payTime: '09:20:00', issueTime: '10:45:22', duration: '1小时25分' },
-            { orderId: 'BD20260522006', projectName: '宁德市体育中心', org: '泉州银行', company: '莆田市建设工程公司', type: '投标保函', status: '处理中', payTime: '08:00:00', issueTime: '', duration: '2小时+' },
-            { orderId: 'BD20260522007', projectName: '龙岩市文化中心', org: '招商银行', company: '龙岩市建筑工程公司', type: '履约保函', status: '已出函', payTime: '05:30:00', issueTime: '14:45:00', duration: '9小时15分' }
+            { orderId: 'BD20260522001', projectName: '中央活力区公共服务中心', org: '泉州银行', company: '福建建工建设有限公司', type: '投标保函', status: '已出函', payTime: '2026-05-22 09:15:30', issueTime: '2026-05-22 11:30:45', duration: '2小时15分' },
+            { orderId: 'BD20260522002', projectName: '泉州市城市更新项目', org: '招商银行', company: '厦门市建筑工程公司', type: '履约保函', status: '已出函', payTime: '2026-05-22 08:30:00', issueTime: '2026-05-22 10:25:18', duration: '1小时55分' },
+            { orderId: 'BD20260522003', projectName: '泉州湾大桥工程', org: '浦发银行', company: '泉州市建设发展集团', type: '预付款保函', status: '已出函', payTime: '2026-05-22 07:00:00', issueTime: '2026-05-22 12:15:30', duration: '5小时15分' },
+            { orderId: 'BD20260522004', projectName: '福州地铁5号线', org: '平安保险', company: '福州城建集团有限公司', type: '质量保函', status: '已退保', payTime: '2026-05-22 06:45:00', issueTime: '2026-05-22 11:00:00', duration: '4小时15分' },
+            { orderId: 'BD20260522005', projectName: '漳州开发区建设项目', org: '新网银行', company: '漳州建工集团有限公司', type: '投标保函', status: '已出函', payTime: '2026-05-22 09:20:00', issueTime: '2026-05-22 10:45:22', duration: '1小时25分' },
+            { orderId: 'BD20260522006', projectName: '宁德市体育中心', org: '泉州银行', company: '莆田市建设工程公司', type: '投标保函', status: '已支付', payTime: '2026-05-22 08:00:00', issueTime: '', duration: '2小时+' },
+            { orderId: 'BD20260522007', projectName: '龙岩市文化中心', org: '招商银行', company: '龙岩市建筑工程公司', type: '履约保函', status: '已出函', payTime: '2026-05-22 05:30:00', issueTime: '2026-05-22 14:45:00', duration: '9小时15分' }
         ];
 
         // 获取状态标签HTML
         function getStatusTag(status) {
             const tags = {
+                '申请中': '<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">申请中</span>',
+                '待审核': '<span class="px-2 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">待审核</span>',
+                '已取消': '<span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">已取消</span>',
+                '审批不通过': '<span class="px-2 py-1 bg-rose-100 text-rose-700 text-xs font-medium rounded-full">审批不通过</span>',
+                '待支付': '<span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full">待支付</span>',
+                '已支付': '<span class="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs font-medium rounded-full">已支付</span>',
                 '已出函': '<span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">已出函</span>',
-                '处理中': '<span class="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-medium rounded-full">处理中</span>',
-                '已取消': '<span class="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">已取消</span>'
+                '退保中': '<span class="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">退保中</span>',
+                '已退保': '<span class="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-medium rounded-full">已退保</span>',
+                '拒绝退保': '<span class="px-2 py-1 bg-pink-100 text-pink-700 text-xs font-medium rounded-full">拒绝退保</span>'
             };
             return tags[status] || status;
+        }
+
+        // 日期与时间分两行显示
+        function formatDateTime(value) {
+            if (!value) return '--';
+            const parts = value.split(' ');
+            if (parts.length === 2) {
+                return `<span class="block text-xs text-slate-400">${parts[0]}</span><span class="block text-sm text-slate-700">${parts[1]}</span>`;
+            }
+            return value;
         }
 
         // 渲染表格
@@ -236,6 +223,13 @@
             let html = '';
             data.forEach((item, index) => {
                 const bgClass = index % 2 === 0 ? '' : 'bg-slate-25';
+                // 已支付（尚未出函）时，出函时间与开函时效显示 --
+                const notIssued = item.status === '已支付' || !item.issueTime;
+                const issueTimeText = notIssued ? '--' : item.issueTime;
+                const durationText = notIssued ? '--' : item.duration;
+                // 日期与时间分两行显示，优化列宽
+                const payText = formatDateTime(item.payTime);
+                const issueText = notIssued ? '--' : formatDateTime(item.issueTime);
                 html += `
                     <tr class="hover:bg-blue-50 transition-all ${bgClass}">
                         <td class="px-5 py-4">
@@ -256,14 +250,14 @@
                         <td class="px-5 py-4 text-center">
                             ${getStatusTag(item.status)}
                         </td>
-                        <td class="px-5 py-4 text-center">
-                            <span class="text-sm text-slate-600">${item.payTime}</span>
+                        <td class="px-4 py-4 text-center w-28">
+                            ${payText}
+                        </td>
+                        <td class="px-4 py-4 text-center w-28">
+                            ${issueText}
                         </td>
                         <td class="px-5 py-4 text-center">
-                            <span class="text-sm text-slate-600">${item.issueTime || '-'}</span>
-                        </td>
-                        <td class="px-5 py-4 text-center">
-                            <span class="text-sm text-slate-600">${item.duration}</span>
+                            <span class="text-sm text-slate-600">${durationText}</span>
                         </td>
                     </tr>
                 `;
@@ -290,35 +284,8 @@
                 return true;
             });
 
-            // 计算统计数据
-            const count = filtered.length;
-            const avgDuration = calculateAvgDuration(filtered);
-
-            // 更新卡片显示
-            document.getElementById('totalCount').textContent = `${count}笔`;
-            document.getElementById('avgDuration').textContent = avgDuration;
-
             // 更新表格显示
             renderTable(filtered);
-        }
-
-        // 计算平均时长
-        function calculateAvgDuration(data) {
-            const durations = data.filter(item => item.duration !== '处理中');
-            if (durations.length === 0) return '0小时0分';
-
-            let totalMinutes = 0;
-            durations.forEach(item => {
-                const match = item.duration.match(/(\d+)小时(\d+)分/);
-                if (match) {
-                    totalMinutes += parseInt(match[1]) * 60 + parseInt(match[2]);
-                }
-            });
-
-            const avgMinutes = Math.round(totalMinutes / durations.length);
-            const hours = Math.floor(avgMinutes / 60);
-            const minutes = avgMinutes % 60;
-            return `${hours}小时${minutes}分`;
         }
 
         function showConfirm(title, message, onConfirm) {
