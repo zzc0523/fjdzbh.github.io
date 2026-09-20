@@ -141,12 +141,12 @@
                                     <i class="fa fa-eye mr-1"></i>查看
                                 </a>
                                 `}
-                                ${['已出函', '退保中', '已退保', '拒绝退保'].includes(item.status) ? `
+                                ${['已出函', '拒绝退保'].includes(item.status) ? `
                                 <a href="#" class="text-blue-500 hover:text-blue-600 font-bold" title="核验真伪">
                                     <i class="fa fa-shield mr-1"></i>验真
                                 </a>
                                 ` : ''}
-                                ${['已支付', '已出函', '退保中', '已退保', '拒绝退保'].includes(item.status) ? `
+                                ${['已支付', '已出函', '拒绝退保'].includes(item.status) ? `
                                 <a href="#" class="text-purple-500 hover:text-purple-600 font-bold" title="申请发票">
                                     <i class="fa fa-file-text-o mr-1"></i>发票
                                 </a>
